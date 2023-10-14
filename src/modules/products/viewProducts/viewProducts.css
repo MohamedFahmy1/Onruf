@@ -1,0 +1,28 @@
+.list_folder .item,
+.list_folder .item > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.list_folder .item {
+  padding: 8px 35px;
+  flex-wrap: wrap;
+}
+
+.list_folder .item:not(:last-child) {
+  border-bottom: 1px solid #eee;
+}
+
+.list_folder .item img {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+}
+.disc-header {
+  font-weight: 600;
+}
+.disc-header span{
+ color: #EE6C4D;
+}

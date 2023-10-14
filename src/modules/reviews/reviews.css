@@ -1,0 +1,70 @@
+.nav-pills {
+    border-radius: 13px;
+    overflow: hidden;
+    margin-bottom: 15px
+}
+
+.nav-pills .nav-link {
+    border-radius: 0;
+    min-width: 125px;
+    padding: 16px 5px;
+    color: inherit;
+    font-weight: bold;
+    background: #FFF
+}
+
+.nav-pills .nav-link.active {
+    background: #FFE5DF;
+    color: var(--main);
+}
+
+.imogy {
+    background: #FFF;
+    border: 1px solid #EEE;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 50px;
+    gap: 4px;
+    padding: 5px 10px;
+    font-weight: bold;
+}
+
+.imogy img {
+    width: 20px;
+    height: 20px;
+}
+
+.box-Rev-Que {
+    overflow: hidden;
+    padding: 0
+}
+
+.box-Rev-Que .title_ {
+    padding: 10px 20px;
+    background: var(--main);
+    color: #FFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+
+.box-Rev-Que .title_ .num {
+    background: #293241;
+    font-size: 11px;
+    padding: 13px 22px;
+    border-radius: 50px;
+}
+
+.box-Rev-Que .btn-main {
+    min-width: auto;
+    padding: 0px 25px;
+    height: 42px;
+    line-height: 42px;
+}
+
+.img_user{
+    width: 60px;
+    height: 60px;
+    border: 1px solid #EEE;
+    border-radius: 50%;
+}

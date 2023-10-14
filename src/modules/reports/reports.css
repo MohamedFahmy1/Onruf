@@ -1,0 +1,35 @@
+.all_pro_cus .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #EEE;
+}
+
+.all_pro_cus .img_table {
+    width: 80px;
+    height: 80px;
+}
+
+.all_pro_cus .item:last-child {
+    border: none;
+}
+
+.The-ratio {
+    color: #1ebf24;
+    font-size: 20px;
+    background: #e1ffe2;
+    display: inline-block;
+    padding: 7px 18px;
+    border-radius: 50px;
+    margin-top: 8px;
+}
+
+.img_report{
+    display: inline-block;
+    width: 105px;
+    height: 105px;
+    background: #ffe5df;
+    margin-bottom: 16px;
+    border-radius: 50%;
+}

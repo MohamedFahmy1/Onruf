@@ -1,0 +1,27 @@
+.select_P {
+    position: relative;
+}
+.select_P .reset {
+    position: absolute;
+    left: 45px;
+    top: 63px;
+    transform: translateY(-50%);
+}
+.search_P .btn-main {
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    min-width: 120px;
+}
+.search_P .reset {
+    position: absolute;
+    left: 130px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.btn-disabled {
+    opacity: 0.5;
+    cursor: auto;
+}

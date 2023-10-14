@@ -1,0 +1,19 @@
+.container{
+    height:100%;
+    display: flex;
+}
+
+.content {
+    padding: 35% 0;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.text {
+    margin-top: 1vw;
+font-size: 3.2vw;
+font-weight: bold;
+text-transform: capitalize;
+}

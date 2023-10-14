@@ -1,0 +1,128 @@
+/* Packages */
+.outer_boxsBouquet {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 15px;
+  overflow: auto;
+  padding-top: 15px;
+}
+
+.box-Bouquet {
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  margin: 5px 0;
+  position: relative;
+  width: 365px;
+  flex-shrink: 0;
+}
+
+.box-Bouquet .head {
+  background: #45495e;
+  border-radius: 8px 8px 0 0;
+  padding: 23px 20px;
+  display: flex;
+  justify-content: space-between;
+  color: #fff;
+  font-size: 18px;
+}
+
+.box-Bouquet .info {
+  color: #45495e;
+  font-weight: 600;
+  padding: 10px 15px;
+}
+
+.box-Bouquet .info li {
+  position: relative;
+  margin: 5px 0;
+  padding-inline-start: 20px;
+}
+
+.box-Bouquet .info li:before {
+  content: "\f005";
+  font-family: "Font Awesome 5 Free";
+  color: var(--main);
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.box-Bouquet-gold .head {
+  background: var(--main);
+}
+
+.box-Bouquet .Tinf {
+  background: #45495e;
+  color: #fff;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  padding: 7px 30px;
+  border-radius: 50px;
+  display: none;
+  z-index: 5;
+}
+
+.box-Bouquet-gold .Tinf {
+  display: block;
+}
+
+.box-Bouquet .pord {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  z-index: 2;
+}
+
+.box-Bouquet input[type="radio"] {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  z-index: 4;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.box-Bouquet .check {
+  position: absolute;
+  z-index: 8;
+  top: -9px;
+  right: -3px;
+  font-size: 18px;
+  color: var(--main);
+  background: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  display: none;
+}
+
+.box-Bouquet > .btn-main {
+  display: block;
+  margin: auto;
+  margin-bottom: 10px;
+  width: calc(100% - 30px);
+}
+
+.btn-main-active {
+  background: #f0f3f8;
+  color: #45495e;
+}
+
+.box-Bouquet input[type="radio"]:checked + .check {
+  display: flex;
+}
+.box-Bouquet input[type="radio"]:checked ~ .pord {
+  border-color: var(--main);
+}

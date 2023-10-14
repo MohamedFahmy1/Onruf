@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="288" height="254" viewBox="0 0 288 254">
+  <defs>
+    <filter id="Ellipse_518" x="149" y="116" width="139" height="138" filterUnits="userSpaceOnUse">
+      <feOffset dy="6" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feFlood flood-color="#c6c6c6" flood-opacity="0.278"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Ellipse_519" x="25" y="0" width="138" height="138" filterUnits="userSpaceOnUse">
+      <feOffset dy="6" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="10" result="blur-2"/>
+      <feFlood flood-color="#c6c6c6" flood-opacity="0.278"/>
+      <feComposite operator="in" in2="blur-2"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+    <filter id="Ellipse_3102" x="0" y="96" width="138" height="138" filterUnits="userSpaceOnUse">
+      <feOffset dy="6" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="10" result="blur-3"/>
+      <feFlood flood-color="#c6c6c6" flood-opacity="0.278"/>
+      <feComposite operator="in" in2="blur-3"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Component_31_1" data-name="Component 31 – 1" transform="translate(30 24)">
+    <g id="Group_55396" data-name="Group 55396" transform="translate(24.717 4)">
+      <g id="Ellipse_503" data-name="Ellipse 503" transform="translate(0.283)" fill="none" stroke="#45495e" stroke-width="50">
+        <circle cx="101.5" cy="101.5" r="101.5" stroke="none"/>
+        <circle cx="101.5" cy="101.5" r="76.5" fill="none"/>
+      </g>
+      <g id="Ellipse_3101" data-name="Ellipse 3101" transform="translate(0.283)" fill="none" stroke="#0b7bc5" stroke-width="50" stroke-dasharray="500 1000">
+        <circle cx="101.5" cy="101.5" r="101.5" stroke="none"/>
+        <circle cx="101.5" cy="101.5" r="76.5" fill="none"/>
+      </g>
+      <g id="Ellipse_504" data-name="Ellipse 504" transform="translate(0.283)" fill="none" stroke="#ee6c4d" stroke-width="50" stroke-dasharray="400 600">
+        <circle cx="101.5" cy="101.5" r="101.5" stroke="none"/>
+        <circle cx="101.5" cy="101.5" r="76.5" fill="none"/>
+      </g>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, -30, -24)" filter="url(#Ellipse_518)">
+      <ellipse id="Ellipse_518-2" data-name="Ellipse 518" cx="39.5" cy="39" rx="39.5" ry="39" transform="translate(179 140)" fill="#fff"/>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, -30, -24)" filter="url(#Ellipse_519)">
+      <circle id="Ellipse_519-2" data-name="Ellipse 519" cx="39" cy="39" r="39" transform="translate(55 24)" fill="#fff"/>
+    </g>
+    <g transform="matrix(1, 0, 0, 1, -30, -24)" filter="url(#Ellipse_3102)">
+      <circle id="Ellipse_3102-2" data-name="Ellipse 3102" cx="39" cy="39" r="39" transform="translate(30 120)" fill="#fff"/>
+    </g>
+    <text id="Link_2" data-name="Link #2" transform="translate(189 163)" fill="#ee6c4d" font-size="7" font-family="MadaniArabic-Medium, MadaniArabic" font-weight="500"><tspan x="-15" y="0">شراء بسعر</tspan><tspan y="0"></tspan><tspan x="-5" y="11">ثابت</tspan></text>
+    <text id="Link_2-2" data-name="Link #2" transform="translate(177 151)" fill="#ee6c4d" font-size="15" font-family="MadaniArabic-Bold, MadaniArabic" font-weight="700"><tspan x="0" y="0">140</tspan></text>
+    <text id="Link_2-3" data-name="Link #2" transform="translate(64 53)" fill="#45495e" font-size="7" font-family="MadaniArabic-Medium, MadaniArabic" font-weight="500"><tspan x="-5" y="0">مزاد</tspan></text>
+    <text id="Link_2-4" data-name="Link #2" transform="translate(39 144)" fill="#0b7bc5" font-size="7" font-family="MadaniArabic-Medium, MadaniArabic" font-weight="500"><tspan x="-18" y="0">تفاوض على</tspan><tspan y="0"> </tspan><tspan x="-8" y="11">السعر</tspan></text>
+    <text id="Link_2-5" data-name="Link #2" transform="translate(52 46)" fill="#45495e" font-size="15" font-family="MadaniArabic-Bold, MadaniArabic" font-weight="700"><tspan x="0" y="0">130</tspan></text>
+    <text id="Link_2-6" data-name="Link #2" transform="translate(27 131)" fill="#0b7bc5" font-size="15" font-family="MadaniArabic-Bold, MadaniArabic" font-weight="700"><tspan x="0" y="0">130</tspan></text>
+  </g>
+</svg>

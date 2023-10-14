@@ -1,0 +1,49 @@
+.box_cus_Folder{
+  border: 1px solid #EEE;
+  border-radius: 20px;
+  padding: 15px;
+  display: block;
+  margin-bottom: 15px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #EEE;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  font-size: 10px;
+  font-weight: bold;
+  background: var(--main);
+  color: #FFF;
+
+}
+
+.avatar img{
+  width: 100%;
+  height: 100%;
+}
+
+.avatars-stack{
+  display: flex;
+  justify-content: center;
+  margin: 10px 0
+}
+
+.avatars-stack .avatar {
+  margin-right: -0.8rem;
+  transition: all 0.2s linear 0s
+}
+
+.avatars-stack .avatar:hover {
+  margin-right: 0;
+}
+
+.folder__actions__btn {
+  display: flex;
+  justify-content: space-between;
+}

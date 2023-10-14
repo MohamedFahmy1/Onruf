@@ -1,0 +1,93 @@
+.imogy {
+    background: #FFF;
+    border: 1px solid #EEE;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 50px;
+    gap: 4px;
+    padding: 5px 10px;
+    font-weight: bold
+}
+
+.imogy img {
+    width: 20px;
+    height: 20px
+}
+
+
+.box-setting_ {
+    background: #FFF;
+    padding: 20px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.box-setting_ img {
+    width: 85px;
+    height: 85px;
+    object-fit: contain;
+    object-position: center;
+    margin-bottom: 15px
+}
+
+.box-setting_ .btn-main {
+    display: block;
+    width: 100%;
+    margin-top: 15px
+}
+
+.btn-bank-accounts {
+    border: 1px solid #EEE;
+    border-radius: 18px;
+    padding: 17px;
+    height: 270px;
+}
+
+.box-bank-account {
+    position: relative;
+    height: 270px;
+    width: 200px;
+    border-radius: 18px;
+    text-align: left;
+    direction: ltr;
+    padding: 25px 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 14px;
+    z-index: 2;
+    color: #FFF
+}
+
+.box-bank-account .img_ {
+    max-width: 50px;
+    max-height: 20px
+}
+
+.box-bank-account .btn_edit {
+    border: 1px solid #EEE;
+    font-size: 10px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    color: var(--main);
+    background: #FFF;
+}
+
+.box-bank-account .baner{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    width: calc(100% + 15px);
+    height: calc(100% + 15px);
+    transform: translate(-50%, -50%);
+}
+
+.status-P{
+    font-weight: normal !important;
+    width: 120px;
+    padding: 11px 5px;
+}

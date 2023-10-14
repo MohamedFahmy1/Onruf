@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="14" viewBox="0 0 16 14">
+  <g id="newspaper" transform="translate(0 -1)">
+    <path id="Path_4" data-name="Path 4" d="M0,2.5A1.5,1.5,0,0,1,1.5,1h11A1.5,1.5,0,0,1,14,2.5V13.028a1.9,1.9,0,0,1-.238.972H14.5a.5.5,0,0,0,.5-.5v-9a.5.5,0,0,1,1,0v9A1.5,1.5,0,0,1,14.5,15H1.5A1.5,1.5,0,0,1,0,13.5ZM12,14a1.138,1.138,0,0,0,.853-.441A.8.8,0,0,0,13,13.028V2.5a.5.5,0,0,0-.5-.5H1.5a.5.5,0,0,0-.5.5v11a.5.5,0,0,0,.5.5Z" fill="#1c1f2c"/>
+    <path id="Path_5" data-name="Path 5" d="M2,3H12V5H2ZM2,6H6V9H2Zm0,4H6v1H2Zm0,2H6v1H2ZM7,6H9V7H7Zm3,0h2V7H10ZM7,8H9V9H7Zm3,0h2V9H10ZM7,10H9v1H7Zm3,0h2v1H10ZM7,12H9v1H7Zm3,0h2v1H10Z" fill="#1c1f2c"/>
+  </g>
+</svg>
