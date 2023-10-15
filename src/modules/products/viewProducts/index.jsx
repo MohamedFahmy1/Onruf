@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useMemo, useEffect } from "react"
+import React, { Fragment, useState, useMemo, useEffect, useCallback } from "react"
 import Table from "../../../common/table"
 import Pagination from "./../../../common/pagination"
 import Router, { useRouter } from "next/router"
@@ -14,7 +14,7 @@ import Link from "next/link"
 import { toast } from "react-toastify"
 import t from "../../../translations.json"
 
-const ViewProducts = ({ products: p = [], setProductsIds , selectedRows , setSelectedRows }) => {
+const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelectedRows }) => {
   const router = useRouter()
   const {
     locale,
@@ -46,9 +46,9 @@ const ViewProducts = ({ products: p = [], setProductsIds , selectedRows , setSel
   // console.log({products})
 
   const productsCount = products?.length
-  const avaliableProducts = productsCount>0 && products?.filter(({ isActive }) => isActive) || []
-  const inActiveProducts = productsCount>0 &&products?.filter(({ isActive }) => !isActive) || []
-  const productsAlmostOut =productsCount>0 && products?.filter(({ qty }) => qty < 2) || []
+  const avaliableProducts = (productsCount > 0 && products?.filter(({ isActive }) => isActive)) || []
+  const inActiveProducts = (productsCount > 0 && products?.filter(({ isActive }) => !isActive)) || []
+  const productsAlmostOut = (productsCount > 0 && products?.filter(({ qty }) => qty < 2)) || []
 
   const filterProducts =
     selectedFilter === "avaliableProducts"
@@ -63,31 +63,34 @@ const ViewProducts = ({ products: p = [], setProductsIds , selectedRows , setSel
     return selectedRow?.[0]?.productId || selectedRow?.[0]?.id
   })
 
-  const handleDeleteProduct = async (productId) => {
-    try {
-      const isDelete = confirm(
-        locale === "en" ? "Are you sure you want to delete this product ?" : "هل ترغب في مسح تلك المنتجات ؟",
-      )
-      if (!isDelete) return
-      await axios.delete(process.env.REACT_APP_API_URL + `/RemoveProduct?id=${productId}`)
-      toast.success(locale === "en" ? "Products has been deleted successfully!" : "تم حذف المنتج بنجاح")
-      const {
-        data: { data },
-      } = await axios(process.env.REACT_APP_API_URL + `/ListProductByBusinessAccountId`)
-      setProducts(data.filter(({ id }) => id !== productId))
-    } catch (error) {
-      console.error(error)
-      toast.error(error.response.data.message)
-    }
-  }
+  const handleDeleteProduct = useCallback(
+    async (productId) => {
+      try {
+        const isDelete = confirm(
+          locale === "en" ? "Are you sure you want to delete this product ?" : "هل ترغب في مسح تلك المنتجات ؟",
+        )
+        if (!isDelete) return
+        await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/RemoveProduct?id=${productId}`)
+        toast.success(locale === "en" ? "Products has been deleted successfully!" : "تم حذف المنتج بنجاح")
+        const {
+          data: { data },
+        } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
+        setProducts(data.filter(({ id }) => id !== productId))
+      } catch (error) {
+        console.error(error)
+        toast.error(error.response.data.message)
+      }
+    },
+    [locale],
+  )
 
   useEffect(() => {
     setProductsIds(selectedProductsIds)
-  }, [selectedRows ])
+  }, [selectedRows])
 
   useEffect(() => {
     setSelectedRows({})
-  },[products.length])
+  }, [products.length])
 
   useEffect(() => {
     if (singleSelectedRow?.id) {
@@ -237,15 +240,15 @@ const ViewProducts = ({ products: p = [], setProductsIds , selectedRows , setSel
         },
       },
     ],
-    [locale, openPriceModal, openQuantityModal,handleDeleteProduct ],
+    [locale, openPriceModal, openQuantityModal, handleDeleteProduct],
   )
 
   const handleChangeStatus = async (id) => {
     try {
-      await axios.post(process.env.REACT_APP_API_URL + `/ChangeStatusProduct?id=${id}`, {})
+      await axios.post(process.env.NEXT_PUBLIC_API_URL + `/ChangeStatusProduct?id=${id}`, {})
       const {
         data: { data },
-      } = await axios(process.env.REACT_APP_API_URL + `/ListProductByBusinessAccountId`)
+      } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
       setProducts(data)
     } catch (err) {
       console.error(err)
@@ -256,14 +259,16 @@ const ViewProducts = ({ products: p = [], setProductsIds , selectedRows , setSel
   const handleEditProductQuantity = async () => {
     try {
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/ProductAdjustQuantity?productId=${singleSelectedRow?.id}${quantityValueInfinity ?'':`&quantity=${quantityValue}`}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${singleSelectedRow?.id}${
+          quantityValueInfinity ? "" : `&quantity=${quantityValue}`
+        }`,
         {},
       )
       setOpenQuantityModal(false)
       toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
       const {
         data: { data },
-      } = await axios(process.env.REACT_APP_API_URL + `/ListProductByBusinessAccountId`)
+      } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
       setProducts(data)
     } catch (err) {
       console.error(err)
@@ -275,14 +280,14 @@ const ViewProducts = ({ products: p = [], setProductsIds , selectedRows , setSel
     try {
       if (priceValue > singleSelectedRow.price) return toast.error(`Discount should be <= ${singleSelectedRow.price}`)
       await axios.post(
-        `${process.env.REACT_APP_API_URL}/ProductDiscount?productId=${singleSelectedRow?.id}&PriceDiscount=${priceValue}&discountEndDate=${discountDate}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/ProductDiscount?productId=${singleSelectedRow?.id}&PriceDiscount=${priceValue}&discountEndDate=${discountDate}`,
         {},
       )
       setOpenPriceModal(false)
       toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
       const {
         data: { data },
-      } = await axios(process.env.REACT_APP_API_URL + `/ListProductByBusinessAccountId`)
+      } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
       setProducts(data)
     } catch (err) {
       console.error(err)
@@ -305,10 +310,12 @@ const ViewProducts = ({ products: p = [], setProductsIds , selectedRows , setSel
                 </a>
               </Link>
             </div>
-            <Button className="btn-main" onClick={() => router.push("/products/add")} variant={"contained"}>
-              {locale === "en" ? "Add Product" : "اضافه منتج"}
-              <FaPlusCircle className="me-2" />
-            </Button>
+            <Link href={"/products/add"}>
+              <Button className="btn-main" variant={"contained"}>
+                {locale === "en" ? "Add Product" : "اضافه منتج"}
+                <FaPlusCircle className="me-2" />
+              </Button>
+            </Link>
           </div>
 
           <div className="filtter_1">
@@ -450,7 +457,6 @@ const ViewProducts = ({ products: p = [], setProductsIds , selectedRows , setSel
               </Modal.Footer>
             </Modal>
             {productsCount > 5 && <Pagination listLength={productsCount} pageSize={5} />}
-
           </div>
         </div>
       </div>

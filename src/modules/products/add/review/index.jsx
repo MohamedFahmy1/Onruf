@@ -27,7 +27,7 @@ const AddProductReview = () => {
   const getAdditionalPakat = async () => {
     try {
       const data = await axios.get(
-        process.env.REACT_APP_API_URL +
+        process.env.NEXT_PUBLIC_API_URL +
           `/CheckOutAdditionalPakat?pakatId=${product.pakatId}&categoryId=${product.categoryId}`,
       )
       setAdditionalPakat(data?.data?.data)
@@ -39,7 +39,7 @@ const AddProductReview = () => {
   const applyCoupon = async () => {
     try {
       const res = await axios.post(
-        process.env.REACT_APP_API_URL + `/CheckOutAdditionalPakatApplyCoupon?couponCode=${couponCode}`,
+        process.env.NEXT_PUBLIC_API_URL + `/CheckOutAdditionalPakatApplyCoupon?couponCode=${couponCode}`,
         additionalPakat,
       )
       setAdditionalPakat(res?.data?.data)
@@ -65,7 +65,7 @@ const AddProductReview = () => {
 
   const handlePayProduct = async () => {
     await axios.post(
-      process.env.REACT_APP_API_URL +
+      process.env.NEXT_PUBLIC_API_URL +
         `/PakatPaymentTransaction?pakatId=${additionalPakat.pakatId}&typePay=${paymentMethod}`,
     )
     try {
@@ -77,7 +77,7 @@ const AddProductReview = () => {
       // data.append('vat', )
       data.append("total", totalPrice)
 
-      await axios.post(process.env.REACT_APP_API_URL + `/PayForProduct?lang=${locale}&currentPage=1`, data)
+      await axios.post(process.env.NEXT_PUBLIC_API_URL + `/PayForProduct?lang=${locale}&currentPage=1`, data)
       toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
       Router.push(`/${locale}/products`)
     } catch (err) {

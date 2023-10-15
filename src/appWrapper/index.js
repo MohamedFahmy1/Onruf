@@ -12,7 +12,7 @@ export const AppWrapper = ({ children }) => {
 
   useEffect(() => {
     dispatch(getTokensFromCookie())
-  }, [])
+  }, [dispatch])
 
   const token = useSelector((state) => state.authSlice.token)
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)

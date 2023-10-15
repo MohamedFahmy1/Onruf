@@ -15,7 +15,7 @@ const AddProduct = () => {
   const getProduct = async () => {
     try {
       const res = await axios(
-        `${process.env.REACT_APP_API_URL}/Provider_GetProductById?id=${router.query.id}&lang=${locale}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/Provider_GetProductById?id=${router.query.id}&lang=${locale}`,
       )
       setProduct(res?.data?.data)
     } catch (error) {

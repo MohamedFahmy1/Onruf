@@ -66,7 +66,7 @@ const AddProductStepTwo = ({ catId, product }) => {
     try {
       const {
         data: { data },
-      } = await axios(`${process.env.REACT_APP_API_URL}/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
+      } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
       setState(data)
     } catch (e) {
       if (!router.pathname.includes("edit")) {
@@ -77,7 +77,7 @@ const AddProductStepTwo = ({ catId, product }) => {
   const fetchCountries = async () => {
     try {
       const { data: countriesData } = await axios(
-        process.env.REACT_APP_API_URL + `/ListCountries?lang=${locale}&currentPage=1`,
+        process.env.NEXT_PUBLIC_API_URL + `/ListCountries?lang=${locale}&currentPage=1`,
       )
       const { data: countriesList } = countriesData
       setCountries(countriesList)
@@ -88,7 +88,7 @@ const AddProductStepTwo = ({ catId, product }) => {
   const fetchPakatList = async () => {
     try {
       const { data: packatData } = await axios(
-        process.env.REACT_APP_API_URL + `/getAllPakatsList?lang=${locale}&currentPage=1`,
+        process.env.NEXT_PUBLIC_API_URL + `/getAllPakatsList?lang=${locale}&currentPage=1`,
       )
       const { data: packatList } = packatData
       setPackat(packatList)
@@ -101,7 +101,7 @@ const AddProductStepTwo = ({ catId, product }) => {
       const {
         data: { data: spefications },
       } = await axios(
-        `${process.env.REACT_APP_API_URL}/ListAllSpecificationAndSubSpecificationByCatId?lang=${locale}&id=${catId}&currentPage=1`,
+        `${process.env.NEXT_PUBLIC_API_URL}/ListAllSpecificationAndSubSpecificationByCatId?lang=${locale}&id=${catId}&currentPage=1`,
       )
       const speficationsPayloadList = spefications.map((spefication) => ({
         HeaderSpeAr: spefication.name,
@@ -185,7 +185,6 @@ const AddProductStepTwo = ({ catId, product }) => {
     })()
   }, [locale, product])
 
-
   const handleUploadImages = (e) => {
     let file = e.target.files[0]
     file.id = Date.now()
@@ -234,9 +233,9 @@ const AddProductStepTwo = ({ catId, product }) => {
     setselectedPack(pack)
   }
 
-  const onChangeSpesfication = ({ target: { value } }, index , type) => {
+  const onChangeSpesfication = ({ target: { value } }, index, type) => {
     const changedSpesfication = { ...speficationsPayload[index], ValueSpeAr: value, ValueSpeEn: value }
-    const updatedSpecififcations = Object.assign([], speficationsPayload, {[index]: changedSpesfication});
+    const updatedSpecififcations = Object.assign([], speficationsPayload, { [index]: changedSpesfication })
     setSpeficationsPayload(updatedSpecififcations)
     setProductPayload((prev) => ({ ...prev, productSep: updatedSpecififcations }))
   }
@@ -245,15 +244,15 @@ const AddProductStepTwo = ({ catId, product }) => {
     e.preventDefault()
     let formData = new FormData()
     productPayload.listImageFile.forEach((ele, indx) => {
-      console.log("sudany",productPayload.listImageFile)
+      console.log("sudany", productPayload.listImageFile)
       ele.id === mainImgId && indx !== 0 && productPayload.listImageFile.move(indx, 0)
     })
 
-console.log("1",productPayload.productSep)
+    console.log("1", productPayload.productSep)
     for (var key in productPayload) {
       if (key === "listImageFile") {
         for (const image of productPayload["listImageFile"]) {
-          formData.append("listImageFile", image);
+          formData.append("listImageFile", image)
         }
       } else if (key === "productSep") {
         formData.append(key, JSON.stringify(productPayload[key]))
@@ -261,18 +260,18 @@ console.log("1",productPayload.productSep)
         formData.append(key, productPayload[key])
       }
     }
-    console.log("formData",formData )
+    console.log("formData", formData)
 
     try {
       if (product?.id) {
         formData.delete("listMedia")
-        const { data } = await axios.put(process.env.REACT_APP_API_URL + "/EditProduct", formData)
+        const { data } = await axios.put(process.env.NEXT_PUBLIC_API_URL + "/EditProduct", formData)
         toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
         Router.push(`/${locale}/products`)
       } else {
         const {
           data: { data: id },
-        } = await axios.post(process.env.REACT_APP_API_URL + "/AddProduct", formData)
+        } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
         Router.push(`/${locale}/products/add/review/${id}`)
       }
@@ -300,7 +299,7 @@ console.log("1",productPayload.productSep)
     return isInputEmpty
   }
 
-  console.log("productPayload",productPayload)
+  console.log("productPayload", productPayload)
 
   return (
     <>
@@ -365,7 +364,7 @@ console.log("1",productPayload.productSep)
                           required={spesfication.isRequired}
                           // value={productPayload?.listProductSep[1]?.valueSpa}
                           className={`${styles["form-control"]} form-control form-select`}
-                          onChange={(e) => onChangeSpesfication(e, 0 ,1)}
+                          onChange={(e) => onChangeSpesfication(e, 0, 1)}
                         >
                           {Boolean(spesfication?.subSpecifications?.length) &&
                             spesfication.subSpecifications.map((subSpecification) => (
@@ -391,7 +390,7 @@ console.log("1",productPayload.productSep)
                               ?.valueSpe
                           }
                           required={spesfication.isRequired}
-                          onChange={(e) => onChangeSpesfication(e, 1 , 2)}
+                          onChange={(e) => onChangeSpesfication(e, 1, 2)}
                           className={`${styles["form-control"]} form-control`}
                         />
                       )}
@@ -538,7 +537,7 @@ console.log("1",productPayload.productSep)
                           type="unlimtedQuantity ? 'text' : 'number'"
                           disabled={unlimtedQuantity}
                           className={`form-control ${styles["form-control"]} ${unlimtedQuantity ? "disabled" : ""}`}
-                          value={productPayload.qty ==1000000 ? "": productPayload.qty}
+                          value={productPayload.qty == 1000000 ? "" : productPayload.qty}
                           onChange={(e) => setProductPayload({ ...productPayload, qty: +e.target.value })}
                         />
                         <button
@@ -1233,7 +1232,7 @@ console.log("1",productPayload.productSep)
               </div>
             </div>
             <button className="btn-main mt-3" type="button" onClick={handleSubmit}>
-               {router.pathname.includes("edit") ? "تعديل ":"اضافه المنتج"} 
+              {router.pathname.includes("edit") ? "تعديل " : "اضافه المنتج"}
             </button>
           </Accordion.Body>
         </Accordion.Item>

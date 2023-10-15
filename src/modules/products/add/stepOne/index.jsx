@@ -7,11 +7,11 @@ import { pathOr, propOr } from "ramda"
 import { Col, Row } from "react-bootstrap"
 import Alerto from "../../../../common/Alerto"
 import { toast } from "react-toastify"
-const AddProductStepOne = ({ next, product , editProduct }) => {
+const AddProductStepOne = ({ next, product, editProduct }) => {
   const {
     locale,
     query: { id },
-  }  = useRouter()
+  } = useRouter()
 
   const router = useRouter()
 
@@ -22,16 +22,16 @@ const AddProductStepOne = ({ next, product , editProduct }) => {
   const [selectedCat, setSelectedCat] = useState(null)
   const [categoriesAndSubList, setCategoriesAndSubList] = useState([])
   useEffect(() => {
-    if(router.pathname.includes("edit")){
-    setCatSearchInputVal(product.name)
-     setSelectedCatId(product.categoryId)
+    if (router.pathname.includes("edit")) {
+      setCatSearchInputVal(product.name)
+      setSelectedCatId(product.categoryId)
     }
-  },[product?.id , product?.category , locale])
+  }, [product?.id, product?.category, locale])
 
   const fetchCategories = useCallback(async () => {
     const {
       data: { data: cats },
-    } = await axios(`${process.env.REACT_APP_API_URL}/ListCategoryAndSub?lang=${locale}&currentPage=1`)
+    } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/ListCategoryAndSub?lang=${locale}&currentPage=1`)
     setAllCats(cats)
     if (id) {
       setSelectedCatId(product?.categoryId)
@@ -41,9 +41,7 @@ const AddProductStepOne = ({ next, product , editProduct }) => {
   useEffect(() => {
     fetchCategories()
     editProduct && catSearchInputVal && hanldeSearchProduct()
-  }, [fetchCategories, id, locale ])
-
- 
+  }, [fetchCategories, id, locale])
 
   const handleNextStep = (e) => {
     e.preventDefault()
@@ -78,7 +76,7 @@ const AddProductStepOne = ({ next, product , editProduct }) => {
       const {
         data: { data: filteredCategories },
       } = await axios(
-        `${process.env.REACT_APP_API_URL}/GetListCategoriesByProductName?productName=${catSearchInputVal}&lang=${locale}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/GetListCategoriesByProductName?productName=${catSearchInputVal}&lang=${locale}`,
       )
       !filteredCategories?.[0] && toast.error("no data found")
       setCategoriesAndSubListByName(filteredCategories)
@@ -89,8 +87,6 @@ const AddProductStepOne = ({ next, product , editProduct }) => {
       Alerto(e)
     }
   }
-
-
 
   return (
     <div className="contint_paner">
@@ -108,29 +104,29 @@ const AddProductStepOne = ({ next, product , editProduct }) => {
                 {!Boolean(selectedCat) && (
                   <div className="form-group">
                     <div className={`po_R overflow-hidden ${styles["search_P"]}`}>
-                           <input
-                           type="text"
-                           className="form-control"
-                           placeholder="اكتب اسم السلعه"
-                           value={catSearchInputVal}
-                           onChange={(e) => setCatSearchInputVal(e?.target?.value)}
-                           disabled={selectedCatId && selectedCat}
-                         />
-                         {Boolean(catSearchInputVal) && (
-                           <button className={styles["reset"]} onClick={hanldeReset}>
-                             <FaTimes />
-                           </button>
-                         )}
-                         <button
-                           className={`btn-main ${styles["btn-main"]} ${
-                             Boolean(selectedCatId && selectedCat) && styles["btn-disabled"]
-                           }`}
-                           disabled={selectedCatId && selectedCat}
-                           type="button"
-                           onClick={hanldeSearchProduct}
-                         >
-                           بحث
-                         </button>
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="اكتب اسم السلعه"
+                        value={catSearchInputVal}
+                        onChange={(e) => setCatSearchInputVal(e?.target?.value)}
+                        disabled={selectedCatId && selectedCat}
+                      />
+                      {Boolean(catSearchInputVal) && (
+                        <button className={styles["reset"]} onClick={hanldeReset}>
+                          <FaTimes />
+                        </button>
+                      )}
+                      <button
+                        className={`btn-main ${styles["btn-main"]} ${
+                          Boolean(selectedCatId && selectedCat) && styles["btn-disabled"]
+                        }`}
+                        disabled={selectedCatId && selectedCat}
+                        type="button"
+                        onClick={hanldeSearchProduct}
+                      >
+                        بحث
+                      </button>
                     </div>
                     {Boolean(categoriesAndSubListByName?.length) && (
                       <ul
@@ -213,7 +209,7 @@ const AddProductStepOne = ({ next, product , editProduct }) => {
                   ))}
                 <button
                   onClick={handleNextStep}
-                  disabled={!selectedCatId }
+                  disabled={!selectedCatId}
                   className={`btn-main d-block w-100 ${!selectedCatId ? styles["btn-disabled"] : ""}`}
                 >
                   التالي

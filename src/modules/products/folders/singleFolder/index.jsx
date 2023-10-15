@@ -11,30 +11,33 @@ const SingleFolder = ({ data }) => {
   const router = useRouter()
   const id = router.query.id
 
-  const getSingleFolder =async() => {
- const { data: { data: getSingleFolder }} = await axios(`${process.env.REACT_APP_API_URL}/GetFolderById?id=${id}&lang=${locale}`) 
-  setProducts(getSingleFolder.listProduct)
+  const getSingleFolder = async () => {
+    const {
+      data: { data: getSingleFolder },
+    } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/GetFolderById?id=${id}&lang=${locale}`)
+    setProducts(getSingleFolder.listProduct)
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(router.isReady)
-    if(router&&router.query){
-      id && getSingleFolder();
-      }
-  },[router])
+    if (router && router.query) {
+      id && getSingleFolder()
+    }
+  }, [router])
 
   const handleRemoveProductFromFolder = async () => {
     if (!productsIds?.length)
       return toast.warning(locale === "en" ? "No product was selected!" : "من فضلك قم بأضافة المنتجات")
     try {
-      await axios.delete(process.env.REACT_APP_API_URL + `/RemoveListProductsFolder`,{ 
-        data: {   folderId: Number(id),
-          prductsIds:productsIds },
-        })
+      await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/RemoveListProductsFolder`, {
+        data: { folderId: Number(id), prductsIds: productsIds },
+      })
 
       toast.success(locale === "en" ? "product has been deleted successfully!" : "تم حذف المنتج بنجاح")
 
-      const { data: productData } = await axios(`${process.env.REACT_APP_API_URL}/GetFolderById?id=${id}&lang=${locale}`)
+      const { data: productData } = await axios(
+        `${process.env.NEXT_PUBLIC_API_URL}/GetFolderById?id=${id}&lang=${locale}`,
+      )
       setProducts(productData.data.listProduct)
     } catch (error) {
       console.error(error)
