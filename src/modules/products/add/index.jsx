@@ -45,7 +45,6 @@ const AddProduct = () => {
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
           <h6 className="f-b m-0">اضافة منتج جديد</h6>
-
           <a onClick={handleBack} className="btn-main btn-main-o">
             الغاء
           </a>
