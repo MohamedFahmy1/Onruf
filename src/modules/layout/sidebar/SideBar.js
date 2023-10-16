@@ -100,8 +100,9 @@ const Sidebar = () => {
       darkIcon: SettingDarkIcon,
     },
   ]
+  console.log(locale)
   return (
-    <StyledSidebar variant={"permanent"} anchor={"right"}>
+    <StyledSidebar variant={"permanent"} anchor={locale === "en" ? "left" : "right"}>
       <StyledLogo>
         <img src={Logo.src} width={"145px"} height={"45px"} alt={"Logo"} onClick={() => Router.push(`/${locale}`)} />
       </StyledLogo>

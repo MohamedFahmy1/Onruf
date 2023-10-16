@@ -4,6 +4,8 @@ import AddProductStepOne from "../../../modules/products/add/stepOne"
 import AddProductStepTwo from "../../../modules/products/add/stepTwo"
 import axios from "axios"
 import { toast } from "react-toastify"
+import { pathOr } from "ramda"
+import t from "../../../translations.json"
 
 const AddProduct = () => {
   const router = useRouter()
@@ -27,8 +29,6 @@ const AddProduct = () => {
     router.query.id && getProduct()
   }, [router.query.id])
 
-  // const router = useRouter()
-
   const handleBack = (e) => {
     e.preventDefault()
 
@@ -44,9 +44,9 @@ const AddProduct = () => {
     <div className="body-content">
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-          <h6 className="f-b m-0">اضافة منتج جديد</h6>
+          <h6 className="f-b m-0">{pathOr("", [locale, "Products", "addNewProduct"], t)}</h6>
           <a onClick={handleBack} className="btn-main btn-main-o">
-            الغاء
+            {pathOr("", [locale, "Products", "cancel"], t)}
           </a>
         </div>
         {step === 1 && !product?.id && (

@@ -10,8 +10,6 @@ import Sidebar from "../modules/layout/sidebar/SideBar"
 import { ToastContainer } from "react-toastify"
 import theme from "../styles/Theme"
 
-
-
 import "react-toastify/dist/ReactToastify.css"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "../styles/globals.css"
@@ -23,66 +21,61 @@ import "../modules/settings/settings.css"
 import "../modules/reports/reports.css"
 import "../modules/reviews/reviews.css"
 import "../modules/coupons/addCoupon/addCoupon.module.css"
-import { Provider } from 'react-redux'
-import { store } from '../appState/Store';
+import { Provider } from "react-redux"
+import { store } from "../appState/Store"
 import BlankPage from "./404"
-import  {AppWrapper}  from "../appWrapper/index"
+import { AppWrapper } from "../appWrapper/index"
 import { useRouter } from "next/router"
-import { getTokensFromCookie } from "../appState/personalData/authActions";
-
+import { getTokensFromCookie } from "../appState/personalData/authActions"
 
 const clientSideEmotionCache = createEmotionCache()
 
 const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache }) => {
   const [queryClient] = React.useState(() => new QueryClient())
-  const router = useRouter()
+  const { locale } = useRouter()
 
   useEffect(() => {
     store.dispatch(getTokensFromCookie())
-  },[])
-
-
-
+  }, [])
+  const pageDir = locale === "en" ? "ltr" : "rtl"
+  const mLeft = locale === "en" ? "250px" : undefined
+  const mRight = locale === "en" ? undefined : "250px"
   return (
     <Provider store={store}>
-    <QueryClientProvider client={queryClient}>
-      {/* <Hydrate state={pageProps.dehydratedState}> */}
+      <QueryClientProvider client={queryClient}>
+        {/* <Hydrate state={pageProps.dehydratedState}> */}
         <CacheProvider value={emotionCache}>
-        <AppWrapper>
-          <Head>
-            <meta name="viewport" content="initial-scale=1, width=device-width" />
-          </Head>
-         
-          <ThemeProvider theme={theme}>
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-            <EmotionCacheProvider theme={theme}>
-              <CssBaseline />
-              <Sidebar />
-              <div id="main">
-                <Navbar />
-                <Component {...pageProps} />
-                <ToastContainer
-                  position="top-center"
-                  autoClose={5000}
-                  hideProgressBar={false}
-                  newestOnTop={false}
-                  closeOnClick
-                  rtl={false}
-                  pauseOnFocusLoss
-                  draggable
-                  pauseOnHover
-                />
-              </div>
-
-            </EmotionCacheProvider>
-          </ThemeProvider>
+          <AppWrapper>
+            <Head>
+              <meta name="viewport" content="initial-scale=1, width=device-width" />
+            </Head>
+            <ThemeProvider theme={theme}>
+              <EmotionCacheProvider theme={theme}>
+                <CssBaseline />
+                <Sidebar />
+                <div id="main" style={{ direction: pageDir, marginLeft: mLeft, marginRight: mRight }}>
+                  <Navbar />
+                  <Component {...pageProps} />
+                  <ToastContainer
+                    position="top-center"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover
+                  />
+                </div>
+              </EmotionCacheProvider>
+            </ThemeProvider>
           </AppWrapper>
         </CacheProvider>
-      {/* </Hydrate> */}
-    </QueryClientProvider>
+        {/* </Hydrate> */}
+      </QueryClientProvider>
     </Provider>
   )
 }
 
-export default MyApp;
-
+export default MyApp

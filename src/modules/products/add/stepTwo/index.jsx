@@ -7,7 +7,8 @@ import { IoIosRemoveCircle } from "react-icons/io"
 import { Accordion, Row, Col } from "react-bootstrap"
 import bigger from "../../../../public/images/screencaptur.png"
 import Router, { useRouter } from "next/router"
-import { omit } from "ramda"
+import { omit, pathOr } from "ramda"
+import t from "../../../../translations.json"
 import { toast } from "react-toastify"
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded"
 import Alerto from "../../../../common/Alerto"
@@ -27,6 +28,7 @@ const AddProductStepTwo = ({ catId, product }) => {
   const [spesfications, setSpesfications] = useState([])
   const [unlimtedQuantity, setUnlimtedQuantity] = useState(false)
   const [mainImgId, setMainImgId] = useState(null)
+  const [mainImageIndex, setMainImageIndex] = useState(undefined)
   const [speficationsPayload, setSpeficationsPayload] = useState([])
   const [productPayload, setProductPayload] = useState({
     nameAr: "",
@@ -57,8 +59,10 @@ const AddProductStepTwo = ({ catId, product }) => {
     neighborhoodId: null,
     pakatId: packat[0]?.id,
     productSep: speficationsPayload,
-    // productSep: '[{ "HeaderSpeAr": "cbdegyg", "HeaderSpeEn": "cbdegyg", "ValueSpeAr": "", "ValueSpeEn": "", "Type": 2}, { "HeaderSpeAr": "نوع المحرك", "HeaderSpeEn": "نوع المحرك", "ValueSpeAr": "", "ValueSpeEn": "", "Type": 2 }, {"HeaderSpeAr": "model year", "HeaderSpeEn": "model year", "ValueSpeAr": "", "ValueSpeEn": "", "Type": 1 }, {"HeaderSpeAr": "color", "HeaderSpeEn": "color", "ValueSpeAr": "xxxxx", "ValueSpeEn": "xxxxx", "Type": 2 },  {"HeaderSpeAr": "Model", "HeaderSpeEn": "Model", "ValueSpeAr": "xxxxx", "ValueSpeEn": "xxxxx", "Type": 1 }, {"HeaderSpeAr": "Model", "HeaderSpeEn": "Model", "ValueSpeAr": "2022", "ValueSpeEn": "2022", "Type": 1 }]',
+    productSep:
+      '[{ "HeaderSpeAr": "cbdegyg", "HeaderSpeEn": "cbdegyg", "ValueSpeAr": "", "ValueSpeEn": "", "Type": 2}, { "HeaderSpeAr": "نوع المحرك", "HeaderSpeEn": "نوع المحرك", "ValueSpeAr": "", "ValueSpeEn": "", "Type": 2 }, {"HeaderSpeAr": "model year", "HeaderSpeEn": "model year", "ValueSpeAr": "", "ValueSpeEn": "", "Type": 1 }, {"HeaderSpeAr": "color", "HeaderSpeEn": "color", "ValueSpeAr": "xxxxx", "ValueSpeEn": "xxxxx", "Type": 2 },  {"HeaderSpeAr": "Model", "HeaderSpeEn": "Model", "ValueSpeAr": "xxxxx", "ValueSpeEn": "xxxxx", "Type": 1 }, {"HeaderSpeAr": "Model", "HeaderSpeEn": "Model", "ValueSpeAr": "2022", "ValueSpeEn": "2022", "Type": 1 }]',
     listImageFile: [],
+    MainImageIndex: undefined,
     // videoUrl: [],
   })
 
@@ -186,11 +190,15 @@ const AddProductStepTwo = ({ catId, product }) => {
   }, [locale, product])
 
   const handleUploadImages = (e) => {
-    let file = e.target.files[0]
+    let file = e.target.files[mainImageIndex ? mainImageIndex : 0]
     file.id = Date.now()
-    setProductPayload({ ...productPayload, listImageFile: [...productPayload?.listImageFile, file] })
+    console.log(mainImageIndex)
+    setProductPayload((prev) => ({
+      ...prev,
+      listImageFile: [...productPayload?.listImageFile, file],
+      MainImageIndex: mainImageIndex,
+    }))
   }
-
   const handleChoosePackat = (pack) => {
     setProductPayload({ ...productPayload, pakatId: pack.id })
     setselectedPack(pack)
@@ -205,16 +213,31 @@ const AddProductStepTwo = ({ catId, product }) => {
   }
 
   const handleRemoveImage = (index) => {
-    setProductPayload({ ...productPayload, listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index) })
+    if (index === mainImageIndex) {
+      setProductPayload({
+        ...productPayload,
+        MainImageIndex: undefined,
+        listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index),
+      })
+    } else
+      setProductPayload({
+        ...productPayload,
+        listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index),
+      })
   }
 
-  const handleMainImage = (id) => {
+  const handleMainImage = (id, index) => {
     if (id !== mainImgId) {
       const targetId = productPayload.listImageFile.find((ele) => ele.id === id)?.id
       setMainImgId(targetId)
     } else {
       setMainImgId(null)
     }
+    setMainImageIndex(index)
+    setProductPayload((prev) => ({
+      ...prev,
+      MainImageIndex: index,
+    }))
     // setProductPayload({ ...productPayload })
   }
 
@@ -269,11 +292,12 @@ const AddProductStepTwo = ({ catId, product }) => {
         toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
         Router.push(`/${locale}/products`)
       } else {
-        const {
-          data: { data: id },
-        } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData)
+        // const {
+        //   data: { data: id },
+        // } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-        Router.push(`/${locale}/products/add/review/${id}`)
+        // Router.push(`/${locale}/products/add/review/${id}`)
+        Router.push(`/${locale}/products`)
       }
     } catch (err) {
       Alerto(err)
@@ -307,7 +331,7 @@ const AddProductStepTwo = ({ catId, product }) => {
         <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="0">
           <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("0")}>
             <span>1</span>
-            صور المنتج
+            {pathOr("", [locale, "Products", "productImages"], t)}
           </Accordion.Button>
           <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
             <div className={styles["all_upload_Image"]}>
@@ -319,12 +343,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                   />
                   <img src={product?.id ? img?.url : URL.createObjectURL(img)} />
                   <label>
-                    <span> الصورة الرئيسيه</span>
+                    <span> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
                     <input
                       type="radio"
                       name="isMain"
                       checked={img?.id === mainImgId}
-                      onClick={() => handleMainImage(img.id)}
+                      onChange={() => handleMainImage(img.id, index)}
                     />
                   </label>
                 </div>
@@ -338,19 +362,25 @@ const AddProductStepTwo = ({ catId, product }) => {
               className="btn-main mt-3 btn-disabled"
               type="button"
               onClick={() => {
-                productPayload?.listImageFile.length > 0
-                  ? setEventKey("1")
-                  : toast.error(locale === "en" ? "No photo uploaded for the product" : "لايوجد صور للمنتج ")
+                if (productPayload?.listImageFile.length > 0 && productPayload?.MainImageIndex !== undefined) {
+                  setEventKey("1")
+                } else {
+                  if (productPayload?.listImageFile.length <= 0) {
+                    toast.error(locale === "en" ? "No photo uploaded for the product" : "لايوجد صور للمنتج")
+                  } else if (productPayload?.MainImageIndex === undefined) {
+                    toast.error(locale === "en" ? "No main photo selected" : "لم يتم اختيار صورة رئيسية")
+                  }
+                }
               }}
             >
-              التالي
+              {pathOr("", [locale, "Products", "next"], t)}
             </button>
           </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="1">
           <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("1")}>
             <span>2</span>
-            تفاصيل المنتج
+            {pathOr("", [locale, "Products", "productDetails"], t)}
           </Accordion.Button>
           <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
             <div className="form-content">
@@ -399,14 +429,14 @@ const AddProductStepTwo = ({ catId, product }) => {
               </form>
             </div>
             <button className="btn-main mt-3" type="button" onClick={() => setEventKey("2")}>
-              التالي
+              {pathOr("", [locale, "Products", "next"], t)}
             </button>
           </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="2">
           <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("2")}>
             <span>3</span>
-            تفاصيل الاعلان
+            {pathOr("", [locale, "Products", "advertisementDetails"], t)}
           </Accordion.Button>
           <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
             <div className="form-content">
@@ -713,14 +743,14 @@ const AddProductStepTwo = ({ catId, product }) => {
                   : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات  ")
               }}
             >
-              التالي
+              {pathOr("", [locale, "Products", "next"], t)}
             </button>
           </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="3">
           <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("3")}>
             <span>4</span>
-            تفاصيل البيع
+            {pathOr("", [locale, "Products", "sellingDetails"], t)}
           </Accordion.Button>
           <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
             <div className="form-content">
@@ -1042,14 +1072,21 @@ const AddProductStepTwo = ({ catId, product }) => {
                   : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
               }
             >
-              التالي
+              {pathOr("", [locale, "Products", "next"], t)}
             </button>
           </Accordion.Body>
         </Accordion.Item>
         <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="4">
           <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("4")}>
             <span>5</span>
-            باقات النشر
+            {pathOr("", [locale, "Products", "shippingOptions"], t)}
+          </Accordion.Button>
+          <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}></Accordion.Body>
+        </Accordion.Item>
+        <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="5">
+          <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("5")}>
+            <span>5</span>
+            {pathOr("", [locale, "Products", "publishingPackages"], t)}
           </Accordion.Button>
           <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
             <div className="form-content">

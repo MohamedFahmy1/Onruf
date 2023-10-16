@@ -71,6 +71,7 @@ const Navbar = () => {
           <input
             type="search"
             className="form-control search"
+            style={{ paddingLeft: "40px" }}
             placeholder={pathOr("", [locale, "navbar", "search"], t)}
           />
           <span className="icon_fa">

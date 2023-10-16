@@ -4,6 +4,7 @@ import Router, { useRouter } from "next/router"
 import styles from "./stepOne.module.css"
 import { FaTimes } from "react-icons/fa"
 import { pathOr, propOr } from "ramda"
+import t from "../../../../translations.json"
 import { Col, Row } from "react-bootstrap"
 import Alerto from "../../../../common/Alerto"
 import { toast } from "react-toastify"
@@ -95,8 +96,8 @@ const AddProductStepOne = ({ next, product, editProduct }) => {
           <div className="mt-4">
             {!Boolean(selectedCat) && (
               <div className="text-center mb-3">
-                <h3 className="f-b">ماذا تريد ان تبيع</h3>
-                <h5>أدخل عنوان المنتج الذي تريد بيعه</h5>
+                <h3 className="f-b">{pathOr("", [locale, "Products", "sellWhat"], t)}</h3>
+                <h5>{pathOr("", [locale, "Products", "enterAddress"], t)}</h5>
               </div>
             )}
             <div className="form-content">
@@ -107,7 +108,7 @@ const AddProductStepOne = ({ next, product, editProduct }) => {
                       <input
                         type="text"
                         className="form-control"
-                        placeholder="اكتب اسم السلعه"
+                        placeholder={pathOr("", [locale, "Products", "enterProductName"], t)}
                         value={catSearchInputVal}
                         onChange={(e) => setCatSearchInputVal(e?.target?.value)}
                         disabled={selectedCatId && selectedCat}
@@ -124,8 +125,9 @@ const AddProductStepOne = ({ next, product, editProduct }) => {
                         disabled={selectedCatId && selectedCat}
                         type="button"
                         onClick={hanldeSearchProduct}
+                        style={locale === "en" ? { right: 0 } : { left: 0 }}
                       >
-                        بحث
+                        {pathOr("", [locale, "Products", "search"], t)}
                       </button>
                     </div>
                     {Boolean(categoriesAndSubListByName?.length) && (
@@ -171,11 +173,12 @@ const AddProductStepOne = ({ next, product, editProduct }) => {
                 )}
                 {!!allCats?.length && !Boolean(categoriesAndSubListByName?.length) && (
                   <div className={`form-group ${styles["select_P"]}`}>
-                    <label className="d-block text-center">اختر التصنيف / القسم</label>
+                    <label className="d-block text-center">
+                      {pathOr("", [locale, "Products", "selectCategory"], t)}
+                    </label>
                     <select value={selectedCatId} className="form-control form-select" onChange={handleSelectChange}>
                       <option disabled selected value>
-                        {" "}
-                        -- select an option --{" "}
+                        {pathOr("", [locale, "Products", "selectOption"], t)}
                       </option>
 
                       {allCats.map((cat, index) => (
@@ -212,7 +215,7 @@ const AddProductStepOne = ({ next, product, editProduct }) => {
                   disabled={!selectedCatId}
                   className={`btn-main d-block w-100 ${!selectedCatId ? styles["btn-disabled"] : ""}`}
                 >
-                  التالي
+                  {pathOr("", [locale, "Products", "next"], t)}
                 </button>
               </form>
             </div>

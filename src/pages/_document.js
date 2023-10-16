@@ -7,7 +7,7 @@ import createEmotionCache from "../styles/createEmotionCache"
 export default class MyDocument extends Document {
   render() {
     return (
-      <Html dir="rtl">
+      <Html>
         <Head>
           {/* PWA primary color */}
           <meta name="theme-color" content={theme.palette.primary.main} />
@@ -29,7 +29,6 @@ export default class MyDocument extends Document {
 // it's compatible with static-site generation (SSG).
 MyDocument.getInitialProps = async (ctx) => {
   const originalRenderPage = ctx.renderPage
-
   // You can consider sharing the same emotion cache between
   // all the SSR requests to speed up performance.
   // However, be aware that it can have global side effects.

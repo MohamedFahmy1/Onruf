@@ -364,7 +364,6 @@ textarea {
 }
 
 body {
-  direction: rtl;
   text-align: right;
   font-family: "myFont";
   word-spacing: 1px;
@@ -376,7 +375,6 @@ body {
 
 #main {
   transition: all 0.5s ease-in-out;
-  margin-right: 250px;
 }
 
 #main .body-content {
