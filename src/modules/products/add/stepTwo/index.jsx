@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-key */
-import { useState, useEffect, useId } from "react"
+import { useState, useEffect, useId, Fragment } from "react"
 import axios from "axios"
 import styles from "./stepTwo.module.css"
 import { FaCamera, FaCheckCircle, FaFlag, FaMinus, FaPlus, FaStar } from "react-icons/fa"
@@ -30,6 +30,7 @@ const AddProductStepTwo = ({ catId, product }) => {
   const [mainImgId, setMainImgId] = useState(null)
   const [mainImageIndex, setMainImageIndex] = useState(undefined)
   const [speficationsPayload, setSpeficationsPayload] = useState([])
+  const [userBanksData, setuserBanksData] = useState([])
   const [productPayload, setProductPayload] = useState({
     nameAr: "",
     nameEn: "",
@@ -59,11 +60,11 @@ const AddProductStepTwo = ({ catId, product }) => {
     neighborhoodId: null,
     pakatId: packat[0]?.id,
     productSep: speficationsPayload,
-    productSep:
-      '[{ "HeaderSpeAr": "cbdegyg", "HeaderSpeEn": "cbdegyg", "ValueSpeAr": "", "ValueSpeEn": "", "Type": 2}, { "HeaderSpeAr": "نوع المحرك", "HeaderSpeEn": "نوع المحرك", "ValueSpeAr": "", "ValueSpeEn": "", "Type": 2 }, {"HeaderSpeAr": "model year", "HeaderSpeEn": "model year", "ValueSpeAr": "", "ValueSpeEn": "", "Type": 1 }, {"HeaderSpeAr": "color", "HeaderSpeEn": "color", "ValueSpeAr": "xxxxx", "ValueSpeEn": "xxxxx", "Type": 2 },  {"HeaderSpeAr": "Model", "HeaderSpeEn": "Model", "ValueSpeAr": "xxxxx", "ValueSpeEn": "xxxxx", "Type": 1 }, {"HeaderSpeAr": "Model", "HeaderSpeEn": "Model", "ValueSpeAr": "2022", "ValueSpeEn": "2022", "Type": 1 }]',
     listImageFile: [],
     MainImageIndex: undefined,
     // videoUrl: [],
+    ShippingOptions: null,
+    PaymentOptions: [],
   })
 
   const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
@@ -100,6 +101,15 @@ const AddProductStepTwo = ({ catId, product }) => {
       Alerto(e)
     }
   }
+  const fetchBanksData = async () => {
+    try {
+      const { data: data } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/BankTransfersList`)
+      const { data: banksData } = data
+      setuserBanksData(banksData)
+    } catch (e) {
+      Alerto(e)
+    }
+  }
   const fetchSpecificationsList = async () => {
     try {
       const {
@@ -108,15 +118,17 @@ const AddProductStepTwo = ({ catId, product }) => {
         `${process.env.NEXT_PUBLIC_API_URL}/ListAllSpecificationAndSubSpecificationByCatId?lang=${locale}&id=${catId}&currentPage=1`,
       )
       const speficationsPayloadList = spefications.map((spefication) => ({
-        HeaderSpeAr: spefication.name,
-        HeaderSpeEn: spefication.name,
+        HeaderSpeAr: spefication.nameAr,
+        HeaderSpeEn: spefication.nameEn,
         ValueSpeAr: "",
         ValueSpeEn: "",
         Type: spefication.type,
+        SpecificationId: spefication.id,
       }))
+      console.log(spefications)
       setSpesfications(spefications)
       setSpeficationsPayload([...speficationsPayloadList])
-      // setProductPayload({ ...productPayload, productSep: [...speficationsPayloadList] })
+      setProductPayload({ ...productPayload, productSep: [...speficationsPayloadList] })
     } catch (e) {
       Alerto("hello")
     }
@@ -124,6 +136,7 @@ const AddProductStepTwo = ({ catId, product }) => {
   useEffect(() => {
     ;(async () => {
       try {
+        fetchBanksData()
         fetchSpecificationsList()
         fetchCountries()
         fetchPakatList()
@@ -192,7 +205,6 @@ const AddProductStepTwo = ({ catId, product }) => {
   const handleUploadImages = (e) => {
     let file = e.target.files[mainImageIndex ? mainImageIndex : 0]
     file.id = Date.now()
-    console.log(mainImageIndex)
     setProductPayload((prev) => ({
       ...prev,
       listImageFile: [...productPayload?.listImageFile, file],
@@ -238,13 +250,12 @@ const AddProductStepTwo = ({ catId, product }) => {
       ...prev,
       MainImageIndex: index,
     }))
-    // setProductPayload({ ...productPayload })
   }
 
   const handleUnlimtedQuantity = ({ target: { checked } }) => {
     if (checked) {
       setUnlimtedQuantity(true)
-      setProductPayload({ ...productPayload, qty: 1000000 })
+      setProductPayload({ ...productPayload, qty: null })
     } else {
       setUnlimtedQuantity(false)
       setProductPayload({ ...productPayload, qty: 1 })
@@ -292,12 +303,11 @@ const AddProductStepTwo = ({ catId, product }) => {
         toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
         Router.push(`/${locale}/products`)
       } else {
-        // const {
-        //   data: { data: id },
-        // } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData)
+        const {
+          data: { data: id },
+        } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-        // Router.push(`/${locale}/products/add/review/${id}`)
-        Router.push(`/${locale}/products`)
+        Router.push(`/${locale}/products/add/review/${id}`)
       }
     } catch (err) {
       Alerto(err)
@@ -322,11 +332,31 @@ const AddProductStepTwo = ({ catId, product }) => {
     const isInputEmpty = inputs.every(checkInputIsEmpty)
     return isInputEmpty
   }
+  const productDetailsValidation = () => {
+    for (let i = 0; i < speficationsPayload.length; i++) {
+      if (speficationsPayload[i].ValueSpeAr === "") {
+        return toast.error(locale === "en" ? "Please enter all necessary data" : "رجاء ادخال جميع البيانات")
+      }
+    }
+    return setEventKey("2")
+  }
+  const paymentOptionsHandler = (optionIndex) => {
+    if (!productPayload.PaymentOptions.includes(optionIndex)) {
+      setProductPayload((prev) => ({
+        ...prev,
+        PaymentOptions: [...prev.PaymentOptions, optionIndex],
+      }))
+    } else if (productPayload.PaymentOptions.includes(optionIndex)) {
+      setProductPayload((prev) => ({
+        ...prev,
+        PaymentOptions: prev.PaymentOptions.filter((value) => value !== optionIndex),
+      }))
+    }
+  }
 
   console.log("productPayload", productPayload)
-
   return (
-    <>
+    <Fragment>
       <Accordion activeKey={eventKey} flush>
         <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="0">
           <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("0")}>
@@ -388,14 +418,23 @@ const AddProductStepTwo = ({ catId, product }) => {
                 {Boolean(spesfications?.length) &&
                   spesfications.map((spesfication, index) => (
                     <div className="form-group" key={spesfication?.id}>
-                      <label>{spesfication.name}</label>
+                      <label
+                        htmlFor={index}
+                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
+                      >
+                        {spesfication.name}
+                      </label>
                       {spesfication.type === 1 && (
                         <select
                           required={spesfication.isRequired}
+                          id={index}
                           // value={productPayload?.listProductSep[1]?.valueSpa}
                           className={`${styles["form-control"]} form-control form-select`}
-                          onChange={(e) => onChangeSpesfication(e, 0, 1)}
+                          onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
                         >
+                          <option value="" disabled selected hidden>
+                            {spesfication?.placeHolder}
+                          </option>
                           {Boolean(spesfication?.subSpecifications?.length) &&
                             spesfication.subSpecifications.map((subSpecification) => (
                               <option
@@ -415,12 +454,14 @@ const AddProductStepTwo = ({ catId, product }) => {
                       {spesfication.type === 2 && (
                         <input
                           type={"text"}
+                          id={index}
                           defaultValue={
                             productPayload?.listProductSep?.find(({ headerSpe }) => headerSpe === spesfication?.name)
                               ?.valueSpe
                           }
                           required={spesfication.isRequired}
-                          onChange={(e) => onChangeSpesfication(e, 1, 2)}
+                          placeholder={spesfication.placeHolder}
+                          onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
                           className={`${styles["form-control"]} form-control`}
                         />
                       )}
@@ -428,7 +469,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                   ))}
               </form>
             </div>
-            <button className="btn-main mt-3" type="button" onClick={() => setEventKey("2")}>
+            <button className="btn-main mt-3" type="button" onClick={productDetailsValidation}>
               {pathOr("", [locale, "Products", "next"], t)}
             </button>
           </Accordion.Body>
@@ -444,24 +485,28 @@ const AddProductStepTwo = ({ catId, product }) => {
                 <Row>
                   <Col md={6}>
                     <div className="form-group">
-                      <label>عنوان المنتج</label> <RequiredSympol />
+                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                        {pathOr("", [locale, "Products", "productAddress"], t)}
+                        <RequiredSympol />
+                      </label>
                       <input
                         type="text"
                         className={`form-control ${styles["form-control"]}`}
-                        placeholder="اكتب عنوان المنتج"
+                        placeholder={pathOr("", [locale, "Products", "enterProductAddress"], t)}
                         value={productPayload.nameAr}
                         onChange={(e) =>
                           setProductPayload({ ...productPayload, nameAr: e.target.value, nameEn: e.target.value })
                         }
                       />
                     </div>
-
                     <div className="form-group">
-                      <label>عنوان فرعي</label>
+                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                        {pathOr("", [locale, "Products", "productSecondaryAddress"], t)}
+                      </label>
                       <input
                         type="text"
                         className={`form-control ${styles["form-control"]}`}
-                        placeholder="اكتب عنوان الفرعي المنتج"
+                        placeholder={pathOr("", [locale, "Products", "enterProductSecondaryAddress"], t)}
                         value={productPayload.subTitleAr}
                         onChange={(e) =>
                           setProductPayload({
@@ -475,10 +520,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                   </Col>
                   <Col md={6}>
                     <div className="form-group">
-                      <label>تفاصيل المنتج</label>
+                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                        {pathOr("", [locale, "Products", "productDetails"], t)}
+                      </label>
                       <textarea
                         className={`form-control ${styles["form-control"]}`}
-                        placeholder="اكتب التفاصيل هنا"
+                        placeholder={pathOr("", [locale, "Products", "enterDetails"], t)}
                         value={productPayload.descriptionAr}
                         onChange={(e) =>
                           setProductPayload({
@@ -493,7 +540,9 @@ const AddProductStepTwo = ({ catId, product }) => {
 
                   <Col>
                     <div className="form-group">
-                      <label>حالة المنتج</label>
+                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                        {pathOr("", [locale, "Products", "productCondition"], t)}
+                      </label>
                       <div className="d-flex gap-3">
                         <div
                           onClick={() =>
@@ -501,7 +550,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                           }
                           className={`${styles.p_select} ${productPayload.status == 2 ? styles.p_select_active : ""}`}
                         >
-                          جديد
+                          {pathOr("", [locale, "Products", "new"], t)}
                         </div>
                         <div
                           onClick={() =>
@@ -509,7 +558,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                           }
                           className={`${styles.p_select} ${productPayload.status == 1 ? styles.p_select_active : ""}`}
                         >
-                          مستعمل
+                          {pathOr("", [locale, "Products", "used"], t)}
                         </div>
                         {/* <div className="status-P">
                           <input
@@ -538,9 +587,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                   </Col>
                   <Col md={6}>
                     <div className="form-group">
-                      <label>الكميه</label>
+                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                        {pathOr("", [locale, "Products", "quantity"], t)}
+                      </label>
                       <div className="d-flex align-items-center justify-content-between mb-2">
-                        <span className="f-b">كميه غير محدوده</span>
+                        <span className="f-b">{pathOr("", [locale, "Products", "unlimitedQuantity"], t)}</span>
                         <div className="form-check form-switch p-0 m-0">
                           <input
                             className="form-check-input m-0"
@@ -548,7 +599,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                             role="switch"
                             id="flexSwitchCheckChecked"
                             onChange={(e) => handleUnlimtedQuantity(e)}
-                            checked={productPayload.qty == 1000000}
+                            checked={productPayload.qty === null}
                           />
                         </div>
                       </div>
@@ -567,7 +618,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                           type="unlimtedQuantity ? 'text' : 'number'"
                           disabled={unlimtedQuantity}
                           className={`form-control ${styles["form-control"]} ${unlimtedQuantity ? "disabled" : ""}`}
-                          value={productPayload.qty == 1000000 ? "" : productPayload.qty}
+                          value={productPayload.qty == null ? "" : productPayload.qty}
                           onChange={(e) => setProductPayload({ ...productPayload, qty: +e.target.value })}
                         />
                         <button
@@ -585,16 +636,24 @@ const AddProductStepTwo = ({ catId, product }) => {
                   </Col>
                 </Row>
                 <div className="form-group">
-                  <label>العنوان</label>
+                  <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                    {" "}
+                    {pathOr("", [locale, "Products", "address"], t)}
+                  </label>
                   <Row>
                     <Col md={6}>
                       <div className="form-group">
-                        <div className={`input-group ${styles["input-group"]}`}>
+                        <div
+                          className={`input-group ${styles["input-group"]}`}
+                          style={{
+                            flexDirection: locale === "en" ? "row-reverse" : "row",
+                          }}
+                        >
                           <span className={`${styles["input-group-text"]} input-group-text`} id="basic-addon1">
                             <FaFlag fontSize="18px" />
                           </span>
                           <div className="po_R flex-grow-1">
-                            <label>البلد</label>
+                            <label>{pathOr("", [locale, "Products", "Country"], t)}</label>
                             <select
                               className={`${styles["form-control"]} form-control form-select`}
                               value={productPayload.countryId}
@@ -608,7 +667,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                                 )
                               }}
                             >
-                              <option value="">Select</option>
+                              <option value="" disabled hidden>
+                                {pathOr("", [locale, "Products", "select"], t)}
+                              </option>
                               {countries?.length &&
                                 countries.map((country) => (
                                   <option value={country?.id} key={country?.id}>
@@ -620,12 +681,17 @@ const AddProductStepTwo = ({ catId, product }) => {
                         </div>
                       </div>
                       <div className="form-group">
-                        <div className={`input-group ${styles["input-group"]}`}>
+                        <div
+                          className={`input-group ${styles["input-group"]}`}
+                          style={{
+                            flexDirection: locale === "en" ? "row-reverse" : "row",
+                          }}
+                        >
                           <span className={`${styles["input-group-text"]} input-group-text`} id="basic-addon1">
                             <FaFlag fontSize="18px" />
                           </span>
                           <div className="po_R flex-grow-1">
-                            <label>المحافظة</label>
+                            <label>{pathOr("", [locale, "Products", "govern"], t)}</label>
                             <select
                               className={`${styles["form-control"]} form-control form-select`}
                               value={productPayload.regionId}
@@ -639,7 +705,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                 )
                               }}
                             >
-                              <option value="">Select</option>
+                              <option value="">{pathOr("", [locale, "Products", "select"], t)}</option>
                               {regions?.length &&
                                 regions.map((region) => (
                                   <option value={region?.id} key={region?.id}>
@@ -651,12 +717,17 @@ const AddProductStepTwo = ({ catId, product }) => {
                         </div>
                       </div>
                       <div className="form-group">
-                        <div className={`input-group ${styles["input-group"]}`}>
+                        <div
+                          className={`input-group ${styles["input-group"]}`}
+                          style={{
+                            flexDirection: locale === "en" ? "row-reverse" : "row",
+                          }}
+                        >
                           <span className={`${styles["input-group-text"]} input-group-text`} id="basic-addon1">
                             <FaFlag fontSize="18px" />
                           </span>
                           <div className="po_R flex-grow-1">
-                            <label>المنطقة</label>
+                            <label>{pathOr("", [locale, "Products", "area"], t)}</label>
                             <select
                               className={`${styles["form-control"]} form-control form-select`}
                               value={productPayload?.neighborhoodId}
@@ -664,7 +735,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                 setProductPayload({ ...productPayload, neighborhoodId: +e.target.value })
                               }}
                             >
-                              <option value="">Select</option>
+                              <option value="">{pathOr("", [locale, "Products", "select"], t)}</option>
                               {neighborhoods?.length &&
                                 neighborhoods.map((neighborhood) => (
                                   <option value={neighborhood?.id} key={neighborhood?.id}>
@@ -679,11 +750,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                     <Col md={6}>
                       <div className="form-group">
                         <div className="po_R">
-                          <label>اسم الحي</label>
+                          <label>{pathOr("", [locale, "Products", "neighbourhood"], t)}</label>
                           <input
                             type="text"
                             className={`form-control ${styles["form-control"]}`}
-                            placeholder="اكتب اسم الحي"
+                            placeholder={pathOr("", [locale, "Products", "enterNeighbourhood"], t)}
                             value={stateName}
                             onChange={(e) => setStateName(e.target.value)}
                           />
@@ -691,11 +762,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                       <div className="form-group">
                         <div className="po_R">
-                          <label>اسم الشارع</label>
+                          <label>{pathOr("", [locale, "Products", "street"], t)}</label>
                           <input
                             type="text"
                             className={`form-control ${styles["form-control"]}`}
-                            placeholder="اكتب اسم الشارع"
+                            placeholder={pathOr("", [locale, "Products", "enterStreet"], t)}
                             value={productPayload.streetName}
                             onChange={(e) => setProductPayload({ ...productPayload, streetName: e.target.value })}
                           />
@@ -703,11 +774,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                       <div className="form-group">
                         <div className="po_R">
-                          <label>كود المحافظة</label>
+                          <label>{pathOr("", [locale, "Products", "governCode"], t)}</label>
                           <input
                             type="text"
                             className={`form-control ${styles["form-control"]}`}
-                            placeholder="اكتب كود المحافظة"
+                            placeholder={pathOr("", [locale, "Products", "enterGovernCode"], t)}
                             value={productPayload.codeRegion}
                             onChange={(e) => setProductPayload({ ...productPayload, codeRegion: e.target.value })}
                           />
@@ -717,12 +788,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                   </Row>
                 </div>
                 <div className="d-flex align-items-center justify-content-between flex-wrap mb-2">
-                  <span className="f-b">تلقي أسئلة من العملاء عن المنتج ؟</span>
+                  <span className="f-b">{pathOr("", [locale, "Products", "gettingQuestions"], t)}</span>
                   <div className="form-check form-switch p-0 m-0">
                     <input
                       className="form-check-input m-0"
                       type="checkbox"
-                      role="switch"
                       id="flexSwitchCheckChecked"
                       value={productPayload.acceptQuestions}
                       checked={productPayload.acceptQuestions}
@@ -758,7 +828,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                 <Row>
                   <div className="col-12">
                     <div className="form-group">
-                      <label>نوع الاعلان</label>
+                      <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
+                        {pathOr("", [locale, "Products", "advertisementType"], t)}
+                      </label>
                       <div className="row">
                         <div className="col-lg-4 col-md-6">
                           <div className="form-group">
@@ -777,7 +849,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     })
                                   }
                                 />
-                                <span>اعلان بسعر ثابت</span>
+                                <span>{pathOr("", [locale, "Products", "adFixed"], t)}</span>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -797,7 +869,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     setProductPayload({ ...productPayload, isMazad: !productPayload.isMazad })
                                   }
                                 />
-                                <span>مزاد</span>
+                                <span>{pathOr("", [locale, "Products", "adAuct"], t)}</span>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -822,7 +894,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     })
                                   }
                                 />
-                                <span>عروض تفاوض</span>
+                                <span>{pathOr("", [locale, "Products", "negotiation"], t)}</span>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -834,13 +906,18 @@ const AddProductStepTwo = ({ catId, product }) => {
                   {productPayload.withFixedPrice && (
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label>سعر المنتج</label>
-                        <div className={`input-group ${styles["input-group"]}`}>
+                        <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
+                          {pathOr("", [locale, "Products", "productPrice"], t)}
+                        </label>
+                        <div
+                          className={`input-group ${styles["input-group"]}`}
+                          style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}
+                        >
                           <span
                             className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                             id="basic-addon1"
                           >
-                            S.R
+                            {pathOr("", [locale, "Products", "currency"], t)}
                           </span>
                           <div className="po_R flex-grow-1">
                             <input
@@ -1059,6 +1136,175 @@ const AddProductStepTwo = ({ catId, product }) => {
                                         </div>
                                     </div> */}
                 </Row>
+                <Row>
+                  <div className="col-12">
+                    <div className="form-group">
+                      <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
+                        {pathOr("", [locale, "Products", "paymentOptions"], t)}
+                      </label>
+                      <div className="row">
+                        <div className="col-lg-6 col-md-6">
+                          <div className="form-group">
+                            <div className="form-control outer-check-input">
+                              <div className="form-check form-switch p-0 m-0">
+                                <input
+                                  className="form-check-input m-0"
+                                  type="checkbox"
+                                  role="switch"
+                                  id="flexSwitchCheckChecked"
+                                  checked={productPayload.PaymentOptions.includes(1) ? true : false}
+                                  onChange={() => paymentOptionsHandler(1)}
+                                />
+                                <span>{pathOr("", [locale, "Products", "cash"], t)}</span>
+                                <span className="bord" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-lg-6 col-md-6">
+                          <div className="form-group">
+                            <div className="form-control outer-check-input">
+                              <div className="form-check form-switch p-0 m-0">
+                                <input
+                                  className="form-check-input m-0"
+                                  type="checkbox"
+                                  role="switch"
+                                  id="flexSwitchCheckChecked"
+                                  checked={productPayload.PaymentOptions.includes(2) ? true : false}
+                                  onChange={() => paymentOptionsHandler(2)}
+                                />
+                                <span>{pathOr("", [locale, "Products", "bankTransfer"], t)}</span>
+                                <span className="bord" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col-lg-6 col-md-6">
+                          <div className="form-group">
+                            <div className="form-control outer-check-input">
+                              <div className="form-check form-switch p-0 m-0">
+                                <input
+                                  className="form-check-input m-0"
+                                  type="checkbox"
+                                  role="switch"
+                                  id="flexSwitchCheckChecked"
+                                  checked={productPayload.PaymentOptions.includes(3) ? true : false}
+                                  onChange={() => paymentOptionsHandler(3)}
+                                />
+                                <span>{pathOr("", [locale, "Products", "creditCard"], t)}</span>
+                                <span className="bord" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-lg-6 col-md-6">
+                          <div className="form-group">
+                            <div className="form-control outer-check-input">
+                              <div className="form-check form-switch p-0 m-0">
+                                <input
+                                  className="form-check-input m-0"
+                                  type="checkbox"
+                                  role="switch"
+                                  id="flexSwitchCheckChecked"
+                                  checked={productPayload.PaymentOptions.includes(4) ? true : false}
+                                  onChange={() => paymentOptionsHandler(4)}
+                                />
+                                <span>{pathOr("", [locale, "Products", "mada"], t)}</span>
+                                <span className="bord" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Row>
+              </form>
+            </div>
+            <button
+              className="btn-main mt-3"
+              type="button"
+              onClick={() =>
+                productPayload.price != " " ||
+                (productPayload.startPriceMazad && productPayload.lessPriceMazad != " ") ||
+                productPayload.mazadNegotiatePrice != " "
+                  ? productPayload.PaymentOptions.length > 0
+                    ? setEventKey("4")
+                    : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
+                  : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
+              }
+            >
+              {pathOr("", [locale, "Products", "next"], t)}
+            </button>
+          </Accordion.Body>
+        </Accordion.Item>
+        <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="4">
+          <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("4")}>
+            <span>5</span>
+            {pathOr("", [locale, "Products", "shippingOptions"], t)}
+          </Accordion.Button>
+          <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
+            <div className="form-content">
+              <form>
+                <Row>
+                  <div className="col-12">
+                    <div className="form-group">
+                      <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
+                        {pathOr("", [locale, "Products", "advertisementType"], t)}
+                      </label>
+                      <div className="row">
+                        <div className="col-lg-6 col-md-6">
+                          <div className="form-group">
+                            <div className="form-control outer-check-input">
+                              <div className="form-check form-switch p-0 m-0">
+                                <input
+                                  className="form-check-input m-0"
+                                  type="checkbox"
+                                  role="switch"
+                                  id="flexSwitchCheckChecked"
+                                  checked={productPayload.ShippingOptions === 1 ? true : false}
+                                  onChange={() =>
+                                    setProductPayload({
+                                      ...productPayload,
+                                      ShippingOptions: 1,
+                                    })
+                                  }
+                                />
+                                <span>{pathOr("", [locale, "Products", "adFixed"], t)}</span>
+                                <span className="bord" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-lg-6 col-md-6">
+                          <div className="form-group">
+                            <div className="form-control outer-check-input">
+                              <div className="form-check form-switch p-0 m-0">
+                                <input
+                                  className="form-check-input m-0"
+                                  type="checkbox"
+                                  role="switch"
+                                  id="flexSwitchCheckChecked"
+                                  checked={productPayload.ShippingOptions === 2 ? true : false}
+                                  onChange={() =>
+                                    setProductPayload({
+                                      ...productPayload,
+                                      ShippingOptions: 2,
+                                    })
+                                  }
+                                />
+                                <span>{pathOr("", [locale, "Products", "adAuct"], t)}</span>
+                                <span className="bord" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Row>
               </form>
             </div>
             <button
@@ -1076,16 +1322,9 @@ const AddProductStepTwo = ({ catId, product }) => {
             </button>
           </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="4">
-          <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("4")}>
-            <span>5</span>
-            {pathOr("", [locale, "Products", "shippingOptions"], t)}
-          </Accordion.Button>
-          <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}></Accordion.Body>
-        </Accordion.Item>
         <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="5">
           <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("5")}>
-            <span>5</span>
+            <span>6</span>
             {pathOr("", [locale, "Products", "publishingPackages"], t)}
           </Accordion.Button>
           <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
@@ -1274,7 +1513,7 @@ const AddProductStepTwo = ({ catId, product }) => {
           </Accordion.Body>
         </Accordion.Item>
       </Accordion>
-    </>
+    </Fragment>
   )
 }
 

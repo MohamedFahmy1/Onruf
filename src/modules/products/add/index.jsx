@@ -13,7 +13,6 @@ const AddProduct = () => {
   const [selectedCatId, setSelectedCatId] = useState(null)
   const [product, setProduct] = useState()
   const { locale } = useRouter()
-
   const getProduct = async () => {
     try {
       const res = await axios(
@@ -24,14 +23,13 @@ const AddProduct = () => {
       toast.error(error.response.data.message)
     }
   }
-
+  console.log("id is:", selectedCatId)
   useEffect(() => {
     router.query.id && getProduct()
   }, [router.query.id])
 
   const handleBack = (e) => {
     e.preventDefault()
-
     router.push("./")
   }
 
