@@ -1,0 +1,27 @@
+.box {
+  background-color: #fff;
+  border-radius: 20px;
+  z-index: 5;
+  position: relative;
+  padding: 20px;
+}
+.box h2 {
+  text-align: center;
+}
+.box label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  font-size: 21px;
+}
+.box .checkbox {
+  flex-direction: row;
+  justify-content: space-between;
+}
+.box .container {
+  display: flex;
+  gap: 30px;
+}
+.box button {
+  font-size: 22px;
+}

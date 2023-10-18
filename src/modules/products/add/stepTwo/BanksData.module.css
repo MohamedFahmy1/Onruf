@@ -1,0 +1,38 @@
+.banksData {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: #7c7c7c8d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+  text-align: left;
+}
+.banksData h2 {
+  text-align: center;
+}
+.box {
+  background-color: #fff;
+  border-radius: 20px;
+  z-index: 2;
+  position: relative;
+  padding: 20px;
+}
+.labelsBox {
+  display: flex;
+  gap: 40px;
+  margin: 0px 20px;
+}
+.bankItem p:first-of-type {
+  font-weight: 700;
+}
+.bankItem {
+  margin: 20px 0;
+}
+.bankButton {
+  margin: 0 auto;
+  display: block;
+}

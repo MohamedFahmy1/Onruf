@@ -12,6 +12,7 @@ import t from "../../../../translations.json"
 import { toast } from "react-toastify"
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded"
 import Alerto from "../../../../common/Alerto"
+import BanksData from "./BanksData"
 
 const AddProductStepTwo = ({ catId, product }) => {
   const { locale } = useRouter()
@@ -31,6 +32,7 @@ const AddProductStepTwo = ({ catId, product }) => {
   const [mainImageIndex, setMainImageIndex] = useState(undefined)
   const [speficationsPayload, setSpeficationsPayload] = useState([])
   const [userBanksData, setuserBanksData] = useState([])
+  const [showBanksData, setShowBanksData] = useState(false)
   const [productPayload, setProductPayload] = useState({
     nameAr: "",
     nameEn: "",
@@ -65,6 +67,7 @@ const AddProductStepTwo = ({ catId, product }) => {
     // videoUrl: [],
     ShippingOptions: null,
     PaymentOptions: [],
+    ProductBankAccounts: [],
   })
 
   const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
@@ -1172,6 +1175,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   id="flexSwitchCheckChecked"
                                   checked={productPayload.PaymentOptions.includes(2) ? true : false}
                                   onChange={() => paymentOptionsHandler(2)}
+                                  onClick={() => setShowBanksData(true)}
                                 />
                                 <span>{pathOr("", [locale, "Products", "bankTransfer"], t)}</span>
                                 <span className="bord" />
@@ -1180,6 +1184,13 @@ const AddProductStepTwo = ({ catId, product }) => {
                           </div>
                         </div>
                       </div>
+                      {showBanksData && (
+                        <BanksData
+                          data={userBanksData}
+                          setShowBanksData={setShowBanksData}
+                          setProductPayload={setProductPayload}
+                        />
+                      )}
                       <div className="row">
                         <div className="col-lg-6 col-md-6">
                           <div className="form-group">
@@ -1252,7 +1263,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                   <div className="col-12">
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
-                        {pathOr("", [locale, "Products", "advertisementType"], t)}
+                        {pathOr("", [locale, "Products", "pickupOptions"], t)}
                       </label>
                       <div className="row">
                         <div className="col-lg-6 col-md-6">
@@ -1272,7 +1283,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     })
                                   }
                                 />
-                                <span>{pathOr("", [locale, "Products", "adFixed"], t)}</span>
+                                <span> {pathOr("", [locale, "Products", "MustPickUp"], t)}</span>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -1295,7 +1306,30 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     })
                                   }
                                 />
-                                <span>{pathOr("", [locale, "Products", "adAuct"], t)}</span>
+                                <span>{pathOr("", [locale, "Products", "NoPickup"], t)}</span>
+                                <span className="bord" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="col-lg-6 col-md-6">
+                          <div className="form-group">
+                            <div className="form-control outer-check-input">
+                              <div className="form-check form-switch p-0 m-0">
+                                <input
+                                  className="form-check-input m-0"
+                                  type="checkbox"
+                                  role="switch"
+                                  id="flexSwitchCheckChecked"
+                                  checked={productPayload.ShippingOptions === 2 ? true : false}
+                                  onChange={() =>
+                                    setProductPayload({
+                                      ...productPayload,
+                                      ShippingOptions: 2,
+                                    })
+                                  }
+                                />
+                                <span>{pathOr("", [locale, "Products", "pickupAvailable"], t)}</span>
                                 <span className="bord" />
                               </div>
                             </div>
