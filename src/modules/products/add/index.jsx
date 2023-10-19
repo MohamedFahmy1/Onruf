@@ -23,7 +23,6 @@ const AddProduct = () => {
       toast.error(error.response.data.message)
     }
   }
-  console.log("id is:", selectedCatId)
   useEffect(() => {
     router.query.id && getProduct()
   }, [router.query.id])

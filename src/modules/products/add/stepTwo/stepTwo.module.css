@@ -177,15 +177,15 @@
 
 .box-Bouquet .info li {
   position: relative;
-  margin: 5px 0;
+  margin: 5px 10px;
   padding-inline-start: 20px;
 }
 
 .box-Bouquet .info li > svg {
   color: var(--main);
   position: absolute;
-  right: 0;
-  top: 0;
+  right: -20px;
+  top: 2px;
 }
 
 .box-Bouquet-gold .head {

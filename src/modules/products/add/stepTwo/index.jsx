@@ -10,7 +10,6 @@ import Router, { useRouter } from "next/router"
 import { omit, pathOr } from "ramda"
 import t from "../../../../translations.json"
 import { toast } from "react-toastify"
-import CheckRoundedIcon from "@mui/icons-material/CheckRounded"
 import Alerto from "../../../../common/Alerto"
 import BanksData from "./BanksData"
 
@@ -41,33 +40,60 @@ const AddProductStepTwo = ({ catId, product }) => {
     descriptionAr: "",
     descriptionEn: "",
     qty: 1,
-    price: 0,
-    priceDisc: 0,
-    streetName: "",
-    codeRegion: "",
-    acceptQuestion: false,
-    isNegotiationOffers: false,
-    withFixedPrice: true,
-    isMazad: false,
-    isSendOfferForMazad: false,
-    startPriceMazad: 0,
-    lessPriceMazad: 0,
-    mazadNegotiatePrice: 0,
-    mazadNegotiateForWhom: 0,
-    appointment: "1",
     status: 1,
     categoryId: catId,
     countryId: null,
     regionId: null,
     neighborhoodId: null,
-    pakatId: packat[0]?.id,
+    District: "",
+    Street: "",
+    GovernmentCode: "",
+    pakatId: null,
     productSep: speficationsPayload,
     listImageFile: [],
     MainImageIndex: undefined,
     // videoUrl: [],
-    ShippingOptions: null,
+    PickUpDeliveryOption: "",
+    // ShippingOptions: null,
+    Lat: "30",
+    Lon: "30",
+    AcceptQuestion: false,
+    IsFixedPriceEnabled: true,
+    IsAuctionEnabled: false,
+    IsNegotiationEnabled: false,
+    Price: 0,
+    PriceDisc: 0,
     PaymentOptions: [],
     ProductBankAccounts: [],
+    IsCashEnabled: true,
+    // AuctionStartPrice: 0,
+    IsAuctionPaied: false,
+    SendOfferForAuction: false,
+    // AuctionMinimumPrice: 0,
+    // AuctionNegotiateForWhom: "",
+    // AuctionNegotiatePrice: 0,
+    "ProductPaymentDetailsDto.PakatId": 0,
+    "ProductPaymentDetailsDto.AdditionalPakatId": 0,
+    "ProductPaymentDetailsDto.ProductPublishPrice": 0,
+    "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": 0,
+    "ProductPaymentDetailsDto.EnableAuctionFee": 0,
+    "ProductPaymentDetailsDto.EnableNegotiationFee": 0,
+    "ProductPaymentDetailsDto.ExtraProductImageFee": 0,
+    "ProductPaymentDetailsDto.ExtraProductVidoeFee": 0,
+    "ProductPaymentDetailsDto.SubTitleFee": 0,
+    "ProductPaymentDetailsDto.CouponId": 0,
+    "ProductPaymentDetailsDto.CouponDiscountValue": 0,
+    "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": 0,
+    "ProductPaymentDetailsDto.TotalAmountAfterCoupon": 0,
+    "ProductPaymentDetailsDto.PaymentType": "Cash",
+    "ProductPaymentDetailsDto.PakatId": 0,
+    "ProductPaymentDetailsDto.PakatId": 0,
+    "ProductPaymentDetailsDto.PakatId": 0,
+    "ProductPaymentDetailsDto.PakatId": 0,
+    "ProductPaymentDetailsDto.PakatId": 0,
+    "ProductPaymentDetailsDto.PakatId": 0,
+    "ProductPaymentDetailsDto.PakatId": 0,
+    SendYourAccountInfoToAuctionWinner: false,
   })
 
   const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
@@ -95,10 +121,15 @@ const AddProductStepTwo = ({ catId, product }) => {
   }
   const fetchPakatList = async () => {
     try {
+      // const { data: packatData } = await axios(
+      //   process.env.NEXT_PUBLIC_API_URL + `/getAllPakatsList?lang=${locale}&currentPage=1`,
+      // )
       const { data: packatData } = await axios(
-        process.env.NEXT_PUBLIC_API_URL + `/getAllPakatsList?lang=${locale}&currentPage=1`,
+        process.env.NEXT_PUBLIC_API_URL +
+          `/getAllPakatsList?lang=${locale}&categoryId=${catId}&isAdmin=${true}&PakatType=Additional`,
       )
       const { data: packatList } = packatData
+      console.log(packatList)
       setPackat(packatList)
     } catch (e) {
       Alerto(e)
@@ -131,7 +162,7 @@ const AddProductStepTwo = ({ catId, product }) => {
       console.log(spefications)
       setSpesfications(spefications)
       setSpeficationsPayload([...speficationsPayloadList])
-      setProductPayload({ ...productPayload, productSep: [...speficationsPayloadList] })
+      // setProductPayload({ ...productPayload, productSep: [...speficationsPayloadList] })
     } catch (e) {
       Alerto("hello")
     }
@@ -193,9 +224,9 @@ const AddProductStepTwo = ({ catId, product }) => {
             descriptionAr: description,
             descriptionEn: description,
             regionId: regionId || 1,
-            acceptQuestions: acceptQuestion,
-            mazadNegotiateForWhom: productMazadNegotiate?.forWhom || 0,
-            mazadNegotiatePrice: productMazadNegotiate?.price || 0,
+            AcceptQuestion: acceptQuestion,
+            AuctionNegotiateForWhom: productMazadNegotiate?.forWhom || 0,
+            AuctionNegotiatePrice: productMazadNegotiate?.price || 0,
           })
           setStateName(regionName)
         }
@@ -215,8 +246,13 @@ const AddProductStepTwo = ({ catId, product }) => {
     }))
   }
   const handleChoosePackat = (pack) => {
-    setProductPayload({ ...productPayload, pakatId: pack.id })
-    setselectedPack(pack)
+    if (productPayload.pakatId) {
+      setProductPayload({ ...productPayload, pakatId: null })
+      setselectedPack(null)
+    } else {
+      setProductPayload({ ...productPayload, pakatId: pack.id })
+      setselectedPack(pack)
+    }
   }
 
   const toggleAccordionPanel = (eKey) => {
@@ -264,41 +300,39 @@ const AddProductStepTwo = ({ catId, product }) => {
       setProductPayload({ ...productPayload, qty: 1 })
     }
   }
-
-  const handleSelectPack = ({ target: { value: pakatId } }, pack) => {
-    setProductPayload({ ...productPayload, pakatId })
-    setselectedPack(pack)
-  }
-
   const onChangeSpesfication = ({ target: { value } }, index, type) => {
     const changedSpesfication = { ...speficationsPayload[index], ValueSpeAr: value, ValueSpeEn: value }
     const updatedSpecififcations = Object.assign([], speficationsPayload, { [index]: changedSpesfication })
     setSpeficationsPayload(updatedSpecififcations)
     setProductPayload((prev) => ({ ...prev, productSep: updatedSpecififcations }))
   }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     let formData = new FormData()
+    if (productPayload.PaymentOptions.includes(1)) {
+      setProductPayload({ ...productPayload, IsCashEnabled: true })
+    } else setProductPayload({ ...productPayload, IsCashEnabled: false })
     productPayload.listImageFile.forEach((ele, indx) => {
       console.log("sudany", productPayload.listImageFile)
       ele.id === mainImgId && indx !== 0 && productPayload.listImageFile.move(indx, 0)
     })
-
-    console.log("1", productPayload.productSep)
-    for (var key in productPayload) {
+    for (let key in productPayload) {
+      const value = productPayload[key]
       if (key === "listImageFile") {
-        for (const image of productPayload["listImageFile"]) {
+        for (const image of value) {
           formData.append("listImageFile", image)
         }
       } else if (key === "productSep") {
-        formData.append(key, JSON.stringify(productPayload[key]))
+        formData.append(key, JSON.stringify(value))
+      } else if (Array.isArray(value)) {
+        value.forEach((item) => {
+          formData.append(key, item)
+        })
       } else {
-        formData.append(key, productPayload[key])
+        formData.append(key, value)
       }
     }
     console.log("formData", formData)
-
     try {
       if (product?.id) {
         formData.delete("listMedia")
@@ -308,11 +342,18 @@ const AddProductStepTwo = ({ catId, product }) => {
       } else {
         const {
           data: { data: id },
-        } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData)
+        } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData, {
+          headers: {
+            accept: "*/*",
+            "Content-Type": "multipart/form-data",
+          },
+        })
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-        Router.push(`/${locale}/products/add/review/${id}`)
+        // Router.push(`/${locale}/products/add/review/${id}`)
+        Router.push(`/${locale}/products`)
       }
     } catch (err) {
+      console.error(err)
       Alerto(err)
     }
   }
@@ -325,9 +366,9 @@ const AddProductStepTwo = ({ catId, product }) => {
     productPayload.countryId,
     productPayload.regionId,
     productPayload.neighborhoodId,
-    stateName,
-    productPayload.streetName,
-    productPayload.codeRegion,
+    productPayload.District,
+    productPayload.Street,
+    productPayload.GovernmentCode,
   ]
 
   const inputsChecker = (inputs) => {
@@ -356,6 +397,12 @@ const AddProductStepTwo = ({ catId, product }) => {
       }))
     }
   }
+  const { PaymentOptions } = productPayload
+  useEffect(() => {
+    if (PaymentOptions.includes(1)) {
+      setProductPayload((prev) => ({ ...prev, IsCashEnabled: true }))
+    } else setProductPayload((prev) => ({ ...prev, IsCashEnabled: false }))
+  }, [PaymentOptions])
 
   console.log("productPayload", productPayload)
   return (
@@ -388,7 +435,7 @@ const AddProductStepTwo = ({ catId, product }) => {
               ))}
               <div className={styles["btn_apload_img"]}>
                 <FaCamera />
-                <input type="file" onChange={handleUploadImages} multiple={selectedPack.countImage >= 1} />
+                <input type="file" onChange={handleUploadImages} multiple={selectedPack?.countImage >= 1} />
               </div>
             </div>
             <button
@@ -563,28 +610,6 @@ const AddProductStepTwo = ({ catId, product }) => {
                         >
                           {pathOr("", [locale, "Products", "used"], t)}
                         </div>
-                        {/* <div className="status-P">
-                          <input
-                            type="radio"
-                            name="status"
-                            checked={productPayload.status === 2}
-                            onChange={() => setProductPayload({ ...productPayload, status: 2 })}
-                          />
-                          <span>جديد</span>
-                          <span className="pord" />
-                          <span className="back" />
-                        </div>
-                        <div className="status-P">
-                          <input
-                            type="radio"
-                            name="status"
-                            checked={productPayload.status === 1}
-                            onChange={() => setProductPayload({ ...productPayload, status: 1 })}
-                          />
-                          <span>مستعمل</span>
-                          <span className="pord" />
-                          <span className="back" />
-                        </div> */}
                       </div>
                     </div>
                   </Col>
@@ -759,7 +784,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                             className={`form-control ${styles["form-control"]}`}
                             placeholder={pathOr("", [locale, "Products", "enterNeighbourhood"], t)}
                             value={stateName}
-                            onChange={(e) => setStateName(e.target.value)}
+                            onChange={(e) => {
+                              setStateName(e.target.value)
+                              setProductPayload({ ...productPayload, District: e.target.value })
+                            }}
                           />
                         </div>
                       </div>
@@ -770,8 +798,8 @@ const AddProductStepTwo = ({ catId, product }) => {
                             type="text"
                             className={`form-control ${styles["form-control"]}`}
                             placeholder={pathOr("", [locale, "Products", "enterStreet"], t)}
-                            value={productPayload.streetName}
-                            onChange={(e) => setProductPayload({ ...productPayload, streetName: e.target.value })}
+                            value={productPayload.Street}
+                            onChange={(e) => setProductPayload({ ...productPayload, Street: e.target.value })}
                           />
                         </div>
                       </div>
@@ -782,8 +810,8 @@ const AddProductStepTwo = ({ catId, product }) => {
                             type="text"
                             className={`form-control ${styles["form-control"]}`}
                             placeholder={pathOr("", [locale, "Products", "enterGovernCode"], t)}
-                            value={productPayload.codeRegion}
-                            onChange={(e) => setProductPayload({ ...productPayload, codeRegion: e.target.value })}
+                            value={productPayload.GovernmentCode}
+                            onChange={(e) => setProductPayload({ ...productPayload, GovernmentCode: e.target.value })}
                           />
                         </div>
                       </div>
@@ -797,10 +825,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                       className="form-check-input m-0"
                       type="checkbox"
                       id="flexSwitchCheckChecked"
-                      value={productPayload.acceptQuestions}
-                      checked={productPayload.acceptQuestions}
+                      value={productPayload.AcceptQuestion}
+                      checked={productPayload.AcceptQuestion}
                       onChange={() =>
-                        setProductPayload({ ...productPayload, acceptQuestion: !productPayload.acceptQuestion })
+                        setProductPayload({ ...productPayload, AcceptQuestion: !productPayload.AcceptQuestion })
                       }
                     />
                   </div>
@@ -844,11 +872,13 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   type="checkbox"
                                   role="switch"
                                   id="flexSwitchCheckChecked"
-                                  checked={productPayload.withFixedPrice === 0 ? "" : productPayload.withFixedPrice}
+                                  checked={
+                                    productPayload.IsFixedPriceEnabled === 0 ? "" : productPayload.IsFixedPriceEnabled
+                                  }
                                   onChange={() =>
                                     setProductPayload({
                                       ...productPayload,
-                                      withFixedPrice: !productPayload.withFixedPrice,
+                                      IsFixedPriceEnabled: !productPayload.IsFixedPriceEnabled,
                                     })
                                   }
                                 />
@@ -867,9 +897,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   type="checkbox"
                                   role="switch"
                                   id="flexSwitchCheckChecked"
-                                  checked={productPayload.isMazad === 0 ? "" : productPayload.isMazad}
+                                  checked={productPayload.IsAuctionEnabled === 0 ? "" : productPayload.IsAuctionEnabled}
                                   onChange={() =>
-                                    setProductPayload({ ...productPayload, isMazad: !productPayload.isMazad })
+                                    setProductPayload({
+                                      ...productPayload,
+                                      IsAuctionEnabled: !productPayload.IsAuctionEnabled,
+                                    })
                                   }
                                 />
                                 <span>{pathOr("", [locale, "Products", "adAuct"], t)}</span>
@@ -888,12 +921,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   role="switch"
                                   id="flexSwitchCheckChecked"
                                   checked={
-                                    productPayload.isNegotiationOffers === 0 ? "" : productPayload.isNegotiationOffers
+                                    productPayload.IsNegotiationEnabled === 0 ? "" : productPayload.IsNegotiationEnabled
                                   }
                                   onChange={() =>
                                     setProductPayload({
                                       ...productPayload,
-                                      isNegotiationOffers: !productPayload.isNegotiationOffers,
+                                      IsNegotiationEnabled: !productPayload.IsNegotiationEnabled,
                                     })
                                   }
                                 />
@@ -906,7 +939,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                     </div>
                   </div>
-                  {productPayload.withFixedPrice && (
+                  {productPayload.IsFixedPriceEnabled && (
                     <div className="col-md-6">
                       <div className="form-group">
                         <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
@@ -925,8 +958,8 @@ const AddProductStepTwo = ({ catId, product }) => {
                           <div className="po_R flex-grow-1">
                             <input
                               type="number"
-                              value={productPayload.price === 0 ? "" : productPayload.price}
-                              onChange={(e) => setProductPayload({ ...productPayload, price: +e.target.value })}
+                              value={productPayload.Price === 0 ? "" : productPayload.Price}
+                              onChange={(e) => setProductPayload({ ...productPayload, Price: +e.target.value })}
                               className={`form-control ${styles["form-control"]}`}
                             />
                           </div>
@@ -934,7 +967,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                     </div>
                   )}
-                  {productPayload.isMazad && (
+                  {productPayload.IsAuctionEnabled && (
                     <div className="col-12">
                       <div className="row">
                         <div className="col-md-6">
@@ -945,14 +978,14 @@ const AddProductStepTwo = ({ catId, product }) => {
                                 className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                                 id="basic-addon1"
                               >
-                                S.R
+                                {pathOr("", [locale, "Products", "currency"], t)}
                               </span>
                               <div className="po_R flex-grow-1">
                                 <input
                                   type="number"
-                                  value={productPayload.startPriceMazad === 0 ? "" : productPayload.startPriceMazad}
+                                  value={productPayload.AuctionStartPrice === 0 ? "" : productPayload.AuctionStartPrice}
                                   onChange={(e) =>
-                                    setProductPayload({ ...productPayload, startPriceMazad: +e.target.value })
+                                    setProductPayload({ ...productPayload, AuctionStartPrice: +e.target.value })
                                   }
                                   className={`form-control ${styles["form-control"]}`}
                                 />
@@ -968,14 +1001,16 @@ const AddProductStepTwo = ({ catId, product }) => {
                                 className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                                 id="basic-addon1"
                               >
-                                S.R
+                                {pathOr("", [locale, "Products", "currency"], t)}
                               </span>
                               <div className="po_R flex-grow-1">
                                 <input
                                   type="number"
-                                  value={productPayload.lessPriceMazad === 0 ? " " : productPayload.lessPriceMazad}
+                                  value={
+                                    productPayload.AuctionMinimumPrice === 0 ? " " : productPayload.AuctionMinimumPrice
+                                  }
                                   onChange={(e) =>
-                                    setProductPayload({ ...productPayload, lessPriceMazad: +e.target.value })
+                                    setProductPayload({ ...productPayload, AuctionMinimumPrice: +e.target.value })
                                   }
                                   className={`form-control ${styles["form-control"]}`}
                                 />
@@ -986,7 +1021,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                     </div>
                   )}
-                  {productPayload.isNegotiationOffers && (
+                  {productPayload.IsNegotiationEnabled && (
                     <div className="contint_paner col-12 px-0">
                       <div className="d-flex align-items-center justify-content-between flex-wrap mb-2 px-3">
                         <span className="f-b">ارسال عروض تفاوض تلقائيا بعد انتهاء المزاد</span>
@@ -997,12 +1032,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                             role="switch"
                             id="flexSwitchCheckChecked"
                             checked={
-                              productPayload.isSendOfferForMazad === 0 ? " " : productPayload.isSendOfferForMazad
+                              productPayload.SendOfferForAuction === 0 ? " " : productPayload.SendOfferForAuction
                             }
                             onChange={() =>
                               setProductPayload({
                                 ...productPayload,
-                                isSendOfferForMazad: !productPayload.isSendOfferForMazad,
+                                SendOfferForAuction: !productPayload.SendOfferForAuction,
                               })
                             }
                           />
@@ -1019,17 +1054,19 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                                   id="basic-addon1"
                                 >
-                                  S.R
+                                  {pathOr("", [locale, "Products", "currency"], t)}
                                 </span>
                                 <div className="po_R flex-grow-1">
                                   <input
                                     type="number"
                                     className={`form-control ${styles["form-control"]}`}
                                     value={
-                                      productPayload.mazadNegotiatePrice === 0 ? "" : productPayload.mazadNegotiatePrice
+                                      productPayload.AuctionNegotiatePrice === 0
+                                        ? ""
+                                        : productPayload.AuctionNegotiatePrice
                                     }
                                     onChange={(e) =>
-                                      setProductPayload({ ...productPayload, mazadNegotiatePrice: +e.target.value })
+                                      setProductPayload({ ...productPayload, AuctionNegotiatePrice: +e.target.value })
                                     }
                                   />
                                 </div>
@@ -1089,8 +1126,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     name="offer"
                                     value={1}
                                     defaultChecked={true}
-                                    checked={productPayload.mazadNegotiateForWhom === 1}
-                                    onChange={(e) => setProductPayload({ ...productPayload, mazadNegotiateForWhom: 1 })}
+                                    checked={productPayload.AuctionNegotiateForWhom === 1}
+                                    onChange={(e) =>
+                                      setProductPayload({ ...productPayload, AuctionNegotiateForWhom: 1 })
+                                    }
                                   />
                                   <span>جميع المزايدين</span>
                                   <span className="pord rounded-pill" />
@@ -1101,8 +1140,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     type="radio"
                                     name="offer"
                                     value={2}
-                                    checked={productPayload.mazadNegotiateForWhom === 2}
-                                    onChange={(e) => setProductPayload({ ...productPayload, mazadNegotiateForWhom: 2 })}
+                                    checked={productPayload.AuctionNegotiateForWhom === 2}
+                                    onChange={(e) =>
+                                      setProductPayload({ ...productPayload, AuctionNegotiateForWhom: 2 })
+                                    }
                                   />
                                   <span>لاعلي 3 اسعار في المزايده</span>
                                   <span className="pord rounded-pill" />
@@ -1113,8 +1154,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     type="radio"
                                     name="offer"
                                     value={3}
-                                    checked={productPayload.mazadNegotiateForWhom === 3}
-                                    onChange={(e) => setProductPayload({ ...productPayload, mazadNegotiateForWhom: 3 })}
+                                    checked={productPayload.AuctionNegotiateForWhom === 3}
+                                    onChange={(e) =>
+                                      setProductPayload({ ...productPayload, AuctionNegotiateForWhom: 3 })
+                                    }
                                   />
                                   <span>للذين اضافو المنتج للمفضلة</span>
                                   <span className="pord rounded-pill" />
@@ -1238,9 +1281,9 @@ const AddProductStepTwo = ({ catId, product }) => {
               className="btn-main mt-3"
               type="button"
               onClick={() =>
-                productPayload.price != " " ||
-                (productPayload.startPriceMazad && productPayload.lessPriceMazad != " ") ||
-                productPayload.mazadNegotiatePrice != " "
+                productPayload.Price != " " ||
+                (productPayload.AuctionStartPrice && productPayload.AuctionMinimumPrice != " ") ||
+                productPayload.AuctionNegotiatePrice != " "
                   ? productPayload.PaymentOptions.length > 0
                     ? setEventKey("4")
                     : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
@@ -1266,7 +1309,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                         {pathOr("", [locale, "Products", "pickupOptions"], t)}
                       </label>
                       <div className="row">
-                        <div className="col-lg-6 col-md-6">
+                        <div className="col-lg-12 col-md-12">
                           <div className="form-group">
                             <div className="form-control outer-check-input">
                               <div className="form-check form-switch p-0 m-0">
@@ -1275,11 +1318,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   type="checkbox"
                                   role="switch"
                                   id="flexSwitchCheckChecked"
-                                  checked={productPayload.ShippingOptions === 1 ? true : false}
+                                  checked={productPayload.PickUpDeliveryOption === "MustPickUp" ? true : false}
                                   onChange={() =>
                                     setProductPayload({
                                       ...productPayload,
-                                      ShippingOptions: 1,
+                                      PickUpDeliveryOption: "MustPickUp",
                                     })
                                   }
                                 />
@@ -1289,7 +1332,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                             </div>
                           </div>
                         </div>
-                        <div className="col-lg-6 col-md-6">
+                        <div className="col-lg-12 col-md-12">
                           <div className="form-group">
                             <div className="form-control outer-check-input">
                               <div className="form-check form-switch p-0 m-0">
@@ -1298,11 +1341,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   type="checkbox"
                                   role="switch"
                                   id="flexSwitchCheckChecked"
-                                  checked={productPayload.ShippingOptions === 2 ? true : false}
+                                  checked={productPayload.PickUpDeliveryOption === "NoPickUp" ? true : false}
                                   onChange={() =>
                                     setProductPayload({
                                       ...productPayload,
-                                      ShippingOptions: 2,
+                                      PickUpDeliveryOption: "NoPickUp",
                                     })
                                   }
                                 />
@@ -1312,7 +1355,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                             </div>
                           </div>
                         </div>
-                        <div className="col-lg-6 col-md-6">
+                        <div className="col-lg-12 col-md-12">
                           <div className="form-group">
                             <div className="form-control outer-check-input">
                               <div className="form-check form-switch p-0 m-0">
@@ -1321,11 +1364,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   type="checkbox"
                                   role="switch"
                                   id="flexSwitchCheckChecked"
-                                  checked={productPayload.ShippingOptions === 2 ? true : false}
+                                  checked={productPayload.PickUpDeliveryOption === "PickUpAvailable" ? true : false}
                                   onChange={() =>
                                     setProductPayload({
                                       ...productPayload,
-                                      ShippingOptions: 2,
+                                      PickUpDeliveryOption: "PickUpAvailable",
                                     })
                                   }
                                 />
@@ -1345,10 +1388,8 @@ const AddProductStepTwo = ({ catId, product }) => {
               className="btn-main mt-3"
               type="button"
               onClick={() =>
-                productPayload.price != " " ||
-                (productPayload.startPriceMazad && productPayload.lessPriceMazad != " ") ||
-                productPayload.mazadNegotiatePrice != " "
-                  ? setEventKey("4")
+                productPayload.PickUpDeliveryOption != ""
+                  ? setEventKey("5")
                   : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
               }
             >
@@ -1365,16 +1406,15 @@ const AddProductStepTwo = ({ catId, product }) => {
             <div className="form-content">
               <div>
                 <div className="text-center mt-4 mb-5">
-                  <h4 className="f-b">اختر واحده من باقاتنا الخاصة</h4>
-                  <h5>واحصل علي مزايا عديده لعرض منتجك</h5>
+                  <h4 className="f-b"> {pathOr("", [locale, "Products", "choosepaka"], t)}</h4>
+                  <h5>{pathOr("", [locale, "Products", "getBenefits"], t)}</h5>
                 </div>
                 <Row className="justify-content-center">
                   <Col lg={9}>
                     <div className="row justify-content-center">
                       {Boolean(packat?.length) &&
                         packat.map((pack, index) => (
-                          <Col md={6} key={pack?.id + index}>
-                            {selectedPack?.id == pack.id && <CheckRoundedIcon className={styles.selectedIcon} />}
+                          <Col md={6} key={pack?.id}>
                             <div
                               className={`${styles["box-Bouquet"]} ${pack.popular ? styles["box-Bouquet-gold"] : ""} ${
                                 selectedPack?.id == pack.id ? styles["activePack"] : ""
@@ -1383,31 +1423,33 @@ const AddProductStepTwo = ({ catId, product }) => {
                             >
                               <div className={styles["head"]}>
                                 <div>{pack.name}</div>
-                                <div>{pack.price} ريال</div>
+                                <div>
+                                  {pack.price} {pathOr("", [locale, "Products", "currency"], t)}
+                                </div>
                               </div>
                               <ul className={styles["info"]}>
                                 {Boolean(pack.countImage) && (
                                   <li>
                                     <FaStar />
-                                    عدد الصور: {pack.countImage}
+                                    {pathOr("", [locale, "Products", "numPics"], t)}: {pack.countImage}
                                   </li>
                                 )}
                                 {Boolean(pack.countVideo) && (
                                   <li>
                                     <FaStar />
-                                    عدد مقاطع الفيديو: {pack.countVideo}
+                                    {pathOr("", [locale, "Products", "numVideos"], t)}: {pack.countVideo}
                                   </li>
                                 )}
                                 {Boolean(pack.isSms) && (
                                   <li>
                                     <FaStar />
-                                    يمكنك ارسال رسالة
+                                    {pathOr("", [locale, "Products", "sendSms"], t)}
                                   </li>
                                 )}
                                 {Boolean(pack.numMonth) && (
                                   <li>
                                     <FaStar />
-                                    عدد الشهور: {pack.numMonth}
+                                    {pathOr("", [locale, "Products", "numMonth"], t)}: {pack.numMonth}
                                   </li>
                                 )}
                               </ul>
@@ -1416,7 +1458,6 @@ const AddProductStepTwo = ({ catId, product }) => {
                                 type="radio"
                                 name="Bouquet"
                                 checked={productPayload.pakatId === pack?.id}
-                                onChange={(e) => handleSelectPack(e, pack)}
                                 value={pack?.id}
                               />
                               <span className={styles["check"]}>
@@ -1429,9 +1470,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                     </div>
                   </Col>
                 </Row>
-                {selectedPack?.productSze === 1 && (
+                {selectedPack?.productSize === 1 && (
                   <div className="mt-4">
-                    <h5 className="mb-3 f-b text-center">اكتشف التغيير</h5>
+                    <h5 className="mb-3 f-b text-center">{pathOr("", [locale, "Products", "findChange"], t)}</h5>
                     <Row className="align-items-center">
                       <Col md={5}>
                         <div className={styles["box-product"]}>
@@ -1440,8 +1481,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                               <img src={URL.createObjectURL(productPayload.listImageFile[0])} />
                             )}
                             <div className={styles["two_btn_"]}>
-                              <button className={styles["btn_"]}>merchant</button>
-                              <button className={styles["btn_"]}>free delivery</button>
+                              <button className={styles["btn_"]}>
+                                {pathOr("", [locale, "Products", "merchant"], t)}
+                              </button>
+                              <button className={styles["btn_"]}>
+                                {pathOr("", [locale, "Products", "freeDelivery"], t)}
+                              </button>
                             </div>
                             <div className={styles["time"]}>
                               <div>
@@ -1468,14 +1513,16 @@ const AddProductStepTwo = ({ catId, product }) => {
                             <div className="row">
                               <div className="col-md-6">
                                 <div className="font-18">
-                                  <div>purchasing price</div>
-                                  <div className="f-b main-color">{productPayload?.price}R.S</div>
+                                  <div>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</div>
+                                  <div className="f-b main-color">
+                                    {productPayload?.Price} {pathOr("", [locale, "Products", "currency"], t)}
+                                  </div>
                                 </div>
                               </div>
                               <div className="col-md-6">
                                 <div className="font-18">
-                                  <div>highest price</div>
-                                  <div className="f-b">290R.S</div>
+                                  <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
+                                  <div className="f-b">290 {pathOr("", [locale, "Products", "currency"], t)}</div>
                                 </div>
                               </div>
                             </div>
@@ -1494,8 +1541,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                               <img src={URL.createObjectURL(productPayload?.listImageFile?.[0])} />
                             )}
                             <div className={styles["two_btn_"]}>
-                              <button className={styles["btn_"]}>merchant</button>
-                              <button className={styles["btn_"]}>free delivery</button>
+                              <button className={styles["btn_"]}>
+                                {pathOr("", [locale, "Products", "merchant"], t)}
+                              </button>
+                              <button className={styles["btn_"]}>
+                                {pathOr("", [locale, "Products", "freeDelivery"], t)}
+                              </button>
                             </div>
                             <div className={styles["time"]}>
                               <div>
@@ -1522,14 +1573,16 @@ const AddProductStepTwo = ({ catId, product }) => {
                             <div className="row">
                               <div className="col-md-6">
                                 <div className="font-18">
-                                  <div>purchasing price</div>
-                                  <div className="f-b main-color">{productPayload?.price}R.S</div>
+                                  <div>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</div>
+                                  <div className="f-b main-color">
+                                    {productPayload?.Price} {pathOr("", [locale, "Products", "currency"], t)}
+                                  </div>
                                 </div>
                               </div>
                               <div className="col-md-6">
                                 <div className="font-18">
-                                  <div>highest price</div>
-                                  <div className="f-b">290R.S</div>
+                                  <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
+                                  <div className="f-b">290 {pathOr("", [locale, "Products", "currency"], t)}</div>
                                 </div>
                               </div>
                             </div>
@@ -1541,8 +1594,15 @@ const AddProductStepTwo = ({ catId, product }) => {
                 )}
               </div>
             </div>
-            <button className="btn-main mt-3" type="button" onClick={handleSubmit}>
-              {router.pathname.includes("edit") ? "تعديل " : "اضافه المنتج"}
+            <button
+              className="btn-main mt-3"
+              style={{ display: "block", margin: "0 auto" }}
+              type="button"
+              onClick={handleSubmit}
+            >
+              {router.pathname.includes("edit")
+                ? pathOr("", [locale, "Products", "edit"], t)
+                : pathOr("", [locale, "Products", "addNewProduct"], t)}
             </button>
           </Accordion.Body>
         </Accordion.Item>

@@ -100,7 +100,6 @@ const Sidebar = () => {
       darkIcon: SettingDarkIcon,
     },
   ]
-  console.log(locale)
   return (
     <StyledSidebar variant={"permanent"} anchor={locale === "en" ? "left" : "right"}>
       <StyledLogo>

@@ -13,23 +13,24 @@ const BanksData = ({ data, setShowBanksData, setProductPayload }) => {
   const [showAddAcc, setShowAddAcc] = useState(false)
   const [userData, setuserData] = useState([])
   const [fetchNewData, setfetchNewData] = useState(false)
-  const changeHandler = (bank) => {
+
+  const changeHandler = (bankId) => {
     setSelectedBank((prev) => {
-      const bankExists = prev.some((b) => b.id === bank.id)
-      if (bankExists) {
-        return prev.filter((b) => b.id !== bank.id)
+      if (prev.includes(bankId)) {
+        return prev.filter((id) => id !== bankId)
       } else {
-        return [...prev, bank]
+        return [...prev, bankId]
       }
     })
   }
+
   const submitBanksDataHanler = (event) => {
     event.preventDefault()
     setShowBanksData(false)
     if (selectedBank.length > 0) {
       setProductPayload((prev) => ({
         ...prev,
-        ProductBankAccounts: [...selectedBank],
+        ProductBankAccounts: [...prev.ProductBankAccounts, ...selectedBank],
       }))
     } else {
       setProductPayload((prev) => ({
@@ -40,6 +41,7 @@ const BanksData = ({ data, setShowBanksData, setProductPayload }) => {
       toast.error(locale === "en" ? "You didn't choose one account at least" : "اختر حساب واحد علي الاقل")
     }
   }
+
   useEffect(() => {
     if (fetchNewData) {
       const fetchBanksData = async () => {
@@ -87,7 +89,7 @@ const BanksData = ({ data, setShowBanksData, setProductPayload }) => {
                 id={`bank-${bank.id}`}
                 name="bank"
                 value={bank.id}
-                onChange={() => changeHandler(bank)}
+                onChange={() => changeHandler(bank.id)}
               />
             </div>
           ))}
@@ -108,7 +110,6 @@ const BanksData = ({ data, setShowBanksData, setProductPayload }) => {
             type="submit"
             style={{ display: "block", margin: "0 auto" }}
             className="btn-main mt-3"
-            disabled={!selectedBank}
             onClick={submitBanksDataHanler}
           >
             {pathOr("", [locale, "Products", "done"], t)}

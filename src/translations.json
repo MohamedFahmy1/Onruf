@@ -135,7 +135,19 @@
       "pickupOptions": "خيارات الاستلام",
       "MustPickUp": "يجب الاستلام",
       "NoPickup": "لا يوجد استلام",
-      "pickupAvailable": "متاح الاستلام"
+      "pickupAvailable": "متاح الاستلام",
+      "choosepaka": "اختر واحده من باقاتنا الخاصة",
+      "getBenefits": "واحصل علي مزايا عديده لعرض منتجك",
+      "numPics": "عدد الصور",
+      "numVideos": "عدد مقاطع الفيديو",
+      "numMonth": "عدد الاشهر",
+      "sendSms": "يمكنك ارسال رسالة",
+      "edit": "تعديل المنتج",
+      "merchant": "تاجر",
+      "freeDelivery": "توصيل مجاني",
+      "findChange": "اكتشف التغيير",
+      "highestPrice": "اعلي سعر",
+      "purchasingPrice": "سعر الشراء"
     },
     "Users": {
       "users": "العملاء",
@@ -474,7 +486,19 @@
       "pickupOptions": "Pick-Up Option",
       "MustPickUp": "Must Pick-Up",
       "NoPickup": "No Pick-Up",
-      "pickupAvailable": "Pick-Up Available"
+      "pickupAvailable": "Pick-Up Available",
+      "choosepaka": "Choose one of our special packages",
+      "getBenefits": "And get many benefits to display your product",
+      "numPics": "Number of Pictures",
+      "numVideos": "Number of Videos",
+      "numMonth": "Number of months",
+      "sendSms": "You can send a message",
+      "edit": "Edit Product",
+      "merchant": "merchant",
+      "freeDelivery": "free delivery",
+      "findChange": "Find out what will change",
+      "highestPrice": "highest price",
+      "purchasingPrice": "purchasing price"
     },
     "Users": {
       "users": "Users",

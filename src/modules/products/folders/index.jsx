@@ -28,7 +28,7 @@ const Folders = () => {
   const [folderImage, setFolderImage] = useState("")
   const [editModal, setEditModal] = useState(false)
   const [folderId, setFolderId] = useState(false)
-
+  console.log(folders)
   const editFolder = async () => {
     const values = { id: folderId, type: 1, nameAr: editedFolderName, nameEn: editedFolderName, image: folderImage }
     const formData = new FormData()
