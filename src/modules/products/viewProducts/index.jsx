@@ -168,7 +168,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                   S.R
                 </h6>
               </span>
-
               {!!original?.priceDisc && (
                 <span>
                   <h6 className="m-0 f-b">
@@ -178,7 +177,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                 </span>
               )}
             </span>
-
             <button
               className="info_"
               data-bs-toggle="modal"
@@ -242,7 +240,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     ],
     [locale, openPriceModal, openQuantityModal, handleDeleteProduct],
   )
-
   const handleChangeStatus = async (id) => {
     try {
       await axios.post(process.env.NEXT_PUBLIC_API_URL + `/ChangeStatusProduct?id=${id}`, {})
@@ -255,7 +252,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       toast.error(error.response.data.message)
     }
   }
-
   const handleEditProductQuantity = async () => {
     try {
       await axios.post(
@@ -275,7 +271,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       toast.error(error.response.data.message)
     }
   }
-
   const handleAddDiscount = async () => {
     try {
       if (priceValue > singleSelectedRow.price) return toast.error(`Discount should be <= ${singleSelectedRow.price}`)
@@ -294,7 +289,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       toast.error(error.response.data.message)
     }
   }
-
   return (
     <Fragment>
       <div className="body-content" style={{ padding: 30 }}>
@@ -317,7 +311,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               </Button>
             </Link>
           </div>
-
           <div className="filtter_1">
             <button
               className={`btn-main ${selectedFilter === "avaliableProducts" ? "active" : ""}`}
@@ -347,7 +340,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               {pathOr("", [locale, "Products", "inActiveProducts"], t)} ({inActiveProducts?.length})
             </button>
           </div>
-
           <div className="contint_paner">
             <div className="outer_table">
               <Table
@@ -358,7 +350,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                 pageSize={5}
               />
             </div>
-
             <Modal centered show={openQuantityModal} onHide={() => setOpenQuantityModal(false)}>
               <Modal.Header>
                 <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
@@ -403,14 +394,12 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                   )}
                 </div>
               </Modal.Body>
-
               <Modal.Footer className="modal-footer">
                 <button type="button" className="btn-main" onClick={handleEditProductQuantity}>
                   {pathOr("", [locale, "Products", "save"], t)}
                 </button>
               </Modal.Footer>
             </Modal>
-
             <Modal show={openPriceModal} onHide={() => setOpenPriceModal(false)}>
               <Modal.Header>
                 <h5 className="disc-header">{pathOr("", [locale, "Products", "discount"], t)}</h5>
@@ -449,7 +438,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                   />
                 </div>
               </Modal.Body>
-
               <Modal.Footer className="modal-footer">
                 <button type="button" className="btn-main" onClick={handleAddDiscount}>
                   حفظ

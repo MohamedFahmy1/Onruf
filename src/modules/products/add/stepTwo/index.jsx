@@ -494,7 +494,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   )?.valueSpe
                                 }
                                 key={subSpecification?.id}
-                                value={subSpecification.nameAr}
+                                value={subSpecification.id}
                               >
                                 {subSpecification.nameAr}
                               </option>
