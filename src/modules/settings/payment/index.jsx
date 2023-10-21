@@ -12,16 +12,15 @@ import { toast } from "react-toastify"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import "react-datepicker/dist/react-datepicker.css"
+import t from "../../../translations.json"
+import { pathOr } from "ramda"
 
 const PaymentCards = ({ bankTransfers }) => {
   const { locale } = useRouter()
-
   const [openModal, setOpenModal] = useState()
   // This is for edit
   const [id, setId] = useState()
-
   const [bankTransferData, setBankTransferData] = useState(bankTransfers || [])
-
   const {
     register,
     handleSubmit,
@@ -40,22 +39,21 @@ const PaymentCards = ({ bankTransfers }) => {
     reset({ ...getSelectedBankTransfer, month, year })
   }
 
-  const handleDeleteBankTransfer = (bankId) => {
-    const data = axios.delete(`${process.env.REACT_APP_API_URL}/RemoveBankTransfer?id=${bankId}`, { id: bankId })
+  const handleDeleteBankTransfer = async (bankId) => {
+    await axios.delete(`${process.env.REACT_APP_API_URL}/RemoveBankTransfer`, { params: { id: bankId } })
     setBankTransferData([...bankTransferData.filter((b) => b.id !== bankId)])
     toast.success("Bank transfer has been deleted successfully!")
   }
 
   const submit = async ({ month, year, ...values }) => {
-    console.log(month, year, values, bankTransferData)
     try {
       if (id) {
         const formData = new FormData()
-          for (let key in values) {
-            formData.append(key, values[key])
-          }
-          formData.append("expiaryDate", `${month}/${year}`)
-        await axios.put(process.env.REACT_APP_API_URL + "/EditBankTransfer",formData )
+        for (let key in values) {
+          formData.append(key, values[key])
+        }
+        formData.append("expiaryDate", `${month}/${year}`)
+        await axios.put(process.env.REACT_APP_API_URL + "/EditBankTransfer", formData)
         setBankTransferData([
           ...bankTransferData?.filter((b) => b.id !== id),
           { ...values, expiaryDate: `${month}/${year}` },
@@ -106,13 +104,12 @@ const PaymentCards = ({ bankTransfers }) => {
 
   useEffect(() => {
     setBankTransferData(bankTransfers)
-  }, [])
-
-  if (!bankTransferData.length) return "Loading"
+  }, [bankTransfers])
+  if (!bankTransferData) return "Loading"
   return (
     <Col lg={8}>
       <div className="contint_paner">
-        <h6 className="f-b mb-3">حسباتك البنكية</h6>
+        <h6 className="f-b mb-3">{pathOr("", [locale, "Settings", "bankAccounts"], t)}</h6>
         <div className="d-flex gap-4">
           <button
             type="button"

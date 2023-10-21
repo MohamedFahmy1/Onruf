@@ -349,6 +349,7 @@ const AddProductStepTwo = ({ catId, product }) => {
           },
         })
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
+        console.log("id of the product is:", id)
         // Router.push(`/${locale}/products/add/review/${id}`)
         Router.push(`/${locale}/products`)
       }
@@ -385,12 +386,13 @@ const AddProductStepTwo = ({ catId, product }) => {
     return setEventKey("2")
   }
   const paymentOptionsHandler = (optionIndex) => {
-    if (!productPayload.PaymentOptions.includes(optionIndex)) {
+    if (!productPayload.PaymentOptions?.includes(optionIndex)) {
+      console.log(productPayload.PaymentOptions)
       setProductPayload((prev) => ({
         ...prev,
         PaymentOptions: [...prev.PaymentOptions, optionIndex],
       }))
-    } else if (productPayload.PaymentOptions.includes(optionIndex)) {
+    } else if (productPayload.PaymentOptions?.includes(optionIndex)) {
       setProductPayload((prev) => ({
         ...prev,
         PaymentOptions: prev.PaymentOptions.filter((value) => value !== optionIndex),
@@ -399,7 +401,7 @@ const AddProductStepTwo = ({ catId, product }) => {
   }
   const { PaymentOptions } = productPayload
   useEffect(() => {
-    if (PaymentOptions.includes(1)) {
+    if (PaymentOptions?.includes(1)) {
       setProductPayload((prev) => ({ ...prev, IsCashEnabled: true }))
     } else setProductPayload((prev) => ({ ...prev, IsCashEnabled: false }))
   }, [PaymentOptions])
@@ -1198,7 +1200,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   type="checkbox"
                                   role="switch"
                                   id="flexSwitchCheckChecked"
-                                  checked={productPayload.PaymentOptions.includes(1) ? true : false}
+                                  checked={productPayload.PaymentOptions?.includes(1) ? true : false}
                                   onChange={() => paymentOptionsHandler(1)}
                                 />
                                 <span>{pathOr("", [locale, "Products", "cash"], t)}</span>
@@ -1216,7 +1218,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   type="checkbox"
                                   role="switch"
                                   id="flexSwitchCheckChecked"
-                                  checked={productPayload.PaymentOptions.includes(2) ? true : false}
+                                  checked={productPayload.PaymentOptions?.includes(2) ? true : false}
                                   onChange={() => paymentOptionsHandler(2)}
                                   onClick={() => setShowBanksData(true)}
                                 />
@@ -1244,7 +1246,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   type="checkbox"
                                   role="switch"
                                   id="flexSwitchCheckChecked"
-                                  checked={productPayload.PaymentOptions.includes(3) ? true : false}
+                                  checked={productPayload.PaymentOptions?.includes(3) ? true : false}
                                   onChange={() => paymentOptionsHandler(3)}
                                 />
                                 <span>{pathOr("", [locale, "Products", "creditCard"], t)}</span>
@@ -1262,7 +1264,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   type="checkbox"
                                   role="switch"
                                   id="flexSwitchCheckChecked"
-                                  checked={productPayload.PaymentOptions.includes(4) ? true : false}
+                                  checked={productPayload.PaymentOptions?.includes(4) ? true : false}
                                   onChange={() => paymentOptionsHandler(4)}
                                 />
                                 <span>{pathOr("", [locale, "Products", "mada"], t)}</span>

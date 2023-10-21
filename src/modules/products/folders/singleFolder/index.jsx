@@ -19,7 +19,6 @@ const SingleFolder = ({ data }) => {
   }
 
   useEffect(() => {
-    console.log(router.isReady)
     if (router && router.query) {
       id && getSingleFolder()
     }

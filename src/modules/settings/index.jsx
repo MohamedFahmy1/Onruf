@@ -16,7 +16,6 @@ const Settings = () => {
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
   const { locale } = useRouter()
 
-
   const fetchBankTransfer = async () => {
     const {
       data: { data },
@@ -45,11 +44,10 @@ const Settings = () => {
   }
 
   useEffect(() => {
-    fetchBankTransfer();
-     fetchUserWalletState();
-     fetchAccountData();
-  },[])
-  
+    fetchBankTransfer()
+    fetchUserWalletState()
+    fetchAccountData()
+  }, [])
   return (
     <div className="body-content">
       <div>

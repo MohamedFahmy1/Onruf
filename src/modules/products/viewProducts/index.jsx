@@ -43,8 +43,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   //   dispatch(getProductsList())
   // })
 
-  // console.log({products})
-
   const productsCount = products?.length
   const avaliableProducts = (productsCount > 0 && products?.filter(({ isActive }) => isActive)) || []
   const inActiveProducts = (productsCount > 0 && products?.filter(({ isActive }) => !isActive)) || []
@@ -56,8 +54,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       : selectedFilter === "productsAlmostOut"
       ? productsAlmostOut
       : inActiveProducts
-
-  const rows = Object.keys(selectedRows)
+  const rows = Object.keys(selectedRows ? selectedRows : {})
   const selectedProductsIds = rows.map((row) => {
     const selectedRow = filterProducts.filter((_, index) => index === +row)
     return selectedRow?.[0]?.productId || selectedRow?.[0]?.id
@@ -89,7 +86,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   }, [selectedRows])
 
   useEffect(() => {
-    setSelectedRows({})
+    // setSelectedRows({})
   }, [products.length])
 
   useEffect(() => {
@@ -114,11 +111,19 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         accessor: "name",
         Cell: ({ row: { original } }) => (
           <div className="d-flex align-items-center">
-            <img
-              src={pathOr("https://miro.medium.com/max/600/0*jGmQzOLaEobiNklD", ["listMedia", 0, "url"], original)}
-              className="img_table"
-              alt=""
-            />
+            {router.pathname.includes("folders") ? (
+              <img src={original.image} className="img_table" alt="" />
+            ) : (
+              <img
+                src={pathOr(
+                  "https://miro.medium.com/max/600/0*jGmQzOLaEobiNklD",
+                  ["listMedia", 0, "url"] || image,
+                  original,
+                )}
+                className="img_table"
+                alt=""
+              />
+            )}
             <div>
               <h6 className="m-0 f-b"> {propOr("-", ["name"], original)} </h6>
               <div className="gray-color">{formatDate(propOr("-", ["createdAt"], original))}</div>
@@ -132,7 +137,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         Cell: ({ row: { values } }) => (
           <div>
             <h6 className="m-0 f-b">{propOr("-", ["category"], values)}</h6>
-            {/* <div className="gray-color">سياره هونداي</div> */}
           </div>
         ),
       },
@@ -214,18 +218,19 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         Cell: ({
           row: {
             values: { isActive },
+            original: { productId },
             original: { id },
           },
         }) => {
           return (
             <div className="d-flex align-items-center gap-2">
               <div className="form-check form-switch p-0 m-0 d-flex">
-                <MdModeEdit className="btn_Measures" onClick={() => Router.push(`/edit/${id}`)} />
-                <RiDeleteBin5Line className="btn_Measures" onClick={() => handleDeleteProduct(id)} />
+                <MdModeEdit className="btn_Measures" onClick={() => Router.push(`/edit/${productId || id}`)} />
+                <RiDeleteBin5Line className="btn_Measures" onClick={() => handleDeleteProduct(productId || id)} />
                 <input
                   readOnly
                   className="form-check-input m-0 btn_Measures"
-                  onChange={(e) => handleChangeStatus(id)}
+                  onChange={(e) => handleChangeStatus(productId || id)}
                   // checked={isActive}
                   defaultChecked={isActive}
                   type="checkbox"
@@ -249,7 +254,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       setProducts(data)
     } catch (err) {
       console.error(err)
-      toast.error(error.response.data.message)
+      toast.error(err.response.data.message)
     }
   }
   const handleEditProductQuantity = async () => {
@@ -268,7 +273,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       setProducts(data)
     } catch (err) {
       console.error(err)
-      toast.error(error.response.data.message)
+      toast.error(err.response.data.message)
     }
   }
   const handleAddDiscount = async () => {
@@ -316,7 +321,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               className={`btn-main ${selectedFilter === "avaliableProducts" ? "active" : ""}`}
               onClick={() => {
                 setSelectedFilter("avaliableProducts")
-                Router.push({ query: { page: 1 } })
+                // router.push({ query: { page: 1 } })
               }}
             >
               {pathOr("", [locale, "Products", "availableProducts"], t)} ({avaliableProducts?.length})
@@ -325,7 +330,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               className={`btn-main ${selectedFilter === "productsAlmostOut" ? "active" : ""}`}
               onClick={() => {
                 setSelectedFilter("productsAlmostOut")
-                Router.push({ query: { page: 1 } })
+                // router.push({ query: { page: 1 } })
               }}
             >
               {pathOr("", [locale, "Products", "almostOut"], t)} ({productsAlmostOut?.length})
@@ -334,7 +339,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               className={`btn-main ${!selectedFilter ? "active" : ""}`}
               onClick={() => {
                 setSelectedFilter("")
-                Router.push({ query: { page: 1 } })
+                // router.push({ query: { page: 1 } })
               }}
             >
               {pathOr("", [locale, "Products", "inActiveProducts"], t)} ({inActiveProducts?.length})

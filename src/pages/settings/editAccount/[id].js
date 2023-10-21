@@ -8,17 +8,29 @@ import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { useRouter } from "next/router"
 import { useSelector } from "react-redux"
+import registery from "../../../assets/images/registry.svg"
+import office from "../../../assets/images/office-building.svg"
+import Plate from "../../../assets/images/Plate Number.svg"
+import email from "../../../assets/images/email (5).svg"
+import Copyright from "../../../public/icons/Copyright_expiry.svg"
+import facebook from "../../../public/icons/facebook.svg"
+import instagram from "../../../public/icons/instagram.svg"
+import twitter from "../../../public/images/twitter.png"
+import tiktok from "../../../assets/images/tik-tok.svg"
+import snapchat from "../../../assets/images/snapchat.svg"
+import web from "../../../public/icons/008-maps.svg"
+import Image from "next/image"
 
 const EditBussinessAccount = () => {
   const [eventKey, setEventKey] = useState("0")
-  const [BusinessAccountImage, setImage] = useState(null)
+  const [businessAccountImage, setBusinessAccountImage] = useState(null)
   const [accountData, setAccountData] = useState()
   const { register, handleSubmit, setValue, reset } = useForm({ defaultValues: accountData })
   const [registeryFile, setRegisteryFile] = useState(accountData?.CommercialRegisterFile)
 
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
 
-  console.log("accountData",accountData)
+  console.log("accountData", accountData)
   const getAccountData = async () => {
     const {
       data: { data: accountData },
@@ -41,7 +53,12 @@ const EditBussinessAccount = () => {
     try {
       const { data } = await axios.post(
         process.env.REACT_APP_API_URL + "/AddEditBusinessAccount",
-        { id: accountData?.id, CommercialRegisterFile: registeryFile, BusinessAccountImage: BusinessAccountImage, ...values },
+        {
+          id: accountData?.id,
+          BusinessAccountCertificates: registeryFile,
+          businessAccountImage: businessAccountImage,
+          ...values,
+        },
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -61,7 +78,7 @@ const EditBussinessAccount = () => {
       {accountData && accountData.id && (
         <div>
           <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-            <h6 className="f-b m-0">اعدادات المتجر</h6>
+            <h6 className="f-b m-0">{pathOr("", [locale, "Settings", "store_settings"], t)}</h6>
           </div>
           <Accordion activeKey={eventKey} flush>
             <form onSubmit={handleSubmit(handleEditBusinessAccount)}>
@@ -74,61 +91,72 @@ const EditBussinessAccount = () => {
                   <div className="contint_paner contint_paner_form">
                     <div className="form-content">
                       <div className="form-group">
-                        <label>نوع العمل</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "business_type"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/office-building.svg" className="img-fluid" alt="" />
+                            <Image src={office} className="img-fluid" alt="" />
                           </span>
-                          <select className="form-control form-select">
-                            <option>سجل تجاري</option>
-                            <option>1</option>
-                            <option>2</option>
+                          <select
+                            defaultValue={accountData.registrationDocumentType}
+                            {...register("registrationDocumentType", { value: accountData.registrationDocumentType })}
+                            onChange={(e) => setValue("registrationDocumentType", e.target.value)}
+                            className="form-control form-select"
+                          >
+                            <option value={"0"}>سجل تجاري</option>
+                            <option value={"1"}>1</option>
+                            <option value={"2"}> 2</option>
                           </select>
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>رقم السجل التجاري</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "commercial_register_number"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/Plate%20Number.svg" className="img-fluid" alt="" />
+                            <Image src={Plate} className="img-fluid" alt="" />
                           </span>
                           <input
-                            {...register("commercialRegisterNumber", { value: accountData.commercialRegisterNumber })}
-                            onChange={(e) => setValue("commercialRegisterNumber", e.target.value)}
+                            {...register("detailRegistrationNumber", { value: accountData.detailRegistrationNumber })}
+                            onChange={(e) => setValue("detailRegistrationNumber", e.target.value)}
                             type="text"
                             className="form-control"
                           />
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>تاريخ الانتهاء</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "expiration_date"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/Copyright_expiry.svg" className="img-fluid" alt="" />
+                            <Image src={Copyright} className="img-fluid" alt="" />
                           </span>
                           <input
-                            {...register("commercialRegisterExpiryDate", {
-                              value: accountData.commercialRegisterExpiryDate,
+                            {...register("registrationNumberExpiryDate", {
+                              value: accountData.registrationNumberExpiryDate,
                             })}
-                            onChange={(e) => setValue("commercialRegisterExpiryDate", e.target.value)}
+                            onChange={(e) => setValue("registrationNumberExpiryDate", e.target.value)}
                             type="text"
                             className="form-control"
                           />
                         </div>
                       </div>
-
-                      {/* <div className="form-group">
-                        <label>الرقم الضريبي</label>
-                        <div className="input-group">
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "tax_number"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/registry.svg" className="img-fluid" alt="" />
+                            <Image src={registery} alt="" />
                           </span>
-                          <input type="number" className="form-control" />
+                          <input
+                            {...register("vatNumber", {
+                              value: accountData.vatNumber,
+                            })}
+                            onChange={(e) => setValue("vatNumber", e.target.value)}
+                            type="text"
+                            className="form-control"
+                          />
                         </div>
-                      </div> */}
+                      </div>
                       <div className="form-group">
                         <div className="form-control input_file">
-                          <span>ارفق صورة السجل التجاري</span>
+                          <span>{pathOr("", [locale, "Settings", "attach_commercial_register_image"], t)}</span>
                           <input
                             onChange={(e) => {
                               setRegisteryFile(e.target.files[0])
@@ -139,7 +167,7 @@ const EditBussinessAccount = () => {
                       </div>
                       <div className="form-group text-center">
                         <button
-                          classNameName="btn-main mt-3 btn-disabled"
+                          className="btn-main mt-3 btn-disabled"
                           type="button"
                           onClick={() => {
                             setEventKey("1")
@@ -152,9 +180,7 @@ const EditBussinessAccount = () => {
                   </div>
                 </Accordion.Body>
               </Accordion.Item>
-
               {/* Second Step */}
-
               <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="1">
                 <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("1")}>
                   <span>2</span>
@@ -165,12 +191,19 @@ const EditBussinessAccount = () => {
                     <div className="form-content">
                       <div className="form-group">
                         <div className="upload_Image">
-                          <image src={BusinessAccountImage ? URL.createObjectURL(BusinessAccountImage) : "../core/imgs/home2.jpg"} alt="" />
+                          <img
+                            src={
+                              businessAccountImage
+                                ? URL.createObjectURL(businessAccountImage)
+                                : "../core/imgs/home2.jpg"
+                            }
+                            alt=""
+                          />
                           <div className="btn_">
-                            تغيير الشعار
+                            {pathOr("", [locale, "Settings", "change_logo"], t)}
                             <input
                               onChange={(e) => {
-                                setImage(e.target.files[0])
+                                setBusinessAccountImage(e.target.files[0])
                               }}
                               type="file"
                             />
@@ -178,24 +211,29 @@ const EditBussinessAccount = () => {
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>اسم المتجر</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "store_name"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/office-building.svg" className="img-fluid" alt="" />
+                            <img src={office.src} className="img-fluid" alt="" />
                           </span>
                           <input
-                            {...register("businessAccountNameEn", { value: accountData.businessAccountNameEn })}
-                            onChange={(e) => setValue("businessAccountNameEn", e.target.value)}
+                            {...register("businessAccountName", { value: accountData.businessAccountName })}
+                            onChange={(e) => {
+                              setValue("businessAccountName", e.target.value)
+                              setValue("BusinessAccountNameAr", e.target.value)
+                              setValue("BusinessAccountNameEn", e.target.value)
+                            }}
                             type="text"
                             className="form-control"
                           />
                         </div>
                       </div>
+                      {/*
                       <div className="form-group">
-                        <label>اسم المتجر Ar</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "store_name_ar"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/office-building.svg" className="img-fluid" alt="" />
+                            <img src={office.src} className="img-fluid" alt="" />
                           </span>
                           <input
                             {...register("businessAccountNameAr", { value: accountData.businessAccountNameAr })}
@@ -205,12 +243,12 @@ const EditBussinessAccount = () => {
                           />
                         </div>
                       </div>
-
+                            
                       <div className="form-group">
-                        <label>اسم الشركه</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "company_name"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/office-building.svg" className="img-fluid" alt="" />
+                            <img src={office.src} className="img-fluid" alt="" />
                           </span>
                           <input
                             {...register("companyNameEn", { value: accountData.companyNameEn })}
@@ -219,12 +257,13 @@ const EditBussinessAccount = () => {
                             className="form-control"
                           />
                         </div>
-                      </div>
+                      </div>*/}
+                      {/*
                       <div className="form-group">
-                        <label>اسم الشركه Ar</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "company_name_ar"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/office-building.svg" className="img-fluid" alt="" />
+                            <img src={office.src} className="img-fluid" alt="" />
                           </span>
                           <input
                             {...register("companyNameAr", { value: accountData.companyNameAr })}
@@ -233,11 +272,12 @@ const EditBussinessAccount = () => {
                             className="form-control"
                           />
                         </div>
-                      </div>
+                      </div> */}
                       <div className="form-group">
-                        <label>البريد الالكترونى</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "email"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
+                            <img src={email.src} className="img-fluid" alt="" />
                           </span>
                           <input
                             {...register("businessAccountEmail", { value: accountData.businessAccountEmail })}
@@ -248,13 +288,15 @@ const EditBussinessAccount = () => {
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>رقم الهاتف</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "phone_number"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/Plate%20Number.svg" className="img-fluid" alt="" />
+                            <img src={Plate.src} className="img-fluid" alt="" />
                           </span>
                           <input
-                            {...register("businessAccountPhoneNumber", { value: accountData.businessAccountPhoneNumber })}
+                            {...register("businessAccountPhoneNumber", {
+                              value: accountData.businessAccountPhoneNumber,
+                            })}
                             onChange={(e) => setValue("businessAccountPhoneNumber", e.target.value)}
                             type="text"
                             className="form-control"
@@ -262,24 +304,24 @@ const EditBussinessAccount = () => {
                         </div>
                       </div>
                       <div className="form-group">
-                        <label> موظف الحساب </label>
-                        <div className="input-group">
+                        <label> {pathOr("", [locale, "Settings", "UserName"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/Plate%20Number.svg" className="img-fluid" alt="" />
+                            <img src={web.src} className="img-fluid" alt="" />
                           </span>
                           <input
-                            {...register("businessAccountEmployees", { value: accountData.businessAccountEmployees })}
-                            onChange={(e) => setValue("businessAccountEmployees", e.target.value)}
+                            {...register("businessAccountUserName", { value: accountData.businessAccountUserName })}
+                            onChange={(e) => setValue("businessAccountUserName", e.target.value)}
                             type="text"
                             className="form-control"
                           />
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>الموقع الرئيسي للمتجر</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "main_store_website"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/008-maps.svg" className="img-fluid" alt="" />
+                            <img src={web.src} className="img-fluid" alt="" />
                           </span>
                           <input
                             {...register("businessAccountWebsite", { value: accountData.businessAccountWebsite })}
@@ -305,7 +347,6 @@ const EditBussinessAccount = () => {
                   </div>
                 </Accordion.Body>
               </Accordion.Item>
-
               {/* Third/last Step */}
               <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="2">
                 <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("2")}>
@@ -316,10 +357,10 @@ const EditBussinessAccount = () => {
                   <div className="contint_paner contint_paner_form">
                     <div className="form-content">
                       <div className="form-group">
-                        <label>فيسبوك</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "facebook"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/facebook.svg" className="img-fluid" alt="" />
+                            <img src={facebook.src} className="img-fluid" alt="" />
                           </span>
                           <input
                             {...register("businessAccountFaceBook", { value: accountData.businessAccountFaceBook })}
@@ -329,12 +370,11 @@ const EditBussinessAccount = () => {
                           />
                         </div>
                       </div>
-
                       <div className="form-group">
-                        <label>انستغرام</label>
-                        <div className="input-group">
+                        <label>{pathOr("", [locale, "Settings", "instagram"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <image src="../core/imgs/instagram.svg" className="img-fluid" alt="" />
+                            <img src={instagram.src} className="img-fluid" alt="" />
                           </span>
                           <input
                             {...register("businessAccountInstagram", { value: accountData.businessAccountInstagram })}
@@ -344,10 +384,83 @@ const EditBussinessAccount = () => {
                           />
                         </div>
                       </div>
-
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "tiktok"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={tiktok.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("businessAccountTikTok", { value: accountData.businessAccountTikTok })}
+                            onChange={(e) => setValue("businessAccountTikTok", e.target.value)}
+                            type="text"
+                            className="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "twitter"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={twitter.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("businessAccountTwitter", { value: accountData.businessAccountTwitter })}
+                            onChange={(e) => setValue("businessAccountTwitter", e.target.value)}
+                            type="text"
+                            className="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "linkedin"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={instagram.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("businessAccountLinkedIn", { value: accountData.businessAccountLinkedIn })}
+                            onChange={(e) => setValue("businessAccountLinkedIn", e.target.value)}
+                            type="text"
+                            className="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "youtube"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={instagram.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("businessAccountYouTube", { value: accountData.businessAccountYouTube })}
+                            onChange={(e) => setValue("businessAccountYouTube", e.target.value)}
+                            type="text"
+                            className="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "snapchat"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={snapchat.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("businessAccountSnapchat", { value: accountData.businessAccountSnapchat })}
+                            onChange={(e) => setValue("businessAccountSnapchat", e.target.value)}
+                            type="text"
+                            className="form-control"
+                          />
+                        </div>
+                      </div>
                       <div className="form-group text-center">
-                        <button className="btn-main mt-3 btn-disabled" type="submit">
-                          {pathOr("", [locale, "EditAccount", "save"], t)}{" "}
+                        <button
+                          className="btn-main mt-3 btn-disabled"
+                          type="submit"
+                          onClick={handleSubmit(handleEditBusinessAccount)}
+                        >
+                          {pathOr("", [locale, "EditAccount", "save"], t)}
                         </button>
                       </div>
                     </div>

@@ -8,14 +8,14 @@ import Link from "next/link"
 import axios from "axios"
 import Router, { useRouter } from "next/router"
 import Pagination from "../../../common/pagination"
-import { propOr } from "ramda"
+import { propOr, pathOr } from "ramda"
 import { formatDate } from "../../../common/functions"
 import { toast } from "react-toastify"
 import { getFolderList } from "../../../appState/product/productActions"
 import { useSelector, useDispatch } from "react-redux"
 import { RiDeleteBin5Line } from "react-icons/ri"
 import { MdModeEdit } from "react-icons/md"
-
+import t from "../../../translations.json"
 const Folders = () => {
   const { locale } = useRouter()
   const page = useRouter()?.query?.page || 1
@@ -28,7 +28,6 @@ const Folders = () => {
   const [folderImage, setFolderImage] = useState("")
   const [editModal, setEditModal] = useState(false)
   const [folderId, setFolderId] = useState(false)
-  console.log(folders)
   const editFolder = async () => {
     const values = { id: folderId, type: 1, nameAr: editedFolderName, nameEn: editedFolderName, image: folderImage }
     const formData = new FormData()
@@ -82,10 +81,12 @@ const Folders = () => {
         <div>
           <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
             <div className="d-flex align-items-center">
-              <h6 className="f-b m-0">مجلدات المنتجات ({totalNumberOfProducts})</h6>
+              <h6 className="f-b m-0">
+                {pathOr("", [locale, "Products", "product_folders"], t)} ({totalNumberOfProducts})
+              </h6>
               <Link href="/products">
                 <a className="btn-main btn-main-w mr-20">
-                  رجوع الي صفحة جميع المنتجات <img src={rightArrow.src} />
+                  {pathOr("", [locale, "Products", "return_to_products_page"], t)} <img src={rightArrow.src} />
                 </a>
               </Link>
             </div>
@@ -96,7 +97,8 @@ const Folders = () => {
                 setOpenFolderModal(!openFolderModal)
               }}
             >
-              اضافه مجلد <i className="fas fa-plus-circle font-18"></i>
+              {pathOr("", [locale, "Products", "add_folder"], t)}
+              <i className="fas fa-plus-circle font-18"></i>
             </button>
           </div>
 
@@ -132,7 +134,8 @@ const Folders = () => {
                           <div className="text-center">
                             <h6 className="f-b m-0">{folder?.name}</h6>
                             <div className="gray-color">
-                              <span className="main-color f-b">{folder?.fileProducts?.length}</span> منتج مضاف
+                              <span className="main-color f-b">{folder?.fileProducts?.length}</span>
+                              {pathOr("", [locale, "Products", "added_product"], t)}
                             </div>
                             <div className="gray-color">{formatDate(folder?.createdAt)}</div>
                           </div>
