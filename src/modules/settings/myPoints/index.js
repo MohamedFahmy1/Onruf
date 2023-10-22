@@ -16,14 +16,17 @@ const MyPoints = () => {
   const [myPointsData, setPointsData] = useState({})
   const { newInvitationCode, pointsTransactionslist, invitationCodePoints, monyOfPointsTransfered, pointsBalance } =
     myPointsData
-
   const handleTransferPointsToMoney = async () => {
     try {
       await axios.post(
         process.env.REACT_APP_API_URL + "/TransferPointsToMoney",
-        {},
         {
           params: { transactionPointsAmount: parseInt(points) },
+        },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         },
       )
       toast.success("Transaction Successfull")
@@ -60,9 +63,7 @@ const MyPoints = () => {
                 <h4 className="gray-color m-0">{pathOr("", [locale, "Points", "myPoints"], t)}</h4>
                 <h5 className="f-b m-0">{pointsBalance}</h5>
                 <div className="font-11">
-                  <a href="" className="under-line">
-                    {pathOr("", [locale, "Points", "myPointsDetails"], t)}
-                  </a>
+                  <p className="under-line">{pathOr("", [locale, "Points", "myPointsDetails"], t)}</p>
                 </div>
               </div>
             </div>
@@ -75,7 +76,10 @@ const MyPoints = () => {
                   className="img-fluid"
                 />
                 <h5 className="gray-color m-0">{pathOr("", [locale, "Points", "shareInviteCode"], t)}</h5>
-                <div className="font-11">واحصل علي {invitationCodePoints} نقطة علي كل متجر جديد</div>
+                <div className="font-11">
+                  {pathOr("", [locale, "Points", "and_get"], t)} {invitationCodePoints}{" "}
+                  {pathOr("", [locale, "Points", "for_every_new_store"], t)}
+                </div>
                 <div className="shared d-flex gap-2 align-items-center">
                   <div className="num">{newInvitationCode}</div>
                   <div className="img_">
@@ -89,7 +93,9 @@ const MyPoints = () => {
                 <div>
                   <h5>{pathOr("", [locale, "Points", "changePointsToCredit"], t)}</h5>
                   <div className="main-color">
-                    كل {invitationCodePoints} نقطة ب {monyOfPointsTransfered} ريال
+                    {locale === "en"
+                      ? `Every ${invitationCodePoints} points for ${monyOfPointsTransfered} Riyals`
+                      : `كل ${invitationCodePoints} نقطة ب ${monyOfPointsTransfered} ريال`}
                   </div>
                 </div>
                 <div className="my-2 po_R">
@@ -99,7 +105,16 @@ const MyPoints = () => {
                     type="number"
                     className="form-control"
                   />
-                  <span className="icon_fa main-color">SAR</span>
+                  <span
+                    className="icon_fa main-color"
+                    style={{
+                      right: locale === "en" ? "25px" : undefined,
+                      width: "fit-content",
+                      left: locale === "en" ? "inherit" : "25px",
+                    }}
+                  >
+                    {pathOr("", [locale, "Products", "currency"], t)}
+                  </span>
                 </div>
                 <button className="btn-main d-block w-100" onClick={handleTransferPointsToMoney}>
                   {pathOr("", [locale, "Points", "send"], t)}

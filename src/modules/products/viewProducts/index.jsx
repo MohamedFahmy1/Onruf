@@ -25,11 +25,8 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const [selectedFilter, setSelectedFilter] = useState("avaliableProducts")
   const [openQuantityModal, setOpenQuantityModal] = useState(false)
   const [openPriceModal, setOpenPriceModal] = useState(false)
-
   const [singleSelectedRow, setSingleSelectedRow] = useState({})
-
   // const [selectedRows, setSelectedRows] = useState({})
-
   const [quantityValue, setQuantityValue] = useState(0)
   const [quantityValueInfinity, setQuantityValueInfinity] = useState(undefined)
   const [priceValue, setPriceValue] = useState(0)
@@ -37,7 +34,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   // const dispatch = useDispatch()
   // const folders = useSelector((state) => state.foldersSlice.folder)
   // const products = useSelector((state) => state.allProducts.products)
-
   // useEffect(()=>{
   //   dispatch(getFolderList(locale))
   //   dispatch(getProductsList())
@@ -85,9 +81,9 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     setProductsIds(selectedProductsIds)
   }, [selectedRows])
 
-  useEffect(() => {
-    // setSelectedRows({})
-  }, [products.length])
+  // useEffect(() => {
+  //   // setSelectedRows({})
+  // }, [products.length])
 
   useEffect(() => {
     if (singleSelectedRow?.id) {
@@ -168,15 +164,14 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
             <span>
               <span>
                 <h6 className="m-0 f-b" style={{ textDecoration: original?.priceDisc ? "line-through" : "unset" }}>
-                  {propOr("-", ["price"], values)}
-                  S.R
+                  {propOr("-", ["price"], values)} {pathOr("", [locale, "Products", "currency"], t)}
                 </h6>
               </span>
               {!!original?.priceDisc && (
                 <span>
                   <h6 className="m-0 f-b">
-                    {propOr("-", ["price"], values) - propOr("-", ["priceDisc"], original)}
-                    S.R
+                    {propOr("-", ["price"], values) - propOr("-", ["priceDisc"], original)}{" "}
+                    {pathOr("", [locale, "Products", "currency"], t)}
                   </h6>
                 </span>
               )}
@@ -258,11 +253,12 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     }
   }
   const handleEditProductQuantity = async () => {
+    console.log(singleSelectedRow)
     try {
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${singleSelectedRow?.id}${
-          quantityValueInfinity ? "" : `&quantity=${quantityValue}`
-        }`,
+        `${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${
+          singleSelectedRow?.id || singleSelectedRow?.productId
+        }${quantityValueInfinity ? "" : `&quantity=${quantityValue}`}`,
         {},
       )
       setOpenQuantityModal(false)
@@ -291,7 +287,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       setProducts(data)
     } catch (err) {
       console.error(err)
-      toast.error(error.response.data.message)
+      toast.error(err.response.data.message)
     }
   }
   return (

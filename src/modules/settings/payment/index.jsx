@@ -40,9 +40,13 @@ const PaymentCards = ({ bankTransfers }) => {
   }
 
   const handleDeleteBankTransfer = async (bankId) => {
-    await axios.delete(`${process.env.REACT_APP_API_URL}/RemoveBankTransfer`, { params: { id: bankId } })
-    setBankTransferData([...bankTransferData.filter((b) => b.id !== bankId)])
-    toast.success("Bank transfer has been deleted successfully!")
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/RemoveBankTransfer`, { params: { id: bankId } })
+      setBankTransferData([...bankTransferData.filter((b) => b.id !== bankId)])
+      toast.success("Bank transfer has been deleted successfully!")
+    } catch (error) {
+      toast.error("Can't delete transfer as it's part of a product payment option!")
+    }
   }
 
   const submit = async ({ month, year, ...values }) => {
@@ -132,7 +136,6 @@ const PaymentCards = ({ bankTransfers }) => {
                     >
                       <BiEditAlt />
                     </button>
-
                     <button className="btn_edit" onClick={() => handleDeleteBankTransfer(bank?.id)}>
                       <RiDeleteBin5Line />
                     </button>

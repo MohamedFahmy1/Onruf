@@ -16,18 +16,19 @@ import Copyright from "../../../public/icons/Copyright_expiry.svg"
 import facebook from "../../../public/icons/facebook.svg"
 import instagram from "../../../public/icons/instagram.svg"
 import twitter from "../../../public/images/twitter.png"
+import home from "../../../public/images/home1.jpg"
 import tiktok from "../../../assets/images/tik-tok.svg"
 import snapchat from "../../../assets/images/snapchat.svg"
 import web from "../../../public/icons/008-maps.svg"
 import Image from "next/image"
 
 const EditBussinessAccount = () => {
+  const { locale } = useRouter()
   const [eventKey, setEventKey] = useState("0")
   const [businessAccountImage, setBusinessAccountImage] = useState(null)
   const [accountData, setAccountData] = useState()
   const { register, handleSubmit, setValue, reset } = useForm({ defaultValues: accountData })
   const [registeryFile, setRegisteryFile] = useState(accountData?.CommercialRegisterFile)
-
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
 
   console.log("accountData", accountData)
@@ -43,20 +44,20 @@ const EditBussinessAccount = () => {
 
   useEffect(() => {
     buisnessAccountId && getAccountData()
-  }, [buisnessAccountId, reset])
+  }, [buisnessAccountId])
 
   const toggleAccordionPanel = (eKey) => {
     eventKey === eKey ? setEventKey("") : setEventKey(eKey)
   }
-
   const handleEditBusinessAccount = async ({ commercialRegisterFile, ...values }) => {
+    console.log(values)
     try {
       const { data } = await axios.post(
         process.env.REACT_APP_API_URL + "/AddEditBusinessAccount",
         {
           id: accountData?.id,
           BusinessAccountCertificates: registeryFile,
-          businessAccountImage: businessAccountImage,
+          businessAccountImage: { ...businessAccountImage },
           ...values,
         },
         {
@@ -70,8 +71,6 @@ const EditBussinessAccount = () => {
       toast.error(error.response.data.message)
     }
   }
-
-  const { locale } = useRouter()
 
   return (
     <div className="body-content">
@@ -97,14 +96,20 @@ const EditBussinessAccount = () => {
                             <Image src={office} className="img-fluid" alt="" />
                           </span>
                           <select
-                            defaultValue={accountData.registrationDocumentType}
+                            // defaultValue={accountData.registrationDocumentType}
                             {...register("registrationDocumentType", { value: accountData.registrationDocumentType })}
-                            onChange={(e) => setValue("registrationDocumentType", e.target.value)}
+                            onChange={(e) => {
+                              setValue("registrationDocumentType", e.target.value)
+                              console.log(e.target.value)
+                            }}
                             className="form-control form-select"
                           >
-                            <option value={"0"}>سجل تجاري</option>
-                            <option value={"1"}>1</option>
-                            <option value={"2"}> 2</option>
+                            <option value={"CommercialRegister"}>
+                              {pathOr("", [locale, "Settings", "commercial_register"], t)}
+                            </option>
+                            <option value={"FreelanceCertificate"}>
+                              {pathOr("", [locale, "Settings", "freelance_certificate"], t)}
+                            </option>
                           </select>
                         </div>
                       </div>
@@ -184,20 +189,17 @@ const EditBussinessAccount = () => {
               <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="1">
                 <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("1")}>
                   <span>2</span>
-                  {pathOr("", [locale, "EditAccount", "storeInfo"], t)}{" "}
+                  {pathOr("", [locale, "EditAccount", "storeInfo"], t)}
                 </Accordion.Button>
                 <Accordion.Body>
                   <div className="contint_paner contint_paner_form">
                     <div className="form-content">
                       <div className="form-group">
                         <div className="upload_Image">
+                          {console.log(businessAccountImage)}
                           <img
-                            src={
-                              businessAccountImage
-                                ? URL.createObjectURL(businessAccountImage)
-                                : "../core/imgs/home2.jpg"
-                            }
-                            alt=""
+                            src={businessAccountImage ? URL.createObjectURL(businessAccountImage) : home.src}
+                            alt="logo"
                           />
                           <div className="btn_">
                             {pathOr("", [locale, "Settings", "change_logo"], t)}

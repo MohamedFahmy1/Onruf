@@ -24,7 +24,6 @@ const Settings = () => {
         currentPage: 1,
       },
     })
-    console.log(data, "bank datra")
     setBankTransfer(data)
   }
 
@@ -34,6 +33,7 @@ const Settings = () => {
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetBusinessAccountById", {
       params: { businessAccountId: buisnessAccountId },
     })
+    console.log(accountData)
     setAccountData(accountData)
   }
   const fetchUserWalletState = async () => {

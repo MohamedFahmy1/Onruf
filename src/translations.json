@@ -208,7 +208,9 @@
       "snapchat": "سناب شات",
       "tiktok": "تيك توك",
       "youtube": "يوتيوب",
-      "twitter": "تويتر"
+      "twitter": "تويتر",
+      "commercial_register": "السجل التجاري",
+      "freelance_certificate": "شهادة العمل الحر"
     },
     "Employee": {
       "filterByRole": "فلتره حسب الصلاحيه",
@@ -291,7 +293,25 @@
       "pendingreply": "انتظار الرد",
       "recieved": "تم الاستلام",
       "cancelled": "ملغي",
-      "orderDetails": "تفاصيل الطلب"
+      "orderDetails": "تفاصيل الطلب",
+      "changeSelectorStatus": "تغيير حاله المحدد",
+      "selectBranch": "حدد الفرع",
+      "downloadSelectorInvoice": "تحميل فاتورة المحدد",
+      "waiting_for_payment": "في انتظار الدفع",
+      "waiting_for_review": "في انتظار المراجعة",
+      "in_progress": "جاري العمل",
+      "ready_for_delivery": "جاهز للتوصيل",
+      "delivery_in_progress": "جاري التوصيل",
+      "delivered": "تم التوصيل",
+      "canceled": "تم الإلغاء",
+      "orderNumber": "رقم الطلب",
+      "client": "العميل",
+      "orderHistory": "تاريخ الطلب",
+      "shipping": "الشحن",
+      "payment": "الدفع",
+      "status": "الحالة",
+      "total": "الإجمالي",
+      "freeDelivery": "توصيل مجاني"
     },
     "Reports": {
       "reports": "التقارير",
@@ -330,7 +350,9 @@
       "shareInviteCode": "شارك كود الدعوه",
       "changePointsToCredit": "تحويل النقاط الي رصيد",
       "lastProcesses": "اخر العمليات",
-      "send": "تحويل"
+      "send": "تحويل",
+      "for_every_new_store": "علي كل متجر جديد",
+      "and_get": "واحصل علي"
     },
     "Branch": {
       "branches": "الفروع",
@@ -549,21 +571,21 @@
       "bankAccounts": "Your Bank Accounts",
       "editAccount": "Edit profile",
       "userFrom": "user from",
-      "myWallet": "my wallet",
-      "topUpCredit": "top up credit",
-      "myPoints": "my points",
-      "point": "point",
-      "transferMyPoints": "transfer my points",
+      "myWallet": "My Wallet",
+      "topUpCredit": "Top Up Credit",
+      "myPoints": "My Points",
+      "point": "Point",
+      "transferMyPoints": "Transfer My Points",
       "shipping": "Shipping and delivery",
-      "manageShipping": "manage shipping",
-      "branches": "branches",
-      "manageBranches": "manage branches",
-      "employees": "employees",
-      "manageEmployees": "manage employees",
-      "packages": "packages",
-      "manageYourPackage": "manage your package",
-      "account": "account",
-      "manageAccount": "manage account",
+      "manageShipping": "Manage Shipping",
+      "branches": "Branches",
+      "manageBranches": "Manage Branches",
+      "employees": "Employees",
+      "manageEmployees": "Manage Employees",
+      "packages": "Packages",
+      "manageYourPackage": "Manage Your Package",
+      "account": "Account",
+      "manageAccount": "Manage Account",
       "store_settings": "Store Settings",
       "business_type": "Business Type",
       "commercial_register_number": "Commercial Register Number",
@@ -585,7 +607,9 @@
       "snapchat": "Snapchat",
       "tiktok": "TikTok",
       "youtube": "YouTube",
-      "twitter": "Twitter"
+      "twitter": "Twitter",
+      "commercial_register": "Commercial Register",
+      "freelance_certificate": "Freelance Certificate"
     },
     "Employee": {
       "filterByRole": "Filter By Role",
@@ -680,7 +704,15 @@
       "folder": "Folder",
       "changeSelectorStatus": "Change Selector Status",
       "selectBranch": "Select Branch",
-      "downloadSelectorInvoice": "Download Selector Invoice"
+      "downloadSelectorInvoice": "Download Selector Invoice",
+      "waiting_for_payment": "Waiting For Payment",
+      "waiting_for_review": "Waiting For Review",
+      "in_progress": "In Progress",
+      "ready_for_delivery": "Ready For Delivery",
+      "delivery_in_progress": "Delivery In Progress",
+      "delivered": "Delivered",
+      "canceled": "Canceled",
+      "freeDelivery": "Free delivery"
     },
     "Reports": {
       "reports": "Reports",
@@ -719,7 +751,9 @@
       "shareInviteCode": "Share Invite Code",
       "changePointsToCredit": "Change Points To Credit",
       "lastProcesses": "Latest Processes",
-      "send": "Transfer"
+      "send": "Transfer",
+      "for_every_new_store": "For every new store",
+      "and_get": "And get"
     },
     "Branch": {
       "branches": "Branches",
