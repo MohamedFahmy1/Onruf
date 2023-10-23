@@ -7,6 +7,9 @@ module.exports = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  images: {
+    domains: ["onrufwebsite2-001-site1.btempurl.com"],
+  },
   // distDir: "build",
   nextConfig,
   i18n: {

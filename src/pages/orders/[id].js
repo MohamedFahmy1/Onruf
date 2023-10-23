@@ -1,24 +1,18 @@
-
-
-
-import {OrderDetails} from "../../modules/orders/orderDetails/index"
+import { Fragment } from "react"
+import { OrderDetails } from "../../modules/orders/orderDetails/index.jsx"
 import Head from "next/head"
 
-
-
 const OrderDetailsPage = () => {
-    return (
-        <>
-            <Head>
-                <title>تعديل المنتج - اونرف</title>
-            </Head>
-            <OrderDetails />
-        </>
-    );
+  return (
+    <Fragment>
+      <Head>
+        <title>تعديل المنتج - اونرف</title>
+      </Head>
+      <OrderDetails />
+    </Fragment>
+  )
 }
 
-
- 
 export default OrderDetailsPage
 
 // import axios from "axios"
@@ -34,7 +28,7 @@ export default OrderDetailsPage
 //   const router = useRouter()
 //   const [orderData , setOrderData]= useState()
 //   // Loading
-  
+
 // const getOrderData =async (id) => {
 //   const {
 //     data: { data: orderData },

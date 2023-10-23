@@ -8,10 +8,13 @@ import { pathOr } from "ramda"
 import t from "../../translations.json"
 import Link from "next/link"
 import { useSelector } from "react-redux"
-
+import styles from "./orders.module.css"
+import { toast } from "react-toastify"
 const Orders = () => {
-  const [shippingOptions, setShippingOptions] = useState()
-  const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+  // const [shippingOptions, setShippingOptions] = useState()
+  // const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+  const [filterdOrders, setFilterdOrders] = useState()
+  const [showFilter, setShowFilter] = useState(false)
   const [orders, setOrders] = useState()
   const { locale } = useRouter()
   const [orderStatus, setorderStatus] = useState()
@@ -26,22 +29,23 @@ const Orders = () => {
     Canceled: 0,
   })
   const [filter, setFilter] = useState({
-    paymentType: null,
-    shippingOptionId: null,
-    year: null,
+    paymentType: "",
+    // shippingOptionId: "",
+    year: "",
   })
-  useEffect(() => {
-    const fetchShippingOptions = async () => {
-      const {
-        data: { data: shippingOptions },
-      } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllShippingOptions", {
-        params: { businessAccountId: buisnessAccountId, lang: locale },
-      })
-      console.log("shippingOptions:", shippingOptions)
-      setShippingOptions(shippingOptions)
-    }
-    fetchShippingOptions()
-  }, [buisnessAccountId, locale])
+
+  // useEffect(() => {
+  //   const fetchShippingOptions = async () => {
+  //     const {
+  //       data: { data: shippingOptions },
+  //     } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllShippingOptions", {
+  //       params: { businessAccountId: buisnessAccountId, lang: locale },
+  //     })
+  //     setShippingOptions(shippingOptions)
+  //   }
+  //   fetchShippingOptions()
+  // }, [buisnessAccountId, locale])
+
   useEffect(() => {
     const getOrder = async () => {
       const {
@@ -75,15 +79,72 @@ const Orders = () => {
     }
     getOrder()
   }, [orderStatus])
+  let paymentTyp
+  switch (filter?.paymentType) {
+    case "1":
+      paymentTyp = pathOr("", [locale, "Products", "cash"], t)
+      break
+    case "2":
+      paymentTyp = pathOr("", [locale, "Products", "bankTransfer"], t)
+      break
+    case "3":
+      paymentTyp = pathOr("", [locale, "Products", "creditCard"], t)
+      break
+    case "4":
+      paymentTyp = pathOr("", [locale, "Products", "mada"], t)
+      break
+  }
   const filterOrders = () => {
-    let updatedOrders
-    if (filter.paymentType !== null) {
-      updatedOrders = orders.filter((item) => item.paymentTypeId === filter.paymentType)
+    if (!filter?.paymentType && !filter?.year) {
+      toast.error(locale === "en" ? "Please Choose at least one filter!" : "أختر علي الاقل فلتر واحد")
+      return
+    } else {
+      let updatedOrders
+      if (filter?.paymentType !== "") {
+        updatedOrders = orders.filter((item) => item.paymentTypeId == filter.paymentType)
+      }
+      // if (filter.shippingOptionId !== "") {
+      //   updatedOrders = orders.filter((item) => item.shippingOptionId === filter.shippingOptionId)
+      // }
+      if (filter?.year !== "") {
+        updatedOrders = orders.filter((item) => item.createdAt.slice(0, 4) == filter.year)
+      }
+      if (filter?.year !== "" && filter?.paymentType !== "") {
+        updatedOrders = orders.filter((item) => item.paymentTypeId == filter.paymentType)
+        updatedOrders = updatedOrders.filter((item) => item.createdAt.slice(0, 4) == filter.year)
+      }
+      console.log(updatedOrders)
+      setFilterdOrders(updatedOrders)
+      setShowFilter(true)
     }
-    // if (filter.shippingOptionId !== null) {
-    //   updatedOrders = orders.filter((item) => item.paymentTypeId === filter.paymentType)
-    // }
-    // setOrders()
+  }
+  const deleteAllFilters = () => {
+    setFilter({
+      paymentType: "",
+      year: "",
+    })
+    setFilterdOrders()
+    setShowFilter(false)
+  }
+  const deletePaymentTypeFilter = () => {
+    setFilter((prev) => ({
+      ...prev,
+      paymentType: "",
+    }))
+    setFilterdOrders()
+    if (filter.year === "") {
+      setShowFilter(false)
+    }
+  }
+  const deleteYearFilter = () => {
+    setFilter((prev) => ({
+      ...prev,
+      year: "",
+    }))
+    setFilterdOrders()
+    if (filter.paymentType === "") {
+      setShowFilter(false)
+    }
   }
 
   const columns = useMemo(
@@ -92,60 +153,83 @@ const Orders = () => {
         Header: pathOr("", [locale, "Orders", "orderNumber"], t),
         accessor: "orderNumber",
         Cell: ({ row: { original } }) => (
-          <div className="f-b" key={original.orderId}>
-            <Link href={`${`orders/${original.orderId}`}`}>
+          <Link href={`${`orders/${original.orderId}`}`}>
+            <div className="f-b" key={original.orderId} style={{ cursor: "pointer" }}>
               <a>#{original?.orderId}</a>
-            </Link>
-          </div>
+            </div>
+          </Link>
         ),
       },
       {
         Header: pathOr("", [locale, "Orders", "client"], t),
         accessor: "userName",
         Cell: ({ row: { original } }) => (
-          <div>
-            <h6 className="m-0 f-b">{original?.clientName}</h6>
-            {/* <div className="gray-color">{original?.city}</div> */}
-          </div>
+          <Link href={`${`orders/${original.orderId}`}`}>
+            <h6 className="m-0 f-b" style={{ cursor: "pointer" }}>
+              {original?.clientName}
+            </h6>
+          </Link>
         ),
       },
       {
         Header: pathOr("", [locale, "Orders", "orderHistory"], t),
         accessor: "createdAt",
         Cell: ({ row: { original } }) => (
-          <div>
-            <h6 className="m-0 f-b">{original?.createdAt.slice(0, 10)}</h6>
-            {/* <div className="gray-color">مساء 4:50</div> */}
-          </div>
+          <Link href={`${`orders/${original.orderId}`}`}>
+            <h6 className="m-0 f-b" style={{ cursor: "pointer" }}>
+              {original?.createdAt.slice(0, 10)}
+            </h6>
+          </Link>
         ),
       },
       {
         Header: pathOr("", [locale, "Orders", "shipping"], t),
         accessor: "shippingFee",
         Cell: ({ row: { original } }) => (
-          <div className="f-b">
-            {original?.shippingFee === 0 ? pathOr("", [locale, "Orders", "freeDelivery"], t) : original?.shippingFee}
-          </div>
+          <Link href={`${`orders/${original.orderId}`}`}>
+            <div className="f-b" style={{ cursor: "pointer" }}>
+              {original?.shippingFee === 0 ? pathOr("", [locale, "Orders", "freeDelivery"], t) : original?.shippingFee}
+            </div>
+          </Link>
         ),
       },
       {
         Header: pathOr("", [locale, "Orders", "payment"], t),
         accessor: "paymentType",
-        Cell: ({ row: { original } }) => <div className="f-b">{original?.paymentType}</div>,
+        Cell: ({ row: { original } }) => (
+          <Link href={`${`orders/${original.orderId}`}`}>
+            <div className="f-b" style={{ cursor: "pointer" }}>
+              {original?.paymentType}
+            </div>
+          </Link>
+        ),
       },
       {
         Header: pathOr("", [locale, "Orders", "status"], t),
         accessor: "status",
-        Cell: ({ row: { original } }) => <div className="f-b main-color">{original?.status}</div>,
+        Cell: ({ row: { original } }) => (
+          <Link href={`${`orders/${original.orderId}`}`}>
+            <div className="f-b main-color" style={{ cursor: "pointer" }}>
+              {original?.status}
+            </div>
+          </Link>
+        ),
       },
       {
         Header: pathOr("", [locale, "Orders", "total"], t),
         accessor: "totalAfterDiscount",
-        Cell: ({ row: { original } }) => <div className="f-b">S.R {original?.totalOrderAmountAfterDiscount}</div>,
+        Cell: ({ row: { original } }) => (
+          <Link href={`${`orders/${original.orderId}`}`}>
+            <div className="f-b" style={{ cursor: "pointer" }}>
+              S.R {original?.totalOrderAmountAfterDiscount}
+            </div>
+          </Link>
+        ),
       },
     ],
     [locale],
   )
+
   return (
     <>
       <div className="body-content">
@@ -157,10 +241,11 @@ const Orders = () => {
           <div className="filtter_2">
             <select
               className="form-control form-select"
-              style={{ width: "170px" }}
-              onChange={() => setFilter({ ...filter, year: e.target.value })}
+              style={{ width: "180px" }}
+              onChange={(e) => setFilter((prev) => ({ ...prev, year: e.target.value }))}
+              value={filter.year || ""}
             >
-              <option hidden disabled selected>
+              <option hidden disabled selected value={""}>
                 {pathOr("", [locale, "Orders", "orderHistory"], t)}
               </option>
               <option value={2023}>2023</option>
@@ -168,10 +253,10 @@ const Orders = () => {
               <option value={2021}>2021</option>
               <option value={2020}>2020</option>
             </select>
-            <select
+            {/*<select
               className="form-control form-select"
-              style={{ width: "170px" }}
-              onChange={() => setFilter({ ...filter, shippingOptionId: e.target.value })}
+              style={{ width: "180px" }}
+              onChange={(e) => setFilter((prev) => ({ ...prev, shippingOptionId: e.target.value }))}
             >
               <option hidden disabled selected>
                 {pathOr("", [locale, "Orders", "filterByShipping"], t)}
@@ -179,13 +264,14 @@ const Orders = () => {
               {shippingOptions?.map((item) => (
                 <option key={item.id}>{item.shippingOptionName}</option>
               ))}
-            </select>
+              </select>*/}
             <select
               className="form-control form-select"
-              style={{ width: "170px" }}
-              onChange={() => setFilter({ ...filter, paymentType: e.target.value })}
+              style={{ width: "180px" }}
+              onChange={(e) => setFilter((prev) => ({ ...prev, paymentType: e.target.value }))}
+              value={filter.paymentType || ""}
             >
-              <option hidden disabled selected>
+              <option hidden disabled selected value={""}>
                 {pathOr("", [locale, "Orders", "filterByPayment"], t)}
               </option>
               <option value={1}>{pathOr("", [locale, "Products", "cash"], t)}</option>
@@ -199,6 +285,34 @@ const Orders = () => {
             </button>
           </div>
         </div>
+        {showFilter && (
+          <div className={locale === "en" ? `m-3 text-left ${styles.filter}` : `m-3 text-right ${styles.filter}`}>
+            <p className="fs-5">
+              {pathOr("", [locale, "Orders", "filter"], t)}{" "}
+              <a href="#" className="text-decoration-underline f-b main-color" onClick={deleteAllFilters}>
+                {pathOr("", [locale, "Orders", "deleteAllFilters"], t)}
+              </a>
+            </p>
+            <div>
+              {filter?.year && (
+                <div>
+                  {filter?.year}
+                  <button type="button" onClick={deleteYearFilter}>
+                    X
+                  </button>
+                </div>
+              )}
+              {filter.paymentType && (
+                <div>
+                  {paymentTyp}
+                  <button type="button" onClick={deletePaymentTypeFilter}>
+                    X
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
         <div className="filtter_1">
           <button
             className={orderStatus === "WaitingForPayment" ? "btn-main active" : "btn-main"}
@@ -245,16 +359,18 @@ const Orders = () => {
           </button>
         </div>
         <div className="contint_paner">
-          {orders && <Table columns={columns} data={orders && orders} pageSize={10} />}
-          {orders && orders?.length > 10 && <Pagination listLength={orders && orders.length} pageSize={10} />}
+          {orders && <Table columns={columns} data={filterdOrders ? filterdOrders : orders} pageSize={10} />}
+          {orders && orders?.length > 10 && (
+            <Pagination listLength={filterdOrders ? filterdOrders.length : orders.length} pageSize={10} />
+          )}
         </div>
       </div>
-      <div className="btns_fixeds">
-        <button className="btn-main btn-main-w rounded-0">
+      <div className={`btns_fixeds ${styles.buttons}`}>
+        <button className="btn-main btn-w rounded-0">
           {pathOr("", [locale, "Orders", "changeSelectorStatus"], t)}
         </button>
-        <button className="btn-main btn-main-w rounded-0">{pathOr("", [locale, "Orders", "selectBranch"], t)}</button>
-        <button className="btn-main btn-main-w rounded-0">
+        <button className="btn-main btn-w rounded-0">{pathOr("", [locale, "Orders", "selectBranch"], t)}</button>
+        <button className="btn-main btn-w rounded-0">
           {pathOr("", [locale, "Orders", "downloadSelectorInvoice"], t)}
         </button>
       </div>

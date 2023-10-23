@@ -15,7 +15,7 @@ import { getTokensFromCookie } from "../../../appState/personalData/authActions"
 
 const Navbar = () => {
   const [toggleLangMenu, setToggleLangMenu] = useState(false)
-  const { pathname, push, locale, reload } = useRouter()
+  const { pathname, push, locale, reload, asPath } = useRouter()
   const router = useRouter()
   const dispatch = useDispatch()
   const [toggleBusinessAccountList, setToggleBusinessAccountList] = useState()
@@ -124,7 +124,7 @@ const Navbar = () => {
                 setToggleLangMenu(!toggleLangMenu)
               }}
             >
-              <Link locale="ar" href={pathname}>
+              <Link locale="ar" href={asPath}>
                 <a className="dropdown-item">
                   <span> {t[locale]?.Settings.arLang}</span> <span className="icon">AR</span>
                 </a>
@@ -136,7 +136,7 @@ const Navbar = () => {
                 setToggleLangMenu(!toggleLangMenu)
               }}
             >
-              <Link locale="en" href={pathname}>
+              <Link locale="en" href={asPath}>
                 <a className="dropdown-item">
                   <span> {t[locale]?.Settings.enLang}</span> <span className="icon">EN</span>
                 </a>
