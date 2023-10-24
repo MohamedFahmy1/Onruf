@@ -13,13 +13,16 @@ import ChangeSingleStatusModal from "./ChangeSingleStatusModal"
 import ChangeBranchModal from "../ChangeBranchModal"
 
 export const OrderDetails = () => {
-  const { locale } = useRouter()
+  const {
+    locale,
+    query: { id },
+  } = useRouter()
   const router = useRouter()
   const [orderData, setOrderData] = useState()
   const [branchesData, setBranchesData] = useState()
   const [openModal, setOpenModal] = useState(false)
   const [openBranchModal, setOpenBranchModal] = useState(false)
-
+  const [orderStatusHistory, setOrderStatusHistory] = useState()
   const getOrderData = async (id) => {
     const {
       data: { data: orderData },
@@ -42,6 +45,16 @@ export const OrderDetails = () => {
     }
     getBranchesData()
   }, [locale, openBranchModal])
+  useEffect(() => {
+    const getListOrderStatusHistory = async () => {
+      const {
+        data: { data: data },
+      } = await axios.post(`${process.env.REACT_APP_API_URL}/ListOrderStatusHistory?orderId=${id}`)
+      setOrderStatusHistory(data)
+      console.log(data)
+    }
+    getListOrderStatusHistory()
+  }, [locale, openModal, id])
 
   useEffect(() => {
     router.query.id && getOrderData(router.query.id)
@@ -287,26 +300,22 @@ export const OrderDetails = () => {
           <div className="contint_paner p-0">
             <h5 className="f-b p-4 m-0 fs-4">{pathOr("", [locale, "Orders", "order_log"], t)}</h5>
             <ul className="all-order-record">
-              <li className="item">
-                <div className="d-flex align-items-center">
-                  <Image src={delivery} alt="delivery" />
-                  <div>
-                    <div className="gray-color">Ali reda</div>
-                    <div className="f-b main-color">تغيير حالة المنتج الي مرحلة التوصيل</div>
+              {orderStatusHistory.map((item) => (
+                <li className="item" key={item.statusDate}>
+                  <div className="d-flex align-items-center">
+                    <Image src={delivery} alt="delivery" />
+                    <div className="mx-4">
+                      <div className="gray-color">{item.userName}</div>
+                      <div className="f-b main-color">
+                        {pathOr("", [locale, "Orders", "changeOrderHistory"], t)} {item.status}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="gray-color">منذ 6 ساعات</div>
-              </li>
-              <li className="item">
-                <div className="d-flex align-items-center">
-                  <Image src={shopping} alt="shopping" />
-                  <div>
-                    <div className="gray-color">Ali reda</div>
-                    <div className="f-b main-color">تغيير حالة المنتج الي تم التسليم</div>
+                  <div className="gray-color">
+                    {item.statusDate.slice(11, 16)} - {item.statusDate.slice(0, 10)}
                   </div>
-                </div>
-                <div className="gray-color">منذ 6 ساعات</div>
-              </li>
+                </li>
+              ))}
             </ul>
           </div>
         </div>

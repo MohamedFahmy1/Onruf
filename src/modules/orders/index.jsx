@@ -266,7 +266,7 @@ const Orders = () => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <div className="f-b" style={{ cursor: "pointer" }}>
-              S.R {original?.totalOrderAmountAfterDiscount}
+              {original?.totalOrderAmountAfterDiscount} {pathOr("", [locale, "Products", "currency"], t)}
             </div>
           </Link>
         ),

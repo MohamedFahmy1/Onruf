@@ -334,7 +334,8 @@
       "via_bank": "عن طريق البنك",
       "shipping_total": "اجمالي الشحنة",
       "order_log": "سجل الطلب",
-      "changeOrderStatus": "تغيير حالة الطلب"
+      "changeOrderStatus": "تغيير حالة الطلب",
+      "changeOrderHistory": "تغيير حالة المنتج الي"
     },
     "Reports": {
       "reports": "التقارير",
@@ -758,7 +759,8 @@
       "via_bank": "Via Bank",
       "shipping_total": "shipment Total",
       "order_log": "Order Log",
-      "changeOrderStatus": "Change Order Status"
+      "changeOrderStatus": "Change Order Status",
+      "changeOrderHistory": "Order status changed to "
     },
     "Reports": {
       "reports": "Reports",
