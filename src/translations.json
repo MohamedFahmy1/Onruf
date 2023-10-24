@@ -299,11 +299,11 @@
       "downloadSelectorInvoice": "تحميل فاتورة المحدد",
       "waiting_for_payment": "في انتظار الدفع",
       "waiting_for_review": "في انتظار المراجعة",
-      "in_progress": "جاري العمل",
-      "ready_for_delivery": "جاهز للتوصيل",
-      "delivery_in_progress": "جاري التوصيل",
+      "in_progress": "تحت الفحص",
+      "ready_for_delivery": "مستعد للتوصيل",
+      "delivery_in_progress": "جاري التسليم",
       "delivered": "تم التوصيل",
-      "canceled": "تم الإلغاء",
+      "canceled": "ملغي",
       "orderNumber": "رقم الطلب",
       "client": "العميل",
       "orderHistory": "تاريخ الطلب",
@@ -333,7 +333,8 @@
       "free_shipping_in_saudi": "شحن مجاني في السعودية",
       "via_bank": "عن طريق البنك",
       "shipping_total": "اجمالي الشحنة",
-      "order_log": "سجل الطلب"
+      "order_log": "سجل الطلب",
+      "changeOrderStatus": "تغيير حالة الطلب"
     },
     "Reports": {
       "reports": "التقارير",
@@ -756,7 +757,8 @@
       "free_shipping_in_saudi": "Free Shipping in Saudi",
       "via_bank": "Via Bank",
       "shipping_total": "shipment Total",
-      "order_log": "Order Log"
+      "order_log": "Order Log",
+      "changeOrderStatus": "Change Order Status"
     },
     "Reports": {
       "reports": "Reports",

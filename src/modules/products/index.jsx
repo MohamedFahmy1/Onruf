@@ -20,7 +20,6 @@ const Products = () => {
   const [folderImage, setFolderImage] = useState("")
   const [productsIds, setProductsIds] = useState([])
   const [selectedRows, setSelectedRows] = useState({})
-
   const { locale } = useRouter()
 
   useEffect(() => {

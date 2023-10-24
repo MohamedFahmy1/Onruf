@@ -2,20 +2,23 @@ import axios from "axios"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import React, { useEffect, useState } from "react"
-import { headersJson } from "../../../../token.js"
 import t from "../../../translations.json"
 import email from "../../../assets/images/email.png"
 import sms from "../../../assets/images/sms.png"
 import whatsapp from "../../../assets/images/whatsapp.png"
-import user from "../../../assets/images/company-workers.svg"
-// import Image from "next/image.js"
+import delivery from "../../../assets/images/delivery-truck.png"
+import shopping from "../../../assets/images/shopping.png"
 import Image from "next/image"
+import ChangeSingleStatusModal from "./ChangeSingleStatusModal"
+import ChangeBranchModal from "../ChangeBranchModal"
 
 export const OrderDetails = () => {
   const { locale } = useRouter()
   const router = useRouter()
   const [orderData, setOrderData] = useState()
-  // Loading
+  const [branchesData, setBranchesData] = useState()
+  const [openModal, setOpenModal] = useState(false)
+  const [openBranchModal, setOpenBranchModal] = useState(false)
 
   const getOrderData = async (id) => {
     const {
@@ -26,13 +29,24 @@ export const OrderDetails = () => {
       },
     })
     setOrderData(orderData)
-    console.log("orderData", orderData)
   }
   useEffect(() => {
-    router.query.id && getOrderData(router.query.id)
-  }, [router.query.id])
-  if (!orderData) return ""
+    const getBranchesData = async () => {
+      const {
+        data: { data: data },
+      } = await axios.get(`${process.env.REACT_APP_API_URL}/GetListBrancheByProviderId?lang=${locale}`)
+      let branches = data.map((item) => {
+        return { branchName: item.name, branchId: item.id }
+      })
+      setBranchesData(branches)
+    }
+    getBranchesData()
+  }, [locale, openBranchModal])
 
+  useEffect(() => {
+    router.query.id && getOrderData(router.query.id)
+  }, [router.query.id, openModal])
+  if (!orderData) return ""
   // Render Order Data
   const {
     clientName,
@@ -47,7 +61,10 @@ export const OrderDetails = () => {
     phoneNumber,
     orderSaleType,
     orderProductFullInfoDto,
+    orderStatus,
+    branchId,
   } = orderData
+  console.log(orderData)
   const totalQuantity = orderProductFullInfoDto
     .map((item) => item.quantity)
     .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
@@ -65,25 +82,40 @@ export const OrderDetails = () => {
             <div className="form-group flex-grow-1 mb-1">
               <div className="po_R">
                 <label>{pathOr("", [locale, "Orders", "order_status"], t)}</label>
-                <select className="form-control form-select border-0 rounded">
-                  <option>{pathOr("", [locale, "Orders", "waiting_for_payment"], t)}</option>
+                <select className="form-control form-select border-0 rounded" onClick={() => setOpenModal(true)}>
+                  <option hidden disabled selected>
+                    {pathOr("", [locale, "Orders", "changeOrderStatus"], t)}
+                  </option>
+                  {/*<option>{pathOr("", [locale, "Orders", "waiting_for_payment"], t)}</option>
                   <option>{pathOr("", [locale, "Orders", "waiting_for_review"], t)}</option>
                   <option>{pathOr("", [locale, "Orders", "in_progress"], t)}</option>
                   <option>{pathOr("", [locale, "Orders", "ready_for_delivery"], t)}</option>
                   <option>{pathOr("", [locale, "Orders", "delivery_in_progress"], t)}</option>
                   <option>{pathOr("", [locale, "Orders", "delivered"], t)}</option>
-                  <option>{pathOr("", [locale, "Orders", "canceled"], t)}</option>
+  <option>{pathOr("", [locale, "Orders", "canceled"], t)}</option>*/}
                 </select>
+                <ChangeSingleStatusModal
+                  openModal={openModal}
+                  setOpenModal={setOpenModal}
+                  selectedOrder={{ orderStatus: orderStatus, orderId: router.query.id }}
+                />
               </div>
             </div>
             <div className="form-group flex-grow-1 mb-1">
               <div className="po_R">
                 <label>{pathOr("", [locale, "Orders", "select_branch"], t)}</label>
-                <select className="form-control form-select border-0 rounded">
-                  <option>حائل</option>
-                  <option>-----</option>
-                  <option>-----</option>
+                <select className="form-control form-select border-0 rounded" onClick={() => setOpenBranchModal(true)}>
+                  <option hidden disabled selected>
+                    {pathOr("", [locale, "Orders", "select_branch"], t)}
+                  </option>
                 </select>
+                <ChangeBranchModal
+                  openBranchModal={openBranchModal}
+                  setOpenBranchModal={setOpenBranchModal}
+                  branchesData={branchesData}
+                  ordersId={[+router.query.id]}
+                  orderBranch={branchId}
+                />
               </div>
             </div>
           </div>
@@ -196,7 +228,7 @@ export const OrderDetails = () => {
 
         <div className="col-12">
           <div className="contint_paner">
-            <h5 className="f-b">{pathOr("", [locale, "Orders", "products"], t)}</h5>
+            <h5 className="f-b fs-4">{pathOr("", [locale, "Orders", "products"], t)}</h5>
             <div className="all_list_producto mb-3">
               <div className="head">
                 <h6 className="m-0 f-b">{pathOr("", [locale, "Orders", "number_of_products"], t)}</h6>{" "}
@@ -253,11 +285,11 @@ export const OrderDetails = () => {
 
         <div className="col-12">
           <div className="contint_paner p-0">
-            <h5 className="f-b p-4 m-0">{pathOr("", [locale, "Products", "order_log"], t)}</h5>
+            <h5 className="f-b p-4 m-0 fs-4">{pathOr("", [locale, "Orders", "order_log"], t)}</h5>
             <ul className="all-order-record">
               <li className="item">
                 <div className="d-flex align-items-center">
-                  <img src="../core/imgs/delivery-truck.png" alt="" />
+                  <Image src={delivery} alt="delivery" />
                   <div>
                     <div className="gray-color">Ali reda</div>
                     <div className="f-b main-color">تغيير حالة المنتج الي مرحلة التوصيل</div>
@@ -267,7 +299,7 @@ export const OrderDetails = () => {
               </li>
               <li className="item">
                 <div className="d-flex align-items-center">
-                  <img src="../core/imgs/shopping.png" alt="" />
+                  <Image src={shopping} alt="shopping" />
                   <div>
                     <div className="gray-color">Ali reda</div>
                     <div className="f-b main-color">تغيير حالة المنتج الي تم التسليم</div>

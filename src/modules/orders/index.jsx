@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react"
+import React, { Fragment, useMemo, useState } from "react"
 import Pagination from "../../common/pagination"
 import Table from "../../common/table"
 import axios from "axios"
@@ -10,14 +10,23 @@ import Link from "next/link"
 import { useSelector } from "react-redux"
 import styles from "./orders.module.css"
 import { toast } from "react-toastify"
+import ChangeStatusModal from "./ChangeStatusModal"
+import ChangeBranchModal from "./ChangeBranchModal"
 const Orders = () => {
   // const [shippingOptions, setShippingOptions] = useState()
   // const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+  const [openBranchModal, setOpenBranchModal] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
+  const [branchesData, setBranchesData] = useState()
+  const [updateOrders, setUpdateOrders] = useState(false)
+  const [selectedOrders, setSelectedOrders] = useState()
+  const [selectedRows, setSelectedRows] = useState({})
+  console.log(selectedOrders)
   const [filterdOrders, setFilterdOrders] = useState()
   const [showFilter, setShowFilter] = useState(false)
   const [orders, setOrders] = useState()
   const { locale } = useRouter()
-  const [orderStatus, setorderStatus] = useState()
+  const [orderStatus, setOrderStatus] = useState()
   const [totalOrders, setTotalOrders] = useState({
     total: 0,
     WaitingForPayment: 0,
@@ -45,6 +54,18 @@ const Orders = () => {
   //   }
   //   fetchShippingOptions()
   // }, [buisnessAccountId, locale])
+  useEffect(() => {
+    const getBranchesData = async () => {
+      const {
+        data: { data: data },
+      } = await axios.get(`${process.env.REACT_APP_API_URL}/GetListBrancheByProviderId?lang=${locale}`)
+      let branches = data.map((item) => {
+        return { branchName: item.name, branchId: item.id }
+      })
+      setBranchesData(branches)
+    }
+    getBranchesData()
+  }, [locale, openBranchModal])
 
   useEffect(() => {
     const getOrder = async () => {
@@ -54,7 +75,7 @@ const Orders = () => {
         `${process.env.REACT_APP_API_URL}/GetBusinessAccountOrders?pageIndex=1&PageRowsCount=100000
         ${orderStatus ? `&orderStatus=${orderStatus}` : ``}`,
       )
-      if (!orderStatus) {
+      if (!orderStatus || updateOrders) {
         const WaitingForPayment = data.filter((item) => item.status === "Waiting For Payment")
         const WaitingForReview = data.filter((item) => item.status === "Waiting For Review")
         const InProgress = data.filter((item) => item.status === "In Progress")
@@ -72,13 +93,18 @@ const Orders = () => {
           Delivered: Delivered.length,
           Canceled: Canceled.length,
         })
-        setorderStatus("WaitingForPayment")
+        setOrderStatus("WaitingForPayment")
+        setUpdateOrders(false)
+        updateOrders && setFilterdOrders()
       }
+      setSelectedRows()
+      setSelectedOrders()
       setOrders(data)
       console.log("orders:", data)
     }
     getOrder()
-  }, [orderStatus])
+  }, [orderStatus, updateOrders])
+
   let paymentTyp
   switch (filter?.paymentType) {
     case "1":
@@ -146,7 +172,26 @@ const Orders = () => {
       setShowFilter(false)
     }
   }
+  // Selecting Multi Rows in the gird
+  const rows = Object.keys(selectedRows ? selectedRows : {})
+  const selectedOrdersObj = rows.map((row) => {
+    const selectedRow = orders.filter((_, index) => index === +row)
+    return { orderId: selectedRow?.[0]?.orderId, orderStatus: selectedRow?.[0]?.orderStatus }
+  })
+  useEffect(() => {
+    setSelectedOrders(selectedOrdersObj)
+  }, [selectedRows])
 
+  // const changeSelectedOrdersStatus = async () => {
+  //   if (selectedOrdersIds) {
+  //     try {
+  //       await axios.post(`${process.env.REACT_APP_API_URL}/ChangeOrderStatus?orderId=1&status=`)
+  //     } catch (error) {
+
+  //     }
+  //   }
+  // }
+  // Columns of the gird
   const columns = useMemo(
     () => [
       {
@@ -231,7 +276,7 @@ const Orders = () => {
   )
 
   return (
-    <>
+    <Fragment>
       <div className="body-content">
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
           <h6 className="f-b m-0">
@@ -267,7 +312,7 @@ const Orders = () => {
               </select>*/}
             <select
               className="form-control form-select"
-              style={{ width: "180px" }}
+              style={{ width: "210px" }}
               onChange={(e) => setFilter((prev) => ({ ...prev, paymentType: e.target.value }))}
               value={filter.paymentType || ""}
             >
@@ -316,65 +361,105 @@ const Orders = () => {
         <div className="filtter_1">
           <button
             className={orderStatus === "WaitingForPayment" ? "btn-main active" : "btn-main"}
-            onClick={() => setorderStatus("WaitingForPayment")}
+            onClick={() => setOrderStatus("WaitingForPayment")}
           >
-            {pathOr("", [locale, "Orders", "waiting_for_payment"], t)}({totalOrders?.WaitingForPayment})
+            {pathOr("", [locale, "Orders", "waiting_for_payment"], t)} ({totalOrders.WaitingForPayment})
           </button>
           <button
             className={orderStatus === "WaitingForReview" ? "btn-main active" : "btn-main"}
-            onClick={() => setorderStatus("WaitingForReview")}
+            onClick={() => setOrderStatus("WaitingForReview")}
           >
             {pathOr("", [locale, "Orders", "waiting_for_review"], t)} ({totalOrders.WaitingForReview})
           </button>
           <button
             className={orderStatus === "InProgress" ? "btn-main active" : "btn-main"}
-            onClick={() => setorderStatus("InProgress")}
+            onClick={() => setOrderStatus("InProgress")}
           >
             {" "}
             {pathOr("", [locale, "Orders", "in_progress"], t)} ({totalOrders.InProgress})
           </button>
           <button
             className={orderStatus === "ReadyForDelivery" ? "btn-main active" : "btn-main"}
-            onClick={() => setorderStatus("ReadyForDelivery")}
+            onClick={() => setOrderStatus("ReadyForDelivery")}
           >
             {pathOr("", [locale, "Orders", "ready_for_delivery"], t)} ({totalOrders.ReadyForDelivery})
           </button>
           <button
             className={orderStatus === "DeliveryInProgress" ? "btn-main active" : "btn-main"}
-            onClick={() => setorderStatus("DeliveryInProgress")}
+            onClick={() => setOrderStatus("DeliveryInProgress")}
           >
             {pathOr("", [locale, "Orders", "delivery_in_progress"], t)} ({totalOrders.DeliveryInProgress})
           </button>
           <button
             className={orderStatus === "Delivered" ? "btn-main active" : "btn-main"}
-            onClick={() => setorderStatus("Delivered")}
+            onClick={() => setOrderStatus("Delivered")}
           >
             {pathOr("", [locale, "Orders", "delivered"], t)} ({totalOrders.Delivered})
           </button>
           <button
             className={orderStatus === "Canceled" ? "btn-main active" : "btn-main"}
-            onClick={() => setorderStatus("Canceled")}
+            onClick={() => setOrderStatus("Canceled")}
           >
             {pathOr("", [locale, "Orders", "canceled"], t)} ({totalOrders.Canceled})
           </button>
         </div>
         <div className="contint_paner">
-          {orders && <Table columns={columns} data={filterdOrders ? filterdOrders : orders} pageSize={10} />}
+          {orders && (
+            <Table
+              columns={columns}
+              data={filterdOrders === undefined ? orders : filterdOrders}
+              pageSize={10}
+              selectedRows={selectedRows}
+              onSelectedRowsChange={setSelectedRows}
+            />
+          )}
           {orders && orders?.length > 10 && (
             <Pagination listLength={filterdOrders ? filterdOrders.length : orders.length} pageSize={10} />
           )}
         </div>
+        <ChangeStatusModal
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          selectedOrders={selectedOrders}
+          setUpdateOrders={setUpdateOrders}
+          setOrderStatus={setOrderStatus}
+        />
+        <ChangeBranchModal
+          openBranchModal={openBranchModal}
+          setOpenBranchModal={setOpenBranchModal}
+          branchesData={branchesData}
+          ordersId={selectedOrders?.map((item) => item.orderId)}
+          // orderBranch={branchId}
+        />
       </div>
       <div className={`btns_fixeds ${styles.buttons}`}>
-        <button className="btn-main btn-w rounded-0">
+        <button
+          className="btn-main btn-w rounded-0"
+          onClick={() => {
+            if (selectedOrders.length > 0) {
+              setOpenModal(true)
+            } else
+              toast.error(locale === "en" ? "Choose at least one order from the grid!" : "!اختر طلب واحد علي الاقل")
+          }}
+        >
           {pathOr("", [locale, "Orders", "changeSelectorStatus"], t)}
         </button>
-        <button className="btn-main btn-w rounded-0">{pathOr("", [locale, "Orders", "selectBranch"], t)}</button>
+        <button
+          className="btn-main btn-w rounded-0"
+          onClick={() => {
+            if (selectedOrders.length > 0) {
+              setOpenBranchModal(true)
+            } else
+              toast.error(locale === "en" ? "Choose at least one order from the grid!" : "!اختر طلب واحد علي الاقل")
+          }}
+        >
+          {pathOr("", [locale, "Orders", "selectBranch"], t)}
+        </button>
         <button className="btn-main btn-w rounded-0">
           {pathOr("", [locale, "Orders", "downloadSelectorInvoice"], t)}
         </button>
       </div>
-    </>
+    </Fragment>
   )
 }
 export default Orders
