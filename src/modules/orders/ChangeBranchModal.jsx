@@ -10,7 +10,6 @@ const ChangeBranchModal = ({ openBranchModal, setOpenBranchModal, branchesData, 
   const { locale } = useRouter()
   const changeOrderBranch = async (branchId) => {
     if (branchesData) {
-      console.log(ordersId)
       try {
         await axios.post(`${process.env.REACT_APP_API_URL}/ChangeMultiOrderBranch?branchId=${branchId}`, ordersId, {
           headers: {

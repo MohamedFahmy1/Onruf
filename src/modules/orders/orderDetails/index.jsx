@@ -51,9 +51,8 @@ export const OrderDetails = () => {
         data: { data: data },
       } = await axios.post(`${process.env.REACT_APP_API_URL}/ListOrderStatusHistory?orderId=${id}`)
       setOrderStatusHistory(data)
-      console.log(data)
     }
-    getListOrderStatusHistory()
+    id && getListOrderStatusHistory()
   }, [locale, openModal, id])
 
   useEffect(() => {
@@ -77,7 +76,6 @@ export const OrderDetails = () => {
     orderStatus,
     branchId,
   } = orderData
-  console.log(orderData)
   const totalQuantity = orderProductFullInfoDto
     .map((item) => item.quantity)
     .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
@@ -300,7 +298,7 @@ export const OrderDetails = () => {
           <div className="contint_paner p-0">
             <h5 className="f-b p-4 m-0 fs-4">{pathOr("", [locale, "Orders", "order_log"], t)}</h5>
             <ul className="all-order-record">
-              {orderStatusHistory.map((item) => (
+              {orderStatusHistory?.map((item) => (
                 <li className="item" key={item.statusDate}>
                   <div className="d-flex align-items-center">
                     <Image src={delivery} alt="delivery" />

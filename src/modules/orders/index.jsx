@@ -21,7 +21,6 @@ const Orders = () => {
   const [updateOrders, setUpdateOrders] = useState(false)
   const [selectedOrders, setSelectedOrders] = useState()
   const [selectedRows, setSelectedRows] = useState({})
-  console.log(selectedOrders)
   const [filterdOrders, setFilterdOrders] = useState()
   const [showFilter, setShowFilter] = useState(false)
   const [orders, setOrders] = useState()
@@ -54,6 +53,7 @@ const Orders = () => {
   //   }
   //   fetchShippingOptions()
   // }, [buisnessAccountId, locale])
+
   useEffect(() => {
     const getBranchesData = async () => {
       const {
@@ -100,7 +100,6 @@ const Orders = () => {
       setSelectedRows()
       setSelectedOrders()
       setOrders(data)
-      console.log("orders:", data)
     }
     getOrder()
   }, [orderStatus, updateOrders])
@@ -139,7 +138,6 @@ const Orders = () => {
         updatedOrders = orders.filter((item) => item.paymentTypeId == filter.paymentType)
         updatedOrders = updatedOrders.filter((item) => item.createdAt.slice(0, 4) == filter.year)
       }
-      console.log(updatedOrders)
       setFilterdOrders(updatedOrders)
       setShowFilter(true)
     }
