@@ -491,9 +491,8 @@ const AddProductStepTwo = ({ catId, product }) => {
                             spesfication.subSpecifications.map((subSpecification) => (
                               <option
                                 defaultValue={
-                                  productPayload?.listProductSep?.find(
-                                    ({ headerSpe }) => headerSpe === spesfication?.name,
-                                  )?.valueSpe
+                                  productPayload?.productSep?.find(({ headerSpe }) => headerSpe === spesfication?.name)
+                                    ?.valueSpe
                                 }
                                 key={subSpecification?.id}
                                 value={subSpecification.id}
@@ -508,7 +507,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                           type={"text"}
                           id={index}
                           defaultValue={
-                            productPayload?.listProductSep?.find(({ headerSpe }) => headerSpe === spesfication?.name)
+                            productPayload?.productSep?.find(({ headerSpe }) => headerSpe === spesfication?.name)
                               ?.valueSpe
                           }
                           required={spesfication.isRequired}

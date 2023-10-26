@@ -15,12 +15,12 @@ import email from "../../../assets/images/email (5).svg"
 import Copyright from "../../../public/icons/Copyright_expiry.svg"
 import facebook from "../../../public/icons/facebook.svg"
 import instagram from "../../../public/icons/instagram.svg"
-import twitter from "../../../public/images/twitter.png"
-import home from "../../../public/images/home1.jpg"
 import tiktok from "../../../assets/images/tik-tok.svg"
 import snapchat from "../../../assets/images/snapchat.svg"
 import web from "../../../public/icons/008-maps.svg"
 import Image from "next/image"
+import { PiLinkedinLogoBold, PiTwitterLogoLight, PiYoutubeLogo } from "react-icons/pi"
+import Alerto from "../../../common/Alerto"
 
 const EditBussinessAccount = () => {
   const { locale } = useRouter()
@@ -29,9 +29,12 @@ const EditBussinessAccount = () => {
   const [accountData, setAccountData] = useState()
   const { register, handleSubmit, setValue, reset } = useForm({ defaultValues: accountData })
   const [registeryFile, setRegisteryFile] = useState(accountData?.CommercialRegisterFile)
+  const [minDate, setMinDate] = useState("")
+  const [countries, setCountries] = useState([])
+  const [regions, setRegions] = useState([])
+  const [neighbourhoods, setNeighbourhoods] = useState([])
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
 
-  console.log("accountData", accountData)
   const getAccountData = async () => {
     const {
       data: { data: accountData },
@@ -41,16 +44,57 @@ const EditBussinessAccount = () => {
     setAccountData(accountData)
     reset(accountData)
   }
+  const fetchCountries = async () => {
+    try {
+      const { data: countriesData } = await axios(
+        process.env.NEXT_PUBLIC_API_URL + `/ListCountries?lang=${locale}&currentPage=1`,
+      )
+      const { data: countriesList } = countriesData
+      setCountries(countriesList)
+    } catch (e) {
+      Alerto(e)
+    }
+  }
+  const fetchRegions = async (id) => {
+    try {
+      const { data: data } = await axios(
+        process.env.NEXT_PUBLIC_API_URL + `/ListRegionsByCountryId?countriesIds=${id}&lang=${locale}&currentPage=1`,
+      )
+      const { data: regions } = data
+      setRegions(regions)
+    } catch (e) {
+      Alerto(e)
+    }
+  }
+  const fetchNeighbourhoods = async (id) => {
+    try {
+      const { data: data } = await axios(
+        process.env.NEXT_PUBLIC_API_URL + `/ListNeighborhoodByRegionId?regionsIds=${id}&lang=${locale}&currentPage=1`,
+      )
+      const { data: neighbourhood } = data
+      setNeighbourhoods(neighbourhood)
+    } catch (e) {
+      Alerto(e)
+    }
+  }
 
   useEffect(() => {
     buisnessAccountId && getAccountData()
+    buisnessAccountId && fetchCountries()
   }, [buisnessAccountId])
 
+  // Getting Today Date To Set Minmum Date for Expiary Date Input Element
+  useEffect(() => {
+    const today = new Date()
+    const yyyy = today.getFullYear()
+    const mm = String(today.getMonth() + 1).padStart(2, "0") // January is 0!
+    const dd = String(today.getDate()).padStart(2, "0")
+    setMinDate(`${yyyy}-${mm}-${dd}`)
+  }, [])
   const toggleAccordionPanel = (eKey) => {
     eventKey === eKey ? setEventKey("") : setEventKey(eKey)
   }
   const handleEditBusinessAccount = async ({ commercialRegisterFile, ...values }) => {
-    console.log(values)
     try {
       const { data } = await axios.post(
         process.env.REACT_APP_API_URL + "/AddEditBusinessAccount",
@@ -90,7 +134,10 @@ const EditBussinessAccount = () => {
                   <div className="contint_paner contint_paner_form">
                     <div className="form-content">
                       <div className="form-group">
-                        <label>{pathOr("", [locale, "Settings", "business_type"], t)}</label>
+                        <label>
+                          {pathOr("", [locale, "Settings", "business_type"], t)}
+                          <span className="text-danger">*</span>
+                        </label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
                             <Image src={office} className="img-fluid" alt="" />
@@ -100,10 +147,13 @@ const EditBussinessAccount = () => {
                             {...register("registrationDocumentType", { value: accountData.registrationDocumentType })}
                             onChange={(e) => {
                               setValue("registrationDocumentType", e.target.value)
-                              console.log(e.target.value)
                             }}
+                            required
                             className="form-control form-select"
                           >
+                            <option hidden disabled selected value={0}>
+                              {pathOr("", [locale, "Settings", "chooseType"], t)}
+                            </option>
                             <option value={"CommercialRegister"}>
                               {pathOr("", [locale, "Settings", "commercial_register"], t)}
                             </option>
@@ -114,7 +164,10 @@ const EditBussinessAccount = () => {
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>{pathOr("", [locale, "Settings", "commercial_register_number"], t)}</label>
+                        <label>
+                          {pathOr("", [locale, "Settings", "commercial_register_number"], t)}
+                          <span className="text-danger">*</span>
+                        </label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
                             <Image src={Plate} className="img-fluid" alt="" />
@@ -123,12 +176,16 @@ const EditBussinessAccount = () => {
                             {...register("detailRegistrationNumber", { value: accountData.detailRegistrationNumber })}
                             onChange={(e) => setValue("detailRegistrationNumber", e.target.value)}
                             type="text"
+                            required
                             className="form-control"
                           />
                         </div>
                       </div>
                       <div className="form-group">
-                        <label>{pathOr("", [locale, "Settings", "expiration_date"], t)}</label>
+                        <label htmlFor="expiry">
+                          {pathOr("", [locale, "Settings", "expiration_date"], t)}
+                          <span className="text-danger">*</span>
+                        </label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
                             <Image src={Copyright} className="img-fluid" alt="" />
@@ -137,9 +194,14 @@ const EditBussinessAccount = () => {
                             {...register("registrationNumberExpiryDate", {
                               value: accountData.registrationNumberExpiryDate,
                             })}
-                            onChange={(e) => setValue("registrationNumberExpiryDate", e.target.value)}
-                            type="text"
+                            onChange={(e) => {
+                              setValue("registrationNumberExpiryDate", e.target.value)
+                            }}
+                            type="date"
+                            id="expiry"
+                            min={minDate}
                             className="form-control"
+                            required
                           />
                         </div>
                       </div>
@@ -161,12 +223,16 @@ const EditBussinessAccount = () => {
                       </div>
                       <div className="form-group">
                         <div className="form-control input_file">
-                          <span>{pathOr("", [locale, "Settings", "attach_commercial_register_image"], t)}</span>
+                          <span>
+                            {pathOr("", [locale, "Settings", "attach_commercial_register_image"], t)}
+                            <span className="text-danger">*</span>
+                          </span>
                           <input
                             onChange={(e) => {
                               setRegisteryFile(e.target.files[0])
                             }}
                             type="file"
+                            required
                           />
                         </div>
                       </div>
@@ -196,12 +262,15 @@ const EditBussinessAccount = () => {
                     <div className="form-content">
                       <div className="form-group">
                         <div className="upload_Image">
-                          {console.log(businessAccountImage)}
                           <img
-                            src={businessAccountImage ? URL.createObjectURL(businessAccountImage) : home.src}
+                            src={
+                              businessAccountImage
+                                ? URL.createObjectURL(businessAccountImage)
+                                : accountData.businessAccountImage
+                            }
                             alt="logo"
                           />
-                          <div className="btn_">
+                          <div className="btn_" style={{ minWidth: "130px" }}>
                             {pathOr("", [locale, "Settings", "change_logo"], t)}
                             <input
                               onChange={(e) => {
@@ -210,6 +279,20 @@ const EditBussinessAccount = () => {
                               type="file"
                             />
                           </div>
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label> {pathOr("", [locale, "Settings", "UserName"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={web.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("businessAccountUserName", { value: accountData.businessAccountUserName })}
+                            type="text"
+                            readOnly
+                            className="form-control"
+                          />
                         </div>
                       </div>
                       <div className="form-group">
@@ -230,51 +313,6 @@ const EditBussinessAccount = () => {
                           />
                         </div>
                       </div>
-                      {/*
-                      <div className="form-group">
-                        <label>{pathOr("", [locale, "Settings", "store_name_ar"], t)}</label>
-                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
-                          <span className="input-group-text">
-                            <img src={office.src} className="img-fluid" alt="" />
-                          </span>
-                          <input
-                            {...register("businessAccountNameAr", { value: accountData.businessAccountNameAr })}
-                            onChange={(e) => setValue("businessAccountNameAr", e.target.value)}
-                            type="text"
-                            className="form-control"
-                          />
-                        </div>
-                      </div>
-                            
-                      <div className="form-group">
-                        <label>{pathOr("", [locale, "Settings", "company_name"], t)}</label>
-                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
-                          <span className="input-group-text">
-                            <img src={office.src} className="img-fluid" alt="" />
-                          </span>
-                          <input
-                            {...register("companyNameEn", { value: accountData.companyNameEn })}
-                            onChange={(e) => setValue("companyNameEn", e.target.value)}
-                            type="text"
-                            className="form-control"
-                          />
-                        </div>
-                      </div>*/}
-                      {/*
-                      <div className="form-group">
-                        <label>{pathOr("", [locale, "Settings", "company_name_ar"], t)}</label>
-                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
-                          <span className="input-group-text">
-                            <img src={office.src} className="img-fluid" alt="" />
-                          </span>
-                          <input
-                            {...register("companyNameAr", { value: accountData.companyNameAr })}
-                            onChange={(e) => setValue("companyNameAr", e.target.value)}
-                            type="text"
-                            className="form-control"
-                          />
-                        </div>
-                      </div> */}
                       <div className="form-group">
                         <label>{pathOr("", [locale, "Settings", "email"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
@@ -306,20 +344,6 @@ const EditBussinessAccount = () => {
                         </div>
                       </div>
                       <div className="form-group">
-                        <label> {pathOr("", [locale, "Settings", "UserName"], t)}</label>
-                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
-                          <span className="input-group-text">
-                            <img src={web.src} className="img-fluid" alt="" />
-                          </span>
-                          <input
-                            {...register("businessAccountUserName", { value: accountData.businessAccountUserName })}
-                            onChange={(e) => setValue("businessAccountUserName", e.target.value)}
-                            type="text"
-                            className="form-control"
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group">
                         <label>{pathOr("", [locale, "Settings", "main_store_website"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
@@ -330,8 +354,161 @@ const EditBussinessAccount = () => {
                             onChange={(e) => setValue("businessAccountWebsite", e.target.value)}
                             type="text"
                             className="form-control"
-                            placeholder="تحديد موقع الشركة"
+                            placeholder="ex: www.onruf.com"
                           />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "address"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <Image src={office} className="img-fluid" alt="" />
+                          </span>
+                          <select
+                            // {...register("country", { value: accountData.country })}
+                            onChange={(e) => {
+                              const selectedOption = countries.find((item) => item.id === +e.target.value)
+                              if (selectedOption) {
+                                setValue("country", selectedOption.name)
+                                fetchRegions(selectedOption.id)
+                              }
+                            }}
+                            className="form-control form-select"
+                          >
+                            <option hidden disabled selected value={0}>
+                              {pathOr("", [locale, "Settings", "selectCountry"], t)}
+                            </option>
+                            {countries.map((item) => (
+                              <option value={item.id} key={item.id}>
+                                {item.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <Image src={office} className="img-fluid" alt="" />
+                          </span>
+                          <select
+                            // {...register("region", { value: accountData.region })}
+                            onChange={(e) => {
+                              const selectedOption = regions.find((item) => item.id === +e.target.value)
+                              if (selectedOption) {
+                                setValue("region", selectedOption.name)
+                                fetchNeighbourhoods(selectedOption.id)
+                              }
+                            }}
+                            className="form-control form-select"
+                          >
+                            <option hidden disabled selected value={0}>
+                              {pathOr("", [locale, "Settings", "selectRegion"], t)}
+                            </option>
+                            {regions.map((item) => (
+                              <option value={item.id} key={item.id}>
+                                {item.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <Image src={office} className="img-fluid" alt="" />
+                          </span>
+                          <select
+                            // {...register("neighborhood", { value: accountData.neighborhood })}
+                            onChange={(e) => {
+                              const selectedOption = neighbourhoods.find((item) => item.id === e.target.value)
+                              if (selectedOption) {
+                                setValue("neighborhood", selectedOption.name)
+                              }
+                            }}
+                            className="form-control form-select"
+                          >
+                            <option hidden disabled selected value={0}>
+                              {pathOr("", [locale, "Settings", "selectNeighbourhood"], t)}
+                            </option>
+                            {neighbourhoods.map((item) => (
+                              <option value={item.id} key={item.id}>
+                                {item.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "district"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={web.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("district", { value: accountData.district })}
+                            onChange={(e) => setValue("district", e.target.value)}
+                            type="text"
+                            className="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "street"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={web.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("street", { value: accountData.street })}
+                            onChange={(e) => setValue("street", e.target.value)}
+                            type="text"
+                            className="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "zip"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={web.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("zipCode", { value: accountData.zipCode })}
+                            onChange={(e) => setValue("zipCode", e.target.value)}
+                            type="text"
+                            className="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "maroof"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={web.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("maroof", { value: accountData.maroof })}
+                            onChange={(e) => setValue("maroof", e.target.value)}
+                            type="text"
+                            className="form-control"
+                          />
+                        </div>
+                      </div>
+                      {console.log(accountData)}
+                      <div className="form-group">
+                        <div className="form-check form-switch p-0 m-0">
+                          <span className="input-group-text justify-content-between">
+                            <label className="fs-5 f-b">{pathOr("", [locale, "Settings", "25years"], t)}</label>
+                            <input
+                              {...register("trade15Years", { value: accountData.trade15Years })}
+                              className="form-check-input m-2"
+                              onChange={(e) => setValue("trade15Years", e.target.checked)}
+                              type="checkbox"
+                              id="flexSwitchCheckChecked"
+                              role="switch"
+                            />
+                          </span>
                         </div>
                       </div>
                       <div className="form-group text-center">
@@ -404,7 +581,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "twitter"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={twitter.src} className="img-fluid" alt="" />
+                            <PiTwitterLogoLight className="img-fluid h-60" />
                           </span>
                           <input
                             {...register("businessAccountTwitter", { value: accountData.businessAccountTwitter })}
@@ -418,7 +595,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "linkedin"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={instagram.src} className="img-fluid" alt="" />
+                            <PiLinkedinLogoBold className="img-fluid h-60" />
                           </span>
                           <input
                             {...register("businessAccountLinkedIn", { value: accountData.businessAccountLinkedIn })}
@@ -432,7 +609,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "youtube"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={instagram.src} className="img-fluid" alt="" />
+                            <PiYoutubeLogo className="img-fluid h-60" />
                           </span>
                           <input
                             {...register("businessAccountYouTube", { value: accountData.businessAccountYouTube })}
@@ -476,5 +653,4 @@ const EditBussinessAccount = () => {
     </div>
   )
 }
-
 export default EditBussinessAccount

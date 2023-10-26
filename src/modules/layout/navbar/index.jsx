@@ -33,8 +33,9 @@ const Navbar = () => {
   }, [token, providerId, buisnessAccountId])
 
   const getAllBuisnessAccounts = async (id) => {
-    const provide = Cookies.get("id") || "f0cfc4ee-e5f9-424d-aba4-46f38df9b3b5"
-    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/GatAllBusinessAccounts?Provider-Id=${provide}`)
+    const { data } = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/GatAllBusinessAccounts?Provider-Id=${providerId}`,
+    )
     setBusinessAccountList(data.data)
   }
 
@@ -43,7 +44,7 @@ const Navbar = () => {
     if (buisnessAccountId) {
       const account = businessAccountList.filter((buisness) => buisness.id == buisnessAccountId)
       setUserName(account[0]?.businessAccountName)
-      setUserImage(account[0]?.businessAccountImage)
+      setUserImage(`http://onrufwebsite2-001-site1.btempurl.com/${account[0]?.businessAccountImage}`)
     }
   }
 
@@ -62,7 +63,6 @@ const Navbar = () => {
   const onClick = () => {
     setToggleBusinessAccountList(!toggleBusinessAccountList)
   }
-
   return (
     <header id="header">
       <div className="d-flex align-items-center flex-grow-1">
@@ -83,7 +83,7 @@ const Navbar = () => {
       <div className="top_linko">
         <div className="change_acc">
           <div className="d-flex align-items-center">
-            <img src={userImg} />
+            <img src={userImage} />
             <div>
               <h6 className="f-b m-0">{userName}</h6>
               <button className="main-color" onClick={() => onClick()}>

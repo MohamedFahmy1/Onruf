@@ -24,7 +24,14 @@ const Settings = () => {
         currentPage: 1,
       },
     })
+    console.log(data)
     setBankTransfer(data)
+  }
+  const fetchUserWalletState = async () => {
+    const {
+      data: { data: userWalletState },
+    } = await axios.get(process.env.REACT_APP_API_URL + "/GetUserWalletTransactions")
+    setUserWalletState(userWalletState)
   }
 
   const fetchAccountData = async () => {
@@ -36,13 +43,6 @@ const Settings = () => {
     console.log(accountData)
     setAccountData(accountData)
   }
-  const fetchUserWalletState = async () => {
-    const {
-      data: { data: userWalletState },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetUserWalletTransactions")
-    setUserWalletState(userWalletState)
-  }
-
   useEffect(() => {
     fetchBankTransfer()
     fetchUserWalletState()

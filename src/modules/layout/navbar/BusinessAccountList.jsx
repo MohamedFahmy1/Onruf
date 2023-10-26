@@ -4,9 +4,15 @@ import { userImg } from "../../../constants"
 import Cookies from "js-cookie"
 import { useRouter } from "next/router"
 
-export const BusinessAccountList = ({ businessAccountList, toggleBusinessAccountList, setToggleBusinessAccountList,setUserName, setUserImage }) => {
+export const BusinessAccountList = ({
+  businessAccountList,
+  toggleBusinessAccountList,
+  setToggleBusinessAccountList,
+  setUserName,
+  setUserImage,
+}) => {
   const router = useRouter()
-  const setAccount = (businessAccountImage , businessAccountName , businessId , ProviderId) => {
+  const setAccount = (businessAccountImage, businessAccountName, businessId, ProviderId) => {
     setUserName(businessAccountName)
     setUserImage(businessAccountImage)
     Cookies.remove("businessId")
@@ -17,9 +23,6 @@ export const BusinessAccountList = ({ businessAccountList, toggleBusinessAccount
     router.push("/")
   }
 
-  
-
-
   return (
     <>
       <ul className={`dropdown-menu ${toggleBusinessAccountList ? "show" : ""}`} aria-labelledby="dropdownMenuButton1">
@@ -27,19 +30,29 @@ export const BusinessAccountList = ({ businessAccountList, toggleBusinessAccount
           businessAccountList.map((account) => {
             return (
               <div key={account.id}>
-                <li 
-                 
-                >
+                <li>
                   <Link locale="ar" href={"/"}>
-                    <a className="dropdown-item"  onClick={()=>setAccount(
-                    account.businessAccountImage,
-                    account.businessAccountName,
-                    account.id,
-                    account.userId,
-                  )}>
+                    <a
+                      className="dropdown-item"
+                      onClick={() =>
+                        setAccount(
+                          account.businessAccountImage,
+                          account.businessAccountName,
+                          account.id,
+                          account.userId,
+                        )
+                      }
+                    >
                       <span>
                         {" "}
-                        <img src={account.businessAccountImage} />
+                        {console.log(account.businessAccountImage)}
+                        <img
+                          src={
+                            account.businessAccountImage === null || account.businessAccountImage === ""
+                              ? userImg
+                              : `http://onrufwebsite2-001-site1.btempurl.com/${account.businessAccountImage}`
+                          }
+                        />
                       </span>{" "}
                       <span className="icon">{account.businessAccountName}</span>
                     </a>

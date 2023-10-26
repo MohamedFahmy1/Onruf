@@ -32,6 +32,7 @@ const UserDetails = () => {
     const {
       data: { data: userDetails },
     } = await axios.get(`${process.env.REACT_APP_API_URL}/ClientDetails?clientId=${id}&lang=${locale}`)
+    console.log(userDetails)
     setUser(userDetails)
   }
 
@@ -130,7 +131,14 @@ const UserDetails = () => {
           <div className="contint_paner">
             <div className="detalis-customer">
               <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
-                <img src={user?.image} className="img" style={{ borderRadius: "50%" }} width={50} height={50} />
+                {console.log(`${process.env.NEXT_PUBLIC_URL}/${user?.clientImage}`)}
+                <img
+                  src={`${process.env.NEXT_PUBLIC_URL}/${user?.clientImage}`}
+                  className="img"
+                  style={{ borderRadius: "50%" }}
+                  width={50}
+                  height={50}
+                />
                 <ul className="d-flex gap-1 contuct">
                   <li>
                     <a href="">

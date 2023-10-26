@@ -137,8 +137,8 @@ const UsersFolders = () => {
                           </div>
                           <div className="avatars-stack">
                             {folder.fileUser?.slice(0, 5).map((user, index) => (
-                              <div className="avatar" key={index}>
-                                <img src={user?.image} />
+                              <div className="avatar " key={index}>
+                                <img src={user?.image} className="rounded-circle" />
                               </div>
                             ))}
                             {folder?.fileUser?.length - 5 > 0 && (
