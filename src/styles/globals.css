@@ -2036,3 +2036,14 @@ body::-webkit-scrollbar-thumb:hover,
   height: 80px;
   border-radius: 12px;
 }
+/* Settings Wallet */
+.transaction-type {
+  border: 1px solid var(--main);
+  border-radius: 20px;
+  width: fit-content;
+  padding: 10px;
+}
+.transaction-type label,
+.transaction-type input {
+  cursor: pointer;
+}

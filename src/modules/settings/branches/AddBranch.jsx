@@ -5,45 +5,62 @@ import axios from "axios"
 import GoogleMaps from "../../../common/GoogleMaps"
 import Link from "next/link"
 import { toast } from "react-toastify"
-
+import { pathOr } from "ramda"
+import t from "../../../translations.json"
 const AddBranch = () => {
   const [neighbourhoods, setNeighbourhoods] = useState([])
   const [regions, setRegions] = useState([])
   const [selectedBranch, setSelectedBranch] = useState({})
-  const [countries , setCountries] = useState()
+  const [countries, setCountries] = useState()
 
   const id = +Router?.router?.state?.query?.id
 
-  const getCountries =async () => {
-    const { data: { data: countries } } = await axios(process.env.REACT_APP_API_URL + `/ListCountries?lang=${locale}`)
+  const getCountries = async () => {
+    const {
+      data: { data: countries },
+    } = await axios(process.env.REACT_APP_API_URL + `/ListCountries?lang=${locale}`)
     setCountries(countries)
   }
 
   useEffect(() => {
     getCountries()
-  },[])
+  }, [])
 
-  const { register, handleSubmit, formState: { errors }, watch, reset } = useForm()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+    reset,
+  } = useForm()
   const { locale } = useRouter()
 
   const getBranchById = async () => {
     try {
-      const { data: { data } } = await axios(`${process.env.REACT_APP_API_URL}/GetBrancheById?id=${id}&lang=${locale}`)
-      const { data: { data: neighborhoods } } = await axios(`${process.env.REACT_APP_API_URL}/ListNeighborhoodByRegionId?id=${data?.region?.id}&currentPage=1&lang=${locale}`)
-      const { data: { data: regions } } = await axios(`${process.env.REACT_APP_API_URL}/ListRegionsByCountryId?id=${data?.country?.id}&currentPage=1&lang=${locale}`)
+      const {
+        data: { data },
+      } = await axios(`${process.env.REACT_APP_API_URL}/GetBrancheById?id=${id}&lang=${locale}`)
+      const {
+        data: { data: neighborhoods },
+      } = await axios(
+        `${process.env.REACT_APP_API_URL}/ListNeighborhoodByRegionId?id=${data?.region?.id}&currentPage=1&lang=${locale}`,
+      )
+      const {
+        data: { data: regions },
+      } = await axios(
+        `${process.env.REACT_APP_API_URL}/ListRegionsByCountryId?id=${data?.country?.id}&currentPage=1&lang=${locale}`,
+      )
 
       setNeighbourhoods(neighborhoods)
       setRegions(regions)
       setSelectedBranch(data)
-  
-      
+
       reset({
         ...data,
         countryId: data?.country?.id,
         neighborhoodId: data?.neighborhood?.id,
         regionId: data?.region?.id,
       })
-      
     } catch (error) {
       console.error(error)
     }
@@ -64,26 +81,34 @@ const AddBranch = () => {
     })
   }, [selectedBranch])
 
-
-  const createBranch = async ({ neighborhoodId, countryId, regionId, name,isActive,streetName,regionCode, ...values }) => {
-    
-
+  const createBranch = async ({
+    neighborhoodId,
+    countryId,
+    regionId,
+    name,
+    isActive,
+    streetName,
+    regionCode,
+    ...values
+  }) => {
     try {
-      const values = { 
-        id: id , 
+      const values = {
+        id: id,
         isActive: isActive,
         neighborhoodId: +neighborhoodId,
         countryId: +countryId,
-        regionId: +regionId, 
-        nameAr: name, 
-        nameEn: name, 
-        location: streetName, 
-        regionCode: regionCode, 
-        lng: 'Test', lat: 'Test', 
-        streetName: 'street Name' }
-      const formData = new FormData();
+        regionId: +regionId,
+        nameAr: name,
+        nameEn: name,
+        location: streetName,
+        regionCode: regionCode,
+        lng: "Test",
+        lat: "Test",
+        streetName: "street Name",
+      }
+      const formData = new FormData()
       for (const key in values) {
-          formData.append(key,values[key])
+        formData.append(key, values[key])
       }
       if (id) {
         await axios.put(process.env.REACT_APP_API_URL + "/EditBranche", formData)
@@ -101,7 +126,9 @@ const AddBranch = () => {
 
   const handleFetchNeighbourhoodsOrRegions = async (url, id, setState) => {
     try {
-      const { data: { data } } = await axios(`${process.env.REACT_APP_API_URL}/${url}?id=${id}&currentPage=1&lang=${locale}`)
+      const {
+        data: { data },
+      } = await axios(`${process.env.REACT_APP_API_URL}/${url}?id=${id}&currentPage=1&lang=${locale}`)
       setState(data)
     } catch (error) {
       console.log({ error })
@@ -112,20 +139,22 @@ const AddBranch = () => {
   useEffect(() => {
     const countryId = watch().countryId
     if (countryId) {
-   
       handleFetchNeighbourhoodsOrRegions("ListNeighborhoodByRegionId", countryId, setNeighbourhoods)
       handleFetchNeighbourhoodsOrRegions("ListRegionsByCountryId", countryId, setRegions)
-    
     }
-  }, [watch('countryId')])
+  }, [watch("countryId")])
 
   return (
     <div className="body-content">
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-          <h6 className="f-b m-0">{!id ? "اضافة" : "تعديل"} فرع</h6>
+          <h6 className="f-b m-0">
+            {" "}
+            {!id ? (locale === "en" ? "Add" : "اضافة") : locale === "en" ? "Edit" : "تعديل"}{" "}
+            {pathOr("", [locale, "Branch", "branch"], t)}
+          </h6>
           <Link href="/settings/branches">
-            <a className="btn-main btn-main-o">الغاء</a>
+            <a className="btn-main btn-main-o">{pathOr("", [locale, "Branch", "cancel"], t)}</a>
           </Link>
         </div>
         <div className="contint_paner">
@@ -135,12 +164,12 @@ const AddBranch = () => {
                 <GoogleMaps isMarkerShown />
               </div>
               <div className="form-group">
-                <label>اسم الفرع</label>
+                <label>{pathOr("", [locale, "Branch", "branchName"], t)}</label>
                 <input
                   {...register("name", { required: "This field is required" })}
                   type="text"
                   className="form-control"
-                  placeholder="اسم الفرع"
+                  placeholder={pathOr("", [locale, "Branch", "branchName"], t)}
                 />
                 {errors?.name && errors?.name?.message}
               </div>
@@ -152,16 +181,20 @@ const AddBranch = () => {
                         <i className="fas fa-flag font-18"></i>
                       </span>
                       <div className="po_R flex-grow-1">
-                        <label>البلد</label>
-                        <select className="form-control form-select" {...register("countryId", { required: "This field is required" })}>
-                          <option value="">Select</option>
-                          {countries && countries
-                            .filter(({ isActive }) => isActive)
-                            .map(({ name, id }) => (
-                              <option key={id} value={id}>
-                                {name}
-                              </option>
-                            ))}
+                        <label>{pathOr("", [locale, "Branch", "country"], t)}</label>
+                        <select
+                          className="form-control form-select"
+                          {...register("countryId", { required: "This field is required" })}
+                        >
+                          <option value="">{pathOr("", [locale, "Branch", "select"], t)}</option>
+                          {countries &&
+                            countries
+                              .filter(({ isActive }) => isActive)
+                              .map(({ name, id }) => (
+                                <option key={id} value={id}>
+                                  {name}
+                                </option>
+                              ))}
                         </select>
                         {errors?.countryId && errors?.countryId?.message}
                       </div>
@@ -174,12 +207,12 @@ const AddBranch = () => {
                         <i className="fas fa-flag font-18"></i>
                       </span>
                       <div className="po_R flex-grow-1">
-                        <label>المحافظة</label>
+                        <label>{pathOr("", [locale, "Branch", "region"], t)}</label>
                         <select
                           className="form-control form-select"
                           {...register("neighborhoodId", { required: "This field is required" })}
                         >
-                          <option value="">Select</option>
+                          <option value="">{pathOr("", [locale, "Branch", "select"], t)}</option>
                           {neighbourhoods
                             .filter(({ isActive }) => isActive)
                             .map(({ name, id }) => (
@@ -199,12 +232,12 @@ const AddBranch = () => {
                         <i className="fas fa-flag font-18"></i>
                       </span>
                       <div className="po_R flex-grow-1">
-                        <label>المنطقة</label>
+                        <label>{pathOr("", [locale, "Branch", "neighbourhood"], t)}</label>
                         <select
                           className="form-control form-select"
                           {...register("regionId", { required: "This field is required" })}
                         >
-                          <option value="">Select</option>
+                          <option value="">{pathOr("", [locale, "Branch", "select"], t)}</option>
                           {regions
                             .filter(({ isActive }) => isActive)
                             .map(({ name, id }) => (
@@ -222,12 +255,12 @@ const AddBranch = () => {
                 <div className="col-md-6">
                   <div className="form-group">
                     <div className="po_R">
-                      <label>اسم الحي</label>
+                      <label>{pathOr("", [locale, "Branch", "neighbourhoodName"], t)}</label>
                       <input
                         type="text"
                         {...register("location", { required: "This field is required" })}
                         className="form-control"
-                        placeholder="اكتب عنوان الفرعي المنتج"
+                        // placeholder="اكتب عنوان الفرعي المنتج"
                       />
                     </div>
                     {errors?.location && errors?.location?.message}
@@ -235,24 +268,27 @@ const AddBranch = () => {
 
                   <div className="form-group">
                     <div className="po_R">
-                      <label>اسم الشارع</label>
+                      <label>{pathOr("", [locale, "Branch", "streetName"], t)}</label>
                       <input
                         type="text"
                         {...register("streetName", { required: "This field is required" })}
                         className="form-control"
-                        placeholder="اكتب عنوان الفرعي المنتج"
+                        // placeholder="اكتب عنوان الفرعي المنتج"
                       />
                     </div>
                     {errors?.streetName && errors?.streetName?.message}
                   </div>
                   <div className="form-group">
                     <div className="po_R">
-                      <label>كود المحافظة</label>
+                      <label>{pathOr("", [locale, "Branch", "regionCode"], t)}</label>
                       <input
                         type="text"
-                        {...register("regionCode", { required: "This field is required", pattern: { value: "/^-?d+.?d*$/", messgae: "Invalid value" } })}
+                        {...register("regionCode", {
+                          required: "This field is required",
+                          pattern: { value: "/^-?d+.?d*$/", messgae: "Invalid value" },
+                        })}
                         className="form-control"
-                        placeholder="اكتب عنوان الفرعي المنتج"
+                        // placeholder="اكتب عنوان الفرعي المنتج"
                       />
                     </div>
                     {errors.regionCode && <p>{errors?.regionCode?.messgae}</p>}
@@ -260,7 +296,8 @@ const AddBranch = () => {
                 </div>
               </div>
               <button type="submit" className="btn-main mt-3">
-                {!id ? "اضافة" : "تعديل"} الفرع
+                {!id ? (locale === "en" ? "Add" : "اضافة") : locale === "en" ? "Edit" : "تعديل"}{" "}
+                {pathOr("", [locale, "Branch", "branch"], t)}
               </button>
             </form>
           </div>

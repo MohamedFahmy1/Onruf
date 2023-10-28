@@ -103,30 +103,49 @@ const Wallet = () => {
                     </div>
                   </div>
   </div>*/}
-                <ul className="swich_larg">
-                  <li>
+                <ul className="swich_larg d-flex justify-content-center gap-5">
+                  <li
+                    className="transaction-type"
+                    style={{
+                      backgroundColor: transType === "In" ? "var(--main)" : undefined,
+                      color: transType === "In" ? "white" : undefined,
+                    }}
+                  >
                     <input
                       type="radio"
                       name="account"
+                      id="in"
                       checked={transType === "In"}
                       onClick={() => {
                         setTransType("In")
                       }}
                     />
                     <span className="back" />
-                    <span>{pathOr("", [locale, "Wallet", "topUp"], t)}</span>
+                    <label htmlFor="in" className="mx-2">
+                      {pathOr("", [locale, "Wallet", "topUp"], t)}
+                    </label>
                   </li>
-                  <li>
+                  <li
+                    className="transaction-type"
+                    style={{
+                      backgroundColor: transType === "Out" ? "var(--main)" : undefined,
+                      color: transType === "Out" ? "white" : undefined,
+                    }}
+                  >
                     <input
                       checked={transType === "Out"}
                       type="radio"
                       name="account"
+                      id="out"
                       onClick={() => {
                         setTransType("Out")
                       }}
                     />
                     <span className="back" />
-                    <span>{pathOr("", [locale, "Wallet", "withdraw"], t)}</span>
+                    <label htmlFor="out" className="mx-2">
+                      {" "}
+                      {pathOr("", [locale, "Wallet", "withdraw"], t)}
+                    </label>
                   </li>
                 </ul>
                 <div className="my-2 po_R">
@@ -148,7 +167,9 @@ const Wallet = () => {
                 </div>
                 <p className="errorMsg">{handleFormErrors(errors, "TransactionAmount")}</p>
                 <button className="btn-main d-block w-100" type="submit">
-                  {pathOr("", [locale, "Wallet", "topUp"], t)}
+                  {transType === "In"
+                    ? pathOr("", [locale, "Wallet", "topUp"], t)
+                    : pathOr("", [locale, "Wallet", "withdraw"], t)}
                 </button>
               </form>
             </Col>
@@ -158,16 +179,20 @@ const Wallet = () => {
             {walletTransactionslist?.map((transaction) => (
               <div className="item_Processes" key={transaction.id}>
                 <div className="f-b">
-                  <div>#No: {transaction.id}</div>
+                  <div>
+                    {pathOr("", [locale, "Wallet", "no"], t)} {transaction.id}
+                  </div>
                   <div>
                     {pathOr("", [locale, "Wallet", "process"], t)} : {transaction.transactionAmount}
                   </div>
-                  <div className="gray-color">Transaction Type: {transaction.transactionType}</div>
+                  <div className="gray-color">
+                    {pathOr("", [locale, "Wallet", "transaction_type"], t)} {transaction.transactionType}
+                  </div>
                   <div className="gray-color">{formatDate(transaction.transactionDate)}</div>
                 </div>
                 <h5 className="m-0 main-color f-b text-center">
                   <span className="d-block">{transaction.totalWalletBalance}</span>
-                  SAR
+                  {pathOr("", [locale, "Products", "currency"], t)}
                 </h5>
               </div>
             ))}

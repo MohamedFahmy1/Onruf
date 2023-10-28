@@ -212,9 +212,9 @@
       "expiration_date": "تاريخ الانتهاء",
       "tax_number": "ضريبة القيمة المضافة",
       "attach_commercial_register_image": "ارفع الشهادات",
-      "store_name": "اسم المتجر",
+      "store_name": "اسم المتجر بالانجليزي",
       "change_logo": "تغيير صورة الحساب",
-      "store_name_ar": "اسم المتجر Ar",
+      "store_name_ar": "اسم المتجر بالعربي",
       "company_name": "اسم الشركه",
       "company_name_ar": "اسم الشركه Ar",
       "email": "البريد الالكترونى",
@@ -238,7 +238,11 @@
       "twitter": "تويتر",
       "commercial_register": "السجل التجاري",
       "freelance_certificate": "شهادة العمل الحر",
-      "25years": "تجارة 15 سنة"
+      "25years": "تجارة 15 سنة",
+      "active": "مفعل",
+      "showStore": "إظهار المتجر",
+      "cancelMember": "الغاء الاشتراك",
+      "deleteAccount": "مسح الحساب"
     },
     "Employee": {
       "filterByRole": "فلتره حسب الصلاحيه",
@@ -308,7 +312,9 @@
       "topUp": "شحن الرصيد",
       "withdraw": "سحب من الرصيد",
       "latestProcesses": "اخر العمليات",
-      "process": "عمليه"
+      "process": "عمليه",
+      "transaction_type": "نوع العملية:",
+      "no": "#رقم:"
     },
     "Orders": {
       "orders": "الطلبات",
@@ -404,20 +410,27 @@
       "lastProcesses": "اخر العمليات",
       "send": "تحويل",
       "for_every_new_store": "علي كل متجر جديد",
-      "and_get": "واحصل علي"
+      "and_get": "واحصل علي",
+      "points": "نقاط"
     },
     "Branch": {
       "branches": "الفروع",
+      "branch": "فرع",
       "addBranch": "اضافه فرع",
       "activeBranches": "فروع نشطه",
       "inActiveBranches": "فروع غير نشطه",
       "yes": "نعم",
       "no": "لا",
       "branchName": "اسم الفرع",
+      "neighbourhoodName": "اسم الحي",
+      "streetName": "اسم الشارع",
       "country": "البلد",
       "neighbourhood": "المنطقه",
-      "regionCode": "كود المحافظه",
-      "actions": "اجراءات"
+      "regionCode": "كود المحافظة",
+      "region": " المحافظة",
+      "actions": "اجراءات",
+      "cancel": "الغاء",
+      "select": "اختر"
     },
     "ContactUs": {
       "welcome": "نجن سعيدون بل تواصل معك",
@@ -449,6 +462,24 @@
       "facebook": "فيسبوك",
       "instagram": "انستجرام",
       "save": "حفظ"
+    },
+    "BankAccounts": {
+      "creditCard": "فيزا / ماستركارد",
+      "mada": "مادا",
+      "ChooseTheBankAccount": "اختر الحساب البنكي الذي تريد التحويل له",
+      "bankAccount": "حساب بنكي",
+      "AccountNumber": "رقم الحساب",
+      "ibn": "الايبان",
+      "Holder's": "اسم صاحب الحساب",
+      "BankName": "اسم البنك",
+      "addNewBank": "اضف حساب جديد",
+      "done": "تم",
+      "swift": "سويفت كود",
+      "expiryDate": "تاريخ الانتهاء",
+      "monthExpiryDate": "تاريخ الانتهاء",
+      "yearExpiryDate": "تاريخ الانتهاء",
+      "saveLater": "احفظ للاستخدام لاحقا",
+      "accountType": "نوع الحساب"
     }
   },
   "en": {
@@ -662,9 +693,9 @@
       "expiration_date": "Expiry Date",
       "tax_number": "VAT Number",
       "attach_commercial_register_image": "Upload All Business Certificates",
-      "store_name": "Store Name",
+      "store_name": "Store Name English",
       "change_logo": "Change Logo",
-      "store_name_ar": "Store Name Ar",
+      "store_name_ar": "Store Name Arabic",
       "company_name": "Company Name",
       "company_name_ar": "Company Name Ar",
       "email": "Email",
@@ -688,7 +719,11 @@
       "twitter": "Twitter",
       "commercial_register": "Commercial Register",
       "freelance_certificate": "Freelance Certificate",
-      "25years": "Trade 15 years of age"
+      "25years": "Trade 15 years of age",
+      "active": "Active",
+      "showStore": "Show Store",
+      "cancelMember": "Cancel Membership",
+      "deleteAccount": "Delete Account"
     },
     "Employee": {
       "filterByRole": "Filter By Role",
@@ -759,7 +794,9 @@
       "topUp": "Top Up Ballance",
       "withdraw": "Withdraw",
       "latestProcesses": "Latest Processes",
-      "process": "Process"
+      "process": "Process",
+      "transaction_type": "Transaction Type:",
+      "no": "#No:"
     },
     "Orders": {
       "orders": "Orders",
@@ -856,10 +893,12 @@
       "lastProcesses": "Latest Processes",
       "send": "Transfer",
       "for_every_new_store": "For every new store",
-      "and_get": "And get"
+      "and_get": "And get",
+      "points": "Points"
     },
     "Branch": {
       "branches": "Branches",
+      "branch": "Branch",
       "addBranch": "Add Branch",
       "activeBranches": "Active Branches",
       "inActiveBranches": "In Active Branches",
@@ -868,8 +907,13 @@
       "branchName": "Branch Name",
       "country": "Country",
       "neighbourhood": "Neighborhood",
+      "neighbourhoodName": "Neighborhood Name",
+      "streetName": "Street Name",
       "regionCode": "Region Code",
-      "actions": "Actions"
+      "region": "Region",
+      "actions": "Actions",
+      "cancel": "Cancel",
+      "select": "Select"
     },
     "ContactUs": {
       "welcome": "We are please to contact you",
@@ -901,6 +945,24 @@
       "facebook": "Facebook",
       "instagram": "Instagram",
       "save": "Save"
+    },
+    "BankAccounts": {
+      "creditCard": "Credit Card",
+      "mada": "Mada",
+      "ChooseTheBankAccount": "Choose The Bank Account",
+      "bankAccount": "Bank Account",
+      "AccountNumber": "Account Number",
+      "ibn": "Bank Account IBN Number",
+      "Holder's": "Bank Holder's Name",
+      "BankName": "Bank Name",
+      "addNewBank": "Add New Bank Account",
+      "done": "Done",
+      "swift": "Bank Swift Code",
+      "expiryDate": "Expiry Date",
+      "monthExpiryDate": "Month Expiry Date",
+      "yearExpiryDate": "Year Expiry Date",
+      "saveLater": "Save For Later Use",
+      "accountType": "Account Type"
     }
   }
 }

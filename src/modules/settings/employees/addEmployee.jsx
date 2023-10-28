@@ -44,13 +44,12 @@ const AddEmployee = () => {
 
   // Submitting Employee To Endpoint
   const handleAddEmployee = async ({ userName, mobileNumber, email, branchId }) => {
+    // const formData = new FormData();
+    // formData.append("userName",userName);
+    // formData.append("mobileNumber",mobileNumber);
+    // formData.append("email",email);
+    // formData.append("branchId",branchId);
 
-    const formData = new FormData();
-    formData.append("userName",userName);
-    formData.append("mobileNumber",mobileNumber);
-    formData.append("email",email);
-    formData.append("branchId",branchId);
-    
     try {
       const result = await axios.post(
         process.env.REACT_APP_API_URL + "/AddEditBusinessAccountEmployee",

@@ -117,6 +117,7 @@ const EditEmployee = () => {
                   type="text"
                   className="form-control"
                   placeholder={pathOr("", [locale, "Users", "username"], t)}
+                  readOnly
                 />
                 {handleFormErrors("userName")}
               </div>
@@ -131,6 +132,7 @@ const EditEmployee = () => {
                       })}
                       type="tel"
                       className="form-control"
+                      readOnly
                     />
                     {handleFormErrors("mobileNumber")}
                   </div>
@@ -143,6 +145,7 @@ const EditEmployee = () => {
                       {...register("email", { required: "This field is required", value: userData.email })}
                       type="email"
                       className="form-control"
+                      readOnly
                     />
                     {handleFormErrors("email")}
                   </div>

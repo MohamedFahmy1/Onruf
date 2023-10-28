@@ -83,7 +83,7 @@ const EditBussinessAccount = () => {
     buisnessAccountId && fetchCountries()
   }, [buisnessAccountId])
 
-  // Getting Today Date To Set Minmum Date for Expiary Date Input Element
+  // Getting Today's Date To Set Minimum Date for Expiary Date Input Element
   useEffect(() => {
     const today = new Date()
     const yyyy = today.getFullYear()
@@ -94,15 +94,17 @@ const EditBussinessAccount = () => {
   const toggleAccordionPanel = (eKey) => {
     eventKey === eKey ? setEventKey("") : setEventKey(eKey)
   }
+  console.log(businessAccountImage)
   const handleEditBusinessAccount = async ({ commercialRegisterFile, ...values }) => {
     try {
       const { data } = await axios.post(
         process.env.REACT_APP_API_URL + "/AddEditBusinessAccount",
         {
+          ...values,
           id: accountData?.id,
           BusinessAccountCertificates: registeryFile,
-          businessAccountImage: { ...businessAccountImage },
-          ...values,
+          businessAccountImage: businessAccountImage,
+          businessAccountUserName: "test",
         },
         {
           headers: {
@@ -305,8 +307,23 @@ const EditBussinessAccount = () => {
                             {...register("businessAccountName", { value: accountData.businessAccountName })}
                             onChange={(e) => {
                               setValue("businessAccountName", e.target.value)
-                              setValue("BusinessAccountNameAr", e.target.value)
                               setValue("BusinessAccountNameEn", e.target.value)
+                            }}
+                            type="text"
+                            className="form-control"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group">
+                        <label>{pathOr("", [locale, "Settings", "store_name_ar"], t)}</label>
+                        <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                          <span className="input-group-text">
+                            <img src={office.src} className="img-fluid" alt="" />
+                          </span>
+                          <input
+                            {...register("BusinessAccountNameAr", { value: accountData.BusinessAccountNameAr })}
+                            onChange={(e) => {
+                              setValue("BusinessAccountNameAr", e.target.value)
                             }}
                             type="text"
                             className="form-control"

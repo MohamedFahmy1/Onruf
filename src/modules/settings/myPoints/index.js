@@ -5,7 +5,6 @@ import { pathOr } from "ramda"
 import { formatDate } from "../../../common/functions"
 import axios from "axios"
 import { toast } from "react-toastify"
-
 // Assets
 import PointsIcon from "../../../assets/images/point_icon.svg"
 import Image from "next/image"
@@ -122,7 +121,6 @@ const MyPoints = () => {
               </div>
             </div>
           </div>
-
           <div className="mt-4">
             <h5 className="mb-4">{pathOr("", [locale, "Points", "lastProcesses"], t)}</h5>
             {pointsTransactionslist?.map((transaction) => (
@@ -133,7 +131,7 @@ const MyPoints = () => {
                 </div>
                 <h5 className="m-0 main-color f-b text-center">
                   <span className="d-block">{transaction.transactionAmount}</span>
-                  Points
+                  {pathOr("", [locale, "Points", "points"], t)}
                 </h5>
               </div>
             ))}

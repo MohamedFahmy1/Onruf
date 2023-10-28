@@ -124,7 +124,10 @@ const PaymentCards = ({ bankTransfers }) => {
           >
             <AiOutlinePlus />
           </button>
-          <div className="d-flex justify-content-around overflow-scroll">
+          <div
+            className="d-flex justify-content-around overflow-scroll gap-4"
+            style={{ height: "300px", alignItems: "center" }}
+          >
             {bankTransferData?.map((bank) => (
               <div className="box-bank-account" key={bank?.id}>
                 <div>
@@ -144,11 +147,13 @@ const PaymentCards = ({ bankTransfers }) => {
                 </div>
                 <div>
                   <div className="mt-10">
-                    <div>bank name: {bank?.bankName}</div>
+                    <div>
+                      {pathOr("", [locale, "BankAccounts", "BankName"], t)}: {bank?.bankName}
+                    </div>
                     <div>{bank?.bankHolderName}</div>
                   </div>
                   <div className="mt-10">
-                    <div>Expiary date</div>
+                    <div>{pathOr("", [locale, "BankAccounts", "expiryDate"], t)}</div>
                     <div>{bank?.expiaryDate}</div>
                   </div>
                 </div>
@@ -158,33 +163,48 @@ const PaymentCards = ({ bankTransfers }) => {
           </div>
         </div>
       </div>
-
       {/* Payment Modal */}
       <form>
         <Modal show={openModal} onHide={() => setOpenModal(false)}>
           <Modal.Header>
             <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
-              {!id ? "اضافة" : "تعديل"} حساب بنكي
+              {!id ? (locale === "en" ? "Add" : "اضافة") : locale === "en" ? "Edit" : "تعديل"}{" "}
+              {pathOr("", [locale, "BankAccounts", "bankAccount"], t)}
             </h5>
             <button type="button" className="btn-close" onClick={() => setOpenModal(false)} />
           </Modal.Header>
           <Modal.Body>
             <div className="mb-2">
-              <label className="f-b">نوع الحساب</label>
+              <label className="f-b">{pathOr("", [locale, "BankAccounts", "accountType"], t)}</label>
               <div className="d-flex gap-3">
                 <div className="status-P">
-                  <input type="radio" name="days" />
-                  <span>فيزا/ماستر كارد</span>
+                  <input
+                    type="radio"
+                    name="days"
+                    value={1}
+                    {...register("paymentAccountType", { required: "This field is required" })}
+                  />
+                  <span>{pathOr("", [locale, "BankAccounts", "creditCard"], t)}</span>
                   <span className="pord rounded-pill"></span>
                 </div>
                 <div className="status-P">
-                  <input type="radio" name="days" />
+                  <input
+                    type="radio"
+                    name="days"
+                    value={2}
+                    {...register("paymentAccountType", { required: "This field is required" })}
+                  />
                   <img src={StcPayImg.src} width="65px" />
                   <span className="pord rounded-pill"></span>
                 </div>
                 <div className="status-P">
-                  <input type="radio" name="days" checked />
-                  <span> حساب بنكي </span>
+                  <input
+                    type="radio"
+                    name="days"
+                    value={3}
+                    {...register("paymentAccountType", { required: "This field is required" })}
+                  />
+                  <span> {pathOr("", [locale, "BankAccounts", "bankAccount"], t)} </span>
                   <span className="pord rounded-pill"></span>
                 </div>
               </div>
@@ -192,7 +212,7 @@ const PaymentCards = ({ bankTransfers }) => {
             <Row>
               <Col md={6}>
                 <div className="mb-2">
-                  <label className="f-b">اسم صاحب الحساب</label>
+                  <label className="f-b">{pathOr("", [locale, "BankAccounts", "Holder's"], t)}</label>
                   <input
                     type="text"
                     className="form-control"
@@ -203,7 +223,7 @@ const PaymentCards = ({ bankTransfers }) => {
               </Col>
               <Col md={6}>
                 <div className="mb-2">
-                  <label className="f-b">اسم البنك</label>
+                  <label className="f-b">{pathOr("", [locale, "BankAccounts", "BankName"], t)}</label>
                   <input
                     type="text"
                     className="form-control"
@@ -214,7 +234,7 @@ const PaymentCards = ({ bankTransfers }) => {
               </Col>
               <Col md={6}>
                 <div className="mb-2">
-                  <label className="f-b">رقم الحساب</label>
+                  <label className="f-b">{pathOr("", [locale, "BankAccounts", "AccountNumber"], t)}</label>
                   <input
                     type="text"
                     className="form-control"
@@ -225,7 +245,7 @@ const PaymentCards = ({ bankTransfers }) => {
               </Col>
               <Col md={6}>
                 <div className="mb-2">
-                  <label className="f-b">الايبان</label>
+                  <label className="f-b">{pathOr("", [locale, "BankAccounts", "ibn"], t)}</label>
                   <input
                     type="text"
                     className="form-control"
@@ -236,7 +256,7 @@ const PaymentCards = ({ bankTransfers }) => {
               </Col>
               <Col md={6}>
                 <div className="mb-2">
-                  <label className="f-b">سويفت كود</label>
+                  <label className="f-b">{pathOr("", [locale, "BankAccounts", "swift"], t)}</label>
                   <input
                     type="text"
                     className="form-control"
@@ -247,7 +267,7 @@ const PaymentCards = ({ bankTransfers }) => {
               </Col>
               <Col md={6}>
                 <div className="mb-2">
-                  <label className="f-b">شهر تاريخ الانتهاء</label>
+                  <label className="f-b">{pathOr("", [locale, "BankAccounts", "monthExpiryDate"], t)}</label>
                   <input
                     type="number"
                     className="form-control"
@@ -274,10 +294,9 @@ const PaymentCards = ({ bankTransfers }) => {
                   {errors["month"] && <p className="errorMsg">{errors["month"]["message"]}</p>}
                 </div>
               </Col>
-
               <Col md={6}>
                 <div className="mb-2">
-                  <label className="f-b">سنة تاريخ الانتهاء</label>
+                  <label className="f-b">{pathOr("", [locale, "BankAccounts", "yearExpiryDate"], t)}</label>
                   <input
                     type="number"
                     className="form-control"
@@ -302,10 +321,9 @@ const PaymentCards = ({ bankTransfers }) => {
               </Col>
             </Row>
           </Modal.Body>
-
           <Modal.Footer className="modal-footer">
             <button type="submit" onClick={handleSubmit(submit)} className="btn-main">
-              {!id ? "اضافة" : "تعديل"}
+              {!id ? (locale === "en" ? "Add" : "اضافة") : locale === "en" ? "Edit" : "تعديل"}
             </button>
           </Modal.Footer>
         </Modal>

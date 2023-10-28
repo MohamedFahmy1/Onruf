@@ -36,19 +36,15 @@ const Employees = () => {
       })
       handleFetchEmployees(1)
       toast.success("Deleted")
-    } catch (error) {
-    }
+    } catch (error) {}
   }
 
   // Handle employee status change
   const handleChangeEmployeeStatus = async (employeeId, isActive) => {
     try {
       const result = await axios.post(
-        process.env.REACT_APP_API_URL + "/ChangeBusinessAccountEmployeeStatus",
-        {},
-        {
-          params: { employeeId, isActive },
-        },
+        process.env.REACT_APP_API_URL +
+          `/ChangeBusinessAccountEmployeeStatus?employeeId=${employeeId}&isActive=${isActive}`,
       )
     } catch (error) {
       // Alerto(error)
@@ -64,6 +60,7 @@ const Employees = () => {
   const renderedEmployees = () => {
     return employees?.map((employee, idx) => (
       <tr key={employee.id}>
+        {console.log(employees)}
         <td>
           <div className="f-b">{employee.userName}</div>
         </td>
@@ -74,7 +71,13 @@ const Employees = () => {
           <div className="f-b">{employee.mobileNumber}</div>
         </td>
         <td>
-          <div className="f-b">no roles coming from backend</div>
+          <div className="f-b">
+            {employee.employeeRoles.map((item, index) => {
+              if (index === employee.employeeRoles.length - 1) {
+                return ` ${item.roleName}.`
+              } else return ` ${item.roleName} -`
+            })}
+          </div>
         </td>
         <td>
           <div className="d-flex align-items-center gap-2">
@@ -89,6 +92,7 @@ const Employees = () => {
                 type="checkbox"
                 role="switch"
                 id="flexSwitchCheckChecked"
+                defaultChecked={employee.isActive}
                 onChange={(e) => {
                   handleChangeEmployeeStatus(employee.id, e.target.checked)
                 }}
@@ -152,7 +156,7 @@ const Employees = () => {
                 </a>
               </li>
 
-              {[1, 2, 3, 4].map((pageIdx) => (
+              {[1, 2, 3].map((pageIdx) => (
                 <li key={pageIdx} className="page-item">
                   <a
                     className={pageIdx == page ? "page-link active" : "page-link"}

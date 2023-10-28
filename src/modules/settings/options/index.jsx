@@ -11,11 +11,13 @@ import { useEffect } from "react"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import Cookies from "js-cookie"
+import { toast } from "react-toastify"
 
 const Options = ({ userWalletState }) => {
   const { locale } = useRouter()
   const [manageAccountPop, setManageAccountPop] = useState(false)
   const [myPointsData, setPointsData] = useState({})
+
   const fetchMyPointsData = async () => {
     const {
       data: { data: myPointsData },
@@ -115,12 +117,10 @@ const Options = ({ userWalletState }) => {
 }
 
 // Manage Account Popup - Better to be moved some where else
-
 const ManageAccountModal = ({ showModal, setShowModal }) => {
   const [accountData, setAccountData] = useState(null)
   const router = useRouter()
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
-
   const style = {
     position: "absolute",
     top: "50%",
@@ -156,14 +156,17 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
 
   // Handle Delete Account
   const handleAccountStatus = async (isActive) => {
-    const { data } = await axios.post(
-      process.env.REACT_APP_API_URL + "/ChangeBusinessAccountStatus",
-      {},
-      {
-        params: { buisnessAccountId, isActive },
-      },
-    )
-    handleFetchAccount()
+    console.log(buisnessAccountId, isActive)
+    try {
+      const { data } = await axios.post(
+        process.env.REACT_APP_API_URL +
+          `/ChangeBusinessAccountStatus?businessAccountId=${buisnessAccountId}&isActive=${isActive}`,
+      )
+      handleFetchAccount()
+      toast.success("Account Status Updated Successfully!")
+    } catch (error) {
+      toast.error(error.data.message.error)
+    }
   }
 
   useEffect(() => {
@@ -186,15 +189,20 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
           {/* Modal Header */}
           <Box sx={{ flex: 1, pb: 2, display: "flex", justifyContent: "space-between" }}>
             <Typography variant="h1" fontSize={24} fontWeight={"bold"}>
-              Manage Account
+              {pathOr("", [router.locale, "Settings", "manageAccount"], t)}
             </Typography>
-            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              onClick={() => setShowModal(false)}
+            ></button>
           </Box>
-
           {/* Modal - Handle Account Status */}
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 4 }}>
             <Typography variant="h1" fontSize={18} fontWeight={"500"}>
-              اظهار المتجر
+              {pathOr("", [router.locale, "Settings", "showStore"], t)}
             </Typography>
             <Box>
               <div
@@ -206,17 +214,16 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
                     handleAccountStatus(e.target.checked)
                   }}
                   className="form-check-input m-0"
-                  checked={accountData?.isActive}
+                  defaultChecked={accountData?.isActive}
                   type="checkbox"
                   role="switch"
                   id="flexSwitchCheckChecked"
                 />
-                <span className="mx-1">Active</span>
+                <span className="mx-1">{pathOr("", [router.locale, "Settings", "active"], t)}</span>
               </div>
             </Box>
           </Box>
           <hr />
-
           {/* Modal - Button Group */}
           <Button
             sx={{
@@ -228,9 +235,8 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
               color: "#fff",
             }}
           >
-            CANCEL MEMEBERSHIP
+            {pathOr("", [router.locale, "Settings", "cancelMember"], t)}
           </Button>
-
           <Button
             onClick={handleDeleteAccount}
             sx={{
@@ -243,7 +249,7 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
               color: "#fff",
             }}
           >
-            DELETE ACCOUNT
+            {pathOr("", [router.locale, "Settings", "deleteAccount"], t)}
           </Button>
         </Box>
       </Modal>
