@@ -24,6 +24,7 @@ const Branches = ({ branches: b = [] }) => {
       const {
         data: { data },
       } = await axios(`${process.env.REACT_APP_API_URL}/GetListBranche?lang=${locale}`)
+      console.log(data)
       setAllBranches(data)
       setBranches(data.filter((branch) => branch?.isActive))
     } catch (error) {

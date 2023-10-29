@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import axios from "axios"
 import { useRouter } from "next/router"
@@ -9,13 +9,14 @@ import t from "../../../translations.json"
 import Alerto from "../../../common/Alerto"
 import SimpleSnackbar from "../../../common/SnackBar"
 import { toast } from "react-toastify"
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
 
 const Employees = () => {
   const [employees, setEmployees] = useState([])
-
   const { locale, push, query } = useRouter()
-
   const { page } = query
+  const inputRef = useRef(null)
+  const [filter, setFilter] = useState(false)
 
   // Get all business employees, also handle page params if exsisted
   const handleFetchEmployees = async (pageIndex = 1, PageRowsCount = 10) => {
@@ -25,6 +26,7 @@ const Employees = () => {
         PageRowsCount,
       },
     })
+    console.log(data.data)
     setEmployees(data.data)
   }
 
@@ -35,7 +37,7 @@ const Employees = () => {
         params: { employeeId },
       })
       handleFetchEmployees(1)
-      toast.success("Deleted")
+      toast.success(locale === "en" ? "Employee data has been Deleted!" : "تم مسح بيانات الموظف")
     } catch (error) {}
   }
 
@@ -46,21 +48,28 @@ const Employees = () => {
         process.env.REACT_APP_API_URL +
           `/ChangeBusinessAccountEmployeeStatus?employeeId=${employeeId}&isActive=${isActive}`,
       )
+      toast.success(locale === "en" ? "Employee data changed successfully!" : "تم تغيير بيانات الموظف")
     } catch (error) {
-      // Alerto(error)
+      Alerto(error)
     }
   }
 
   // Handle table next page
   const handleTableNextPrevPage = (state) => {
-    push({ query: { page: state === "prev" ? parseInt(page) - 1 : parseInt(page) + 1 } })
+    const currentPage = parseInt(page)
+    const newPage = state === "prev" ? currentPage - 1 : currentPage + 1
+    if (newPage < 1) {
+      return
+    }
+    if (employees.length === 0 && state !== "prev") {
+      return push({ query: { page: currentPage } })
+    }
+    push({ query: { page: newPage } })
   }
-
   // Render all fetched employees to the screen
   const renderedEmployees = () => {
     return employees?.map((employee, idx) => (
       <tr key={employee.id}>
-        {console.log(employees)}
         <td>
           <div className="f-b">{employee.userName}</div>
         </td>
@@ -103,6 +112,15 @@ const Employees = () => {
       </tr>
     ))
   }
+  const filterEmployees = () => {
+    const filtered = employees.filter((employee) =>
+      employee.employeeRoles?.some((role) =>
+        role.roleName?.toLowerCase().includes(inputRef.current.value.toLowerCase()),
+      ),
+    )
+    setFilter(true)
+    setEmployees(filtered)
+  }
 
   useEffect(() => {
     handleFetchEmployees(page)
@@ -111,6 +129,7 @@ const Employees = () => {
     }
   }, [page])
 
+  console.log(employees)
   return (
     <div className="body-content">
       <div>
@@ -127,10 +146,28 @@ const Employees = () => {
         </div>
         <div className="d-flex">
           <div className="filtter_2">
-            <input className="form-control" placeholder={pathOr("", [locale, "Employee", "filterByRole"], t)} />
-            <button className="btn-main rounded-0">{pathOr("", [locale, "Users", "filter"], t)}</button>
+            <input
+              className="form-control rounded-0"
+              placeholder={pathOr("", [locale, "Employee", "filterByRole"], t)}
+              ref={inputRef}
+            />
+            <button className="btn-main rounded-0" onClick={filterEmployees}>
+              {pathOr("", [locale, "Users", "filter"], t)}
+            </button>
           </div>
         </div>
+        {filter && (
+          <button
+            className="btn-main d-flex mt-3 justifiy-content-center"
+            onClick={() => {
+              handleFetchEmployees(1, 10)
+              setFilter(false)
+              inputRef.current.value = ""
+            }}
+          >
+            {pathOr("", [locale, "Users", "resetFilter"], t)}
+          </button>
+        )}
         <div className="contint_paner">
           <div className="outer_table">
             <table className="table table_dash">
@@ -143,34 +180,33 @@ const Employees = () => {
                   <th>{pathOr("", [locale, "Employee", "actions"], t)}</th>
                 </tr>
               </thead>
-              <tbody>{renderedEmployees()}</tbody>
+              <tbody>{employees.length > 0 && renderedEmployees()}</tbody>
             </table>
+            {!employees.length > 0 && <p className="text-center f-b fs-5">No Data To Show!</p>}
           </div>
           <nav aria-label="Page navigation example" className="mt-3">
             <ul className="pagination justify-content-center">
               <li className="page-item">
-                <a className="page-link" aria-label="Previous">
-                  <i className="fas fa-chevron-right" onClick={handleTableNextPrevPage}>
-                    Next
+                <a className="page-link" aria-label="Next">
+                  <i className="fas fa-chevron-left" onClick={() => handleTableNextPrevPage("prev")}>
+                    {locale === "en" ? <IoIosArrowBack /> : <IoIosArrowForward />}
                   </i>
                 </a>
               </li>
-
-              {[1, 2, 3].map((pageIdx) => (
-                <li key={pageIdx} className="page-item">
+              {/*[1, 2, 3].map((pageIdx) => (
+              <li key={pageIdx} className="page-item">
                   <a
                     className={pageIdx == page ? "page-link active" : "page-link"}
                     onClick={() => push({ query: { page: pageIdx } })}
                   >
                     {pageIdx}
-                  </a>
-                </li>
-              ))}
-
+                    </a>
+                    </li>
+                  ))*/}
               <li className="page-item">
-                <a className="page-link" aria-label="Next">
-                  <i className="fas fa-chevron-left" onClick={() => handleTableNextPrevPage("prev")}>
-                    Prev
+                <a className="page-link" aria-label="Previous">
+                  <i className="fas fa-chevron-right" onClick={handleTableNextPrevPage}>
+                    {locale === "en" ? <IoIosArrowForward /> : <IoIosArrowBack />}
                   </i>
                 </a>
               </li>

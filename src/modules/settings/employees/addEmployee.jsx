@@ -68,10 +68,13 @@ const AddEmployee = () => {
         data: { status_code },
       } = result
       push("/settings/employees")
-      toast.success("Employee Added")
+      toast.success(locale === "en" ? "Employee Added" : "تم اضافة الموظف")
     } catch (e) {
-      toast.error(e.response.data.message)
-      // Alerto(e)
+      toast.error(
+        locale === "en"
+          ? "Please recheck the data of your employee and try again!"
+          : "!الرجاء التحقق من معلومات الموظف و اعادة المحاولة",
+      )
     }
   }
 

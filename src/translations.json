@@ -181,7 +181,8 @@
       "clientsAdded": "عميل مضاف",
       "addPic": "أضف صورة",
       "totalOrders": "اجمالي طلبات العميل",
-      "removeClient": "ازالة العميل من المجلد"
+      "removeClient": "ازالة العميل من المجلد",
+      "resetFilter": "مسح الفلترة"
     },
     "Settings": {
       "settings": "الاعدادات",
@@ -292,7 +293,13 @@
       "packages": "باقات",
       "popular": "شائع",
       "subsribed": "بل فعل مشترك",
-      "countProducts": "عدد المنتجات"
+      "countProducts": "عدد المنتجات",
+      "currentPaka": "باقتك الحالية",
+      "subscribe": "اشترك",
+      "changePaka": "تغيير الباقة",
+      "noPakat": "!لا يوجد باقات",
+      "productPosition": "موقع المنتج",
+      "isBusinessAccountSubscriped": "هل حساب البزنس مشترك ؟"
     },
     "questionsAndReviews": {
       "all": "الكل",
@@ -663,7 +670,8 @@
       "folderName": "Folder name",
       "addPic": "Add Picture",
       "totalOrders": "Total Client Orders",
-      "removeClient": "Remove Client From Folder"
+      "removeClient": "Remove Client From Folder",
+      "resetFilter": "Reset Filter"
     },
     "Settings": {
       "settings": "Settings",
@@ -772,8 +780,14 @@
       "countVideo": "Number of videos",
       "packages": "Packages",
       "popular": "Popular",
-      "subsribed": "Already Subsribed",
-      "countProducts": "Count of products"
+      "subsribed": "Already Subscribed",
+      "countProducts": "Count of products",
+      "currentPaka": "Current Package",
+      "subscribe": "Subscribe",
+      "changePaka": "Change Package",
+      "noPakat": "No Packages To Show!",
+      "productPosition": "Product Position",
+      "isBusinessAccountSubscriped": "is Business Account Subscriped ?"
     },
     "questionsAndReviews": {
       "all": "All",

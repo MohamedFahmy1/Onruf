@@ -96,25 +96,28 @@ const EditBussinessAccount = () => {
   }
   console.log(businessAccountImage)
   const handleEditBusinessAccount = async ({ commercialRegisterFile, ...values }) => {
+    console.log(values)
     try {
-      const { data } = await axios.post(
-        process.env.REACT_APP_API_URL + "/AddEditBusinessAccount",
-        {
-          ...values,
-          id: accountData?.id,
-          BusinessAccountCertificates: registeryFile,
-          businessAccountImage: businessAccountImage,
-          businessAccountUserName: "test",
+      const payload = {
+        ...values,
+        id: accountData?.id,
+        businessAccountCertificates: registeryFile,
+        businessAccountUserName: "test",
+        businessAccountNameEn: values.businessAccountName,
+      }
+      if (businessAccountImage != null) {
+        payload.businessAccountImage = businessAccountImage
+      } else payload.businessAccountImage = accountData.businessAccountImage
+
+      const { data } = await axios.post(process.env.REACT_APP_API_URL + "/AddEditBusinessAccount", payload, {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        },
-      )
-      toast.success("Your account data saved!")
+      })
+
+      toast.success(locale === "en" ? "Your account data saved!" : "!تم حفظ البيانات بنجاح")
     } catch (error) {
-      toast.error(error.response.data.message)
+      toast.error(locale === "en" ? "Please Enter All Data!" : "الرجاء ادخال جميع البيانات")
     }
   }
 
@@ -321,9 +324,9 @@ const EditBussinessAccount = () => {
                             <img src={office.src} className="img-fluid" alt="" />
                           </span>
                           <input
-                            {...register("BusinessAccountNameAr", { value: accountData.BusinessAccountNameAr })}
+                            {...register("businessAccountNameAr", { value: accountData.businessAccountNameAr })}
                             onChange={(e) => {
-                              setValue("BusinessAccountNameAr", e.target.value)
+                              setValue("businessAccountNameAr", e.target.value)
                             }}
                             type="text"
                             className="form-control"
@@ -382,11 +385,11 @@ const EditBussinessAccount = () => {
                             <Image src={office} className="img-fluid" alt="" />
                           </span>
                           <select
-                            // {...register("country", { value: accountData.country })}
+                            // {...register("countryId", { value: accountData.countryId })}
                             onChange={(e) => {
                               const selectedOption = countries.find((item) => item.id === +e.target.value)
                               if (selectedOption) {
-                                setValue("country", selectedOption.name)
+                                setValue("countryId", +selectedOption.id)
                                 fetchRegions(selectedOption.id)
                               }
                             }}
@@ -409,12 +412,12 @@ const EditBussinessAccount = () => {
                             <Image src={office} className="img-fluid" alt="" />
                           </span>
                           <select
-                            // {...register("region", { value: accountData.region })}
+                            // {...register("regionId", { value: accountData.regionId })}
                             onChange={(e) => {
                               const selectedOption = regions.find((item) => item.id === +e.target.value)
                               if (selectedOption) {
-                                setValue("region", selectedOption.name)
-                                fetchNeighbourhoods(selectedOption.id)
+                                setValue("regionId", +selectedOption.id)
+                                fetchNeighbourhoods(+selectedOption.id)
                               }
                             }}
                             className="form-control form-select"
@@ -436,12 +439,9 @@ const EditBussinessAccount = () => {
                             <Image src={office} className="img-fluid" alt="" />
                           </span>
                           <select
-                            // {...register("neighborhood", { value: accountData.neighborhood })}
+                            // {...register("neighborhoodId", { value: accountData.neighborhoodId })}
                             onChange={(e) => {
-                              const selectedOption = neighbourhoods.find((item) => item.id === e.target.value)
-                              if (selectedOption) {
-                                setValue("neighborhood", selectedOption.name)
-                              }
+                              setValue("neighborhoodId", +e.target.value)
                             }}
                             className="form-control form-select"
                           >
@@ -598,7 +598,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "twitter"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <PiTwitterLogoLight className="img-fluid h-60" />
+                            <PiTwitterLogoLight size={30} />
                           </span>
                           <input
                             {...register("businessAccountTwitter", { value: accountData.businessAccountTwitter })}
@@ -612,7 +612,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "linkedin"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <PiLinkedinLogoBold className="img-fluid h-60" />
+                            <PiLinkedinLogoBold size={30} />
                           </span>
                           <input
                             {...register("businessAccountLinkedIn", { value: accountData.businessAccountLinkedIn })}
@@ -626,7 +626,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "youtube"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <PiYoutubeLogo className="img-fluid h-60" />
+                            <PiYoutubeLogo size={30} />
                           </span>
                           <input
                             {...register("businessAccountYouTube", { value: accountData.businessAccountYouTube })}

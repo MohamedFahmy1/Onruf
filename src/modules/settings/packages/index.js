@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { Fragment, useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
@@ -34,7 +34,7 @@ const Packages = () => {
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllPakatsList", {
       params: {
         isAdmin: false,
-        PakatType: 3,
+        PakatType: "SMS",
       },
     })
 
@@ -47,7 +47,7 @@ const Packages = () => {
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllPakatsList", {
       params: {
         isAdmin: false,
-        PakatType: 2,
+        PakatType: "Publish",
       },
     })
     setPublishPakat(PublishPakat)
@@ -61,7 +61,7 @@ const Packages = () => {
         clientId: headersJson.headers["Provider-Id"],
       },
     })
-
+    console.log(CurrentPakat)
     setCurrentPakat(CurrentPakat)
   }
 
@@ -126,15 +126,22 @@ const Packages = () => {
     return (
       <div style={{ display: "flex", flexDirection: "column" }}>
         <div className="box-Bouquet">
-          <div className="head">
+          <div
+            className={`head`}
+            style={{
+              backgroundColor: paka.popular ? "var(--main)" : undefined,
+            }}
+          >
             <img src={paka.image} width={48} alt={`Package ${paka.name}`} />
             <div>{paka.name}</div>
-            <div>{paka.price} EGP</div>
+            <div>
+              {paka.price} {pathOr("", [locale, "Products", "currency"], t)}
+            </div>
           </div>
           <ul className="info">
             {Object.keys(mapAndRenderOnObject(paka)).map((key, idx) => {
               return (
-                <li key={idx}>
+                <li key={idx} className="text-center">
                   {pathOr("", [locale, "Packages", key], t)}:{" "}
                   {typeof paka[key] === "boolean" ? JSON.stringify(paka[key]) : paka[key]}
                 </li>
@@ -142,11 +149,17 @@ const Packages = () => {
             })}
           </ul>
           {paka.popular ? (
-            <aside className="Tinf" style={{ display: "unset" }}>
+            <aside
+              className="Tinf"
+              style={{
+                backgroundColor: paka.popular ? "var(--main)" : undefined,
+                display: "unset",
+              }}
+            >
               {pathOr("", [locale, "Packages", "popular"], t)}
             </aside>
           ) : (
-            <></>
+            <Fragment></Fragment>
           )}
           <input type="radio" name="Bouquet-SMS" checked={paka.id === selectedPaka} />
           <span className="check">
@@ -155,14 +168,16 @@ const Packages = () => {
           <span className="pord"></span>
         </div>
         <button
-          className={`btn-main ${paka.isBusinessAccountSubscriped || isCurrent ? "btn-main-active" : ""}`}
-          style={{ width: "100%" }}
+          className={`btn-main`}
+          style={{ width: "100%", backgroundColor: paka.isActive ? "#ccc" : undefined }}
           onClick={() => {
             setSelectedPaka(paka.id)
             setPaymentModal(true)
           }}
         >
-          {paka.isBusinessAccountSubscriped || isCurrent ? "Susribed" : "Subsribe"}
+          {paka.isActive
+            ? pathOr("", [locale, "Packages", "subsribed"], t)
+            : pathOr("", [locale, "Packages", "subscribe"], t)}
         </button>
       </div>
     )
@@ -173,7 +188,7 @@ const Packages = () => {
       {/* Current Pakat */}
       <div className="mb-4">
         <div>
-          <h6 className="f-b m-0">باقتك الحالية</h6>
+          <h6 className="f-b m-0">{pathOr("", [locale, "Packages", "currentPaka"], t)}</h6>
         </div>
         <div className="outer_boxsBouquet">
           {CurrentPakat?.map((paka, idx) => (
@@ -186,15 +201,15 @@ const Packages = () => {
                   <p>اخر تجديد للباقة</p>
                   <div className="f-b">20/11/2020</div>
                 </div>
-                <button className="btn-main">تحميل الفاتورة</button>
+                <button className="btn-main">{pathOr("", [locale, "Orders", "download_invoice"], t)}</button>
               </li>
               <li className="mb-4 d-flex justify-content-between">
                 <div>
                   <p>موعد التجديد القادم</p>
                   <div className="f-b">20/11/2020</div>
                 </div>
-                <a href="" className="btn-main btn-main-B">
-                  تغيير الباقة
+                <a href="#" className="btn-main btn-main-B">
+                  {pathOr("", [locale, "Packages", "changePaka"], t)}
                 </a>
               </li>
             </ul>
@@ -214,7 +229,7 @@ const Packages = () => {
             ))}
           </div>
         ) : (
-          <h1>No Pakat to show</h1>
+          <h2 className="text-center">{pathOr("", [locale, "Packages", "noPakat"], t)}</h2>
         )}
       </div>
       <hr />

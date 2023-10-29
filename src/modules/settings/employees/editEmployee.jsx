@@ -62,11 +62,15 @@ const EditEmployee = () => {
       } = result
 
       if (status_code === 200) {
-        toast.success("Employee Added")
+        toast.success(locale === "en" ? "Employee Data Edited Successfully!" : "!تم تعديل معلومات الموظف")
         push("/settings/employees")
       }
     } catch (error) {
-      toast.error(error.response.data.message)
+      toast.error(
+        locale === "en"
+          ? "Please recheck the data of your employee and try again!"
+          : "!الرجاء التحقق من معلومات الموظف و اعادة المحاولة",
+      )
     }
   }
 

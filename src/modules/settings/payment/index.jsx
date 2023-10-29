@@ -8,6 +8,7 @@ import VisaImg from "../../../public/images/Visa.png"
 import BoxBankImg from "../../../public/images/box-bank.png"
 import stcPayImg from "../../../public/images/stc-pay.png"
 import StcPayImg from "../../../public/images/Stc_pay2.png"
+import stc from "../../../public/images/stc.png"
 import { toast } from "react-toastify"
 import { useForm } from "react-hook-form"
 import axios from "axios"
@@ -129,10 +130,18 @@ const PaymentCards = ({ bankTransfers }) => {
             style={{ height: "300px", alignItems: "center" }}
           >
             {bankTransferData?.map((bank) => (
-              <div className="box-bank-account" key={bank?.id}>
+              <div
+                className="box-bank-account"
+                key={bank?.id}
+                style={{
+                  color: bank.paymentAccountType === "BankDeposit" ? "black" : undefined,
+                  border: bank.paymentAccountType === "BankDeposit" ? "1px solid #ccc" : undefined,
+                }}
+              >
                 <div>
                   <div className="d-flex align-items-center justify-content-between mb-10">
-                    <img src={VisaImg.src} className="img_" />
+                    {bank.paymentAccountType === "CreditCard" && <img src={VisaImg.src} className="img_" />}
+                    {bank.paymentAccountType === "STCPay" && <img src={stcPayImg.src} className="img_" />}
                     <button
                       className="btn_edit"
                       onClick={() => handleOpenEditModalAndSetFormWithDefaultValues(bank?.id)}
@@ -152,12 +161,19 @@ const PaymentCards = ({ bankTransfers }) => {
                     </div>
                     <div>{bank?.bankHolderName}</div>
                   </div>
-                  <div className="mt-10">
-                    <div>{pathOr("", [locale, "BankAccounts", "expiryDate"], t)}</div>
-                    <div>{bank?.expiaryDate}</div>
-                  </div>
+                  {bank.paymentAccountType === "BankDeposit" ? (
+                    <div className="mt-10">
+                      <div>{bank?.swiftCode}</div>
+                    </div>
+                  ) : (
+                    <div className="mt-10">
+                      <div>{pathOr("", [locale, "BankAccounts", "expiryDate"], t)}</div>
+                      <div>{bank?.expiaryDate}</div>
+                    </div>
+                  )}
                 </div>
-                <img src={BoxBankImg.src} className="baner" />
+                {bank.paymentAccountType === "CreditCard" && <img src={BoxBankImg.src} className="baner" />}
+                {bank.paymentAccountType === "STCPay" && <img src={stc.src} className="baner" />}
               </div>
             ))}
           </div>
@@ -181,7 +197,7 @@ const PaymentCards = ({ bankTransfers }) => {
                   <input
                     type="radio"
                     name="days"
-                    value={1}
+                    value={3}
                     {...register("paymentAccountType", { required: "This field is required" })}
                   />
                   <span>{pathOr("", [locale, "BankAccounts", "creditCard"], t)}</span>
@@ -191,7 +207,7 @@ const PaymentCards = ({ bankTransfers }) => {
                   <input
                     type="radio"
                     name="days"
-                    value={2}
+                    value={5}
                     {...register("paymentAccountType", { required: "This field is required" })}
                   />
                   <img src={StcPayImg.src} width="65px" />
@@ -201,7 +217,7 @@ const PaymentCards = ({ bankTransfers }) => {
                   <input
                     type="radio"
                     name="days"
-                    value={3}
+                    value={1}
                     {...register("paymentAccountType", { required: "This field is required" })}
                   />
                   <span> {pathOr("", [locale, "BankAccounts", "bankAccount"], t)} </span>

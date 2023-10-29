@@ -12,7 +12,7 @@ import axios from "axios"
 import { useSelector } from "react-redux"
 import Cookies from "js-cookie"
 import { toast } from "react-toastify"
-
+import Alerto from "../../../common/Alerto"
 const Options = ({ userWalletState }) => {
   const { locale } = useRouter()
   const [manageAccountPop, setManageAccountPop] = useState(false)
@@ -81,7 +81,7 @@ const Options = ({ userWalletState }) => {
           <div className="box-setting_">
             <Image {...CompanyWorkers} />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "employees"], t)}</h6>
-            <Link href="/settings/employees">
+            <Link href="/settings/employees?page=1">
               <a className="btn-main">{pathOr("", [locale, "Settings", "manageEmployees"], t)}</a>
             </Link>
           </div>
@@ -146,12 +146,17 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
 
   // Handle Delete Account
   const handleDeleteAccount = async () => {
-    const { data } = await axios.delete(process.env.REACT_APP_API_URL + "/DeleteBusinessAccount", {
-      params: { businessAccountId: buisnessAccountId },
-    })
-    setShowModal(false)
-    Cookies.remove("id")
-    router.push("/")
+    try {
+      const { data } = await axios.delete(process.env.REACT_APP_API_URL + "/DeleteBusinessAccount", {
+        params: { businessAccountId: buisnessAccountId },
+      })
+      setShowModal(false)
+      toast.success("Account Successfully Deleted!")
+      Cookies.remove("id")
+      router.push("/")
+    } catch (error) {
+      Alerto(error)
+    }
   }
 
   // Handle Delete Account
