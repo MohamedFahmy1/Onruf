@@ -173,7 +173,7 @@ const Coupons = () => {
         },
       },
     ],
-    [],
+    [handleDeleteCode, editCoupon],
   )
   return (
     <div className="body-content">
