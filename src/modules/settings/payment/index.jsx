@@ -31,13 +31,22 @@ const PaymentCards = ({ bankTransfers }) => {
     watch,
   } = useForm({ mode: "onBlur" })
 
+  const fetchBankTransfer = async () => {
+    const {
+      data: { data },
+    } = await axios.get(process.env.REACT_APP_API_URL + "/ListBankTransfers", {
+      params: {
+        currentPage: 1,
+      },
+    })
+    setBankTransferData(data)
+  }
+
   const handleOpenEditModalAndSetFormWithDefaultValues = (bankId) => {
     setId(bankId)
     setOpenModal(true)
     const getSelectedBankTransfer = bankTransferData.map((b) => b).find((b) => b.id === bankId)
-    const month = getSelectedBankTransfer?.expiaryDate.split("/")[0]
-    const year = getSelectedBankTransfer?.expiaryDate.split("/")[1]
-    reset({ ...getSelectedBankTransfer, month, year })
+    reset({ ...getSelectedBankTransfer })
   }
 
   const handleDeleteBankTransfer = async (bankId) => {
@@ -45,40 +54,38 @@ const PaymentCards = ({ bankTransfers }) => {
       await axios.delete(`${process.env.REACT_APP_API_URL}/RemoveBankTransfer`, { params: { id: bankId } })
       setBankTransferData([...bankTransferData.filter((b) => b.id !== bankId)])
       toast.success("Bank transfer has been deleted successfully!")
+      fetchBankTransfer()
     } catch (error) {
       toast.error("Can't delete transfer as it's part of a product payment option!")
     }
   }
 
-  const submit = async ({ month, year, ...values }) => {
+  const submit = async ({ ...values }) => {
     try {
       if (id) {
         const formData = new FormData()
         for (let key in values) {
           formData.append(key, values[key])
         }
-        formData.append("expiaryDate", `${month}/${year}`)
         await axios.put(process.env.REACT_APP_API_URL + "/EditBankTransfer", formData)
-        setBankTransferData([
-          ...bankTransferData?.filter((b) => b.id !== id),
-          { ...values, expiaryDate: `${month}/${year}` },
-        ])
+        setBankTransferData([...bankTransferData?.filter((b) => b.id !== id), { ...values }])
         setOpenModal(false)
         setId(undefined)
         toast.success("Bank transfer has been edited successfully!")
+        fetchBankTransfer()
       } else {
         try {
           const formData = new FormData()
           for (let key in values) {
             formData.append(key, values[key])
           }
-          formData.append("expiaryDate", `${month}/${year}`)
           await axios.post(process.env.REACT_APP_API_URL + "/AddBankTransfer", formData)
-          setBankTransferData([...bankTransferData, { ...values, expiaryDate: `${month}/${year}` }])
+          setBankTransferData([...bankTransferData, { ...values }])
           setOpenModal(false)
           toast.success("Bank transfer has been added successfully!")
+          fetchBankTransfer()
         } catch (error) {
-          toast.success("Bank transfer has been added successfully!")
+          toast.error("Error!")
           setOpenModal(false)
         }
       }
@@ -95,13 +102,13 @@ const PaymentCards = ({ bankTransfers }) => {
     setId("")
     reset(
       {
+        paymentAccountType: null,
         bankHolderName: null,
         swiftCode: null,
         ibanNumber: null,
         accountNumber: null,
         bankName: null,
-        month: null,
-        year: null,
+        expiaryDate: null,
       },
       { keepValues: false },
     )
@@ -210,6 +217,7 @@ const PaymentCards = ({ bankTransfers }) => {
                     value={5}
                     {...register("paymentAccountType", { required: "This field is required" })}
                   />
+
                   <img src={StcPayImg.src} width="65px" />
                   <span className="pord rounded-pill"></span>
                 </div>
@@ -224,6 +232,9 @@ const PaymentCards = ({ bankTransfers }) => {
                   <span className="pord rounded-pill"></span>
                 </div>
               </div>
+              {errors["paymentAccountType"] && (
+                <p className="errorMsg text-center">{errors["paymentAccountType"]["message"]}</p>
+              )}
             </div>
             <Row>
               <Col md={6}>
@@ -283,56 +294,16 @@ const PaymentCards = ({ bankTransfers }) => {
               </Col>
               <Col md={6}>
                 <div className="mb-2">
-                  <label className="f-b">{pathOr("", [locale, "BankAccounts", "monthExpiryDate"], t)}</label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    {...register("month", {
-                      required: "This field is required",
-                      maxLength: {
-                        value: 2,
-                        message: locale === "en" ? "Invalid month value" : "الشهر غير صحيح",
-                      },
-                      minLength: {
-                        value: 1,
-                        message: locale === "en" ? "Invalid month value" : "الشهر غير صحيح",
-                      },
-                      min: {
-                        value: 1,
-                        message: locale === "en" ? "Invalid month value" : "الشهر غير صحيح",
-                      },
-                      max: {
-                        value: 12,
-                        message: locale === "en" ? "Invalid month value" : "الشهر غير صحيح",
-                      },
-                    })}
-                  />
-                  {errors["month"] && <p className="errorMsg">{errors["month"]["message"]}</p>}
-                </div>
-              </Col>
-              <Col md={6}>
-                <div className="mb-2">
                   <label className="f-b">{pathOr("", [locale, "BankAccounts", "yearExpiryDate"], t)}</label>
                   <input
-                    type="number"
+                    type="text"
                     className="form-control"
-                    {...register("year", {
+                    placeholder="Ex: 07/27"
+                    {...register("expiaryDate", {
                       required: "This field is required",
-                      maxLength: {
-                        value: 4,
-                        message: locale === "en" ? "Invalid غثشق value" : "السنة غير صحيحة",
-                      },
-                      minLength: {
-                        value: 4,
-                        message: locale === "en" ? "Invalid غثشق value" : "السنة غير صحيحة",
-                      },
-                      min: {
-                        value: 2000,
-                        message: locale === "en" ? "Invalid غثشق value" : "السنة غير صحيحة",
-                      },
                     })}
                   />
-                  {errors["year"] && <p className="errorMsg">{errors["year"]["message"]}</p>}
+                  {errors["expiaryDate"] && <p className="errorMsg">{errors["expiaryDate"]["message"]}</p>}
                 </div>
               </Col>
             </Row>

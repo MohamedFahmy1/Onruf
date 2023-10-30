@@ -10,33 +10,31 @@ import axios from "axios"
 const Reviews = () => {
   const router = useRouter()
   const { locale } = useRouter()
-  const [productReviews , setProductReviews] = useState();
-  const [productQuestions , setProductQuestions] = useState();
+  const [productReviews, setProductReviews] = useState([])
+  const [productQuestions, setProductQuestions] = useState([])
 
+  const getProductReviews = async () => {
+    const {
+      data: { data: productReviews },
+    } = await axios.get(process.env.REACT_APP_API_URL + "/ListRateProduct", {
+      params: { currentPage: 1, productId: 267, lang: "en" },
+    })
+    setProductReviews(productReviews)
+  }
+  const getProductQuestions = async () => {
+    const {
+      data: { data: productQuestions },
+    } = await axios.get(process.env.REACT_APP_API_URL + "/ListQuestions", {
+      params: { pageIndex: 1, productId: 267, PageRowsCount: 10 },
+    })
 
-const getProductReviews =async() => {
-  const {
-    data: { data: productReviews },
-  } = await axios.get(process.env.REACT_APP_API_URL + "/ListRateProduct", {
-    params: { currentPage: 1, productId: 267, lang: "en" },
-  })
-  setProductReviews(productReviews)
-}
-const getProductQuestions =async() => {
-  const {
-    data: { data: productQuestions },
-  } = await axios.get(process.env.REACT_APP_API_URL + "/ListQuestions", {
-    params: { pageIndex: 1, productId: 267, PageRowsCount: 10 },
-  })
-  
-  setProductQuestions(productQuestions)
-}
+    setProductQuestions(productQuestions)
+  }
 
-
-useEffect(() => {
-  getProductReviews();
-  getProductQuestions();
-},[])
+  useEffect(() => {
+    getProductReviews()
+    getProductQuestions()
+  }, [])
 
   const handleSubModule = () => {
     switch (router.query.tab) {
@@ -50,9 +48,7 @@ useEffect(() => {
                   <button className="btn-main">{pathOr("", [locale, "questionsAndReviews", "negative"], t)}</button>
                   <button className="btn-main">{pathOr("", [locale, "questionsAndReviews", "positive"], t)}</button>
                 </div>
-                {productReviews?.map((review) => (
-                  <Comment key={review.id} {...review} />
-                ))}
+                {productReviews.length > 0 && productReviews?.map((review) => <Comment key={review.id} {...review} />)}
               </div>
             </div>
           </div>
@@ -72,9 +68,8 @@ useEffect(() => {
                   <button className="btn-main">{pathOr("", [locale, "questionsAndReviews", "negative"], t)}</button>
                   <button className="btn-main">{pathOr("", [locale, "questionsAndReviews", "positive"], t)}</button>
                 </div>
-                {productQuestions?.map((question) => (
-                  <Question key={question.id} {...question} />
-                ))}
+                {productQuestions.length > 0 &&
+                  productQuestions?.map((question) => <Question key={question.id} {...question} />)}
               </div>
             </div>
           </div>
@@ -90,7 +85,6 @@ useEffect(() => {
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
           <h6 className="f-b m-0">{pathOr("", [locale, "questionsAndReviews", "ratings"], t)} (255)</h6>
         </div>
-
         <div className="d-flex mb-3">
           <ul
             className="nav nav-pills"

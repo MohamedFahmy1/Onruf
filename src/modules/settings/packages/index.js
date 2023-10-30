@@ -3,9 +3,10 @@ import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import axios from "axios"
-import { headersJson } from "../../../../token"
 import { toast } from "react-toastify"
-import { Modal } from "@mui/material"
+import Link from "next/link"
+import { useSelector } from "react-redux"
+import PaymentModal from "./PaymentModal"
 
 const Packages = () => {
   const { locale, push } = useRouter()
@@ -14,6 +15,7 @@ const Packages = () => {
   const [PublishPakat, setPublishPakat] = useState([])
   const [CurrentPakat, setCurrentPakat] = useState([])
   const [SMSPakat, setSMSPakat] = useState([])
+  const providerId = useSelector((state) => state.authSlice.providerId)
 
   // Loop through an object and filter couple of keys ex: image, id and then remove all empty keys...
   const mapAndRenderOnObject = (object) => {
@@ -58,7 +60,7 @@ const Packages = () => {
       data: { data: CurrentPakat },
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetClientSubcripePakats", {
       params: {
-        clientId: headersJson.headers["Provider-Id"],
+        clientId: providerId,
       },
     })
     console.log(CurrentPakat)
@@ -152,7 +154,6 @@ const Packages = () => {
             <aside
               className="Tinf"
               style={{
-                backgroundColor: paka.popular ? "var(--main)" : undefined,
                 display: "unset",
               }}
             >
@@ -167,18 +168,20 @@ const Packages = () => {
           </span>
           <span className="pord"></span>
         </div>
-        <button
-          className={`btn-main`}
-          style={{ width: "100%", backgroundColor: paka.isActive ? "#ccc" : undefined }}
-          onClick={() => {
-            setSelectedPaka(paka.id)
-            setPaymentModal(true)
-          }}
-        >
-          {paka.isActive
-            ? pathOr("", [locale, "Packages", "subsribed"], t)
-            : pathOr("", [locale, "Packages", "subscribe"], t)}
-        </button>
+        {!isCurrent && (
+          <button
+            className={`btn-main`}
+            style={{ width: "100%", backgroundColor: paka.isActive ? "#ccc" : undefined }}
+            onClick={() => {
+              setSelectedPaka(paka.id)
+              setPaymentModal(true)
+            }}
+          >
+            {paka.isActive
+              ? pathOr("", [locale, "Packages", "subsribed"], t)
+              : pathOr("", [locale, "Packages", "subscribe"], t)}
+          </button>
+        )}
       </div>
     )
   }
@@ -208,9 +211,9 @@ const Packages = () => {
                   <p>موعد التجديد القادم</p>
                   <div className="f-b">20/11/2020</div>
                 </div>
-                <a href="#" className="btn-main btn-main-B">
-                  {pathOr("", [locale, "Packages", "changePaka"], t)}
-                </a>
+                <button className="btn-main btn-main-B">
+                  <Link href="packages/changepackage">{pathOr("", [locale, "Packages", "changePaka"], t)}</Link>
+                </button>
               </li>
             </ul>
           </div>
@@ -255,102 +258,6 @@ const Packages = () => {
         handleSubscribePackage={handleSubscribePackage}
       />
     </div>
-  )
-}
-
-// Confirm Subscribe & Payment
-const PaymentModal = ({ showModal = true, setShowModal, pakaID, handleSubscribePackage }) => {
-  const style = {
-    margin: "auto",
-    maxWidth: "1080px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-  }
-
-  return (
-    <Modal
-      open={showModal}
-      onClose={() => {
-        setShowModal(false)
-      }}
-      sx={style}
-      aria-labelledby="modal-manage-account"
-      aria-describedby="modal-manage-account"
-    >
-      <div className="col-lg-12">
-        <div className="contint_paner p-2">
-          <div className="Payment-details" style={{ display: "flex", gap: "12px" }}>
-            <div style={{ flex: 1 }}>
-              <div className="f-b mb-2">لديك كبون خصم</div>
-              <div className="po_R overflow-hidden search_P mb-3">
-                <input type="text" className="form-control" placeholder="ادخل الكبون" />
-                <button className="btn-main">تفعيل</button>
-              </div>
-              <ul className="list_salary">
-                <li>
-                  <span>سعر رفع الاعلان</span> <span>1600 ر.س</span>
-                </li>
-                <li>
-                  <span>كوبون الخصم</span> <span>1600 ر.س</span>
-                </li>
-                <li>
-                  <span>تكلفة الباقة</span> <span>1600 ر.س</span>
-                </li>
-                <li>
-                  <span>الضريبة المضافة (12%)</span> <span>1600 ر.س</span>
-                </li>
-                <li>
-                  <span>الاجمالي</span> <span className="f-b">1600 ر.س</span>
-                </li>
-              </ul>
-            </div>
-            <div style={{ flex: 1 }}>
-              <div className="f-b mb-2">طرق الدفع</div>
-              <div className="payment-methods">
-                <label className="method_check method_check1">
-                  <input type="radio" name="payment" checked />
-                  <span className="bord"></span>
-                  <span>فيزا / ماستر كارد</span>
-                </label>
-                <div className="info-payment-methods">
-                  <div className="f-b mb-1">الدفع عن طريق الفيزا</div>
-                  <div className="mb-2">
-                    اجمالي الطلب <span className="main-color f-b">1750 ر.س</span>
-                  </div>
-                  <label className="method_check rounded-pill">
-                    <div>
-                      <input type="radio" name="visa_num" />
-                      <span className="bord rounded-pill"></span>
-                      <span className="back"></span>
-                      <span className="main-color">**********1410</span>
-                    </div>
-                    <img src="../core/imgs/MasterCard.png" width="26" />
-                  </label>
-                  <button className="btn-main btn-main-w border border-1 gray-color mt-2 w-100">
-                    اضافة بطاقة جديدة
-                  </button>
-                </div>
-
-                <label className="method_check">
-                  <input checked type="radio" name="payment" />
-                  <span className="bord"></span>
-                  <span>Cash on delivery</span>
-                </label>
-              </div>
-              <button
-                className="btn-main mt-2 w-100"
-                data-bs-toggle="modal"
-                data-bs-target="#add-product_"
-                onClick={() => handleSubscribePackage(pakaID)}
-              >
-                اشتراك{" "}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Modal>
   )
 }
 

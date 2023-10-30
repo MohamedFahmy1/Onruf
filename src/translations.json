@@ -299,7 +299,8 @@
       "changePaka": "تغيير الباقة",
       "noPakat": "!لا يوجد باقات",
       "productPosition": "موقع المنتج",
-      "isBusinessAccountSubscriped": "هل حساب البزنس مشترك ؟"
+      "isBusinessAccountSubscriped": "هل حساب البزنس مشترك ؟",
+      "ChoosePaka": "أختر الباقة التي تريد التغيير اليها"
     },
     "questionsAndReviews": {
       "all": "الكل",
@@ -407,7 +408,27 @@
       "all": "الكل",
       "active": "مفعل",
       "expired": "منتهي",
-      "addCoupon": "اصافه كوبون"
+      "addCoupon": "اضافه كوبون",
+      "couponType": "نوع الكوبون",
+      "fixedPrice": "مبلغ ثابت من مجموع طلب العميل",
+      "percentagePrice": "نسبة مئوية من مجموع طلب العميل",
+      "cancel": "إلغاء",
+      "couponDetails": "بيانات الكوبون",
+      "discountAmount": "مبلغ الخصم",
+      "discountPercentage": "نسبة الخصم",
+      "discountedExcluded": "استثناء المنتجات المخفضة",
+      "minimumProductsAmount": "الحد الأدنى للمشتريات",
+      "discountExpiryDate": "تاريخ انتهاء التخفيض",
+      "numberOfTimesCustomer": "عدد مرات الاستخدام للعميل الواحد",
+      "numberOfTimesEveryone": "عدد مرات الاستخدام للجميع",
+      "next": "التالي",
+      "includedIn": "مشمول في الكوبون",
+      "catIn": "تصنيفات مشمولة",
+      "foldersIn": "مجلدات مشمولة",
+      "productsIn": "منتجات مشمولة",
+      "add": "إضافة",
+      "chosenProd": "المنتجات المختارة",
+      "deleteAll": "حذف الكل"
     },
     "Points": {
       "myPoints": "نقاطي",
@@ -678,7 +699,7 @@
       "enLang": "English",
       "arLang": "Arabic",
       "bankAccounts": "Your Bank Accounts",
-      "editAccount": "Edit profile",
+      "editAccount": "Edit Profile",
       "userFrom": "user from",
       "myWallet": "My Wallet",
       "topUpCredit": "Top Up Credit",
@@ -787,7 +808,8 @@
       "changePaka": "Change Package",
       "noPakat": "No Packages To Show!",
       "productPosition": "Product Position",
-      "isBusinessAccountSubscriped": "is Business Account Subscriped ?"
+      "isBusinessAccountSubscriped": "is Business Account Subscriped ?",
+      "ChoosePaka": "Choose the package you want to subscribe to!"
     },
     "questionsAndReviews": {
       "all": "All",
@@ -897,7 +919,27 @@
       "all": "All",
       "active": "Active",
       "expired": "Expired",
-      "addCoupon": "Add Coupon"
+      "addCoupon": "Add Coupon",
+      "couponType": "Coupon Type",
+      "fixedPrice": "Fixed Price from the total of the client product",
+      "percentagePrice": "Discount Percentage from the total of the client product",
+      "cancel": "Cancel",
+      "couponDetails": "Coupon Details",
+      "discountAmount": "Discount Amount",
+      "discountPercentage": "Discount Percentage",
+      "discountedExcluded": "Exclude Discounted Products",
+      "minimumProductsAmount": "Minimum Purchases",
+      "discountExpiryDate": "Discount Expiry Date",
+      "numberOfTimesCustomer": "Number of times of use for one customer",
+      "numberOfTimesEveryone": "Number of times of use for everyone",
+      "next": "Next",
+      "includedIn": "Included In The Coupon",
+      "catIn": "Categories Included",
+      "foldersIn": "Folders Included",
+      "productsIn": "Products Included",
+      "add": "Add Coupon",
+      "chosenProd": "Chosen Products",
+      "deleteAll": "Delete All"
     },
     "Points": {
       "myPoints": "My Points",
@@ -974,7 +1016,7 @@
       "swift": "Bank Swift Code",
       "expiryDate": "Expiry Date",
       "monthExpiryDate": "Month Expiry Date",
-      "yearExpiryDate": "Year Expiry Date",
+      "yearExpiryDate": "Expiry Date",
       "saveLater": "Save For Later Use",
       "accountType": "Account Type"
     }

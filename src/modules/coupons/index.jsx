@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { FiPlusCircle } from "react-icons/fi"
 import { BiChart } from "react-icons/bi"
 import { useRouter } from "next/router"
@@ -8,8 +8,8 @@ import axios from "axios"
 import Table from "../../common/table"
 import Pagination from "../../common/pagination"
 import styles from "./coupons.module.css"
-import { toast } from 'react-toastify'
-import { RiDeleteBin5Line } from 'react-icons/ri';
+import { toast } from "react-toastify"
+import { RiDeleteBin5Line } from "react-icons/ri"
 import { headersJson } from "../../../token"
 import t from "../../translations.json"
 import { pathOr } from "ramda"
@@ -19,50 +19,79 @@ const Coupons = () => {
   const { locale } = useRouter()
   const [coupons, setCoupons] = useState()
   const [selectedFilter, setSelectedFilter] = useState("all")
-  const couponsCount = coupons & coupons?.length
+  const couponsCount = coupons && coupons?.length
   const allCoupons = coupons && coupons
   const activeCoupons = coupons && coupons?.filter(({ isActive }) => isActive)
-  const expiredCoupons =coupons && coupons?.filter(({ expiredDate }) => new Date(expiredDate) < new Date())
+  const expiredCoupons = coupons && coupons?.filter(({ expiredDate }) => new Date(expiredDate) < new Date())
   const filterCoupons =
     selectedFilter === "all" ? allCoupons : selectedFilter === "active" ? activeCoupons : expiredCoupons
 
-
-    const editCoupon = async (couponId) => {
-        try{
-            const formData = new FormData()
-            formData.append('id', couponId)
-            const data  = await axios.patch(`${process.env.REACT_APP_API_URL}/ChangeCouponStatus?couponId=${couponId}`,null)
-            toast.success(locale === 'en' ? 'Coupon has been updated successfully!' : 'تم تعديل الكوبون بنجاح')
-        }
-        catch(err){
-          toast.error(e.response.data.message)
-          console.error(err)
-        }
+  const editCoupon = useCallback(async (couponId) => {
+    try {
+      const formData = new FormData()
+      formData.append("id", couponId)
+      const data = await axios.patch(`${process.env.REACT_APP_API_URL}/ChangeCouponStatus?couponId=${couponId}`, null)
+      toast.success(locale === "en" ? "Coupon has been updated successfully!" : "تم تعديل الكوبون بنجاح")
+    } catch (err) {
+      toast.error(e.response.data.message)
+      console.error(err)
     }
+  }, [])
 
-
-    const handleDeleteCode = async (id) => {
-      try {
-        const isDelete = confirm(locale === 'en' ? 'Are you sure you want to delete this Coupon ?' : 'هل ترغب في مسح الكوبون ؟')
-        if(!isDelete) return
-        await axios.post(process.env.REACT_APP_API_URL + `/DeleteCoupon?couponId=${id}`, null)
-        toast.success(locale === 'en' ? 'Coupon has been deleted successfully!' : 'تم حذف الكوبون بنجاح')  
-        getCopounsList();     
-     }
-      catch(error){
-        console.error(error)
-        toast.error(error.response.data.message)
-      }
+  // const editCoupon = async (couponId) => {
+  //   try {
+  //     const formData = new FormData()
+  //     formData.append("id", couponId)
+  //     const data = await axios.patch(`${process.env.REACT_APP_API_URL}/ChangeCouponStatus?couponId=${couponId}`, null)
+  //     toast.success(locale === "en" ? "Coupon has been updated successfully!" : "تم تعديل الكوبون بنجاح")
+  //   } catch (err) {
+  //     toast.error(e.response.data.message)
+  //     console.error(err)
+  //   }
+  // }
+  const handleDeleteCode = useCallback(async (id) => {
+    try {
+      const isDelete = confirm(
+        locale === "en" ? "Are you sure you want to delete this Coupon ?" : "هل ترغب في مسح الكوبون ؟",
+      )
+      if (!isDelete) return
+      await axios.post(process.env.REACT_APP_API_URL + `/DeleteCoupon?couponId=${id}`, null)
+      toast.success(locale === "en" ? "Coupon has been deleted successfully!" : "تم حذف الكوبون بنجاح")
+      getCopounsList()
+    } catch (error) {
+      console.error(error)
+      toast.error(error.response.data.message)
     }
-const getCopounsList = async() => {
- const data = await axios.get(`${process.env.REACT_APP_API_URL}/ListBusinessAccountCoupons?pageIndex=1&PageRowsCount=10`) 
-  setCoupons(data.data.data)
-}
+  }, [])
 
-    useEffect(()=> {
+  // const handleDeleteCode = async (id) => {
+  //   try {
+  //     const isDelete = confirm(
+  //       locale === "en" ? "Are you sure you want to delete this Coupon ?" : "هل ترغب في مسح الكوبون ؟",
+  //     )
+  //     if (!isDelete) return
+  //     await axios.post(process.env.REACT_APP_API_URL + `/DeleteCoupon?couponId=${id}`, null)
+  //     toast.success(locale === "en" ? "Coupon has been deleted successfully!" : "تم حذف الكوبون بنجاح")
+  //     getCopounsList()
+  //   } catch (error) {
+  //     console.error(error)
+  //     toast.error(error.response.data.message)
+  //   }
+  // }
+  const getCopounsList = async () => {
+    const data = await axios.get(
+      `${process.env.REACT_APP_API_URL}/ListBusinessAccountCoupons?pageIndex=1&PageRowsCount=10`,
+    )
+    setCoupons(data.data.data)
+  }
+
+  useEffect(() => {
     getCopounsList()
-    },[])
-    
+    return () => {
+      setCoupons()
+    }
+  }, [])
+
   const columns = useMemo(
     () => [
       {
@@ -97,7 +126,7 @@ const getCopounsList = async() => {
         accessor: "createdAt",
         Cell: ({ row: { original } }) => (
           <div className="d-flex align-items-center">
-            <h6 className="m-0 f-b"> {propOr("-", ["createdAt"], original)} </h6>
+            <h6 className="m-0 f-b"> {original.createdAt.slice(0, 10)} </h6>
           </div>
         ),
       },
@@ -115,9 +144,8 @@ const getCopounsList = async() => {
         accessor: "isActive",
         Cell: ({
           row: {
-            values: { isActive},
-            original: { id }
-
+            values: { isActive },
+            original: { id },
           },
         }) => {
           return (
@@ -145,7 +173,7 @@ const getCopounsList = async() => {
         },
       },
     ],
-    [editCoupon, handleDeleteCode],
+    [],
   )
   return (
     <div className="body-content">
@@ -191,7 +219,7 @@ const getCopounsList = async() => {
         </div>
         <div className="contint_paner">
           <div className="outer_table">
-            <Table columns={columns} data={filterCoupons} isCheckbox={false} pageSize={10} />
+            {coupons && <Table columns={columns} data={filterCoupons} isCheckbox={false} pageSize={10} />}
           </div>
           {filterCoupons?.length > 10 && <Pagination listLength={filterCoupons?.length} pageSize={10} />}
         </div>
