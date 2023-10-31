@@ -229,19 +229,6 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
             </Box>
           </Box>
           <hr />
-          {/* Modal - Button Group */}
-          <Button
-            sx={{
-              p: 2,
-              width: "100%",
-              ":hover": { bgcolor: "#45495e" },
-              bgcolor: "#45495e",
-              borderRadius: "100px",
-              color: "#fff",
-            }}
-          >
-            {pathOr("", [router.locale, "Settings", "cancelMember"], t)}
-          </Button>
           <Button
             onClick={handleDeleteAccount}
             sx={{

@@ -6,20 +6,23 @@ import Comment from "./comments"
 import Question from "./questions"
 import { useEffect } from "react"
 import axios from "axios"
-
+import { useSelector } from "react-redux"
 const Reviews = () => {
   const router = useRouter()
   const { locale } = useRouter()
-  const [productReviews, setProductReviews] = useState([])
+  const [productReviews, setProductReviews] = useState()
   const [productQuestions, setProductQuestions] = useState([])
+  const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+  const providerId = useSelector((state) => state.authSlice.providerId)
 
   const getProductReviews = async () => {
     const {
-      data: { data: productReviews },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/ListRateProduct", {
-      params: { currentPage: 1, productId: 267, lang: "en" },
+      data: { data: data },
+    } = await axios.get(process.env.REACT_APP_API_URL + "/ListRateSeller", {
+      params: { BusinessAccountId: buisnessAccountId, providerId: providerId, pageIndex: 1, PageRowsCount: 50 },
     })
-    setProductReviews(productReviews)
+    console.log(data)
+    setProductReviews(data)
   }
   const getProductQuestions = async () => {
     const {
@@ -48,7 +51,8 @@ const Reviews = () => {
                   <button className="btn-main">{pathOr("", [locale, "questionsAndReviews", "negative"], t)}</button>
                   <button className="btn-main">{pathOr("", [locale, "questionsAndReviews", "positive"], t)}</button>
                 </div>
-                {productReviews.length > 0 && productReviews?.map((review) => <Comment key={review.id} {...review} />)}
+                {productReviews &&
+                  productReviews.rateSellerListDto?.map((review) => <Comment key={review.id} {...review} />)}
               </div>
             </div>
           </div>

@@ -1304,7 +1304,7 @@ const AddProductStepTwo = ({ catId, product }) => {
             <div className="form-content">
               <form>
                 <Row>
-                  <div className="col-12">
+                  <div className="col-6">
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
                         {pathOr("", [locale, "Products", "pickupOptions"], t)}
@@ -1324,6 +1324,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     setProductPayload({
                                       ...productPayload,
                                       PickUpDeliveryOption: "MustPickUp",
+                                      ShippingOptions: null,
                                     })
                                   }
                                 />
@@ -1382,6 +1383,87 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                     </div>
                   </div>
+                  {(productPayload.PickUpDeliveryOption == "PickUpAvailable" ||
+                    productPayload.PickUpDeliveryOption == "NoPickUp") && (
+                    <div className="col-6">
+                      <div className="form-group">
+                        <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
+                          {pathOr("", [locale, "Products", "shippingOptions"], t)}
+                        </label>
+                        <div className="row">
+                          <div className="col-lg-12 col-md-12">
+                            <div className="form-group">
+                              <div className="form-control outer-check-input">
+                                <div className="form-check form-switch p-0 m-0">
+                                  <input
+                                    className="form-check-input m-0"
+                                    type="checkbox"
+                                    role="switch"
+                                    id="flexSwitchCheckChecked"
+                                    checked={productPayload.ShippingOptions === "1" ? true : false}
+                                    onChange={() =>
+                                      setProductPayload({
+                                        ...productPayload,
+                                        ShippingOptions: "1",
+                                      })
+                                    }
+                                  />
+                                  <span> {pathOr("", [locale, "Products", "freeShippingWithinSaudi"], t)}</span>
+                                  <span className="bord" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-lg-12 col-md-12">
+                            <div className="form-group">
+                              <div className="form-control outer-check-input">
+                                <div className="form-check form-switch p-0 m-0">
+                                  <input
+                                    className="form-check-input m-0"
+                                    type="checkbox"
+                                    role="switch"
+                                    id="flexSwitchCheckChecked"
+                                    checked={productPayload.ShippingOptions === "2" ? true : false}
+                                    onChange={() =>
+                                      setProductPayload({
+                                        ...productPayload,
+                                        ShippingOptions: "2",
+                                      })
+                                    }
+                                  />
+                                  <span>{pathOr("", [locale, "Products", "integratedShippingOptions"], t)}</span>
+                                  <span className="bord" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-lg-12 col-md-12">
+                            <div className="form-group">
+                              <div className="form-control outer-check-input">
+                                <div className="form-check form-switch p-0 m-0">
+                                  <input
+                                    className="form-check-input m-0"
+                                    type="checkbox"
+                                    role="switch"
+                                    id="flexSwitchCheckChecked"
+                                    checked={productPayload.ShippingOptions === "3" ? true : false}
+                                    onChange={() =>
+                                      setProductPayload({
+                                        ...productPayload,
+                                        ShippingOptions: "3",
+                                      })
+                                    }
+                                  />
+                                  <span>{pathOr("", [locale, "Products", "arrangementWithBuyer"], t)}</span>
+                                  <span className="bord" />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </Row>
               </form>
             </div>

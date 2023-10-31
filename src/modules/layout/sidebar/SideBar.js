@@ -123,14 +123,14 @@ const Sidebar = () => {
           }}
         >
           <Typography variant="p" color={"white"}>
-            هل تحتاج ل مساعده
+            {pathOr("", [locale, "sidebar", "needHelp"], t)}
           </Typography>
           <Button
             className="mr-10 mt-10 btn btn-main"
             style={{ backgroundColor: "#fff", color: "#ee6c4d" }}
             onClick={() => Router.push("/contact-us")}
           >
-            راسلنا
+            {pathOr("", [locale, "sidebar", "contactus"], t)}
           </Button>
         </Box>
       </List>

@@ -2,7 +2,8 @@
   "ar": {
     "navbar": {
       "search": "ابحث برقم الطلب, المنتج",
-      "switch": "تغيير الحساب"
+      "switch": "تغيير الحساب",
+      "enter": "دخول"
     },
     "sidebar": {
       "home": "الرئيسية",
@@ -14,7 +15,8 @@
       "comments": "التقيمات و الاسئلة",
       "marketing": "التسويق",
       "settings": "الاعدادات",
-      "contactus": "راسلنا"
+      "contactus": "راسلنا",
+      "needHelp": "هل تحتاج لمساعده؟"
     },
     "Home": {
       "productsAlmostOut": "منتجات علي وشك النفاذ",
@@ -136,6 +138,9 @@
       "MustPickUp": "يجب الاستلام",
       "NoPickup": "لا يوجد استلام",
       "pickupAvailable": "متاح الاستلام",
+      "freeShippingWithinSaudi": "شحن مجاني داخل المملكة العربية السعودية",
+      "integratedShippingOptions": "خيارات شركة الشحن المتكاملة",
+      "arrangementWithBuyer": "سيتم الترتيب مع المشتري",
       "choosepaka": "اختر واحده من باقاتنا الخاصة",
       "getBenefits": "واحصل علي مزايا عديده لعرض منتجك",
       "numPics": "عدد الصور",
@@ -241,7 +246,7 @@
       "freelance_certificate": "شهادة العمل الحر",
       "25years": "تجارة 15 سنة",
       "active": "مفعل",
-      "showStore": "إظهار المتجر",
+      "showStore": "ظهور المتجر",
       "cancelMember": "الغاء الاشتراك",
       "deleteAccount": "مسح الحساب"
     },
@@ -300,7 +305,8 @@
       "noPakat": "!لا يوجد باقات",
       "productPosition": "موقع المنتج",
       "isBusinessAccountSubscriped": "هل حساب البزنس مشترك ؟",
-      "ChoosePaka": "أختر الباقة التي تريد التغيير اليها"
+      "ChoosePaka": "أختر الباقة التي تريد التغيير اليها",
+      "noPaka": "لا يوجد باقات للاشتراك بقا"
     },
     "questionsAndReviews": {
       "all": "الكل",
@@ -405,6 +411,7 @@
       "isFreeDelivery": "شحن مجاني",
       "discount": "الخصم",
       "actions": "اجراءات",
+      "statistics": "احصائيات",
       "all": "الكل",
       "active": "مفعل",
       "expired": "منتهي",
@@ -461,7 +468,7 @@
       "select": "اختر"
     },
     "ContactUs": {
-      "welcome": "نجن سعيدون بل تواصل معك",
+      "welcome": "نحن سعيدون بالتواصل معك",
       "ask": "ما هو نوع التساؤل ؟",
       "typeOfCumm": "نوع التواصل",
       "complaint": "مشكله",
@@ -513,7 +520,8 @@
   "en": {
     "navbar": {
       "search": "Search by order number, product",
-      "switch": "Switch accounts"
+      "switch": "Switch accounts",
+      "enter": "Enter"
     },
     "sidebar": {
       "home": "Home",
@@ -525,7 +533,8 @@
       "marketing": "Marketing",
       "coupons": "Coupons",
       "settings": "Settings",
-      "contactus": "Contact Us"
+      "contactus": "Contact Us",
+      "needHelp": "Do you need help ?"
     },
     "Home": {
       "productsAlmostOut": "products almost out",
@@ -646,6 +655,9 @@
       "MustPickUp": "Must Pick-Up",
       "NoPickup": "No Pick-Up",
       "pickupAvailable": "Pick-Up Available",
+      "freeShippingWithinSaudi": "Free Shipping Within Saudi Arabia",
+      "integratedShippingOptions": "Integrated Shipping Company Options",
+      "arrangementWithBuyer": "Arrangement Will Be Made With The Buyer",
       "choosepaka": "Choose one of our special packages",
       "getBenefits": "And get many benefits to display your product",
       "numPics": "Number of Pictures",
@@ -809,7 +821,8 @@
       "noPakat": "No Packages To Show!",
       "productPosition": "Product Position",
       "isBusinessAccountSubscriped": "is Business Account Subscriped ?",
-      "ChoosePaka": "Choose the package you want to subscribe to!"
+      "ChoosePaka": "Choose the package you want to subscribe to!",
+      "noPaka": "No Packages To Subscribe!"
     },
     "questionsAndReviews": {
       "all": "All",
@@ -916,6 +929,7 @@
       "expiryDate": "Expiry Date",
       "isFreeDelivery": "Free Delivery",
       "actions": "Actions",
+      "statistics": "Statistics",
       "all": "All",
       "active": "Active",
       "expired": "Expired",

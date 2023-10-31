@@ -4,11 +4,12 @@ import React, { useState } from "react"
 import { Row, Col } from "react-bootstrap"
 import Modal from "react-bootstrap/Modal"
 import { formatDate } from "../../../common/functions"
-
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
-
-const Comment = ({ id, rate, comment, productName, userName, image, createdAt }) => {
+import { Fragment } from "react"
+import Image from "next/image"
+import ratingImage from "../../../public/images/rating.png"
+const Comment = ({ id, rate, comment, productName, userName, imgProfile, createdAt }) => {
   const [openReplyModal, setOpenReplyModal] = useState(false)
   const [openEditModal, setOpenEditModal] = useState(false)
   const { locale, push } = useRouter()
@@ -25,15 +26,11 @@ const Comment = ({ id, rate, comment, productName, userName, image, createdAt })
 
   // Handle Share a review
   const handleShareReview = async (id) => {
-    const result = await axios.post(
-      process.env.REACT_APP_API_URL + "/ShareRate",
-      {},
-      {
-        params: {
-          id,
-        },
+    const result = await axios.post(process.env.REACT_APP_API_URL + "/ShareRate", {
+      params: {
+        id,
       },
-    )
+    })
   }
 
   // Handle Edit a review
@@ -44,7 +41,7 @@ const Comment = ({ id, rate, comment, productName, userName, image, createdAt })
   }
 
   return (
-    <>
+    <Fragment>
       <div className="contint_paner box-Rev-Que">
         <div className="title_">
           <div className="d-flex align-items-center gap-2">
@@ -61,14 +58,15 @@ const Comment = ({ id, rate, comment, productName, userName, image, createdAt })
         <div className="px-4 py-3 d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-2">
             <div className="d-flex align-items-center gap-2">
-              <img src={image} className="img_user" />
+              <img src={imgProfile} className="img_user" />
               <div className="f-b">
                 <h6 className="m-0 f-b">{userName}</h6>
                 <div className="gray-color">{comment}</div>
               </div>
             </div>
             <div className="imogy">
-              <span>{rate}</span>
+              <Image src={ratingImage} alt="rating" width={40} height={40} />
+              <span className="fs-4">{rate.toFixed(1)}</span>
             </div>
           </div>
           <div className="d-flex align-items-center gap-3">
@@ -109,7 +107,7 @@ const Comment = ({ id, rate, comment, productName, userName, image, createdAt })
           rate={rate}
           comment={comment}
           userName={userName}
-          image={image}
+          image={imgProfile}
         />
         <EditModal
           openModal={openEditModal}
@@ -117,12 +115,12 @@ const Comment = ({ id, rate, comment, productName, userName, image, createdAt })
           rate={rate}
           comment={comment}
           userName={userName}
-          image={image}
+          image={imgProfile}
           id={id}
           handleEditReview={handleEditReview}
         />
       </div>
-    </>
+    </Fragment>
   )
 }
 

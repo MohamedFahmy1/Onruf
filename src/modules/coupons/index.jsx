@@ -22,11 +22,11 @@ const Coupons = () => {
   const couponsCount = coupons && coupons?.length
   const allCoupons = coupons && coupons
   const activeCoupons = coupons && coupons?.filter(({ isActive }) => isActive)
-  const expiredCoupons = coupons && coupons?.filter(({ expiredDate }) => new Date(expiredDate) < new Date())
+  const expiredCoupons = coupons && coupons?.filter(({ expiryDate }) => new Date(expiryDate) < new Date())
   const filterCoupons =
     selectedFilter === "all" ? allCoupons : selectedFilter === "active" ? activeCoupons : expiredCoupons
 
-  const editCoupon = useCallback(async (couponId) => {
+  const editCoupon = async (couponId) => {
     try {
       const formData = new FormData()
       formData.append("id", couponId)
@@ -36,7 +36,7 @@ const Coupons = () => {
       toast.error(e.response.data.message)
       console.error(err)
     }
-  }, [])
+  }
 
   // const editCoupon = async (couponId) => {
   //   try {
@@ -49,7 +49,7 @@ const Coupons = () => {
   //     console.error(err)
   //   }
   // }
-  const handleDeleteCode = useCallback(async (id) => {
+  const handleDeleteCode = async (id) => {
     try {
       const isDelete = confirm(
         locale === "en" ? "Are you sure you want to delete this Coupon ?" : "هل ترغب في مسح الكوبون ؟",
@@ -62,7 +62,7 @@ const Coupons = () => {
       console.error(error)
       toast.error(error.response.data.message)
     }
-  }, [])
+  }
 
   // const handleDeleteCode = async (id) => {
   //   try {
@@ -151,12 +151,12 @@ const Coupons = () => {
           return (
             <div className="d-flex align-items-center gap-2">
               <button className={`btn-main ${styles["btn-main"]}`}>
-                احصائيات
+                {pathOr("", [locale, "Coupons", "statistics"], t)}
                 <BiChart className="me-2" size={"1.3rem"} />
               </button>
               <div className="form-control outer-check-input w-auto">
                 <div className="form-check form-switch p-0 m-0 d-flex">
-                  <span className="ms-2">{pathOr("", [locale, "Coupons", "active"], t)}</span>
+                  <span className="mx-2">{pathOr("", [locale, "Coupons", "active"], t)}</span>
                   <input
                     className="form-check-input m-0"
                     onChange={() => editCoupon(id)}

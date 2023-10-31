@@ -3,6 +3,7 @@ import axios from "axios"
 import { UnAuthorisedPage } from "../modules/404/Unauthorised"
 import { useSelector, useDispatch } from "react-redux"
 import { getTokensFromCookie } from "../appState/personalData/authActions"
+import { Fragment } from "react"
 
 export const AppWrapper = ({ children }) => {
   const dispatch = useDispatch()
@@ -21,5 +22,5 @@ export const AppWrapper = ({ children }) => {
     axios.defaults.headers.common["Business-Account-Id"] = buisnessAccountId
   }, [token, providerId, buisnessAccountId])
 
-  return <>{token && buisnessAccountId ? children : <UnAuthorisedPage />}</>
+  return <Fragment>{token && buisnessAccountId ? children : <UnAuthorisedPage />}</Fragment>
 }

@@ -97,13 +97,6 @@ export const OrderDetails = () => {
                   <option hidden disabled selected>
                     {pathOr("", [locale, "Orders", "changeOrderStatus"], t)}
                   </option>
-                  {/*<option>{pathOr("", [locale, "Orders", "waiting_for_payment"], t)}</option>
-                  <option>{pathOr("", [locale, "Orders", "waiting_for_review"], t)}</option>
-                  <option>{pathOr("", [locale, "Orders", "in_progress"], t)}</option>
-                  <option>{pathOr("", [locale, "Orders", "ready_for_delivery"], t)}</option>
-                  <option>{pathOr("", [locale, "Orders", "delivery_in_progress"], t)}</option>
-                  <option>{pathOr("", [locale, "Orders", "delivered"], t)}</option>
-  <option>{pathOr("", [locale, "Orders", "canceled"], t)}</option>*/}
                 </select>
                 <ChangeSingleStatusModal
                   openModal={openModal}
@@ -162,7 +155,6 @@ export const OrderDetails = () => {
             </ul>
           </div>
         </div>
-
         <div className="col-lg-4">
           <div className="contint_paner mt-0 p-0">
             <div className="detalis-customer">
@@ -236,7 +228,6 @@ export const OrderDetails = () => {
             </div>
           </div>
         </div>
-
         <div className="col-12">
           <div className="contint_paner">
             <h5 className="f-b fs-4">{pathOr("", [locale, "Orders", "products"], t)}</h5>
@@ -293,7 +284,6 @@ export const OrderDetails = () => {
             </div>
           </div>
         </div>
-
         <div className="col-12">
           <div className="contint_paner p-0">
             <h5 className="f-b p-4 m-0 fs-4">{pathOr("", [locale, "Orders", "order_log"], t)}</h5>
@@ -321,19 +311,3 @@ export const OrderDetails = () => {
     </div>
   )
 }
-
-// export async function getServerSideProps({ query: { id = 548 } }) {
-//   const {
-//     data: { data: orderData },
-//   } = await axios.get(`${process.env.REACT_APP_API_URL}/GetOrderDetailsByOrderId`, {
-//     ...headersJson,
-//     params: {
-//       orderId: 548,
-//     },
-//   })
-//   return {
-//     props: {
-//       orderData: orderData[0],
-//     },
-//   }
-// }

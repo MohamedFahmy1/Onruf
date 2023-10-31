@@ -9,7 +9,6 @@ import t from "../../../translations.json"
 import { pathOr } from "ramda"
 import { BusinessAccountList } from "./BusinessAccountList"
 import axios from "axios"
-import Cookies from "js-cookie"
 import { useSelector, useDispatch } from "react-redux"
 import { getTokensFromCookie } from "../../../appState/personalData/authActions"
 
@@ -33,14 +32,11 @@ const Navbar = () => {
   }, [token, providerId, buisnessAccountId])
 
   const getAllBuisnessAccounts = async (id) => {
-    const { data } = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/GatAllBusinessAccounts?Provider-Id=${providerId}`,
-    )
+    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/GatAllBusinessAccounts`)
     setBusinessAccountList(data.data)
   }
 
   const accountData = () => {
-    const buisnessAccountId = Cookies.get("businessId") ? Cookies.get("businessId") : 3
     if (buisnessAccountId) {
       const account = businessAccountList.filter((buisness) => buisness.id == buisnessAccountId)
       setUserName(account[0]?.businessAccountName)
@@ -92,7 +88,7 @@ const Navbar = () => {
               </button>
             </div>
           </div>
-          <a href="" className="close_">
+          <a href="#" className="close_">
             <AiOutlinePoweroff />
           </a>
           {toggleBusinessAccountList && (

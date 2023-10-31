@@ -1,9 +1,20 @@
-import React, { useEffect, useState } from "react"
-import Link from "next/link"
+import React from "react"
+import Image from "next/image"
+import { Modal } from "@mui/material"
 import { userImg } from "../../../constants"
 import Cookies from "js-cookie"
 import { useRouter } from "next/router"
-
+import { AiOutlineCloseCircle } from "react-icons/ai"
+import { pathOr } from "ramda"
+import t from "../../../translations.json"
+const style = {
+  margin: "auto",
+  maxWidth: "1080px",
+  minWidth: "350px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}
 export const BusinessAccountList = ({
   businessAccountList,
   toggleBusinessAccountList,
@@ -12,56 +23,79 @@ export const BusinessAccountList = ({
   setUserImage,
 }) => {
   const router = useRouter()
+  const { locale } = useRouter()
   const setAccount = (businessAccountImage, businessAccountName, businessId, ProviderId) => {
     setUserName(businessAccountName)
     setUserImage(businessAccountImage)
-    Cookies.remove("businessId")
-    Cookies.remove("id")
-    Cookies.set("id", ProviderId)
-    Cookies.set("businessId", businessId)
+    Cookies.remove("businessAccountId")
+    Cookies.remove("ProviderId")
+    Cookies.set("ProviderId", ProviderId)
+    Cookies.set("businessAccountId", businessId)
     setToggleBusinessAccountList(false)
     router.push("/")
   }
 
   return (
-    <>
-      <ul className={`dropdown-menu ${toggleBusinessAccountList ? "show" : ""}`} aria-labelledby="dropdownMenuButton1">
+    <Modal
+      open={toggleBusinessAccountList}
+      onClose={() => {
+        setToggleBusinessAccountList(false)
+      }}
+      sx={style}
+    >
+      <ul
+        className={`dropdown-menu ${toggleBusinessAccountList ? "show" : ""}`}
+        aria-labelledby="dropdownMenuButton1"
+        style={{ minWidth: "350px", textAlign: "right", padding: "20px", height: "50%", overflowY: "auto" }}
+      >
+        <button
+          type="button"
+          className="text-left"
+          style={{ width: "fit-content", marginRight: "auto", display: "block", marginBottom: "15px" }}
+          onClick={() => setToggleBusinessAccountList(false)}
+        >
+          <AiOutlineCloseCircle size={40} />
+        </button>
         {businessAccountList &&
           businessAccountList.map((account) => {
             return (
               <div key={account.id}>
                 <li>
-                  <Link locale="ar" href={"/"}>
-                    <a
-                      className="dropdown-item"
+                  <span className="d-flex align-items-center justify-content-between">
+                    <button
+                      type="button"
+                      className="btn-main"
                       onClick={() =>
                         setAccount(
                           account.businessAccountImage,
                           account.businessAccountName,
                           account.id,
-                          account.userId,
+                          account.providerId,
                         )
                       }
                     >
-                      <span>
-                        {" "}
-                        {console.log(account.businessAccountImage)}
-                        <img
-                          src={
-                            account.businessAccountImage === null || account.businessAccountImage === ""
-                              ? userImg
-                              : `http://onrufwebsite2-001-site1.btempurl.com/${account.businessAccountImage}`
-                          }
-                        />
-                      </span>{" "}
-                      <span className="icon">{account.businessAccountName}</span>
-                    </a>
-                  </Link>
+                      {pathOr("", [locale, "navbar", "enter"], t)}
+                    </button>
+                    <div>
+                      <span className="icon mx-2 f-b fs-5">{account.businessAccountName}</span>
+                      <Image
+                        src={
+                          account.businessAccountImage === null || account.businessAccountImage === ""
+                            ? userImg
+                            : `http://onrufwebsite2-001-site1.btempurl.com/${account.businessAccountImage}`
+                        }
+                        alt="user"
+                        width={60}
+                        height={60}
+                        style={{ borderRadius: "50%" }}
+                      />
+                    </div>
+                  </span>
                 </li>
               </div>
             )
           })}
       </ul>
-    </>
+    </Modal>
   )
 }

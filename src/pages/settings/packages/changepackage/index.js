@@ -29,7 +29,7 @@ const ChangePackage = () => {
       data: { data: CurrentPackages },
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllPakatsList", {
       params: {
-        isAdmin: true,
+        isAdmin: false,
       },
     })
     const unsubscripedPackages = CurrentPackages.filter((item) => item.isBusinessAccountSubscriped === false)
@@ -145,9 +145,11 @@ const ChangePackage = () => {
         <h6 className="f-b m-0 fs-5">{pathOr("", [locale, "Packages", "ChoosePaka"], t)}</h6>
       </div>
       <div className="outer_boxsBouquet">
-        {packages?.map((paka, idx) => (
-          <PackageCard isCurrent={true} paka={paka} key={idx} />
-        ))}
+        {packages.length > 0 ? (
+          packages?.map((paka, idx) => <PackageCard isCurrent={true} paka={paka} key={idx} />)
+        ) : (
+          <h2 className="f-b justify-content-center mt-5">{pathOr("", [locale, "Packages", "noPaka"], t)}</h2>
+        )}
       </div>
       <PaymentModal
         showModal={paymentModal}
