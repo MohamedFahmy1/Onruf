@@ -4,10 +4,10 @@ import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import axios from "axios"
 import { toast } from "react-toastify"
-import Link from "next/link"
 import { useSelector } from "react-redux"
 import PaymentModal from "./PaymentModal"
-
+import { formatDate } from "../../../common/functions"
+import { AiFillCheckCircle } from "react-icons/ai"
 const Packages = () => {
   const { locale, push } = useRouter()
   const [selectedPaka, setSelectedPaka] = useState(null)
@@ -94,22 +94,18 @@ const Packages = () => {
   // Handle Subscribe Package
   const handleSubscribePackage = async (pakaID) => {
     try {
-      const paymentTrans = await axios.post(
-        process.env.REACT_APP_API_URL + "/PakatPaymentTransaction",
-        {},
-        {
-          params: {
-            pakatId: pakaID,
-            typePay: "Cash",
-          },
+      const paymentTrans = await axios.post(process.env.REACT_APP_API_URL + "/PakatPaymentTransaction", {
+        params: {
+          pakatId: pakaID,
+          typePay: "Cash",
         },
-      )
+      })
 
       // If payment success do subsribe
       if (paymentTrans.status === 200) {
         try {
           await axios.post(process.env.REACT_APP_API_URL + "/AddPakatSubcription", [pakaID])
-          toast.success("You Subscribed Package!")
+          toast.success(locale === "en" ? "You Subscribed Package!" : "!تم الاشتراك بنجاح بالباقة")
           setPaymentModal(false)
           fetchCurrentPakat()
           fetchPublishPakat()
@@ -122,11 +118,25 @@ const Packages = () => {
       toast.error(error.response.data.message)
     }
   }
-
+  const handlePackageRenew = async (pakaID) => {
+    try {
+      // await axios.post(process.env.REACT_APP_API_URL + "/AddPakatSubcription", [pakaID])
+      toast.success(locale === "en" ? "You Renewed Package!" : "!تم تجديد الباقة بنجاح")
+      setPaymentModal(false)
+      fetchCurrentPakat()
+    } catch (error) {
+      toast.error(error.response.data.message)
+    }
+  }
   // Re-usable paka card
   const PackageCard = ({ paka, isCurrent }) => {
     return (
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: isCurrent ? "row" : "column",
+        }}
+      >
         <div className="box-Bouquet">
           <div
             className={`head`}
@@ -162,22 +172,22 @@ const Packages = () => {
           ) : (
             <Fragment></Fragment>
           )}
-          <input type="radio" name="Bouquet-SMS" checked={paka.id === selectedPaka} />
+          <input type="checkbox" name="Bouquet-SMS" checked={paka.isBusinessAccountSubscriped || isCurrent} />
           <span className="check">
-            <i className="fas fa-check-circle"></i>
+            <AiFillCheckCircle size={100} />
           </span>
           <span className="pord"></span>
         </div>
         {!isCurrent && (
           <button
             className={`btn-main`}
-            style={{ width: "100%", backgroundColor: paka.isActive ? "#ccc" : undefined }}
+            style={{ width: "100%", backgroundColor: paka.isBusinessAccountSubscriped ? "#ccc" : undefined }}
             onClick={() => {
-              setSelectedPaka(paka.id)
-              setPaymentModal(true)
+              !paka.isBusinessAccountSubscriped && setSelectedPaka(paka.id)
+              !paka.isBusinessAccountSubscriped && setPaymentModal(true)
             }}
           >
-            {paka.isActive
+            {paka.isBusinessAccountSubscriped
               ? pathOr("", [locale, "Packages", "subsribed"], t)
               : pathOr("", [locale, "Packages", "subscribe"], t)}
           </button>
@@ -195,31 +205,32 @@ const Packages = () => {
         </div>
         <div className="outer_boxsBouquet">
           {CurrentPakat?.map((paka, idx) => (
-            <PackageCard isCurrent={true} paka={paka} key={idx} />
+            <div className="d-flex" key={idx}>
+              <PackageCard isCurrent={true} paka={paka} key={idx} />
+              <div className="box-Bouquet p-4">
+                <ul>
+                  <li className="mb-4 d-flex justify-content-between">
+                    <div>
+                      <p>{pathOr("", [locale, "Packages", "lastPackageUpdate"], t)}</p>
+                      <div className="f-b">{formatDate(paka.startDate)}</div>
+                    </div>
+                    <button className="btn-main">{pathOr("", [locale, "Orders", "download_invoice"], t)}</button>
+                  </li>
+                  <li className="mb-4 d-flex justify-content-between">
+                    <div>
+                      <p>{pathOr("", [locale, "Packages", "nextRenewalDate"], t)}</p>
+                      <div className="f-b">{formatDate(paka.endDate)}</div>
+                    </div>
+                    <button className="btn-main btn-main-B" onClick={() => handlePackageRenew(paka.pakaId)}>
+                      {pathOr("", [locale, "Packages", "renewPaka"], t)}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
           ))}
-          <div className="box-Bouquet p-4">
-            <ul>
-              <li className="mb-4 d-flex justify-content-between">
-                <div>
-                  <p>اخر تجديد للباقة</p>
-                  <div className="f-b">20/11/2020</div>
-                </div>
-                <button className="btn-main">{pathOr("", [locale, "Orders", "download_invoice"], t)}</button>
-              </li>
-              <li className="mb-4 d-flex justify-content-between">
-                <div>
-                  <p>موعد التجديد القادم</p>
-                  <div className="f-b">20/11/2020</div>
-                </div>
-                <button className="btn-main btn-main-B">
-                  <Link href="packages/changepackage">{pathOr("", [locale, "Packages", "changePaka"], t)}</Link>
-                </button>
-              </li>
-            </ul>
-          </div>
         </div>
       </div>
-
       {/* SMS Pakat */}
       <div className="mb-4">
         <div className="mb-4">

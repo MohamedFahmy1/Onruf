@@ -301,12 +301,14 @@
       "countProducts": "عدد المنتجات",
       "currentPaka": "باقتك الحالية",
       "subscribe": "اشترك",
-      "changePaka": "تجديد الباقة",
+      "renewPaka": "تجديد الباقة",
       "noPakat": "!لا يوجد باقات",
       "productPosition": "موقع المنتج",
       "isBusinessAccountSubscriped": "هل حساب البزنس مشترك ؟",
       "ChoosePaka": "أختر الباقة التي تريد التغيير اليها",
-      "noPaka": "لا يوجد باقات للاشتراك بقا"
+      "noPaka": "لا يوجد باقات للاشتراك بقا",
+      "lastPackageUpdate": "اخر تجديد للباقة",
+      "nextRenewalDate": "موعد التجديد القادم"
     },
     "questionsAndReviews": {
       "all": "الكل",
@@ -817,12 +819,14 @@
       "countProducts": "Count of products",
       "currentPaka": "Current Package",
       "subscribe": "Subscribe",
-      "changePaka": "Renew Package",
+      "renewPaka": "Renew Package",
       "noPakat": "No Packages To Show!",
       "productPosition": "Product Position",
       "isBusinessAccountSubscriped": "is Business Account Subscriped ?",
       "ChoosePaka": "Choose the package you want to subscribe to!",
-      "noPaka": "No Packages To Subscribe!"
+      "noPaka": "No Packages To Subscribe!",
+      "lastPackageUpdate": "Last Package Update",
+      "nextRenewalDate": "Next Renewal Date"
     },
     "questionsAndReviews": {
       "all": "All",
@@ -986,7 +990,7 @@
       "select": "Select"
     },
     "ContactUs": {
-      "welcome": "We are please to contact you",
+      "welcome": "We are pleased to contact you",
       "ask": "What kind of help you need",
       "typeOfCumm": "Type of communication",
       "complaint": "Complaint",

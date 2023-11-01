@@ -1540,8 +1540,8 @@ const AddProductStepTwo = ({ catId, product }) => {
                               <input
                                 type="radio"
                                 name="Bouquet"
-                                checked={productPayload.pakatId === pack?.id}
-                                value={pack?.id}
+                                checked={productPayload.pakatId === +pack?.id}
+                                value={+pack?.id}
                               />
                               <span className={styles["check"]}>
                                 <FaCheckCircle />
