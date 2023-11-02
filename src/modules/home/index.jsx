@@ -30,14 +30,7 @@ const Home = () => {
   const getProduct = async () => {
     const {
       data: { data: products },
-    } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/ListProductByBusinessAccountId`, {
-      params: {
-        currentPage: 1,
-        productFilter: 0,
-        lang: locale,
-        maxRows: 10,
-      },
-    })
+    } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/ListProductForProvider`)
     setProducts(products)
   }
   const getOrders = async () => {
@@ -63,6 +56,7 @@ const Home = () => {
 
   useEffect(() => {
     let almostFinishedProducts = []
+    console.log(products)
     products?.map((product) => {
       if (product.qty < 4) {
         almostFinishedProducts.push(product)

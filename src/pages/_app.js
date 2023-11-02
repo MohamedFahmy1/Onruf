@@ -53,7 +53,15 @@ const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache }) 
               <EmotionCacheProvider theme={theme}>
                 <CssBaseline />
                 <Sidebar />
-                <div id="main" style={{ direction: pageDir, marginLeft: mLeft, marginRight: mRight }}>
+                <div
+                  id="main"
+                  style={{
+                    direction: pageDir,
+                    marginLeft: mLeft,
+                    marginRight: mRight,
+                    textAlign: locale === "en" ? "left" : "right",
+                  }}
+                >
                   <Navbar />
                   <Component {...pageProps} />
                   <ToastContainer

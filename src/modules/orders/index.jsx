@@ -288,7 +288,7 @@ const Orders = () => {
               onChange={(e) => setFilter((prev) => ({ ...prev, year: e.target.value }))}
               value={filter.year || ""}
             >
-              <option hidden disabled selected value={""}>
+              <option hidden disabled value={""}>
                 {pathOr("", [locale, "Orders", "orderHistory"], t)}
               </option>
               <option value={2023}>2023</option>
@@ -301,7 +301,7 @@ const Orders = () => {
               style={{ width: "180px" }}
               onChange={(e) => setFilter((prev) => ({ ...prev, shippingOptionId: e.target.value }))}
             >
-              <option hidden disabled selected>
+              <option hidden disabled >
                 {pathOr("", [locale, "Orders", "filterByShipping"], t)}
               </option>
               {shippingOptions?.map((item) => (
@@ -314,7 +314,7 @@ const Orders = () => {
               onChange={(e) => setFilter((prev) => ({ ...prev, paymentType: e.target.value }))}
               value={filter.paymentType || ""}
             >
-              <option hidden disabled selected value={""}>
+              <option hidden disabled value={""}>
                 {pathOr("", [locale, "Orders", "filterByPayment"], t)}
               </option>
               <option value={1}>{pathOr("", [locale, "Products", "cash"], t)}</option>

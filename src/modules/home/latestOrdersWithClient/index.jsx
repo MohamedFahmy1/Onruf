@@ -1,9 +1,9 @@
-import React from 'react'
-import { Col } from 'react-bootstrap'
-import { BsArrowLeft } from 'react-icons/bs'
-import { userImg } from '../../../constants'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
+import React from "react"
+import { Col } from "react-bootstrap"
+import { BsArrowLeft } from "react-icons/bs"
+import { userImg } from "../../../constants"
+import Link from "next/link"
+import { useRouter } from "next/router"
 
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
@@ -16,14 +16,16 @@ const LatestOrdersWithClients = ({ clients }) => {
       <div className="contint_paner">
         <div className="d-flex align-items-center justify-content-between mb-2">
           <h5 className="f-b m-0">{pathOr("", [locale, "LastOrdersWithClients", "lastOrdersWithClients"], t)}</h5>
-          <Link href={`/${locale}/users`}><a className="main-color font-18 text-decoration-none">
-            {pathOr("", [locale, "LastOrdersWithClients", "allClients"], t)}
-          </a></Link>
+          <Link href={`/${locale}/users`}>
+            <a className="main-color font-18 text-decoration-none">
+              {pathOr("", [locale, "LastOrdersWithClients", "allClients"], t)}
+            </a>
+          </Link>
         </div>
         <ul className="all_pro_cus">
           {Boolean(clients && clients?.length) &&
-            clients.map((client) => (
-              <li className="item d-flex justify-content-between my-5 border-bottom" key={client.id}>
+            clients.map((client, idx) => (
+              <li className="item d-flex justify-content-between my-5 border-bottom" key={idx}>
                 <div className="d-flex align-items-center">
                   <img src={client.imgProfile} className="img_table img_table2" />
                   <div>

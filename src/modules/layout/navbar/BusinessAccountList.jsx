@@ -46,12 +46,19 @@ export const BusinessAccountList = ({
       <ul
         className={`dropdown-menu ${toggleBusinessAccountList ? "show" : ""}`}
         aria-labelledby="dropdownMenuButton1"
-        style={{ minWidth: "350px", textAlign: "right", padding: "20px", height: "50%", overflowY: "auto" }}
+        style={{
+          minWidth: "350px",
+          textAlign: "right",
+          padding: "20px",
+          height: "50%",
+          overflowY: "auto",
+          borderRadius: "20px",
+        }}
       >
         <button
           type="button"
           className="text-left"
-          style={{ width: "fit-content", marginRight: "auto", display: "block", marginBottom: "15px" }}
+          style={{ width: "fit-content", marginRight: "auto", display: "block", marginBottom: "5px" }}
           onClick={() => setToggleBusinessAccountList(false)}
         >
           <AiOutlineCloseCircle size={40} />
@@ -76,7 +83,7 @@ export const BusinessAccountList = ({
                     >
                       {pathOr("", [locale, "navbar", "enter"], t)}
                     </button>
-                    <div>
+                    <div className="d-flex align-items-center">
                       <span className="icon mx-2 f-b fs-5">{account.businessAccountName}</span>
                       <Image
                         src={

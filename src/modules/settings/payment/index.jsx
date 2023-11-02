@@ -306,6 +306,29 @@ const PaymentCards = ({ bankTransfers }) => {
                   {errors["expiaryDate"] && <p className="errorMsg">{errors["expiaryDate"]["message"]}</p>}
                 </div>
               </Col>
+              <Col md={12}>
+                <div className="mb-2">
+                  <label
+                    style={{ flexDirection: "row", justifyContent: "space-between", display: "flex" }}
+                    className="f-b"
+                  >
+                    <span> {pathOr("", [locale, "Products", "saveLater"], t)}</span>
+                    <div className="form-group">
+                      <div className="form-check form-switch p-0 m-0">
+                        <input
+                          className="form-check-input m-0"
+                          name="SaveForLaterUse"
+                          type="checkbox"
+                          role="switch"
+                          id="flexSwitchCheckChecked"
+                          {...register("saveForLaterUse", { required: "This field is required" })}
+                        />
+                      </div>
+                    </div>
+                  </label>
+                  {errors["saveForLaterUse"] && <p className="errorMsg">{errors["saveForLaterUse"]["message"]}</p>}
+                </div>
+              </Col>
             </Row>
           </Modal.Body>
           <Modal.Footer className="modal-footer">

@@ -253,7 +253,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     }
   }
   const handleEditProductQuantity = async () => {
-    console.log(singleSelectedRow)
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${

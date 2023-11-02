@@ -7,7 +7,6 @@ import email from "../../../assets/images/email.png"
 import sms from "../../../assets/images/sms.png"
 import whatsapp from "../../../assets/images/whatsapp.png"
 import delivery from "../../../assets/images/delivery-truck.png"
-import shopping from "../../../assets/images/shopping.png"
 import Image from "next/image"
 import ChangeSingleStatusModal from "./ChangeSingleStatusModal"
 import ChangeBranchModal from "../ChangeBranchModal"
@@ -82,7 +81,7 @@ export const OrderDetails = () => {
   return (
     <div style={{ padding: "24px" }}>
       <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-        <h6 className="f-b m-0">{pathOr("", [locale, "Orders", "order_details"], t)}</h6>
+        <h6 className="f-b m-0 fs-5">{pathOr("", [locale, "Orders", "order_details"], t)}</h6>
         <a href="#" className="btn-main">
           {pathOr("", [locale, "Orders", "download_invoice"], t)}
         </a>
@@ -93,8 +92,12 @@ export const OrderDetails = () => {
             <div className="form-group flex-grow-1 mb-1">
               <div className="po_R">
                 <label>{pathOr("", [locale, "Orders", "order_status"], t)}</label>
-                <select className="form-control form-select border-0 rounded" onClick={() => setOpenModal(true)}>
-                  <option hidden disabled selected>
+                <select
+                  className="form-control form-select border-0 rounded"
+                  onClick={() => setOpenModal(true)}
+                  value={""}
+                >
+                  <option hidden disabled value={""}>
                     {pathOr("", [locale, "Orders", "changeOrderStatus"], t)}
                   </option>
                 </select>
@@ -108,8 +111,12 @@ export const OrderDetails = () => {
             <div className="form-group flex-grow-1 mb-1">
               <div className="po_R">
                 <label>{pathOr("", [locale, "Orders", "select_branch"], t)}</label>
-                <select className="form-control form-select border-0 rounded" onClick={() => setOpenBranchModal(true)}>
-                  <option hidden disabled selected>
+                <select
+                  className="form-control form-select border-0 rounded"
+                  onClick={() => setOpenBranchModal(true)}
+                  value={""}
+                >
+                  <option hidden disabled value={""}>
                     {pathOr("", [locale, "Orders", "select_branch"], t)}
                   </option>
                 </select>

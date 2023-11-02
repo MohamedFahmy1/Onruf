@@ -128,7 +128,7 @@ const Folders = () => {
                         </div>
                         <div onClick={() => Router.push(`/products/folders/${folder?.id}`)}>
                           <div className="img_ alot-img">
-                            {/* {folders?.fileList?.map((product) =>{ console.log({product}); return <img src={product?.image} key={product?.id} />})} */}
+                            {/* {folders?.fileList?.map((product) =>{ return <img src={product?.image} key={product?.id} />})} */}
                             {<img src={folder.image} />}
                           </div>
                           <div className="text-center">

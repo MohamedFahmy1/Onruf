@@ -539,11 +539,11 @@
       "needHelp": "Do you need help ?"
     },
     "Home": {
-      "productsAlmostOut": "products almost out",
-      "viewAll": "view all",
-      "remaining": "remaining quantity",
-      "singleProduct": "single product",
-      "products": "products"
+      "productsAlmostOut": "Products Almost Out",
+      "viewAll": "View all",
+      "remaining": "Remaining Quantity",
+      "singleProduct": "Single Product",
+      "products": "Products"
     },
     "Chart": {
       "profit": "Profit",

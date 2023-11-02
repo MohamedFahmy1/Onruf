@@ -41,7 +41,6 @@ const Products = () => {
       ),
     ])
     setProducts(products)
-    console.log(products)
     setFolders(folders)
   }
 
