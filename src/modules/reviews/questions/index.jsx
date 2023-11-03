@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useRouter } from "next/router"
-import React, { useState } from "react"
+import React, { Fragment, useState } from "react"
 import { Row, Col } from "react-bootstrap"
 import Modal from "react-bootstrap/Modal"
 import { headers, headersJson } from "../../../../token"
@@ -37,7 +37,7 @@ const Question = ({ id, question, isActive, productName, clientName, image, crea
   }
 
   return (
-    <>
+    <Fragment>
       <div className="contint_paner box-Rev-Que">
         <div className="title_">
           <div className="d-flex align-items-center gap-2">
@@ -96,7 +96,7 @@ const Question = ({ id, question, isActive, productName, clientName, image, crea
           question={question}
         />
       </div>
-    </>
+    </Fragment>
   )
 }
 

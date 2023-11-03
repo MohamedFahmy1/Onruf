@@ -85,11 +85,12 @@ export const BusinessAccountList = ({
                     </button>
                     <div className="d-flex align-items-center">
                       <span className="icon mx-2 f-b fs-5">{account.businessAccountName}</span>
+                      {console.log(account)}
                       <Image
                         src={
                           account.businessAccountImage === null || account.businessAccountImage === ""
                             ? userImg
-                            : `http://onrufwebsite2-001-site1.btempurl.com/${account.businessAccountImage}`
+                            : `${account.businessAccountImage}`
                         }
                         alt="user"
                         width={60}

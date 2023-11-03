@@ -314,13 +314,17 @@
       "all": "الكل",
       "positive": "تقييمات ايجابيه",
       "negative": "تقييمات سلبيه",
-      "ratings": "تقييمات",
+      "ratings": "التقييمات",
+      "ad": "الاعلان",
       "questions": "الاسئلة",
       "reqNumber": "رقم الطلب",
       "edit": "تعديل",
       "delete": "مسح",
-      "share": "نشر",
-      "reply": "الرد"
+      "share": "نشرالتقييم",
+      "reply": "رد",
+      "respondToReview": "الرد علي التقييم",
+      "writeYourReply": "اكتب ردك",
+      "sendReply": "ارسال الرد"
     },
     "Wallet": {
       "myWallet": "محفظتي",
@@ -839,7 +843,10 @@
       "edit": "Edit",
       "delete": "Delete",
       "share": "Share",
-      "reply": "Reply"
+      "reply": "Reply",
+      "respondToReview": "Respond to Review",
+      "writeYourReply": "Write Your Reply",
+      "sendReply": "Send Reply"
     },
     "Wallet": {
       "myWallet": "My Wallet",

@@ -40,7 +40,7 @@ const Navbar = () => {
     if (buisnessAccountId) {
       const account = businessAccountList.filter((buisness) => buisness.id == buisnessAccountId)
       setUserName(account[0]?.businessAccountName)
-      setUserImage(`http://onrufwebsite2-001-site1.btempurl.com/${account[0]?.businessAccountImage}`)
+      setUserImage(`${account[0]?.businessAccountImage}`)
     }
   }
 

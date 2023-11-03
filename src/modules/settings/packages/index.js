@@ -63,7 +63,6 @@ const Packages = () => {
         clientId: providerId,
       },
     })
-    console.log(CurrentPakat)
     setCurrentPakat(CurrentPakat)
   }
 
@@ -118,9 +117,13 @@ const Packages = () => {
       toast.error(error.response.data.message)
     }
   }
-  const handlePackageRenew = async (pakaID) => {
+  const handlePackageRenew = async (pakaID, id) => {
     try {
-      // await axios.post(process.env.REACT_APP_API_URL + "/AddPakatSubcription", [pakaID])
+      const params = {
+        PakatSubsriptionId: id,
+        pakatId: pakaID,
+      }
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/RenewPaka`, {}, { params: params })
       toast.success(locale === "en" ? "You Renewed Package!" : "!تم تجديد الباقة بنجاح")
       setPaymentModal(false)
       fetchCurrentPakat()
@@ -221,7 +224,7 @@ const Packages = () => {
                       <p>{pathOr("", [locale, "Packages", "nextRenewalDate"], t)}</p>
                       <div className="f-b">{formatDate(paka.endDate)}</div>
                     </div>
-                    <button className="btn-main btn-main-B" onClick={() => handlePackageRenew(paka.pakaId)}>
+                    <button className="btn-main btn-main-B" onClick={() => handlePackageRenew(paka.pakaId, paka.id)}>
                       {pathOr("", [locale, "Packages", "renewPaka"], t)}
                     </button>
                   </li>

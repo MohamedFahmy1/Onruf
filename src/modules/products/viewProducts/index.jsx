@@ -38,7 +38,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   //   dispatch(getFolderList(locale))
   //   dispatch(getProductsList())
   // })
-
   const productsCount = products?.length
   const avaliableProducts = (productsCount > 0 && products?.filter(({ isActive }) => isActive)) || []
   const inActiveProducts = (productsCount > 0 && products?.filter(({ isActive }) => !isActive)) || []
@@ -444,7 +443,15 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                 </button>
               </Modal.Footer>
             </Modal>
-            {productsCount > 5 && <Pagination listLength={productsCount} pageSize={5} />}
+            {selectedFilter == "avaliableProducts" && avaliableProducts.length > 5 && (
+              <Pagination listLength={avaliableProducts.length} pageSize={5} />
+            )}
+            {selectedFilter == "productsAlmostOut" && productsAlmostOut.length > 5 && (
+              <Pagination listLength={productsAlmostOut.length} pageSize={5} />
+            )}
+            {selectedFilter == "" && inActiveProducts.length > 5 && (
+              <Pagination listLength={inActiveProducts.length} pageSize={5} />
+            )}
           </div>
         </div>
       </div>
