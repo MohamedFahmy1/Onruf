@@ -24,7 +24,7 @@ const Reviews = () => {
   const getProductQuestions = async () => {
     const {
       data: { data: productQuestions },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/ListQuestions?pageIndex=1&PageRowsCount=50")
+    } = await axios.get(process.env.REACT_APP_API_URL + "/ListQuestions?pageIndex=1&PageRowsCount=100")
 
     setProductQuestions(productQuestions)
   }
@@ -83,11 +83,6 @@ const Reviews = () => {
               aria-labelledby="pills-profile-tab"
             >
               <div>
-                <div className="filtter_1">
-                  <button className="btn-main active">{pathOr("", [locale, "questionsAndReviews", "all"], t)}</button>
-                  <button className="btn-main">{pathOr("", [locale, "questionsAndReviews", "negative"], t)}</button>
-                  <button className="btn-main">{pathOr("", [locale, "questionsAndReviews", "positive"], t)}</button>
-                </div>
                 {console.log(productQuestions)}
                 {productQuestions?.length > 0 &&
                   productQuestions?.map((question) => <Question key={question.id} {...question} />)}
@@ -105,7 +100,10 @@ const Reviews = () => {
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
           <h6 className="f-b m-0 fs-5">
-            {pathOr("", [locale, "questionsAndReviews", "ratings"], t)} ({productReviews?.length})
+            {router.query.tab === "reviews" &&
+              `${pathOr("", [locale, "questionsAndReviews", "ratings"], t)} (${productReviews?.length || 0})`}
+            {router.query.tab === "questions" &&
+              `${pathOr("", [locale, "questionsAndReviews", "questions"], t)} (${productQuestions?.length || 0})`}
           </h6>
         </div>
         <div className="d-flex mb-3">

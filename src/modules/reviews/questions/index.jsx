@@ -7,20 +7,15 @@ import { headers, headersJson } from "../../../../token"
 import { formatDate } from "../../../common/functions"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
+import Image from "next/image"
 
-const Question = ({ id, question, isActive, productName, clientName, image, createdAt }) => {
+const Question = ({ id, question, isShared, productName, clientName, clientImage, createdAt }) => {
   const [openReplyModal, setOpenReplyModal] = useState(false)
   const { locale, push } = useRouter()
 
   // Handle Share a review
   const handleShareQuestion = async (id) => {
-    const result = await axios.patch(
-      process.env.REACT_APP_API_URL + "/ChangeQuestionStatus",
-      { id },
-      {
-        ...headers,
-      },
-    )
+    const result = await axios.patch(process.env.REACT_APP_API_URL + "/ChangeQuestionStatus", { id })
     push({ pathname: "/reviews", query: { tab: "questions" } })
   }
 
@@ -54,7 +49,7 @@ const Question = ({ id, question, isActive, productName, clientName, image, crea
         <div className="px-4 py-3 d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-2">
             <div className="d-flex align-items-center gap-2">
-              <img src={image} className="img_user" />
+              <img src={clientImage} className="img_user" />
               <div className="f-b">
                 <h6 className="m-0 f-b">{clientName}</h6>
                 <div className="gray-color">{question}</div>
@@ -78,7 +73,7 @@ const Question = ({ id, question, isActive, productName, clientName, image, crea
             <div className="form-check form-switch p-0 m-0">
               <input
                 onChange={() => handleShareQuestion(id)}
-                checked={isActive}
+                checked={isShared}
                 className="form-check-input m-0"
                 type="checkbox"
                 role="switch"
@@ -94,46 +89,57 @@ const Question = ({ id, question, isActive, productName, clientName, image, crea
           handleAnswerQuestion={handleAnswerQuestion}
           clientName={clientName}
           question={question}
+          clientImage={clientImage}
         />
       </div>
     </Fragment>
   )
 }
 
-const ReplyModal = ({ openModal, setOpenModal, clientName, question, handleAnswerQuestion }) => {
+const ReplyModal = ({ openModal, setOpenModal, clientName, question, handleAnswerQuestion, clientImage }) => {
   const [answer, setAnswer] = useState("")
+  const { locale } = useRouter()
   return (
-    <Modal show={openModal} onHide={() => setOpenModal(false)}>
-      <div className="modal-dialog modal-dialog-centered modal-lg">
-        <div className="modal-content">
-          <Modal.Header>
+    <Modal
+      show={openModal}
+      onHide={() => setOpenModal(false)}
+      style={{
+        textAlign: locale === "en" ? "left" : "right",
+        direction: locale === "en" ? "rtl" : "ltr",
+      }}
+    >
+      <div className="modal-dialog modal-dialog-centered modal-lg mx-5">
+        <div className="modal-content" style={{ border: "none" }}>
+          <Modal.Header className="py-1 px-0">
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+              onClick={() => setOpenModal(false)}
+            ></button>
             <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
-              الرد علي السؤال
+              {pathOr("", [locale, "questionsAndReviews", "respondToQuestion"], t)}
             </h5>
-            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </Modal.Header>
-          <Modal.Body className="d-flex align-items-center justify-content-between gap-2">
+          <Modal.Body className="d-flex align-items-center justify-content-end gap-2  px-0 pt-3 pb-0">
             <div className="d-flex align-items-center gap-2">
-              <img src="../core/imgs/user.png" className="img_user" />
               <div className="f-b">
                 <h6 className="m-0 f-b">{clientName}</h6>
                 <div className="gray-color">{question}</div>
               </div>
             </div>
-            <div className="imogy">
-              {/* <span>{rate}</span> */}
-              {/* <img src={image} /> */}
-            </div>
+            <Image src={clientImage} className="img_user" alt="client" width={50} height={50} />
           </Modal.Body>
           <hr />
           <div className="form-group">
-            <label>اكتب ردك</label>
+            <label>{pathOr("", [locale, "questionsAndReviews", "writeYourReply"], t)}</label>
             <input
               value={answer}
               onChange={(e) => setAnswer(e.target.value)}
               type="text"
               className="form-control"
-              placeholder="اكتب ردك"
+              placeholder={pathOr("", [locale, "questionsAndReviews", "writeYourReply"], t)}
             />
           </div>
 
@@ -143,15 +149,22 @@ const ReplyModal = ({ openModal, setOpenModal, clientName, question, handleAnswe
                 type="button"
                 data-bs-dismiss="modal"
                 aria-label="Close"
-                className="btn-main w-100"
-                onClick={() => handleAnswerQuestion(answer)}
+                className="btn-main btn-main-B w-100"
+                style={{ backgroundColor: "#45495e" }}
+                onClick={() => setOpenModal(false)}
               >
-                ارسال الرد
+                {pathOr("", [locale, "Products", "cancel"], t)}
               </button>
             </Col>
             <Col>
-              <button type="button" data-bs-dismiss="modal" aria-label="Close" className="btn-main btn-main-B w-100">
-                الغاء
+              <button
+                type="button"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                className="btn-main w-100"
+                onClick={() => handleAnswerQuestion(answer)}
+              >
+                {pathOr("", [locale, "questionsAndReviews", "sendReply"], t)}
               </button>
             </Col>
           </Row>
