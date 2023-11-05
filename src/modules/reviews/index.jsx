@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useRouter } from "next/router"
-import { pathOr } from "ramda"
+import { pathOr, product } from "ramda"
 import t from "../../translations.json"
 import Comment from "./comments"
 import Question from "./questions"
@@ -18,14 +18,12 @@ const Reviews = () => {
     } = await axios.get(process.env.REACT_APP_API_URL + "/ListProviderProductsRates", {
       params: { pageIndex: 1 },
     })
-    console.log(data)
     setProductReviews(data)
   }
   const getProductQuestions = async () => {
     const {
       data: { data: productQuestions },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/ListQuestions?pageIndex=1&PageRowsCount=100")
-
+    } = await axios.get(process.env.REACT_APP_API_URL + "/ListQuestionsForProductOwnerToReplyQuestion")
     setProductQuestions(productQuestions)
   }
 
@@ -83,7 +81,6 @@ const Reviews = () => {
               aria-labelledby="pills-profile-tab"
             >
               <div>
-                {console.log(productQuestions)}
                 {productQuestions?.length > 0 &&
                   productQuestions?.map((question) => <Question key={question.id} {...question} />)}
               </div>

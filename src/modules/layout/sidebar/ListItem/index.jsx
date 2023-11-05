@@ -33,6 +33,8 @@ const ListItem = ({ lightIcon: LightIcon, darkIcon: DarkIcon, name, link, subIte
               selected={isActive}
               sx={{
                 ...(isActive && { pointerEvents: "none" }),
+                fontSize: link.includes("reviews") ? "17px" : "18px",
+                letterSpacing: link.includes("reviews") ? "-0.5px" : "0",
               }}
               onMouseOver={() => {
                 setIsHoveredOn(true)

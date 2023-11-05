@@ -29,6 +29,7 @@ import { useForm } from "react-hook-form"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import axios from "axios"
+import Image from "next/image"
 
 const Sidebar = () => {
   const [modalOpen, setModalOpen] = useState(false)
@@ -103,7 +104,7 @@ const Sidebar = () => {
   return (
     <StyledSidebar variant={"permanent"} anchor={locale === "en" ? "left" : "right"}>
       <StyledLogo>
-        <img src={Logo.src} width={"145px"} height={"45px"} alt={"Logo"} onClick={() => Router.push(`/${locale}`)} />
+        <Image src={Logo.src} width={145} height={45} alt={"Logo"} onClick={() => Router.push(`/${locale}`)} />
       </StyledLogo>
       <List>
         {navBarItems.map((listItem) => (

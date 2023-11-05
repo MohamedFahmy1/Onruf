@@ -47,7 +47,7 @@ export const BusinessAccountList = ({
         className={`dropdown-menu ${toggleBusinessAccountList ? "show" : ""}`}
         aria-labelledby="dropdownMenuButton1"
         style={{
-          minWidth: "350px",
+          minWidth: "550px",
           textAlign: "right",
           padding: "20px",
           height: "50%",
@@ -66,7 +66,7 @@ export const BusinessAccountList = ({
         {businessAccountList &&
           businessAccountList.map((account) => {
             return (
-              <div key={account.id}>
+              <div key={account.id} className="py-2">
                 <li>
                   <span className="d-flex align-items-center justify-content-between">
                     <button
@@ -85,10 +85,11 @@ export const BusinessAccountList = ({
                     </button>
                     <div className="d-flex align-items-center">
                       <span className="icon mx-2 f-b fs-5">{account.businessAccountName}</span>
-                      {console.log(account)}
                       <Image
                         src={
-                          account.businessAccountImage === null || account.businessAccountImage === ""
+                          account.businessAccountImage === null ||
+                          account.businessAccountImage === "" ||
+                          account.businessAccountImage === "http://onrufwebsite2-001-site1.btempurl.com/"
                             ? userImg
                             : `${account.businessAccountImage}`
                         }

@@ -6,8 +6,7 @@ import { toast } from "react-toastify"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as yup from "yup"
 import { handleFormErrors } from "../../common/functions"
-import Router, { useRouter } from "next/router"
-import { headersJson } from "../../../token"
+import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../translations.json"
 
@@ -30,8 +29,8 @@ const ContactUS = () => {
 
   const handleSubmitQuestion = async (values) => {
     try {
-      const res = await axios.post(process.env.REACT_APP_API_URL + "/AddEditContactUs", { ...values }, headersJson)
-      toast.success("Question recieved!")
+      const res = await axios.post(process.env.REACT_APP_API_URL + "/AddEditContactUs", { ...values })
+      toast.success(locale === "en" ? "Your Question has been sent successfully!" : "!تم إرسال سؤالك بنجاح")
       push("/")
     } catch (error) {
       toast.error(error.response.data.message)
@@ -78,13 +77,17 @@ const ContactUS = () => {
                   {...register("mobileNumber")}
                   type={"tel"}
                   className="form-control"
-                  placeholder="ex: +201200000000"
+                  placeholder={locale === "en" ? "Example: +20123456789" : "مثال: +2012456789"}
                 />
                 <p className="errorMsg">{handleFormErrors(errors, "mobileNumber")}</p>
               </Box>
               <Box className="form-group col-md-12">
                 <Typography variant="body2"> {pathOr("", [locale, "ContactUs", "email"], t)}</Typography>
-                <input {...register("email")} className="form-control" placeholder="ex: me@example.com" />
+                <input
+                  {...register("email")}
+                  className="form-control"
+                  placeholder={locale === "en" ? "ex: test@example.com" : "test@example.com :مثال"}
+                />
                 <p className="errorMsg">{handleFormErrors(errors, "email")}</p>
               </Box>
             </Box>

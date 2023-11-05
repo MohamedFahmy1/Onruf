@@ -40,16 +40,16 @@ const Question = ({ id, question, isShared, productName, clientName, clientImage
               <div>{pathOr("", [locale, "questionsAndReviews", "ad"], t)}</div>
               <div className="f-b">{productName}</div>
             </div>
-            <div className="num">
-              {pathOr("", [locale, "questionsAndReviews", "reqNumber"], t)} #{id}
-            </div>
+            {/*<div className="num">
+  {pathOr("", [locale, "questionsAndReviews", "reqNumber"], t)} #{id}
+            </div>*/}
           </div>
           <div>{formatDate(createdAt)}</div>
         </div>
         <div className="px-4 py-3 d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-2">
             <div className="d-flex align-items-center gap-2">
-              <img src={clientImage} className="img_user" />
+              <Image src={clientImage} className="img_user" alt="client" width={70} height={70} />
               <div className="f-b">
                 <h6 className="m-0 f-b">{clientName}</h6>
                 <div className="gray-color">{question}</div>
