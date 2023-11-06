@@ -1,13 +1,13 @@
 import axios from "axios"
 import { useRouter } from "next/router"
-import React, { Fragment, useState } from "react"
+import { Fragment, useState } from "react"
 import { Row, Col } from "react-bootstrap"
 import Modal from "react-bootstrap/Modal"
-import { headers, headersJson } from "../../../../token"
 import { formatDate } from "../../../common/functions"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import Image from "next/image"
+import { toast } from "react-toastify"
 
 const Question = ({ id, question, isShared, productName, clientName, clientImage, createdAt }) => {
   const [openReplyModal, setOpenReplyModal] = useState(false)
@@ -21,7 +21,8 @@ const Question = ({ id, question, isShared, productName, clientName, clientImage
 
   // Handle Edit a review
   const handleAnswerQuestion = async (answer) => {
-    const result = await axios.post(process.env.REACT_APP_API_URL + "/ReplyQuestion", { answer, id }, headers)
+    const result = await axios.post(process.env.REACT_APP_API_URL + "/ReplyQuestion", { answer, id })
+    toast.success(locale === "en" ? "Your reply has been sent successfully!" : "!تم إرسال ردك بنجاح")
     setOpenReplyModal(false)
     push({
       pathname: "/reviews",
@@ -79,7 +80,7 @@ const Question = ({ id, question, isShared, productName, clientName, clientImage
                 role="switch"
                 id="flexSwitchCheckChecked"
               />
-              <span className="mx-1"> {pathOr("", [locale, "questionsAndReviews", "share"], t)}</span>
+              <span className="mx-1"> {pathOr("", [locale, "questionsAndReviews", "shareQuestion"], t)}</span>
             </div>
           </div>
         </div>

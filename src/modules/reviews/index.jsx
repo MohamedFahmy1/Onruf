@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { useRouter } from "next/router"
-import { pathOr, product } from "ramda"
+import { pathOr } from "ramda"
 import t from "../../translations.json"
 import Comment from "./comments"
 import Question from "./questions"

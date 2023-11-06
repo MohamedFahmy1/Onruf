@@ -9,6 +9,7 @@ import t from "../../../translations.json"
 import { Fragment } from "react"
 import Image from "next/image"
 import ratingImage from "../../../public/images/rating.png"
+
 const Comment = ({ orderId, rate, comment, productName, userName, userImage, createdAt, id, isShare }) => {
   const [openReplyModal, setOpenReplyModal] = useState(false)
   const [openEditModal, setOpenEditModal] = useState(false)
@@ -58,7 +59,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
         <div className="px-4 py-3 d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center gap-2">
             <div className="d-flex align-items-center gap-2">
-              <img src={userImage} className="img_user" />
+              <Image src={userImage} className="img_user" alt="user" width={70} height={70} />
               <div className="f-b">
                 <h6 className="m-0 f-b">{userName}</h6>
                 <div className="gray-color">{comment}</div>
@@ -99,7 +100,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
                 id="flexSwitchCheckChecked"
                 defaultValue={isShare}
               />
-              <span className="mx-1"> {pathOr("", [locale, "questionsAndReviews", "share"], t)}</span>
+              <span className="mx-1"> {pathOr("", [locale, "questionsAndReviews", "shareRating"], t)}</span>
             </div>
           </div>
         </div>
@@ -111,7 +112,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
           userName={userName}
           image={userImage}
         />
-        <EditModal
+        {/*<EditModal
           openModal={openEditModal}
           setOpenModal={setOpenEditModal}
           rate={rate}
@@ -120,79 +121,79 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
           image={userImage}
           id={orderId}
           handleEditReview={handleEditReview}
-        />
+/>*/}
       </div>
     </Fragment>
   )
 }
 
-const EditModal = ({ openModal, setOpenModal, userName, comment, rate, image, handleEditReview }) => {
-  const [commentEdit, setComment] = useState(comment)
-  const [rateEdit, setRate] = useState(rate)
+// const EditModal = ({ openModal, setOpenModal, userName, comment, rate, image, handleEditReview }) => {
+//   const [commentEdit, setComment] = useState(comment)
+//   const [rateEdit, setRate] = useState(rate)
 
-  return (
-    <Modal show={openModal} onHide={() => setOpenModal(false)}>
-      <div className="modal-dialog modal-dialog-centered modal-lg" style={{ width: "100%" }}>
-        <div className="modal-content">
-          <Modal.Header>
-            <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
-              Edit Review
-            </h5>
-            <button
-              onClick={() => setOpenModal(false)}
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </Modal.Header>
-          <Modal.Body className="d-flex align-items-center justify-content-between gap-2">
-            <div className="d-flex align-items-center gap-2">
-              <img src="../core/imgs/user.png" className="img_user" />
-              <div className="f-b">
-                <h6 className="m-0 f-b">{userName}</h6>
-              </div>
-            </div>
-            <div className="imogy">
-              <input
-                value={rateEdit}
-                onChange={(e) => setRate(e.target.value)}
-                type="number"
-                style={{ border: "0", maxWidth: "48px" }}
-              />
-              <img src={image} />
-            </div>
-          </Modal.Body>
-          <hr />
-          <div className="form-group">
-            <label>اكتب ردك</label>
-            <input
-              value={commentEdit}
-              onChange={(e) => setComment(e.target.value)}
-              type="text"
-              className="form-control"
-              placeholder="اكتب ردك"
-            />
-          </div>
+//   return (
+//     <Modal show={openModal} onHide={() => setOpenModal(false)}>
+//       <div className="modal-dialog modal-dialog-centered modal-lg" style={{ width: "100%" }}>
+//         <div className="modal-content">
+//           <Modal.Header>
+//             <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
+//               Edit Review
+//             </h5>
+//             <button
+//               onClick={() => setOpenModal(false)}
+//               type="button"
+//               className="btn-close"
+//               data-bs-dismiss="modal"
+//               aria-label="Close"
+//             ></button>
+//           </Modal.Header>
+//           <Modal.Body className="d-flex align-items-center justify-content-between gap-2">
+//             <div className="d-flex align-items-center gap-2">
+//               <img src="../core/imgs/user.png" className="img_user" />
+//               <div className="f-b">
+//                 <h6 className="m-0 f-b">{userName}</h6>
+//               </div>
+//             </div>
+//             <div className="imogy">
+//               <input
+//                 value={rateEdit}
+//                 onChange={(e) => setRate(e.target.value)}
+//                 type="number"
+//                 style={{ border: "0", maxWidth: "48px" }}
+//               />
+//               <img src={image} />
+//             </div>
+//           </Modal.Body>
+//           <hr />
+//           <div className="form-group">
+//             <label>اكتب ردك</label>
+//             <input
+//               value={commentEdit}
+//               onChange={(e) => setComment(e.target.value)}
+//               type="text"
+//               className="form-control"
+//               placeholder="اكتب ردك"
+//             />
+//           </div>
 
-          <Row>
-            <Col>
-              <button
-                onClick={() => handleEditReview(commentEdit, rateEdit)}
-                type="button"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                className="btn-main w-100"
-              >
-                حفظ
-              </button>
-            </Col>
-          </Row>
-        </div>
-      </div>
-    </Modal>
-  )
-}
+//           <Row>
+//             <Col>
+//               <button
+//                 onClick={() => handleEditReview(commentEdit, rateEdit)}
+//                 type="button"
+//                 data-bs-dismiss="modal"
+//                 aria-label="Close"
+//                 className="btn-main w-100"
+//               >
+//                 حفظ
+//               </button>
+//             </Col>
+//           </Row>
+//         </div>
+//       </div>
+//     </Modal>
+//   )
+// }
 
 const ReplyModal = ({ openModal, setOpenModal, comment, userName, rate, image }) => {
   const { locale } = useRouter()
@@ -241,7 +242,6 @@ const ReplyModal = ({ openModal, setOpenModal, comment, userName, rate, image })
               placeholder={pathOr("", [locale, "questionsAndReviews", "writeYourReply"], t)}
             />
           </div>
-
           <Row>
             <Col>
               <button
