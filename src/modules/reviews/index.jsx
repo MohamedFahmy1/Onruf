@@ -62,6 +62,7 @@ const Reviews = () => {
                     {pathOr("", [locale, "questionsAndReviews", "positive"], t)}
                   </button>
                 </div>
+                {console.log(productReviews)}
                 {selectedFilter === "All" && productReviews?.map((review) => <Comment key={review.id} {...review} />)}
                 {selectedFilter === "Positive" &&
                   positiveReviews?.map((review) => <Comment key={review.id} {...review} />)}

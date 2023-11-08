@@ -29,5 +29,5 @@
   font-family: sans-serif;
 }
 .buttons button:hover {
-  color: var(--main);
+  color: var(--white);
 }

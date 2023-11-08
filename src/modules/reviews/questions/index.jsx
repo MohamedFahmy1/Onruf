@@ -14,12 +14,11 @@ const Question = ({ id, question, isShared, productName, clientName, clientImage
   const { locale, push } = useRouter()
 
   // Handle Share a review
-  const handleShareQuestion = async (id) => {
-    const result = await axios.patch(process.env.REACT_APP_API_URL + "/ChangeQuestionStatus", { id })
-    push({ pathname: "/reviews", query: { tab: "questions" } })
-  }
+  // const handleShareQuestion = async (id) => {
+  //   const result = await axios.patch(process.env.REACT_APP_API_URL + "/ChangeQuestionStatus", { id })
+  //   push({ pathname: "/reviews", query: { tab: "questions" } })
+  // }
 
-  // Handle Edit a review
   const handleAnswerQuestion = async (answer) => {
     const result = await axios.post(process.env.REACT_APP_API_URL + "/ReplyQuestion", { answer, id })
     toast.success(locale === "en" ? "Your reply has been sent successfully!" : "!تم إرسال ردك بنجاح")
@@ -71,7 +70,7 @@ const Question = ({ id, question, isShared, productName, clientName, clientImage
               {pathOr("", [locale, "questionsAndReviews", "reply"], t)}
             </button>
 
-            <div className="form-check form-switch p-0 m-0">
+            {/*<div className="form-check form-switch p-0 m-0">
               <input
                 onChange={() => handleShareQuestion(id)}
                 checked={isShared}
@@ -81,7 +80,7 @@ const Question = ({ id, question, isShared, productName, clientName, clientImage
                 id="flexSwitchCheckChecked"
               />
               <span className="mx-1"> {pathOr("", [locale, "questionsAndReviews", "shareQuestion"], t)}</span>
-            </div>
+          </div>*/}
           </div>
         </div>
         <ReplyModal

@@ -9,12 +9,16 @@ import t from "../../../translations.json"
 import { Fragment } from "react"
 import Image from "next/image"
 import ratingImage from "../../../public/images/rating.png"
+import { toast } from "react-toastify"
+import { useSelector } from "react-redux"
+import { mulitFormData } from "../../../../token"
 
 const Comment = ({ orderId, rate, comment, productName, userName, userImage, createdAt, id, isShare }) => {
-  const [openReplyModal, setOpenReplyModal] = useState(false)
-  const [openEditModal, setOpenEditModal] = useState(false)
   const { locale, push } = useRouter()
-
+  const [openReplyModal, setOpenReplyModal] = useState(false)
+  const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+  const [reply, setReply] = useState()
+  // const [openEditModal, setOpenEditModal] = useState(false)
   // Handle Delete a review
   // const handleDeleteReview = async (id) => {
   //   const result = await axios.delete(process.env.REACT_APP_API_URL + "/RemoveRateProduct", {
@@ -25,21 +29,43 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
   //   push({ pathname: "/reviews", query: { tab: "reviews" } })
   // }
 
-  // Handle Share a review
   const handleShareReview = async (id) => {
-    const result = await axios.post(process.env.REACT_APP_API_URL + "/ShareRate", {
-      params: {
-        id,
-      },
-    })
+    try {
+      const result = await axios.post(process.env.REACT_APP_API_URL + `/ShareRate?id=${id}`)
+      toast.success(locale === "en" ? "Rating share status successfully changed!" : "!تم تغيير حالة نشر التقييم")
+      push({ pathname: "/reviews", query: { tab: "reviews" } })
+    } catch (error) {
+      toast.error(
+        locale === "en" ? "Error happend please try again later!" : "!حدث خطأ الرجاء اعادة المحاولة في وقت أخر",
+      )
+    }
   }
-
+  const handleReplyReview = async (id) => {
+    try {
+      await axios.post(
+        process.env.REACT_APP_API_URL + `/ReplyToRate`,
+        {
+          rateId: id,
+          userId: buisnessAccountId,
+          reply: reply,
+        },
+        mulitFormData,
+      )
+      toast.success(locale === "en" ? "Your Reply has been sent!" : "!تم إرسال الرد بنجاح")
+      setOpenReplyModal(false)
+      push({ pathname: "/reviews", query: { tab: "reviews" } })
+    } catch (error) {
+      toast.error(
+        locale === "en" ? "Error happend please try again later!" : "!حدث خطأ الرجاء اعادة المحاولة في وقت أخر",
+      )
+    }
+  }
   // Handle Edit a review
-  const handleEditReview = async (comment, rate) => {
-    const result = await axios.put(process.env.REACT_APP_API_URL + "/EditRateProduct", { comment, rate, id })
-    setOpenEditModal(false)
-    push({ pathname: "/reviews", query: { tab: "reviews" } })
-  }
+  // const handleEditReview = async (comment, rate) => {
+  //   const result = await axios.put(process.env.REACT_APP_API_URL + "/EditRateProduct", { comment, rate, id })
+  //   setOpenEditModal(false)
+  //   push({ pathname: "/reviews", query: { tab: "reviews" } })
+  // }
 
   return (
     <Fragment>
@@ -98,7 +124,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
                 type="checkbox"
                 role="switch"
                 id="flexSwitchCheckChecked"
-                defaultValue={isShare}
+                defaultChecked={isShare ? true : false}
               />
               <span className="mx-1"> {pathOr("", [locale, "questionsAndReviews", "shareRating"], t)}</span>
             </div>
@@ -111,6 +137,9 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
           comment={comment}
           userName={userName}
           image={userImage}
+          id={id}
+          setReply={setReply}
+          handleReplyReview={handleReplyReview}
         />
         {/*<EditModal
           openModal={openEditModal}
@@ -124,6 +153,84 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
 />*/}
       </div>
     </Fragment>
+  )
+}
+const ReplyModal = ({ openModal, setOpenModal, comment, userName, rate, image, handleReplyReview, id, setReply }) => {
+  const { locale } = useRouter()
+  return (
+    <Modal
+      show={openModal}
+      onHide={() => setOpenModal(false)}
+      style={{
+        textAlign: locale === "en" ? "left" : "right",
+        direction: locale === "en" ? "rtl" : "ltr",
+      }}
+    >
+      <div className="modal-dialog modal-dialog-centered modal-lg mx-5">
+        <div className="modal-content" style={{ border: "none" }}>
+          <Modal.Header className="py-1 px-0">
+            <button
+              onClick={() => setOpenModal(false)}
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+            <h5 className="modal-title m-0  f-b" id="staticBackdropLabel">
+              {pathOr("", [locale, "questionsAndReviews", "respondToReview"], t)}
+            </h5>
+          </Modal.Header>
+          <Modal.Body className="d-flex align-items-center justify-content-between gap-2 px-0 pt-3 pb-0">
+            <div className="imogy">
+              <span>{rate.toFixed(1)}</span>
+              <Image src={ratingImage} alt="rating" width={30} height={30} />
+            </div>
+            <div className="d-flex align-items-center gap-2 px-2">
+              <div className="f-b">
+                <h6 className="m-0 f-b">{userName}</h6>
+                <div className="gray-color">{comment}</div>
+              </div>
+              <Image src={image} alt="user" width={50} height={50} />
+            </div>
+          </Modal.Body>
+          <hr />
+          <div className="form-group">
+            <label>{pathOr("", [locale, "questionsAndReviews", "writeYourReply"], t)}</label>
+            <input
+              type="text"
+              className="form-control"
+              onChange={(e) => setReply(e.target.value)}
+              placeholder={pathOr("", [locale, "questionsAndReviews", "writeYourReply"], t)}
+            />
+          </div>
+          <Row>
+            <Col>
+              <button
+                type="button"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                className="btn-main btn-main-B w-100"
+                style={{ backgroundColor: "#45495e" }}
+                onClick={() => setOpenModal(false)}
+              >
+                {pathOr("", [locale, "Products", "cancel"], t)}
+              </button>
+            </Col>
+            <Col>
+              <button
+                type="button"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                className="btn-main w-100"
+                onClick={() => handleReplyReview(id)}
+              >
+                {pathOr("", [locale, "questionsAndReviews", "sendReply"], t)}
+              </button>
+            </Col>
+          </Row>
+        </div>
+      </div>
+    </Modal>
   )
 }
 
@@ -194,77 +301,5 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
 //     </Modal>
 //   )
 // }
-
-const ReplyModal = ({ openModal, setOpenModal, comment, userName, rate, image }) => {
-  const { locale } = useRouter()
-  return (
-    <Modal
-      show={openModal}
-      onHide={() => setOpenModal(false)}
-      style={{
-        textAlign: locale === "en" ? "left" : "right",
-        direction: locale === "en" ? "rtl" : "ltr",
-      }}
-    >
-      <div className="modal-dialog modal-dialog-centered modal-lg mx-5">
-        <div className="modal-content" style={{ border: "none" }}>
-          <Modal.Header className="py-1 px-0">
-            <button
-              onClick={() => setOpenModal(false)}
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-            <h5 className="modal-title m-0  f-b" id="staticBackdropLabel">
-              {pathOr("", [locale, "questionsAndReviews", "respondToReview"], t)}
-            </h5>
-          </Modal.Header>
-          <Modal.Body className="d-flex align-items-center justify-content-between gap-2 px-0 pt-3 pb-0">
-            <div className="imogy">
-              <span>{rate.toFixed(1)}</span>
-              <Image src={ratingImage} alt="rating" width={30} height={30} />
-            </div>
-            <div className="d-flex align-items-center gap-2 px-2">
-              <div className="f-b">
-                <h6 className="m-0 f-b">{userName}</h6>
-                <div className="gray-color">{comment}</div>
-              </div>
-              <Image src={image} alt="user" width={50} height={50} />
-            </div>
-          </Modal.Body>
-          <hr />
-          <div className="form-group">
-            <label>{pathOr("", [locale, "questionsAndReviews", "writeYourReply"], t)}</label>
-            <input
-              type="text"
-              className="form-control"
-              placeholder={pathOr("", [locale, "questionsAndReviews", "writeYourReply"], t)}
-            />
-          </div>
-          <Row>
-            <Col>
-              <button
-                type="button"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-                className="btn-main btn-main-B w-100"
-                style={{ backgroundColor: "#45495e" }}
-                onClick={() => setOpenModal(false)}
-              >
-                {pathOr("", [locale, "Products", "cancel"], t)}
-              </button>
-            </Col>
-            <Col>
-              <button type="button" data-bs-dismiss="modal" aria-label="Close" className="btn-main w-100">
-                {pathOr("", [locale, "questionsAndReviews", "sendReply"], t)}
-              </button>
-            </Col>
-          </Row>
-        </div>
-      </div>
-    </Modal>
-  )
-}
 
 export default Comment

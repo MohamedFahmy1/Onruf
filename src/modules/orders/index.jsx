@@ -8,6 +8,7 @@ import { pathOr } from "ramda"
 import t from "../../translations.json"
 import Link from "next/link"
 import { useSelector } from "react-redux"
+import { formatDate, orderStatusTranslate, paymentTypesTranslation } from "../../common/functions"
 import styles from "./orders.module.css"
 import { toast } from "react-toastify"
 import ChangeStatusModal from "./ChangeStatusModal"
@@ -24,7 +25,7 @@ const Orders = () => {
   const [filterdOrders, setFilterdOrders] = useState()
   const [showFilter, setShowFilter] = useState(false)
   const [orders, setOrders] = useState()
-  const { locale } = useRouter()
+  const { locale, push } = useRouter()
   const [orderStatus, setOrderStatus] = useState()
   const [totalOrders, setTotalOrders] = useState({
     total: 0,
@@ -220,7 +221,7 @@ const Orders = () => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <h6 className="m-0 f-b" style={{ cursor: "pointer" }}>
-              {original?.createdAt.slice(0, 10)}
+              {formatDate(original?.createdAt)}
             </h6>
           </Link>
         ),
@@ -231,7 +232,9 @@ const Orders = () => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <div className="f-b" style={{ cursor: "pointer" }}>
-              {original?.shippingFee === 0 ? pathOr("", [locale, "Orders", "freeDelivery"], t) : original?.shippingFee}
+              {original?.shippingFee === 0
+                ? pathOr("", [locale, "Orders", "freeDelivery"], t)
+                : `${pathOr("", [locale, "Products", "currency"], t)} ${original?.shippingFee}`}
             </div>
           </Link>
         ),
@@ -242,7 +245,7 @@ const Orders = () => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <div className="f-b" style={{ cursor: "pointer" }}>
-              {original?.paymentType}
+              {paymentTypesTranslation(original?.paymentType, locale)}
             </div>
           </Link>
         ),
@@ -253,7 +256,7 @@ const Orders = () => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <div className="f-b main-color" style={{ cursor: "pointer" }}>
-              {original?.status}
+              {orderStatusTranslate(original?.status, locale)}
             </div>
           </Link>
         ),
@@ -365,38 +368,68 @@ const Orders = () => {
           </button>
           <button
             className={orderStatus === "WaitingForReview" ? "btn-main active" : "btn-main"}
-            onClick={() => setOrderStatus("WaitingForReview")}
+            onClick={() => {
+              setOrderStatus("WaitingForReview")
+              push({
+                query: { page: 1 },
+              })
+            }}
           >
             {pathOr("", [locale, "Orders", "waiting_for_review"], t)} ({totalOrders.WaitingForReview})
           </button>
           <button
             className={orderStatus === "InProgress" ? "btn-main active" : "btn-main"}
-            onClick={() => setOrderStatus("InProgress")}
+            onClick={() => {
+              setOrderStatus("InProgress")
+              push({
+                query: { page: 1 },
+              })
+            }}
           >
             {" "}
             {pathOr("", [locale, "Orders", "in_progress"], t)} ({totalOrders.InProgress})
           </button>
           <button
             className={orderStatus === "ReadyForDelivery" ? "btn-main active" : "btn-main"}
-            onClick={() => setOrderStatus("ReadyForDelivery")}
+            onClick={() => {
+              setOrderStatus("ReadyForDelivery")
+              push({
+                query: { page: 1 },
+              })
+            }}
           >
             {pathOr("", [locale, "Orders", "ready_for_delivery"], t)} ({totalOrders.ReadyForDelivery})
           </button>
           <button
             className={orderStatus === "DeliveryInProgress" ? "btn-main active" : "btn-main"}
-            onClick={() => setOrderStatus("DeliveryInProgress")}
+            onClick={() => {
+              setOrderStatus("DeliveryInProgress")
+              push({
+                query: { page: 1 },
+              })
+            }}
           >
             {pathOr("", [locale, "Orders", "delivery_in_progress"], t)} ({totalOrders.DeliveryInProgress})
           </button>
           <button
             className={orderStatus === "Delivered" ? "btn-main active" : "btn-main"}
-            onClick={() => setOrderStatus("Delivered")}
+            onClick={() => {
+              setOrderStatus("Delivered")
+              push({
+                query: { page: 1 },
+              })
+            }}
           >
             {pathOr("", [locale, "Orders", "delivered"], t)} ({totalOrders.Delivered})
           </button>
           <button
             className={orderStatus === "Canceled" ? "btn-main active" : "btn-main"}
-            onClick={() => setOrderStatus("Canceled")}
+            onClick={() => {
+              setOrderStatus("Canceled")
+              push({
+                query: { page: 1 },
+              })
+            }}
           >
             {pathOr("", [locale, "Orders", "canceled"], t)} ({totalOrders.Canceled})
           </button>

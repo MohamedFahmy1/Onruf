@@ -2,7 +2,7 @@ import React, { useMemo } from "react"
 import { Col } from "react-bootstrap"
 import Table from "../../../common/table"
 import Pagination from "../../../common/pagination"
-import { formatDate } from "../../../common/functions"
+import { formatDate, orderStatusTranslate, paymentTypesTranslation } from "../../../common/functions"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
@@ -41,7 +41,7 @@ const LatestOrders = ({ orders }) => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <h6 className="m-0 f-b" style={{ cursor: "pointer" }}>
-              {original?.createdAt.slice(0, 10)}
+              {formatDate(original?.createdAt)}
             </h6>
           </Link>
         ),
@@ -52,7 +52,9 @@ const LatestOrders = ({ orders }) => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <div className="f-b" style={{ cursor: "pointer" }}>
-              {original?.shippingFee === 0 ? pathOr("", [locale, "Orders", "freeDelivery"], t) : original?.shippingFee}
+              {original?.shippingFee === 0
+                ? pathOr("", [locale, "Orders", "freeDelivery"], t)
+                : `${pathOr("", [locale, "Products", "currency"], t)} ${original?.shippingFee}`}
             </div>
           </Link>
         ),
@@ -63,7 +65,7 @@ const LatestOrders = ({ orders }) => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <div className="f-b" style={{ cursor: "pointer" }}>
-              {original?.paymentType}
+              {paymentTypesTranslation(original?.paymentType, locale)}
             </div>
           </Link>
         ),
@@ -74,7 +76,7 @@ const LatestOrders = ({ orders }) => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <div className="f-b main-color" style={{ cursor: "pointer" }}>
-              {original?.status}
+              {orderStatusTranslate(original?.status, locale)}
             </div>
           </Link>
         ),

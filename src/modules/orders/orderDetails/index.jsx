@@ -1,7 +1,7 @@
 import axios from "axios"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import t from "../../../translations.json"
 import email from "../../../assets/images/email.png"
 import sms from "../../../assets/images/sms.png"
@@ -10,6 +10,7 @@ import delivery from "../../../assets/images/delivery-truck.png"
 import Image from "next/image"
 import ChangeSingleStatusModal from "./ChangeSingleStatusModal"
 import ChangeBranchModal from "../ChangeBranchModal"
+import { orderStatusTranslate, orderTypesTranslation } from "../../../common/functions"
 
 export const OrderDetails = () => {
   const {
@@ -126,6 +127,7 @@ export const OrderDetails = () => {
                   branchesData={branchesData}
                   ordersId={[+router.query.id]}
                   orderBranch={branchId}
+                  getOrderData={getOrderData}
                 />
               </div>
             </div>
@@ -138,7 +140,7 @@ export const OrderDetails = () => {
               </li>
               <li>
                 <span className="gray-color">{pathOr("", [locale, "Orders", "order_type"], t)}</span>
-                <div className="f-b">{orderSaleType}</div>
+                <div className="f-b">{orderTypesTranslation(orderSaleType, locale)}</div>
               </li>
               <li>
                 <span className="gray-color">{pathOr("", [locale, "Orders", "order_time"], t)}</span>
@@ -157,7 +159,7 @@ export const OrderDetails = () => {
               </li>
               <li>
                 <span className="gray-color">{pathOr("", [locale, "Orders", "order_status"], t)}</span>
-                <div className="f-b main-color">{status}</div>
+                <div className="f-b main-color">{orderStatusTranslate(status, locale)}</div>
               </li>
             </ul>
           </div>
@@ -251,9 +253,7 @@ export const OrderDetails = () => {
                       <div>
                         <div className="gray-color">{item.category}</div>
                         <div className="f-b">{item.productName}</div>
-                        <div className="gray-color">
-                          {orderSaleType === "FixedPrice" && locale === "ar" ? "اعلان بسعر ثابت" : orderSaleType}
-                        </div>
+                        <div className="gray-color">{orderTypesTranslation(orderSaleType, locale)}</div>
                       </div>
                     </div>
                     <div className="text-center">
@@ -302,7 +302,9 @@ export const OrderDetails = () => {
                     <div className="mx-4">
                       <div className="gray-color">{item.userName}</div>
                       <div className="f-b main-color">
-                        {pathOr("", [locale, "Orders", "changeOrderHistory"], t)} {item.status}
+                        {pathOr("", [locale, "Orders", "changeOrderHistory"], t)}
+                        {" - "}
+                        {orderStatusTranslate(item.status, locale)}
                       </div>
                     </div>
                   </div>

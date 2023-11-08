@@ -12,6 +12,8 @@ import t from "../../../../translations.json"
 import { toast } from "react-toastify"
 import Alerto from "../../../../common/Alerto"
 import BanksData from "./BanksData"
+import regionImage from "../../../../public/icons/008-maps.svg"
+import Image from "next/image"
 
 const AddProductStepTwo = ({ catId, product }) => {
   const { locale } = useRouter()
@@ -63,9 +65,9 @@ const AddProductStepTwo = ({ catId, product }) => {
     IsNegotiationEnabled: false,
     Price: 0,
     PriceDisc: 0,
-    PaymentOptions: [],
+    PaymentOptions: [3, 4],
     ProductBankAccounts: [],
-    IsCashEnabled: true,
+    IsCashEnabled: false,
     // AuctionStartPrice: 0,
     IsAuctionPaied: false,
     SendOfferForAuction: false,
@@ -86,13 +88,6 @@ const AddProductStepTwo = ({ catId, product }) => {
     "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": 0,
     "ProductPaymentDetailsDto.TotalAmountAfterCoupon": 0,
     "ProductPaymentDetailsDto.PaymentType": "Cash",
-    "ProductPaymentDetailsDto.PakatId": 0,
-    "ProductPaymentDetailsDto.PakatId": 0,
-    "ProductPaymentDetailsDto.PakatId": 0,
-    "ProductPaymentDetailsDto.PakatId": 0,
-    "ProductPaymentDetailsDto.PakatId": 0,
-    "ProductPaymentDetailsDto.PakatId": 0,
-    "ProductPaymentDetailsDto.PakatId": 0,
     SendYourAccountInfoToAuctionWinner: false,
   })
 
@@ -114,6 +109,7 @@ const AddProductStepTwo = ({ catId, product }) => {
         process.env.NEXT_PUBLIC_API_URL + `/ListCountries?lang=${locale}&currentPage=1`,
       )
       const { data: countriesList } = countriesData
+      console.log(countriesList)
       setCountries(countriesList)
     } catch (e) {
       Alerto(e)
@@ -159,7 +155,6 @@ const AddProductStepTwo = ({ catId, product }) => {
         Type: spefication.type,
         SpecificationId: spefication.id,
       }))
-      console.log(spefications)
       setSpesfications(spefications)
       setSpeficationsPayload([...speficationsPayloadList])
       // setProductPayload({ ...productPayload, productSep: [...speficationsPayloadList] })
@@ -406,6 +401,11 @@ const AddProductStepTwo = ({ catId, product }) => {
     } else setProductPayload((prev) => ({ ...prev, IsCashEnabled: false }))
   }, [PaymentOptions])
 
+  const countryFlag = countries?.map((item) => {
+    if (item.id == productPayload.countryId) {
+      return item.countryFlag
+    }
+  })
   console.log("productPayload", productPayload)
   return (
     <Fragment>
@@ -424,9 +424,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                     onClick={() => handleRemoveImage(index)}
                   />
                   <img src={product?.id ? img?.url : URL.createObjectURL(img)} />
-                  <label>
+                  <label htmlFor="mainImage">
                     <span> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
                     <input
+                      id="mainImage"
                       type="radio"
                       name="isMain"
                       checked={img?.id === mainImgId}
@@ -536,12 +537,16 @@ const AddProductStepTwo = ({ catId, product }) => {
                 <Row>
                   <Col md={6}>
                     <div className="form-group">
-                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                      <label
+                        htmlFor="nameEn"
+                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
+                      >
                         {pathOr("", [locale, "Products", "productAddress"], t)}
                         <RequiredSympol />
                       </label>
                       <input
                         type="text"
+                        id="nameEn"
                         className={`form-control ${styles["form-control"]}`}
                         placeholder={pathOr("", [locale, "Products", "enterProductAddress"], t)}
                         value={productPayload.nameAr}
@@ -551,11 +556,15 @@ const AddProductStepTwo = ({ catId, product }) => {
                       />
                     </div>
                     <div className="form-group">
-                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                      <label
+                        htmlFor="subTitleEn"
+                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
+                      >
                         {pathOr("", [locale, "Products", "productSecondaryAddress"], t)}
                       </label>
                       <input
                         type="text"
+                        id="subTitleEn"
                         className={`form-control ${styles["form-control"]}`}
                         placeholder={pathOr("", [locale, "Products", "enterProductSecondaryAddress"], t)}
                         value={productPayload.subTitleAr}
@@ -571,10 +580,14 @@ const AddProductStepTwo = ({ catId, product }) => {
                   </Col>
                   <Col md={6}>
                     <div className="form-group">
-                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                      <label
+                        htmlFor="descriptionEn"
+                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
+                      >
                         {pathOr("", [locale, "Products", "productDetails"], t)}
                       </label>
                       <textarea
+                        id="descriptionEn"
                         className={`form-control ${styles["form-control"]}`}
                         placeholder={pathOr("", [locale, "Products", "enterDetails"], t)}
                         value={productPayload.descriptionAr}
@@ -620,13 +633,15 @@ const AddProductStepTwo = ({ catId, product }) => {
                         {pathOr("", [locale, "Products", "quantity"], t)}
                       </label>
                       <div className="d-flex align-items-center justify-content-between mb-2">
-                        <span className="f-b">{pathOr("", [locale, "Products", "unlimitedQuantity"], t)}</span>
+                        <label htmlFor="unlimitedQuantity" className="f-b">
+                          {pathOr("", [locale, "Products", "unlimitedQuantity"], t)}
+                        </label>
                         <div className="form-check form-switch p-0 m-0">
                           <input
                             className="form-check-input m-0"
                             type="checkbox"
                             role="switch"
-                            id="flexSwitchCheckChecked"
+                            id="unlimitedQuantity"
                             onChange={(e) => handleUnlimtedQuantity(e)}
                             checked={productPayload.qty === null}
                           />
@@ -679,11 +694,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                           }}
                         >
                           <span className={`${styles["input-group-text"]} input-group-text`} id="basic-addon1">
-                            <FaFlag fontSize="18px" />
+                            {countryFlag && <img src={countryFlag} alt="country flag" width={20} height={20} />}
                           </span>
                           <div className="po_R flex-grow-1">
-                            <label>{pathOr("", [locale, "Products", "Country"], t)}</label>
+                            <label htmlFor="countryId">{pathOr("", [locale, "Products", "Country"], t)}</label>
                             <select
+                              id="countryId"
                               className={`${styles["form-control"]} form-control form-select`}
                               value={productPayload.countryId}
                               onChange={(e) => {
@@ -720,8 +736,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                             <FaFlag fontSize="18px" />
                           </span>
                           <div className="po_R flex-grow-1">
-                            <label>{pathOr("", [locale, "Products", "govern"], t)}</label>
+                            <label htmlFor="regionId">{pathOr("", [locale, "Products", "govern"], t)}</label>
                             <select
+                              id="regionId"
                               className={`${styles["form-control"]} form-control form-select`}
                               value={productPayload.regionId}
                               onChange={(e) => {
@@ -753,11 +770,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                           }}
                         >
                           <span className={`${styles["input-group-text"]} input-group-text`} id="basic-addon1">
-                            <FaFlag fontSize="18px" />
+                            <Image src={regionImage} alt="region" width={20} height={20} />
                           </span>
                           <div className="po_R flex-grow-1">
-                            <label>{pathOr("", [locale, "Products", "area"], t)}</label>
+                            <label htmlFor="neighborhoodId">{pathOr("", [locale, "Products", "area"], t)}</label>
                             <select
+                              id="neighborhoodId"
                               className={`${styles["form-control"]} form-control form-select`}
                               value={productPayload?.neighborhoodId}
                               onChange={(e) => {
@@ -779,9 +797,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                     <Col md={6}>
                       <div className="form-group">
                         <div className="po_R">
-                          <label>{pathOr("", [locale, "Products", "neighbourhood"], t)}</label>
+                          <label htmlFor="District">{pathOr("", [locale, "Products", "neighbourhood"], t)}</label>
                           <input
                             type="text"
+                            id="District"
                             className={`form-control ${styles["form-control"]}`}
                             placeholder={pathOr("", [locale, "Products", "enterNeighbourhood"], t)}
                             value={stateName}
@@ -794,9 +813,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                       <div className="form-group">
                         <div className="po_R">
-                          <label>{pathOr("", [locale, "Products", "street"], t)}</label>
+                          <label htmlFor="Street">{pathOr("", [locale, "Products", "street"], t)}</label>
                           <input
                             type="text"
+                            id="Street"
                             className={`form-control ${styles["form-control"]}`}
                             placeholder={pathOr("", [locale, "Products", "enterStreet"], t)}
                             value={productPayload.Street}
@@ -806,8 +826,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                       <div className="form-group">
                         <div className="po_R">
-                          <label>{pathOr("", [locale, "Products", "governCode"], t)}</label>
+                          <label htmlFor="GovernmentCode">{pathOr("", [locale, "Products", "governCode"], t)}</label>
                           <input
+                            id="GovernmentCode"
                             type="text"
                             className={`form-control ${styles["form-control"]}`}
                             placeholder={pathOr("", [locale, "Products", "enterGovernCode"], t)}
@@ -820,12 +841,14 @@ const AddProductStepTwo = ({ catId, product }) => {
                   </Row>
                 </div>
                 <div className="d-flex align-items-center justify-content-between flex-wrap mb-2">
-                  <span className="f-b">{pathOr("", [locale, "Products", "gettingQuestions"], t)}</span>
+                  <label htmlFor="flexSwitchCheckCheck" className="f-b">
+                    {pathOr("", [locale, "Products", "gettingQuestions"], t)}
+                  </label>
                   <div className="form-check form-switch p-0 m-0">
                     <input
                       className="form-check-input m-0"
                       type="checkbox"
-                      id="flexSwitchCheckChecked"
+                      id="flexSwitchCheckCheck"
                       value={productPayload.AcceptQuestion}
                       checked={productPayload.AcceptQuestion}
                       onChange={() =>
@@ -872,7 +895,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   className="form-check-input m-0"
                                   type="checkbox"
                                   role="switch"
-                                  id="flexSwitchCheckChecked"
+                                  id="IsFixedPriceEnabled"
                                   checked={
                                     productPayload.IsFixedPriceEnabled === 0 ? "" : productPayload.IsFixedPriceEnabled
                                   }
@@ -883,7 +906,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     })
                                   }
                                 />
-                                <span>{pathOr("", [locale, "Products", "adFixed"], t)}</span>
+                                <label htmlFor="IsFixedPriceEnabled">
+                                  {pathOr("", [locale, "Products", "adFixed"], t)}
+                                </label>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -897,7 +922,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   className="form-check-input m-0"
                                   type="checkbox"
                                   role="switch"
-                                  id="flexSwitchCheckChecked"
+                                  id="IsAuctionEnabled"
                                   checked={productPayload.IsAuctionEnabled === 0 ? "" : productPayload.IsAuctionEnabled}
                                   onChange={() =>
                                     setProductPayload({
@@ -906,7 +931,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     })
                                   }
                                 />
-                                <span>{pathOr("", [locale, "Products", "adAuct"], t)}</span>
+                                <label htmlFor="IsAuctionEnabled">
+                                  {pathOr("", [locale, "Products", "adAuct"], t)}
+                                </label>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -920,7 +947,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   className="form-check-input m-0"
                                   type="checkbox"
                                   role="switch"
-                                  id="flexSwitchCheckChecked"
+                                  id="IsNegotiationEnabled"
                                   checked={
                                     productPayload.IsNegotiationEnabled === 0 ? "" : productPayload.IsNegotiationEnabled
                                   }
@@ -931,7 +958,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     })
                                   }
                                 />
-                                <span>{pathOr("", [locale, "Products", "negotiation"], t)}</span>
+                                <label htmlFor="IsNegotiationEnabled">
+                                  {pathOr("", [locale, "Products", "negotiation"], t)}
+                                </label>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -943,7 +972,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                   {productPayload.IsFixedPriceEnabled && (
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
+                        <label
+                          htmlFor="Price"
+                          style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}
+                        >
                           {pathOr("", [locale, "Products", "productPrice"], t)}
                         </label>
                         <div
@@ -958,6 +990,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                           </span>
                           <div className="po_R flex-grow-1">
                             <input
+                              id="Price"
                               type="number"
                               value={productPayload.Price === 0 ? "" : productPayload.Price}
                               onChange={(e) => setProductPayload({ ...productPayload, Price: +e.target.value })}
@@ -1198,11 +1231,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   className="form-check-input m-0"
                                   type="checkbox"
                                   role="switch"
-                                  id="flexSwitchCheckChecked"
+                                  id="cash"
                                   checked={productPayload.PaymentOptions?.includes(1) ? true : false}
                                   onChange={() => paymentOptionsHandler(1)}
                                 />
-                                <span>{pathOr("", [locale, "Products", "cash"], t)}</span>
+                                <label htmlFor="cash">{pathOr("", [locale, "Products", "cash"], t)}</label>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -1216,12 +1249,14 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   className="form-check-input m-0"
                                   type="checkbox"
                                   role="switch"
-                                  id="flexSwitchCheckChecked"
+                                  id="bankTransfer"
                                   checked={productPayload.PaymentOptions?.includes(2) ? true : false}
                                   onChange={() => paymentOptionsHandler(2)}
                                   onClick={() => setShowBanksData(true)}
                                 />
-                                <span>{pathOr("", [locale, "Products", "bankTransfer"], t)}</span>
+                                <label htmlFor="bankTransfer">
+                                  {pathOr("", [locale, "Products", "bankTransfer"], t)}
+                                </label>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -1244,11 +1279,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   className="form-check-input m-0"
                                   type="checkbox"
                                   role="switch"
-                                  id="flexSwitchCheckChecked"
-                                  checked={productPayload.PaymentOptions?.includes(3) ? true : false}
-                                  onChange={() => paymentOptionsHandler(3)}
+                                  checked={true}
+                                  disabled
+                                  readOnly
                                 />
-                                <span>{pathOr("", [locale, "Products", "creditCard"], t)}</span>
+                                <label>{pathOr("", [locale, "Products", "creditCard"], t)}</label>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -1263,10 +1298,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   type="checkbox"
                                   role="switch"
                                   id="flexSwitchCheckChecked"
-                                  checked={productPayload.PaymentOptions?.includes(4) ? true : false}
-                                  onChange={() => paymentOptionsHandler(4)}
+                                  checked={true}
+                                  disabled
+                                  readOnly
                                 />
-                                <span>{pathOr("", [locale, "Products", "mada"], t)}</span>
+                                <label>{pathOr("", [locale, "Products", "mada"], t)}</label>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -1304,7 +1340,7 @@ const AddProductStepTwo = ({ catId, product }) => {
             <div className="form-content">
               <form>
                 <Row>
-                  <div className="col-6">
+                  <div className="col-lg-6 col-md-12">
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
                         {pathOr("", [locale, "Products", "pickupOptions"], t)}
@@ -1318,7 +1354,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   className="form-check-input m-0"
                                   type="checkbox"
                                   role="switch"
-                                  id="flexSwitchCheckChecked"
+                                  id="MustPickUp"
                                   checked={productPayload.PickUpDeliveryOption === "MustPickUp" ? true : false}
                                   onChange={() =>
                                     setProductPayload({
@@ -1328,7 +1364,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     })
                                   }
                                 />
-                                <span> {pathOr("", [locale, "Products", "MustPickUp"], t)}</span>
+                                <label htmlFor="MustPickUp"> {pathOr("", [locale, "Products", "MustPickUp"], t)}</label>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -1342,7 +1378,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   className="form-check-input m-0"
                                   type="checkbox"
                                   role="switch"
-                                  id="flexSwitchCheckChecked"
+                                  id="NoPickup"
                                   checked={productPayload.PickUpDeliveryOption === "NoPickUp" ? true : false}
                                   onChange={() =>
                                     setProductPayload({
@@ -1351,7 +1387,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     })
                                   }
                                 />
-                                <span>{pathOr("", [locale, "Products", "NoPickup"], t)}</span>
+                                <label htmlFor="NoPickup">{pathOr("", [locale, "Products", "NoPickup"], t)}</label>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -1365,7 +1401,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                   className="form-check-input m-0"
                                   type="checkbox"
                                   role="switch"
-                                  id="flexSwitchCheckChecked"
+                                  id="PickUpAvailable"
                                   checked={productPayload.PickUpDeliveryOption === "PickUpAvailable" ? true : false}
                                   onChange={() =>
                                     setProductPayload({
@@ -1374,7 +1410,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     })
                                   }
                                 />
-                                <span>{pathOr("", [locale, "Products", "pickupAvailable"], t)}</span>
+                                <label htmlFor="PickUpAvailable">
+                                  {pathOr("", [locale, "Products", "pickupAvailable"], t)}
+                                </label>
                                 <span className="bord" />
                               </div>
                             </div>
@@ -1385,7 +1423,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                   </div>
                   {(productPayload.PickUpDeliveryOption == "PickUpAvailable" ||
                     productPayload.PickUpDeliveryOption == "NoPickUp") && (
-                    <div className="col-6">
+                    <div className="col-lg-6 col-md-12">
                       <div className="form-group">
                         <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
                           {pathOr("", [locale, "Products", "shippingOptions"], t)}
@@ -1399,7 +1437,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     className="form-check-input m-0"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckChecked"
+                                    id="freeShippingWithinSaudi"
                                     checked={productPayload.ShippingOptions === "1" ? true : false}
                                     onChange={() =>
                                       setProductPayload({
@@ -1408,7 +1446,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                                       })
                                     }
                                   />
-                                  <span> {pathOr("", [locale, "Products", "freeShippingWithinSaudi"], t)}</span>
+                                  <label htmlFor="freeShippingWithinSaudi">
+                                    {pathOr("", [locale, "Products", "freeShippingWithinSaudi"], t)}
+                                  </label>
                                   <span className="bord" />
                                 </div>
                               </div>
@@ -1422,7 +1462,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     className="form-check-input m-0"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckChecked"
+                                    id="integratedShippingOptions"
                                     checked={productPayload.ShippingOptions === "2" ? true : false}
                                     onChange={() =>
                                       setProductPayload({
@@ -1431,7 +1471,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                                       })
                                     }
                                   />
-                                  <span>{pathOr("", [locale, "Products", "integratedShippingOptions"], t)}</span>
+                                  <label htmlFor="integratedShippingOptions">
+                                    {pathOr("", [locale, "Products", "integratedShippingOptions"], t)}
+                                  </label>
                                   <span className="bord" />
                                 </div>
                               </div>
@@ -1445,7 +1487,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                                     className="form-check-input m-0"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckChecked"
+                                    id="arrangementWithBuyer"
                                     checked={productPayload.ShippingOptions === "3" ? true : false}
                                     onChange={() =>
                                       setProductPayload({
@@ -1454,7 +1496,9 @@ const AddProductStepTwo = ({ catId, product }) => {
                                       })
                                     }
                                   />
-                                  <span>{pathOr("", [locale, "Products", "arrangementWithBuyer"], t)}</span>
+                                  <label htmlFor="arrangementWithBuyer">
+                                    {pathOr("", [locale, "Products", "arrangementWithBuyer"], t)}
+                                  </label>
                                   <span className="bord" />
                                 </div>
                               </div>

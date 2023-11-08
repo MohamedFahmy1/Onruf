@@ -2,7 +2,7 @@ import React, { Fragment, useState, useMemo, useEffect, useCallback } from "reac
 import Table from "../../../common/table"
 import Pagination from "./../../../common/pagination"
 import Router, { useRouter } from "next/router"
-import { propOr, pathOr, product } from "ramda"
+import { propOr, pathOr } from "ramda"
 import { MdModeEdit } from "react-icons/md"
 import { formatDate } from "../../../common/functions"
 import Modal from "react-bootstrap/Modal"
@@ -107,7 +107,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         Cell: ({ row: { original } }) => (
           <div className="d-flex align-items-center">
             {router.pathname.includes("folders") ? (
-              <img src={original.image} className="img_table" alt="" />
+              <img src={original.image} className="img_table" alt="folder" />
             ) : (
               <img
                 src={pathOr(
@@ -116,7 +116,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                   original,
                 )}
                 className="img_table"
-                alt=""
+                alt="folder"
               />
             )}
             <div>
@@ -195,13 +195,14 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         Cell: ({ row: { original } }) => (
           <div>
             <h6 className="m-0 f-b">
-              {original.isMazad && original.withFixedPrice
+              {original.isAuctionEnabled && original.isFixedPriceEnabled
                 ? `${pathOr("", [locale, "Products", "fixed"], t)}, ${pathOr("", [locale, "Products", "auction"], t)}`
-                : original.isMazad && !original.withFixedPrice
+                : original.isAuctionEnabled && !original.isFixedPriceEnabled
                 ? pathOr("", [locale, "Products", "auction"], t)
-                : !original.isMazad && original.withFixedPrice
-                ? pathOr("", [locale, "Products", "fixed"], t)
+                : !original.isAuctionEnabled && original.isFixedPriceEnabled
+                ? pathOr("", [locale, "Orders", "fixedPrice"], t)
                 : "-"}
+              {original.isNegotiationEnabled && ` ${pathOr("", [locale, "Orders", "negotiation"], t)}`}
             </h6>
           </div>
         ),
@@ -315,7 +316,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               className={`btn-main ${selectedFilter === "avaliableProducts" ? "active" : ""}`}
               onClick={() => {
                 setSelectedFilter("avaliableProducts")
-                // router.push({ query: { page: 1 } })
+                router.push({ query: { page: 1 } })
               }}
             >
               {pathOr("", [locale, "Products", "availableProducts"], t)} ({avaliableProducts?.length})
@@ -324,7 +325,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               className={`btn-main ${selectedFilter === "productsAlmostOut" ? "active" : ""}`}
               onClick={() => {
                 setSelectedFilter("productsAlmostOut")
-                // router.push({ query: { page: 1 } })
+                router.push({ query: { page: 1 } })
               }}
             >
               {pathOr("", [locale, "Products", "almostOut"], t)} ({productsAlmostOut?.length})
@@ -333,7 +334,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               className={`btn-main ${!selectedFilter ? "active" : ""}`}
               onClick={() => {
                 setSelectedFilter("")
-                // router.push({ query: { page: 1 } })
+                router.push({ query: { page: 1 } })
               }}
             >
               {pathOr("", [locale, "Products", "inActiveProducts"], t)} ({inActiveProducts?.length})

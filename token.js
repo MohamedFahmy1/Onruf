@@ -23,6 +23,11 @@ export const headersJson = {
     "User-Language": "en",
   },
 }
+export const mulitFormData = {
+  headers: {
+    "Content-Type": "multipart/form-data",
+  },
+}
 // "ProductPaymentDetailsDto.PakatId": 0,
 // "ProductPaymentDetailsDto.AdditionalPakatId": 0,
 // "ProductPaymentDetailsDto.ProductPublishPrice": 0,
@@ -37,11 +42,4 @@ export const headersJson = {
 // "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": 0,
 // "ProductPaymentDetailsDto.TotalAmountAfterCoupon": 0,
 // "ProductPaymentDetailsDto.PaymentType": "Cash",
-// "ProductPaymentDetailsDto.PakatId": 0,
-// "ProductPaymentDetailsDto.PakatId": 0,
-// "ProductPaymentDetailsDto.PakatId": 0,
-// "ProductPaymentDetailsDto.PakatId": 0,
-// "ProductPaymentDetailsDto.PakatId": 0,
-// "ProductPaymentDetailsDto.PakatId": 0,
-// "ProductPaymentDetailsDto.PakatId": 0,
 // SendYourAccountInfoToAuctionWinner: false,

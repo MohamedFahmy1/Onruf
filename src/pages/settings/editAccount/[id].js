@@ -94,9 +94,7 @@ const EditBussinessAccount = () => {
   const toggleAccordionPanel = (eKey) => {
     eventKey === eKey ? setEventKey("") : setEventKey(eKey)
   }
-  console.log(businessAccountImage)
   const handleEditBusinessAccount = async ({ commercialRegisterFile, ...values }) => {
-    console.log(values)
     try {
       const payload = {
         ...values,
@@ -120,7 +118,11 @@ const EditBussinessAccount = () => {
       toast.error(locale === "en" ? "Please Enter All Data!" : "الرجاء ادخال جميع البيانات")
     }
   }
-
+  // const countryFlag = countries?.map((item) => {
+  //   if (item.id == productPayload.countryId) {
+  //     return item.countryFlag
+  //   }
+  // })
   return (
     <div className="body-content">
       {accountData && accountData.id && (
@@ -382,7 +384,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "address"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <Image src={office} className="img-fluid" alt="" />
+                            <Image src={office} className="img-fluid" alt="country flag" />
                           </span>
                           <select
                             // {...register("countryId", { value: accountData.countryId })}
@@ -512,7 +514,6 @@ const EditBussinessAccount = () => {
                           />
                         </div>
                       </div>
-                      {console.log(accountData)}
                       <div className="form-group">
                         <div className="form-check form-switch p-0 m-0">
                           <span className="input-group-text justify-content-between">

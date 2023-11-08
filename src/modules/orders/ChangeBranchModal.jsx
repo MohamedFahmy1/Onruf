@@ -6,7 +6,14 @@ import { useRouter } from "next/router"
 import { toast } from "react-toastify"
 import axios from "axios"
 
-const ChangeBranchModal = ({ openBranchModal, setOpenBranchModal, branchesData, ordersId, orderBranch }) => {
+const ChangeBranchModal = ({
+  openBranchModal,
+  setOpenBranchModal,
+  branchesData,
+  ordersId,
+  orderBranch,
+  getOrderData,
+}) => {
   const { locale } = useRouter()
   const changeOrderBranch = async (branchId) => {
     if (branchesData) {
@@ -17,9 +24,10 @@ const ChangeBranchModal = ({ openBranchModal, setOpenBranchModal, branchesData, 
           },
         })
         setOpenBranchModal(false)
+        getOrderData(ordersId[0])
         toast.success(locale === "en" ? "Branch Updated Successfully!" : "!تم تحديد الفرع بنجاح")
       } catch (error) {
-        toast.error(error.response.data.message)
+        toast.error("Error")
       }
     }
   }

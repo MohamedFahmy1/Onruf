@@ -71,7 +71,7 @@
       "selectFolder": "اختر الملف",
       "folderName": "اسم المجلد",
       "auction": "مزاد",
-      "fixed": "ثابت",
+      "fixed": "سعر ثابت",
       "availableProducts": "منتجات متاحة",
       "almostOut": "اوشكت على النفاذ",
       "inActiveProducts": "منتجات نشطة",
@@ -391,7 +391,10 @@
       "shipping_total": "اجمالي الشحنة",
       "order_log": "سجل الطلب",
       "changeOrderStatus": "تغيير حالة الطلب",
-      "changeOrderHistory": "تغيير حالة المنتج الي"
+      "changeOrderHistory": "تغيير حالة المنتج الي",
+      "fixedPrice": "سعر ثابت",
+      "auction": "مزاد",
+      "negotiation": "تفاوض"
     },
     "Reports": {
       "reports": "التقارير",
@@ -916,7 +919,10 @@
       "shipping_total": "shipment Total",
       "order_log": "Order Log",
       "changeOrderStatus": "Change Order Status",
-      "changeOrderHistory": "Order status changed to "
+      "changeOrderHistory": "Order status changed to ",
+      "fixedPrice": "Fixed Price",
+      "auction": "Auction",
+      "negotiation": "Negotiation"
     },
     "Reports": {
       "reports": "Reports",
