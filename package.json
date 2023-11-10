@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next -p 3002",
+    "dev": "next -p 3030",
     "export": "next export",
     "build": "npm install -g n && n 17 && next build",
     "start": "next start",

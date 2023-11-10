@@ -34,6 +34,7 @@ const AddProductStepTwo = ({ catId, product }) => {
   const [speficationsPayload, setSpeficationsPayload] = useState([])
   const [userBanksData, setuserBanksData] = useState([])
   const [showBanksData, setShowBanksData] = useState(false)
+  const [shippingOptions, setShippingOptions] = useState([])
   const [productPayload, setProductPayload] = useState({
     nameAr: "",
     nameEn: "",
@@ -55,8 +56,7 @@ const AddProductStepTwo = ({ catId, product }) => {
     listImageFile: [],
     MainImageIndex: undefined,
     // videoUrl: [],
-    PickUpDeliveryOption: "",
-    // ShippingOptions: null,
+    ShippingOptions: [],
     Lat: "30",
     Lon: "30",
     AcceptQuestion: false,
@@ -90,7 +90,6 @@ const AddProductStepTwo = ({ catId, product }) => {
     "ProductPaymentDetailsDto.PaymentType": "Cash",
     SendYourAccountInfoToAuctionWinner: false,
   })
-
   const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
     try {
       const {
@@ -109,7 +108,6 @@ const AddProductStepTwo = ({ catId, product }) => {
         process.env.NEXT_PUBLIC_API_URL + `/ListCountries?lang=${locale}&currentPage=1`,
       )
       const { data: countriesList } = countriesData
-      console.log(countriesList)
       setCountries(countriesList)
     } catch (e) {
       Alerto(e)
@@ -125,7 +123,6 @@ const AddProductStepTwo = ({ catId, product }) => {
           `/getAllPakatsList?lang=${locale}&categoryId=${catId}&isAdmin=${true}&PakatType=Additional`,
       )
       const { data: packatList } = packatData
-      console.log(packatList)
       setPackat(packatList)
     } catch (e) {
       Alerto(e)
@@ -136,6 +133,15 @@ const AddProductStepTwo = ({ catId, product }) => {
       const { data: data } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/BankTransfersList`)
       const { data: banksData } = data
       setuserBanksData(banksData)
+    } catch (e) {
+      Alerto(e)
+    }
+  }
+  const fetchShippingOptions = async () => {
+    try {
+      const { data: data } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/GetAllShippingOptions`)
+      const { data: shippingData } = data
+      setShippingOptions(shippingData)
     } catch (e) {
       Alerto(e)
     }
@@ -167,6 +173,7 @@ const AddProductStepTwo = ({ catId, product }) => {
       try {
         fetchBanksData()
         fetchSpecificationsList()
+        fetchShippingOptions()
         fetchCountries()
         fetchPakatList()
         router.pathname.includes("edit") && setProductPayload(product)
@@ -308,7 +315,6 @@ const AddProductStepTwo = ({ catId, product }) => {
       setProductPayload({ ...productPayload, IsCashEnabled: true })
     } else setProductPayload({ ...productPayload, IsCashEnabled: false })
     productPayload.listImageFile.forEach((ele, indx) => {
-      console.log("sudany", productPayload.listImageFile)
       ele.id === mainImgId && indx !== 0 && productPayload.listImageFile.move(indx, 0)
     })
     for (let key in productPayload) {
@@ -320,9 +326,14 @@ const AddProductStepTwo = ({ catId, product }) => {
       } else if (key === "productSep") {
         formData.append(key, JSON.stringify(value))
       } else if (Array.isArray(value)) {
-        value.forEach((item) => {
-          formData.append(key, item)
-        })
+        if (key == "ShippingOptions") {
+          value.forEach((item) => {
+            formData.append(key, Number(item))
+          })
+        } else
+          value.forEach((item) => {
+            formData.append(key, item)
+          })
       } else {
         formData.append(key, value)
       }
@@ -335,21 +346,28 @@ const AddProductStepTwo = ({ catId, product }) => {
         toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
         Router.push(`/${locale}/products`)
       } else {
-        const {
-          data: { data: id },
-        } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData, {
-          headers: {
-            accept: "*/*",
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-        console.log("id of the product is:", id)
-        // Router.push(`/${locale}/products/add/review/${id}`)
-        Router.push(`/${locale}/products`)
+        try {
+          const {
+            data: { data: id },
+          } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData, {
+            headers: {
+              accept: "*/*",
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
+          console.log("id of the product is:", id)
+          // Router.push(`/${locale}/products/add/review/${id}`)
+          Router.push(`/${locale}/products`)
+        } catch (error) {
+          toast.error(
+            locale === "en"
+              ? "Error Please recheck the data you entered!"
+              : "حدث خطأ برجاء مراجعة البيانات و اعادة المحاولة",
+          )
+        }
       }
     } catch (err) {
-      console.error(err)
       Alerto(err)
     }
   }
@@ -382,7 +400,6 @@ const AddProductStepTwo = ({ catId, product }) => {
   }
   const paymentOptionsHandler = (optionIndex) => {
     if (!productPayload.PaymentOptions?.includes(optionIndex)) {
-      console.log(productPayload.PaymentOptions)
       setProductPayload((prev) => ({
         ...prev,
         PaymentOptions: [...prev.PaymentOptions, optionIndex],
@@ -394,18 +411,44 @@ const AddProductStepTwo = ({ catId, product }) => {
       }))
     }
   }
+  const handleShippingOptions = (optionIndex) => {
+    // if the shipping option was not selected
+    if (!productPayload.ShippingOptions?.includes(optionIndex)) {
+      setProductPayload((prev) => ({
+        ...prev,
+        ShippingOptions: [...prev.ShippingOptions, +optionIndex],
+      }))
+    }
+    // if the shipping option is already selected
+    else if (productPayload.ShippingOptions?.includes(optionIndex)) {
+      setProductPayload((prev) => ({
+        ...prev,
+        ShippingOptions: prev.ShippingOptions.filter((value) => value !== optionIndex),
+      }))
+      // clear 4 ,5 and 6 options if 2 and 3 options not selected in the array
+      if (productPayload.ShippingOptions?.includes(2) || productPayload.ShippingOptions?.includes(3)) {
+        setProductPayload((prev) => ({
+          ...prev,
+          ShippingOptions: prev.ShippingOptions.filter((value) => value !== 4 && value !== 5 && value !== 6),
+        }))
+      }
+    }
+  }
   const { PaymentOptions } = productPayload
   useEffect(() => {
     if (PaymentOptions?.includes(1)) {
       setProductPayload((prev) => ({ ...prev, IsCashEnabled: true }))
     } else setProductPayload((prev) => ({ ...prev, IsCashEnabled: false }))
   }, [PaymentOptions])
+  const shippingOptionsErrorHandling = () => {
+    const hasTwoOrThree = productPayload.ShippingOptions.includes(2) || productPayload.ShippingOptions.includes(3)
+    const hasFourFiveOrSix = productPayload.ShippingOptions.some((id) => [4, 5, 6].includes(id))
 
-  const countryFlag = countries?.map((item) => {
-    if (item.id == productPayload.countryId) {
-      return item.countryFlag
-    }
-  })
+    if (hasTwoOrThree && !hasFourFiveOrSix) {
+      toast.error("Please select the highlighted options!")
+    } else setEventKey("5")
+  }
+  const countryFlag = countries?.find((item) => item.id === productPayload.countryId)?.countryFlag
   console.log("productPayload", productPayload)
   return (
     <Fragment>
@@ -693,8 +736,16 @@ const AddProductStepTwo = ({ catId, product }) => {
                             flexDirection: locale === "en" ? "row-reverse" : "row",
                           }}
                         >
-                          <span className={`${styles["input-group-text"]} input-group-text`} id="basic-addon1">
-                            {countryFlag && <img src={countryFlag} alt="country flag" width={20} height={20} />}
+                          <span
+                            className={`${styles["input-group-text"]} input-group-text`}
+                            id="basic-addon1"
+                            style={{ padding: "14px" }}
+                          >
+                            {productPayload.countryId ? (
+                              <img src={countryFlag} alt="country flag" width={30} height={20} />
+                            ) : (
+                              <FaFlag size={21} style={{ width: "30px" }} />
+                            )}
                           </span>
                           <div className="po_R flex-grow-1">
                             <label htmlFor="countryId">{pathOr("", [locale, "Products", "Country"], t)}</label>
@@ -702,6 +753,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                               id="countryId"
                               className={`${styles["form-control"]} form-control form-select`}
                               value={productPayload.countryId}
+                              defaultValue={""}
                               onChange={(e) => {
                                 setProductPayload({ ...productPayload, countryId: +e.target.value })
                                 handleFetchNeighbourhoodsOrRegions(
@@ -1340,186 +1392,66 @@ const AddProductStepTwo = ({ catId, product }) => {
             <div className="form-content">
               <form>
                 <Row>
-                  <div className="col-lg-6 col-md-12">
+                  <div className="col-lg-12 col-md-12">
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
-                        {pathOr("", [locale, "Products", "pickupOptions"], t)}
+                        {pathOr("", [locale, "Products", "shippingOptions"], t)}
                       </label>
                       <div className="row">
-                        <div className="col-lg-12 col-md-12">
-                          <div className="form-group">
-                            <div className="form-control outer-check-input">
-                              <div className="form-check form-switch p-0 m-0">
-                                <input
-                                  className="form-check-input m-0"
-                                  type="checkbox"
-                                  role="switch"
-                                  id="MustPickUp"
-                                  checked={productPayload.PickUpDeliveryOption === "MustPickUp" ? true : false}
-                                  onChange={() =>
-                                    setProductPayload({
-                                      ...productPayload,
-                                      PickUpDeliveryOption: "MustPickUp",
-                                      ShippingOptions: null,
-                                    })
-                                  }
-                                />
-                                <label htmlFor="MustPickUp"> {pathOr("", [locale, "Products", "MustPickUp"], t)}</label>
-                                <span className="bord" />
+                        {productPayload.ShippingOptions.includes(2) || productPayload.ShippingOptions.includes(3)
+                          ? shippingOptions.map((item) => (
+                              <div className="col-lg-6 col-md-6" key={item.id}>
+                                <div className="form-group">
+                                  <div
+                                    className={`${
+                                      [4, 5, 6].includes(item.id) ? "orange-border" : ""
+                                    } form-control outer-check-input`}
+                                  >
+                                    <div className="form-check form-switch p-0 m-0">
+                                      <input
+                                        className="form-check-input m-0"
+                                        type="checkbox"
+                                        role="switch"
+                                        id={item.id + " ShippingOptions"}
+                                        checked={productPayload.ShippingOptions.includes(item.id)}
+                                        onChange={() => handleShippingOptions(item.id)}
+                                      />
+                                      <label htmlFor={item.id + " ShippingOptions"}>{item.shippingOptionName}</label>
+                                      <span className="bord" />
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-12 col-md-12">
-                          <div className="form-group">
-                            <div className="form-control outer-check-input">
-                              <div className="form-check form-switch p-0 m-0">
-                                <input
-                                  className="form-check-input m-0"
-                                  type="checkbox"
-                                  role="switch"
-                                  id="NoPickup"
-                                  checked={productPayload.PickUpDeliveryOption === "NoPickUp" ? true : false}
-                                  onChange={() =>
-                                    setProductPayload({
-                                      ...productPayload,
-                                      PickUpDeliveryOption: "NoPickUp",
-                                    })
-                                  }
-                                />
-                                <label htmlFor="NoPickup">{pathOr("", [locale, "Products", "NoPickup"], t)}</label>
-                                <span className="bord" />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-lg-12 col-md-12">
-                          <div className="form-group">
-                            <div className="form-control outer-check-input">
-                              <div className="form-check form-switch p-0 m-0">
-                                <input
-                                  className="form-check-input m-0"
-                                  type="checkbox"
-                                  role="switch"
-                                  id="PickUpAvailable"
-                                  checked={productPayload.PickUpDeliveryOption === "PickUpAvailable" ? true : false}
-                                  onChange={() =>
-                                    setProductPayload({
-                                      ...productPayload,
-                                      PickUpDeliveryOption: "PickUpAvailable",
-                                    })
-                                  }
-                                />
-                                <label htmlFor="PickUpAvailable">
-                                  {pathOr("", [locale, "Products", "pickupAvailable"], t)}
-                                </label>
-                                <span className="bord" />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                            ))
+                          : shippingOptions
+                              .filter((item) => item.id !== 4 && item.id !== 5 && item.id !== 6)
+                              .map((item) => (
+                                <div className="col-lg-6 col-md-6" key={item.id}>
+                                  <div className="form-group">
+                                    <div className="form-control outer-check-input">
+                                      <div className="form-check form-switch p-0 m-0">
+                                        <input
+                                          className="form-check-input m-0"
+                                          type="checkbox"
+                                          role="switch"
+                                          id={item.id + " ShippingOptions"}
+                                          checked={productPayload.ShippingOptions.includes(item.id)}
+                                          onChange={() => handleShippingOptions(item.id)}
+                                        />
+                                        <label htmlFor={item.id + " ShippingOptions"}>{item.shippingOptionName}</label>
+                                        <span className="bord" />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
                       </div>
                     </div>
                   </div>
-                  {(productPayload.PickUpDeliveryOption == "PickUpAvailable" ||
-                    productPayload.PickUpDeliveryOption == "NoPickUp") && (
-                    <div className="col-lg-6 col-md-12">
-                      <div className="form-group">
-                        <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
-                          {pathOr("", [locale, "Products", "shippingOptions"], t)}
-                        </label>
-                        <div className="row">
-                          <div className="col-lg-12 col-md-12">
-                            <div className="form-group">
-                              <div className="form-control outer-check-input">
-                                <div className="form-check form-switch p-0 m-0">
-                                  <input
-                                    className="form-check-input m-0"
-                                    type="checkbox"
-                                    role="switch"
-                                    id="freeShippingWithinSaudi"
-                                    checked={productPayload.ShippingOptions === "1" ? true : false}
-                                    onChange={() =>
-                                      setProductPayload({
-                                        ...productPayload,
-                                        ShippingOptions: "1",
-                                      })
-                                    }
-                                  />
-                                  <label htmlFor="freeShippingWithinSaudi">
-                                    {pathOr("", [locale, "Products", "freeShippingWithinSaudi"], t)}
-                                  </label>
-                                  <span className="bord" />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col-lg-12 col-md-12">
-                            <div className="form-group">
-                              <div className="form-control outer-check-input">
-                                <div className="form-check form-switch p-0 m-0">
-                                  <input
-                                    className="form-check-input m-0"
-                                    type="checkbox"
-                                    role="switch"
-                                    id="integratedShippingOptions"
-                                    checked={productPayload.ShippingOptions === "2" ? true : false}
-                                    onChange={() =>
-                                      setProductPayload({
-                                        ...productPayload,
-                                        ShippingOptions: "2",
-                                      })
-                                    }
-                                  />
-                                  <label htmlFor="integratedShippingOptions">
-                                    {pathOr("", [locale, "Products", "integratedShippingOptions"], t)}
-                                  </label>
-                                  <span className="bord" />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="col-lg-12 col-md-12">
-                            <div className="form-group">
-                              <div className="form-control outer-check-input">
-                                <div className="form-check form-switch p-0 m-0">
-                                  <input
-                                    className="form-check-input m-0"
-                                    type="checkbox"
-                                    role="switch"
-                                    id="arrangementWithBuyer"
-                                    checked={productPayload.ShippingOptions === "3" ? true : false}
-                                    onChange={() =>
-                                      setProductPayload({
-                                        ...productPayload,
-                                        ShippingOptions: "3",
-                                      })
-                                    }
-                                  />
-                                  <label htmlFor="arrangementWithBuyer">
-                                    {pathOr("", [locale, "Products", "arrangementWithBuyer"], t)}
-                                  </label>
-                                  <span className="bord" />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </Row>
               </form>
             </div>
-            <button
-              className="btn-main mt-3"
-              type="button"
-              onClick={() =>
-                productPayload.PickUpDeliveryOption != ""
-                  ? setEventKey("5")
-                  : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
-              }
-            >
+            <button className="btn-main mt-3" type="button" onClick={() => shippingOptionsErrorHandling()}>
               {pathOr("", [locale, "Products", "next"], t)}
             </button>
           </Accordion.Body>

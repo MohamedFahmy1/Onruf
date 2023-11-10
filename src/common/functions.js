@@ -70,13 +70,13 @@ export const paymentTypesTranslation = (typeFromApi, locale) => {
     case "4":
       return pathOr("", [locale, "Products", "mada"], t)
     default:
-      if (typeFromApi.match(/cash/gi)) {
+      if (typeFromApi?.match(/cash/gi)) {
         return pathOr("", [locale, "Products", "cash"], t)
-      } else if (typeFromApi.match(/bank/gi)) {
+      } else if (typeFromApi?.match(/bank/gi)) {
         return pathOr("", [locale, "Products", "bankTransfer"], t)
-      } else if (typeFromApi.match(/card/gi)) {
+      } else if (typeFromApi?.match(/card/gi)) {
         return pathOr("", [locale, "Products", "creditCard"], t)
-      } else if (typeFromApi.match(/mada/gi)) {
+      } else if (typeFromApi?.match(/mada/gi)) {
         return pathOr("", [locale, "Products", "mada"], t)
       }
       return "Unknown payment type"

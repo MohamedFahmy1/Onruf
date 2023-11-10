@@ -10,7 +10,7 @@ import delivery from "../../../assets/images/delivery-truck.png"
 import Image from "next/image"
 import ChangeSingleStatusModal from "./ChangeSingleStatusModal"
 import ChangeBranchModal from "../ChangeBranchModal"
-import { orderStatusTranslate, orderTypesTranslation } from "../../../common/functions"
+import { orderStatusTranslate, orderTypesTranslation, paymentTypesTranslation } from "../../../common/functions"
 
 export const OrderDetails = () => {
   const {
@@ -75,6 +75,7 @@ export const OrderDetails = () => {
     orderProductFullInfoDto,
     orderStatus,
     branchId,
+    paymentType,
   } = orderData
   const totalQuantity = orderProductFullInfoDto
     .map((item) => item.quantity)
@@ -273,7 +274,7 @@ export const OrderDetails = () => {
               </div>
               <div className="info_shan">
                 <span>{pathOr("", [locale, "Orders", "payment_method"], t)}</span>{" "}
-                <span className="f-b">{pathOr("", [locale, "Orders", "via_bank"], t)}</span>
+                <span className="f-b">{paymentTypesTranslation(paymentType, locale)}</span>
               </div>
               <div className="po_R upload_filo my-3">
                 <input type="text" className="form-control" readOnly value="تم ارفاق الفاتورة" />

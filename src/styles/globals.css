@@ -2048,3 +2048,6 @@ body::-webkit-scrollbar-thumb:hover,
 .transaction-type input {
   cursor: pointer;
 }
+.orange-border {
+  border: 2px solid orange;
+}

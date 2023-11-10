@@ -120,7 +120,7 @@ function ConditionForm({ fetchedCountries, products, conditions, setAddCondition
   useEffect(() => {
     fetchRegionsByCountry()
   }, [watch("countries")])
-
+  console.log(fields)
   return (
     <>
       {fields.map((field, index) => (
@@ -238,7 +238,6 @@ function ConditionForm({ fetchedCountries, products, conditions, setAddCondition
                 </FormControl>
               </div>
             </div>
-
             <div className="row">
               <div className="form-group col-md-6">
                 <label>{pathOr("", [locale, "Shipping", "standardAmount"], t)}</label>
@@ -249,7 +248,6 @@ function ConditionForm({ fetchedCountries, products, conditions, setAddCondition
                 />
                 <p className="errorMsg">{handleFormErrors(errors, "standardAmount")}</p>
               </div>
-
               <div className="form-group col-md-6">
                 <label>{pathOr("", [locale, "Shipping", "standardPrice"], t)}</label>
                 <input
@@ -260,7 +258,6 @@ function ConditionForm({ fetchedCountries, products, conditions, setAddCondition
                 <p className="errorMsg">{handleFormErrors(errors, "standardPrice")}</p>
               </div>
             </div>
-
             <div className="row">
               <div className="form-group col-md-6">
                 <label>{pathOr("", [locale, "Shipping", "extraAmount"], t)}</label>
@@ -281,11 +278,9 @@ function ConditionForm({ fetchedCountries, products, conditions, setAddCondition
                 <p className="errorMsg">{handleFormErrors(errors, "extraAmountFee")}</p>
               </div>
             </div>
-
             <button className="btn-main mt-3" type="submit">
               {pathOr("", [locale, "Products", "save"], t)}
             </button>
-
             <Button
               onClick={() => {
                 handleDeleteCondition(conditions[index].id, index)
