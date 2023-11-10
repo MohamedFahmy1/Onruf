@@ -89,7 +89,7 @@ const AddProductStepTwo = ({ catId, product }) => {
     "ProductPaymentDetailsDto.TotalAmountAfterCoupon": 0,
     "ProductPaymentDetailsDto.PaymentType": "Cash",
     SendYourAccountInfoToAuctionWinner: false,
-    AlmostSoldOutQuantity: null,
+    AlmostSoldOutQuantity: 1,
   })
   const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
     try {
@@ -727,32 +727,38 @@ const AddProductStepTwo = ({ catId, product }) => {
                   <Col md={6}>
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
-                        {pathOr("", [locale, "Products", "quantity"], t)}
+                        {pathOr("", [locale, "Products", "productsAlmostOut"], t)}
                       </label>
                       <div className="inpt_numb">
                         <button
                           className="btn_ plus"
-                          disabled={unlimtedQuantity}
                           onClick={(e) => {
                             e.preventDefault()
-                            setProductPayload({ ...productPayload, qty: productPayload.qty + 1 })
+                            setProductPayload({
+                              ...productPayload,
+                              AlmostSoldOutQuantity: productPayload.AlmostSoldOutQuantity + 1,
+                            })
                           }}
                         >
                           <FaPlus />
                         </button>
                         <input
                           type="unlimtedQuantity ? 'text' : 'number'"
-                          disabled={unlimtedQuantity}
-                          className={`form-control ${styles["form-control"]} ${unlimtedQuantity ? "disabled" : ""}`}
-                          value={productPayload.qty == null ? "" : productPayload.qty}
-                          onChange={(e) => setProductPayload({ ...productPayload, qty: +e.target.value })}
+                          className={`form-control ${styles["form-control"]}`}
+                          value={productPayload.AlmostSoldOutQuantity == 0 ? 1 : productPayload.AlmostSoldOutQuantity}
+                          onChange={(e) =>
+                            setProductPayload({ ...productPayload, AlmostSoldOutQuantity: +e.target.value })
+                          }
                         />
                         <button
                           className="btn_ minus"
-                          disabled={!productPayload.qty || unlimtedQuantity}
+                          disabled={productPayload.AlmostSoldOutQuantity === 1}
                           onClick={(e) => {
                             e.preventDefault()
-                            setProductPayload({ ...productPayload, qty: productPayload.qty - 1 })
+                            setProductPayload({
+                              ...productPayload,
+                              AlmostSoldOutQuantity: productPayload.AlmostSoldOutQuantity - 1,
+                            })
                           }}
                         >
                           <FaMinus />
