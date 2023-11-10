@@ -156,7 +156,8 @@
       "add_folder": "اضافه مجلد",
       "product_folders": "مجلدات المنتجات",
       "return_to_all_products_page": "رجوع الي صفحة جميع المنتجات",
-      "added_product": "منتج مضاف"
+      "added_product": "منتج مضاف",
+      "productsAlmostOut": "كمية اوشكت على النفاذ"
     },
     "Users": {
       "users": "العملاء",
@@ -684,7 +685,8 @@
       "add_folder": "Add folder",
       "product_folders": "Product folders",
       "return_to_products_page": "Return to products page",
-      "added_product": "added product"
+      "added_product": "added product",
+      "productsAlmostOut": "Almost sold out"
     },
     "Users": {
       "users": "Users",

@@ -89,6 +89,7 @@ const AddProductStepTwo = ({ catId, product }) => {
     "ProductPaymentDetailsDto.TotalAmountAfterCoupon": 0,
     "ProductPaymentDetailsDto.PaymentType": "Cash",
     SendYourAccountInfoToAuctionWinner: false,
+    AlmostSoldOutQuantity: null,
   })
   const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
     try {
@@ -690,6 +691,44 @@ const AddProductStepTwo = ({ catId, product }) => {
                           />
                         </div>
                       </div>
+                      <div className="inpt_numb">
+                        <button
+                          className="btn_ plus"
+                          disabled={unlimtedQuantity}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setProductPayload({ ...productPayload, qty: productPayload.qty + 1 })
+                          }}
+                        >
+                          <FaPlus />
+                        </button>
+                        <input
+                          type="unlimtedQuantity ? 'text' : 'number'"
+                          disabled={unlimtedQuantity}
+                          className={`form-control ${styles["form-control"]} ${unlimtedQuantity ? "disabled" : ""}`}
+                          value={productPayload.qty == null ? "" : productPayload.qty}
+                          onChange={(e) => setProductPayload({ ...productPayload, qty: +e.target.value })}
+                        />
+                        <button
+                          className="btn_ minus"
+                          disabled={!productPayload.qty || unlimtedQuantity}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setProductPayload({ ...productPayload, qty: productPayload.qty - 1 })
+                          }}
+                        >
+                          <FaMinus />
+                        </button>
+                      </div>
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                        {pathOr("", [locale, "Products", "quantity"], t)}
+                      </label>
                       <div className="inpt_numb">
                         <button
                           className="btn_ plus"

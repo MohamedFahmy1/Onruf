@@ -8,6 +8,7 @@ import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import Image from "next/image"
 import { toast } from "react-toastify"
+import { mulitFormData } from "../../../../token"
 
 const Question = ({ id, question, isShared, productName, clientName, clientImage, createdAt }) => {
   const [openReplyModal, setOpenReplyModal] = useState(false)
@@ -20,15 +21,19 @@ const Question = ({ id, question, isShared, productName, clientName, clientImage
   // }
 
   const handleAnswerQuestion = async (answer) => {
-    const result = await axios.post(process.env.REACT_APP_API_URL + "/ReplyQuestion", { answer, id })
-    toast.success(locale === "en" ? "Your reply has been sent successfully!" : "!تم إرسال ردك بنجاح")
-    setOpenReplyModal(false)
-    push({
-      pathname: "/reviews",
-      query: {
-        tab: "questions",
-      },
-    })
+    try {
+      const result = await axios.post(process.env.REACT_APP_API_URL + "/ReplyQuestion", { answer, id }, mulitFormData)
+      toast.success(locale === "en" ? "Your reply has been sent successfully!" : "!تم إرسال ردك بنجاح")
+      setOpenReplyModal(false)
+      push({
+        pathname: "/reviews",
+        query: {
+          tab: "questions",
+        },
+      })
+    } catch (error) {
+      toast.error(locale === "en" ? "Failed to sent your reply!" : "!فشل ارسال ردك")
+    }
   }
 
   return (
