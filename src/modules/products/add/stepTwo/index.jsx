@@ -66,7 +66,6 @@ const AddProductStepTwo = ({ catId, product }) => {
     IsAuctionEnabled: false,
     IsNegotiationEnabled: false,
     Price: 0,
-    PriceDisc: 0,
     PaymentOptions: [3, 4],
     ProductBankAccounts: [],
     IsCashEnabled: false,
@@ -242,13 +241,16 @@ const AddProductStepTwo = ({ catId, product }) => {
   }, [locale, product])
 
   const handleUploadImages = (e) => {
-    let file = e.target.files[mainImageIndex ? mainImageIndex : 0]
-    file.id = id
-    setProductPayload((prev) => ({
-      ...prev,
-      listImageFile: [...prev?.listImageFile, file],
-      MainImageIndex: mainImageIndex,
-    }))
+    let file = e.target.files[0]
+    console.log(file, mainImageIndex)
+    if (file) {
+      file.id = Date.now()
+      setProductPayload((prev) => ({
+        ...prev,
+        listImageFile: [...prev?.listImageFile, file],
+        MainImageIndex: mainImageIndex,
+      }))
+    }
     e.target.value = null
   }
   const handleUrlChange = (index, event) => {
@@ -336,6 +338,11 @@ const AddProductStepTwo = ({ catId, product }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     let formData = new FormData()
+    // if video url is empty don't send it to the api
+    if (productPayload.videoUrl[0] === "") {
+      const filteredUrls = productPayload.videoUrl.filter((item) => item.trim() === "")
+      setProductPayload({ ...productPayload, videoUrl: filteredUrls })
+    }
     if (productPayload.PaymentOptions.includes(1)) {
       setProductPayload({ ...productPayload, IsCashEnabled: true })
     } else setProductPayload({ ...productPayload, IsCashEnabled: false })
@@ -355,10 +362,18 @@ const AddProductStepTwo = ({ catId, product }) => {
           value.forEach((item) => {
             formData.append(key, Number(item))
           })
+        }
+        // if array is empty don't send it to the api
+        else if (value[0] === "") {
+          continue
         } else
           value.forEach((item) => {
             formData.append(key, item)
           })
+      }
+      // if any value is empty don't send it to the api
+      else if (value === "") {
+        continue
       } else {
         formData.append(key, value)
       }
@@ -486,10 +501,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                     onClick={() => handleRemoveImage(index)}
                   />
                   <img src={product?.id ? img?.url : URL.createObjectURL(img)} />
-                  <label htmlFor="mainImage">
+                  <label htmlFor={img.id}>
                     <span> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
                     <input
-                      id="mainImage"
+                      id={img.id}
                       type="radio"
                       name="isMain"
                       checked={img?.id === mainImgId}
