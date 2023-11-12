@@ -4,6 +4,7 @@ import axios from "axios"
 import styles from "./stepTwo.module.css"
 import { FaCamera, FaCheckCircle, FaFlag, FaMinus, FaPlus, FaStar } from "react-icons/fa"
 import { IoIosRemoveCircle } from "react-icons/io"
+import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"
 import { Accordion, Row, Col } from "react-bootstrap"
 import bigger from "../../../../public/images/screencaptur.png"
 import Router, { useRouter } from "next/router"
@@ -13,6 +14,7 @@ import { toast } from "react-toastify"
 import Alerto from "../../../../common/Alerto"
 import BanksData from "./BanksData"
 import regionImage from "../../../../public/icons/008-maps.svg"
+import cityImage from "../../../../public/icons/neighboor.svg"
 import Image from "next/image"
 
 const AddProductStepTwo = ({ catId, product }) => {
@@ -317,12 +319,12 @@ const AddProductStepTwo = ({ catId, product }) => {
   const handleUnlimtedQuantity = ({ target: { checked } }) => {
     if (checked) {
       setUnlimtedQuantity(true)
-      // Update state without 'qty'
-      const { qty, ...rest } = productPayload
+      // Update state without 'qty' and "AlmostSoldOutQuantity" props cause there is not qty
+      const { qty, AlmostSoldOutQuantity, ...rest } = productPayload
       setProductPayload(rest)
     } else {
       setUnlimtedQuantity(false)
-      setProductPayload({ ...productPayload, qty: 1 })
+      setProductPayload({ ...productPayload, qty: 1, AlmostSoldOutQuantity: 1 })
     }
   }
   const onChangeSpesfication = ({ target: { value } }, index, type) => {
@@ -518,11 +520,11 @@ const AddProductStepTwo = ({ catId, product }) => {
                   />
                   {productPayload.videoUrl.length > 1 && (
                     <button onClick={() => removeUrlField(index)} className={styles.button}>
-                      -
+                      <AiOutlineMinus />
                     </button>
                   )}
                   <button onClick={addUrlField} className={styles.button}>
-                    +
+                    <AiOutlinePlus />
                   </button>
                 </div>
               ))}
@@ -635,21 +637,83 @@ const AddProductStepTwo = ({ catId, product }) => {
                   <Col md={6}>
                     <div className="form-group">
                       <label
+                        htmlFor="nameAr"
+                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
+                      >
+                        {pathOr("", [locale, "Products", "productAddressAr"], t)}
+                        <RequiredSympol />
+                      </label>
+                      <input
+                        type="text"
+                        id="nameAr"
+                        className={`form-control ${styles["form-control"]}`}
+                        placeholder={pathOr("", [locale, "Products", "enterProductAddressAr"], t)}
+                        value={productPayload.nameAr}
+                        onChange={(e) => setProductPayload({ ...productPayload, nameAr: e.target.value })}
+                      />
+                    </div>
+                    <div className="form-group">
+                      <label
+                        htmlFor="subTitleAr"
+                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
+                      >
+                        {pathOr("", [locale, "Products", "productSecondaryAddressAr"], t)}
+                      </label>
+                      <input
+                        type="text"
+                        id="subTitleAr"
+                        className={`form-control ${styles["form-control"]}`}
+                        placeholder={pathOr("", [locale, "Products", "enterProductSecondaryAddressAr"], t)}
+                        value={productPayload.subTitleAr}
+                        onChange={(e) =>
+                          setProductPayload({
+                            ...productPayload,
+                            subTitleAr: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label
+                        htmlFor="descriptionAr"
+                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
+                      >
+                        {pathOr("", [locale, "Products", "productDetailsAr"], t)}
+                      </label>
+                      <textarea
+                        id="descriptionAr"
+                        className={`form-control ${styles["form-control"]}`}
+                        placeholder={pathOr("", [locale, "Products", "enterDetailsAr"], t)}
+                        value={productPayload.descriptionAr}
+                        onChange={(e) =>
+                          setProductPayload({
+                            ...productPayload,
+                            descriptionAr: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col md={6}>
+                    <div className="form-group">
+                      <label
                         htmlFor="nameEn"
                         style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
                       >
-                        {pathOr("", [locale, "Products", "productAddress"], t)}
+                        {pathOr("", [locale, "Products", "productAddressEn"], t)}
                         <RequiredSympol />
                       </label>
                       <input
                         type="text"
                         id="nameEn"
                         className={`form-control ${styles["form-control"]}`}
-                        placeholder={pathOr("", [locale, "Products", "enterProductAddress"], t)}
-                        value={productPayload.nameAr}
-                        onChange={(e) =>
-                          setProductPayload({ ...productPayload, nameAr: e.target.value, nameEn: e.target.value })
-                        }
+                        placeholder={pathOr("", [locale, "Products", "enterProductAddressEn"], t)}
+                        value={productPayload.nameEn}
+                        onChange={(e) => setProductPayload({ ...productPayload, nameEn: e.target.value })}
                       />
                     </div>
                     <div className="form-group">
@@ -657,18 +721,17 @@ const AddProductStepTwo = ({ catId, product }) => {
                         htmlFor="subTitleEn"
                         style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
                       >
-                        {pathOr("", [locale, "Products", "productSecondaryAddress"], t)}
+                        {pathOr("", [locale, "Products", "productSecondaryAddressEn"], t)}
                       </label>
                       <input
                         type="text"
                         id="subTitleEn"
                         className={`form-control ${styles["form-control"]}`}
-                        placeholder={pathOr("", [locale, "Products", "enterProductSecondaryAddress"], t)}
-                        value={productPayload.subTitleAr}
+                        placeholder={pathOr("", [locale, "Products", "enterProductSecondaryAddressEn"], t)}
+                        value={productPayload.subTitleEn}
                         onChange={(e) =>
                           setProductPayload({
                             ...productPayload,
-                            subTitleAr: e.target.value,
                             subTitleEn: e.target.value,
                           })
                         }
@@ -681,17 +744,16 @@ const AddProductStepTwo = ({ catId, product }) => {
                         htmlFor="descriptionEn"
                         style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
                       >
-                        {pathOr("", [locale, "Products", "productDetails"], t)}
+                        {pathOr("", [locale, "Products", "productDetailsEn"], t)}
                       </label>
                       <textarea
                         id="descriptionEn"
                         className={`form-control ${styles["form-control"]}`}
-                        placeholder={pathOr("", [locale, "Products", "enterDetails"], t)}
-                        value={productPayload.descriptionAr}
+                        placeholder={pathOr("", [locale, "Products", "enterDetailsEn"], t)}
+                        value={productPayload.descriptionEn}
                         onChange={(e) =>
                           setProductPayload({
                             ...productPayload,
-                            descriptionAr: e.target.value,
                             descriptionEn: e.target.value,
                           })
                         }
@@ -702,7 +764,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                   <Col>
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
-                        {pathOr("", [locale, "Products", "productCondition"], t)}
+                        {pathOr("", [locale, "Products", "itemStatus"], t)}
                       </label>
                       <div className="d-flex gap-3">
                         <div
@@ -724,6 +786,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                     </div>
                   </Col>
+
                   <Col md={6}>
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
@@ -777,50 +840,52 @@ const AddProductStepTwo = ({ catId, product }) => {
                     </div>
                   </Col>
                 </Row>
-                <Row>
-                  <Col md={6}>
-                    <div className="form-group">
-                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
-                        {pathOr("", [locale, "Products", "productsAlmostOut"], t)}
-                      </label>
-                      <div className="inpt_numb">
-                        <button
-                          className="btn_ plus"
-                          onClick={(e) => {
-                            e.preventDefault()
-                            setProductPayload({
-                              ...productPayload,
-                              AlmostSoldOutQuantity: productPayload.AlmostSoldOutQuantity + 1,
-                            })
-                          }}
-                        >
-                          <FaPlus />
-                        </button>
-                        <input
-                          type="unlimtedQuantity ? 'text' : 'number'"
-                          className={`form-control ${styles["form-control"]}`}
-                          value={productPayload.AlmostSoldOutQuantity == 0 ? 1 : productPayload.AlmostSoldOutQuantity}
-                          onChange={(e) =>
-                            setProductPayload({ ...productPayload, AlmostSoldOutQuantity: +e.target.value })
-                          }
-                        />
-                        <button
-                          className="btn_ minus"
-                          disabled={productPayload.AlmostSoldOutQuantity === 1}
-                          onClick={(e) => {
-                            e.preventDefault()
-                            setProductPayload({
-                              ...productPayload,
-                              AlmostSoldOutQuantity: productPayload.AlmostSoldOutQuantity - 1,
-                            })
-                          }}
-                        >
-                          <FaMinus />
-                        </button>
+                {!unlimtedQuantity && (
+                  <Row>
+                    <Col md={6}>
+                      <div className="form-group">
+                        <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                          {pathOr("", [locale, "Products", "productsAlmostOut"], t)}
+                        </label>
+                        <div className="inpt_numb">
+                          <button
+                            className="btn_ plus"
+                            onClick={(e) => {
+                              e.preventDefault()
+                              setProductPayload({
+                                ...productPayload,
+                                AlmostSoldOutQuantity: productPayload.AlmostSoldOutQuantity + 1,
+                              })
+                            }}
+                          >
+                            <FaPlus />
+                          </button>
+                          <input
+                            type="unlimtedQuantity ? 'text' : 'number'"
+                            className={`form-control ${styles["form-control"]}`}
+                            value={productPayload.AlmostSoldOutQuantity == 0 ? 1 : productPayload.AlmostSoldOutQuantity}
+                            onChange={(e) =>
+                              setProductPayload({ ...productPayload, AlmostSoldOutQuantity: +e.target.value })
+                            }
+                          />
+                          <button
+                            className="btn_ minus"
+                            disabled={productPayload.AlmostSoldOutQuantity === 1}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              setProductPayload({
+                                ...productPayload,
+                                AlmostSoldOutQuantity: productPayload.AlmostSoldOutQuantity - 1,
+                              })
+                            }}
+                          >
+                            <FaMinus />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  </Col>
-                </Row>
+                    </Col>
+                  </Row>
+                )}
                 <div className="form-group">
                   <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
                     {" "}
@@ -847,7 +912,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                             )}
                           </span>
                           <div className="po_R flex-grow-1">
-                            <label htmlFor="countryId">{pathOr("", [locale, "Products", "Country"], t)}</label>
+                            <label htmlFor="countryId">{pathOr("", [locale, "Products", "country"], t)}</label>
                             <select
                               id="countryId"
                               className={`${styles["form-control"]} form-control form-select`}
@@ -864,7 +929,8 @@ const AddProductStepTwo = ({ catId, product }) => {
                               }}
                             >
                               <option value="" disabled hidden>
-                                {pathOr("", [locale, "Products", "select"], t)}
+                                {pathOr("", [locale, "Products", "select"], t)}{" "}
+                                {pathOr("", [locale, "Products", "country"], t)}
                               </option>
                               {countries?.length &&
                                 countries.map((country) => (
@@ -884,10 +950,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                           }}
                         >
                           <span className={`${styles["input-group-text"]} input-group-text`} id="basic-addon1">
-                            <FaFlag fontSize="18px" />
+                            <Image src={cityImage} alt="region" width={20} height={20} />
                           </span>
                           <div className="po_R flex-grow-1">
-                            <label htmlFor="regionId">{pathOr("", [locale, "Products", "govern"], t)}</label>
+                            <label htmlFor="regionId">{pathOr("", [locale, "Products", "region"], t)}</label>
                             <select
                               id="regionId"
                               className={`${styles["form-control"]} form-control form-select`}
@@ -902,7 +968,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                                 )
                               }}
                             >
-                              <option value="">{pathOr("", [locale, "Products", "select"], t)}</option>
+                              <option value="">
+                                {pathOr("", [locale, "Products", "select"], t)}{" "}
+                                {pathOr("", [locale, "Products", "region"], t)}
+                              </option>
                               {regions?.length &&
                                 regions.map((region) => (
                                   <option value={region?.id} key={region?.id}>
@@ -924,7 +993,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                             <Image src={regionImage} alt="region" width={20} height={20} />
                           </span>
                           <div className="po_R flex-grow-1">
-                            <label htmlFor="neighborhoodId">{pathOr("", [locale, "Products", "area"], t)}</label>
+                            <label htmlFor="neighborhoodId">{pathOr("", [locale, "Products", "city"], t)}</label>
                             <select
                               id="neighborhoodId"
                               className={`${styles["form-control"]} form-control form-select`}
@@ -933,7 +1002,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                                 setProductPayload({ ...productPayload, neighborhoodId: +e.target.value })
                               }}
                             >
-                              <option value="">{pathOr("", [locale, "Products", "select"], t)}</option>
+                              <option value="">
+                                {pathOr("", [locale, "Products", "select"], t)}{" "}
+                                {pathOr("", [locale, "Products", "city"], t)}
+                              </option>
                               {neighborhoods?.length &&
                                 neighborhoods.map((neighborhood) => (
                                   <option value={neighborhood?.id} key={neighborhood?.id}>
@@ -948,12 +1020,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                     <Col md={6}>
                       <div className="form-group">
                         <div className="po_R">
-                          <label htmlFor="District">{pathOr("", [locale, "Products", "neighbourhood"], t)}</label>
+                          <label htmlFor="District">{pathOr("", [locale, "Products", "area"], t)}</label>
                           <input
                             type="text"
                             id="District"
                             className={`form-control ${styles["form-control"]}`}
-                            placeholder={pathOr("", [locale, "Products", "enterNeighbourhood"], t)}
+                            placeholder={pathOr("", [locale, "Products", "enterArea"], t)}
                             value={stateName}
                             onChange={(e) => {
                               setStateName(e.target.value)
@@ -977,12 +1049,12 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                       <div className="form-group">
                         <div className="po_R">
-                          <label htmlFor="GovernmentCode">{pathOr("", [locale, "Products", "governCode"], t)}</label>
+                          <label htmlFor="GovernmentCode">{pathOr("", [locale, "Products", "countryCode"], t)}</label>
                           <input
                             id="GovernmentCode"
                             type="text"
                             className={`form-control ${styles["form-control"]}`}
-                            placeholder={pathOr("", [locale, "Products", "enterGovernCode"], t)}
+                            placeholder={pathOr("", [locale, "Products", "enterCountryCode"], t)}
                             value={productPayload.GovernmentCode}
                             onChange={(e) => setProductPayload({ ...productPayload, GovernmentCode: e.target.value })}
                           />
