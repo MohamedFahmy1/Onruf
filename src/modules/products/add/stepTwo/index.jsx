@@ -55,7 +55,7 @@ const AddProductStepTwo = ({ catId, product }) => {
     productSep: speficationsPayload,
     listImageFile: [],
     MainImageIndex: undefined,
-    // videoUrl: [],
+    videoUrl: [""],
     ShippingOptions: [],
     Lat: "30",
     Lon: "30",
@@ -241,12 +241,32 @@ const AddProductStepTwo = ({ catId, product }) => {
 
   const handleUploadImages = (e) => {
     let file = e.target.files[mainImageIndex ? mainImageIndex : 0]
-    file.id = Date.now()
+    file.id = id
     setProductPayload((prev) => ({
       ...prev,
-      listImageFile: [...productPayload?.listImageFile, file],
+      listImageFile: [...prev?.listImageFile, file],
       MainImageIndex: mainImageIndex,
     }))
+    e.target.value = null
+  }
+  const handleUrlChange = (index, event) => {
+    const newVideoUrls = [...productPayload.videoUrl]
+    newVideoUrls[index] = event.target.value
+    setProductPayload({ ...productPayload, videoUrl: newVideoUrls })
+  }
+
+  const addUrlField = () => {
+    const newVideoUrls = [...productPayload.videoUrl, ""]
+    if (productPayload.videoUrl.every((url) => url.trim() !== "")) {
+      setProductPayload((prev) => ({ ...prev, videoUrl: newVideoUrls }))
+    }
+  }
+  const removeUrlField = (index) => {
+    const newVideoUrls = [...productPayload.videoUrl]
+    if (newVideoUrls.length > 1) {
+      newVideoUrls.splice(index, 1)
+      setProductPayload((prev) => ({ ...prev, videoUrl: newVideoUrls }))
+    }
   }
   const handleChoosePackat = (pack) => {
     if (productPayload.pakatId) {
@@ -297,7 +317,9 @@ const AddProductStepTwo = ({ catId, product }) => {
   const handleUnlimtedQuantity = ({ target: { checked } }) => {
     if (checked) {
       setUnlimtedQuantity(true)
-      setProductPayload({ ...productPayload, qty: null })
+      // Update state without 'qty'
+      const { qty, ...rest } = productPayload
+      setProductPayload(rest)
     } else {
       setUnlimtedQuantity(false)
       setProductPayload({ ...productPayload, qty: 1 })
@@ -357,9 +379,8 @@ const AddProductStepTwo = ({ catId, product }) => {
             },
           })
           toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-          console.log("id of the product is:", id)
-          // Router.push(`/${locale}/products/add/review/${id}`)
-          Router.push(`/${locale}/products`)
+          Router.push(`/${locale}/products/add/review/${id}`)
+          // Router.push(`/${locale}/products`)
         } catch (error) {
           toast.error(
             locale === "en"
@@ -482,20 +503,52 @@ const AddProductStepTwo = ({ catId, product }) => {
               ))}
               <div className={styles["btn_apload_img"]}>
                 <FaCamera />
-                <input type="file" onChange={handleUploadImages} multiple={selectedPack?.countImage >= 1} />
+                <input type="file" onChange={(e) => handleUploadImages(e)} multiple={selectedPack?.countImage >= 1} />
               </div>
+            </div>
+            <div className={styles.container}>
+              {productPayload.videoUrl.map((url, index) => (
+                <div key={index} className={styles.urlInputContainer}>
+                  <input
+                    type="text"
+                    value={url}
+                    onChange={(e) => handleUrlChange(index, e)}
+                    placeholder="Please enter a video link"
+                    className={styles.urlInput}
+                  />
+                  {productPayload.videoUrl.length > 1 && (
+                    <button onClick={() => removeUrlField(index)} className={styles.button}>
+                      -
+                    </button>
+                  )}
+                  <button onClick={addUrlField} className={styles.button}>
+                    +
+                  </button>
+                </div>
+              ))}
             </div>
             <button
               className="btn-main mt-3 btn-disabled"
               type="button"
               onClick={() => {
-                if (productPayload?.listImageFile.length > 0 && productPayload?.MainImageIndex !== undefined) {
+                if (
+                  productPayload?.listImageFile.length > 0 &&
+                  productPayload?.MainImageIndex !== undefined &&
+                  // check that videoUrl array doesn't have empty fileds or user didn't enter any then it's accepted
+                  (productPayload.videoUrl.every((url) => url.trim() !== "") || productPayload.videoUrl.length === 1)
+                ) {
                   setEventKey("1")
                 } else {
                   if (productPayload?.listImageFile.length <= 0) {
                     toast.error(locale === "en" ? "No photo uploaded for the product" : "لايوجد صور للمنتج")
                   } else if (productPayload?.MainImageIndex === undefined) {
                     toast.error(locale === "en" ? "No main photo selected" : "لم يتم اختيار صورة رئيسية")
+                  } else if (!productPayload.videoUrl.every((url) => url.trim() !== "")) {
+                    toast.error(
+                      locale === "en"
+                        ? "Please Enter Video Url or Remove the empty field it!"
+                        : "رجاءاً أدخل لينك الفيديو او امسح الحقل الفارغ",
+                    )
                   }
                 }
               }}
@@ -687,7 +740,8 @@ const AddProductStepTwo = ({ catId, product }) => {
                             role="switch"
                             id="unlimitedQuantity"
                             onChange={(e) => handleUnlimtedQuantity(e)}
-                            checked={productPayload.qty === null}
+                            // checked={productPayload.qty === null}
+                            checked={unlimtedQuantity}
                           />
                         </div>
                       </div>
@@ -711,7 +765,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                         />
                         <button
                           className="btn_ minus"
-                          disabled={!productPayload.qty || unlimtedQuantity}
+                          disabled={productPayload.qty == 1 || unlimtedQuantity}
                           onClick={(e) => {
                             e.preventDefault()
                             setProductPayload({ ...productPayload, qty: productPayload.qty - 1 })

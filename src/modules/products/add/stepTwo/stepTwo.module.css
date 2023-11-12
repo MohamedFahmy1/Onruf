@@ -346,3 +346,36 @@
 .box-product2 {
   transform: scale(0.8);
 }
+/* VideoUrl styles */
+.container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+}
+
+.urlInputContainer {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.urlInput {
+  flex-grow: 1;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-right: 5px;
+  max-width: 500px;
+  border-radius: 20px;
+}
+
+.button {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 20px;
+  margin: 0 5px;
+}
+
+.button:hover {
+  background-color: #f0f0f0;
+}
