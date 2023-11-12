@@ -70,10 +70,10 @@ const AddProductStepTwo = ({ catId, product }) => {
     PaymentOptions: [3, 4],
     ProductBankAccounts: [],
     IsCashEnabled: false,
-    // AuctionStartPrice: 0,
+    AuctionStartPrice: 0,
     IsAuctionPaied: false,
     SendOfferForAuction: false,
-    // AuctionMinimumPrice: 0,
+    AuctionMinimumPrice: 0,
     // AuctionNegotiateForWhom: "",
     // AuctionNegotiatePrice: 0,
     "ProductPaymentDetailsDto.PakatId": 0,
@@ -381,8 +381,8 @@ const AddProductStepTwo = ({ catId, product }) => {
             },
           })
           toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-          Router.push(`/${locale}/products/add/review/${id}`)
-          // Router.push(`/${locale}/products`)
+          // Router.push(`/${locale}/products/add/review/${id}`)
+          Router.push(`/${locale}/products`)
         } catch (error) {
           toast.error(
             locale === "en"
@@ -399,14 +399,9 @@ const AddProductStepTwo = ({ catId, product }) => {
   const productDetailsInputs = [
     productPayload.nameAr,
     productPayload.nameEn,
-    productPayload.descriptionAr,
-    productPayload.descriptionEn,
     productPayload.countryId,
     productPayload.regionId,
     productPayload.neighborhoodId,
-    productPayload.District,
-    productPayload.Street,
-    productPayload.GovernmentCode,
   ]
 
   const inputsChecker = (inputs) => {
@@ -1107,7 +1102,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                   <div className="col-12">
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
-                        {pathOr("", [locale, "Products", "advertisementType"], t)}
+                        {pathOr("", [locale, "Products", "salesType"], t)}
                       </label>
                       <div className="row">
                         <div className="col-lg-4 col-md-6">
@@ -1199,10 +1194,10 @@ const AddProductStepTwo = ({ catId, product }) => {
                           htmlFor="Price"
                           style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}
                         >
-                          {pathOr("", [locale, "Products", "productPrice"], t)}
+                          {pathOr("", [locale, "Products", "purchasingPrice"], t)}
                         </label>
                         <div
-                          className={`input-group ${styles["input-group"]}`}
+                          className={`input-group ${styles["input-group"]}  flex-nowrap`}
                           style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}
                         >
                           <span
@@ -1229,8 +1224,8 @@ const AddProductStepTwo = ({ catId, product }) => {
                       <div className="row">
                         <div className="col-md-6">
                           <div className="form-group">
-                            <label>سعر بدأ المزاد</label>
-                            <div className={`input-group ${styles["input-group"]}`}>
+                            <label>{pathOr("", [locale, "Products", "auction_start_price"], t)}</label>
+                            <div className={`input-group ${styles["input-group"]}  flex-nowrap`}>
                               <span
                                 className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                                 id="basic-addon1"
@@ -1252,8 +1247,8 @@ const AddProductStepTwo = ({ catId, product }) => {
                         </div>
                         <div className="col-md-6">
                           <div className="form-group">
-                            <label>أقل سعر</label>
-                            <div className={`input-group ${styles["input-group"]}`}>
+                            <label>{pathOr("", [locale, "Products", "minimum_price"], t)}</label>
+                            <div className={`input-group ${styles["input-group"]}  flex-nowrap`}>
                               <span
                                 className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                                 id="basic-addon1"
@@ -1276,37 +1271,40 @@ const AddProductStepTwo = ({ catId, product }) => {
                           </div>
                         </div>
                       </div>
+                      <div className="row">
+                        <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-4 px-3">
+                          <span className="f-b">
+                            {pathOr("", [locale, "Products", "auto_send_negotiation_offers_post_auction"], t)}
+                          </span>
+                          <div className="form-check form-switch p-0 m-0">
+                            <input
+                              className="form-check-input m-0"
+                              type="checkbox"
+                              role="switch"
+                              id="flexSwitchCheckChecked"
+                              checked={
+                                productPayload.SendOfferForAuction === 0 ? " " : productPayload.SendOfferForAuction
+                              }
+                              onChange={() =>
+                                setProductPayload({
+                                  ...productPayload,
+                                  SendOfferForAuction: !productPayload.SendOfferForAuction,
+                                })
+                              }
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )}
                   {productPayload.IsNegotiationEnabled && (
                     <div className="contint_paner col-12 px-0">
-                      <div className="d-flex align-items-center justify-content-between flex-wrap mb-2 px-3">
-                        <span className="f-b">ارسال عروض تفاوض تلقائيا بعد انتهاء المزاد</span>
-                        <div className="form-check form-switch p-0 m-0">
-                          <input
-                            className="form-check-input m-0"
-                            type="checkbox"
-                            role="switch"
-                            id="flexSwitchCheckChecked"
-                            checked={
-                              productPayload.SendOfferForAuction === 0 ? " " : productPayload.SendOfferForAuction
-                            }
-                            onChange={() =>
-                              setProductPayload({
-                                ...productPayload,
-                                SendOfferForAuction: !productPayload.SendOfferForAuction,
-                              })
-                            }
-                          />
-                        </div>
-                      </div>
-                      <hr />
                       <div className="px-3">
                         <div className="row">
                           <div className="col-md-6">
                             <div className="form-group">
                               <label>أقل سعر</label>
-                              <div className={`input-group ${styles["input-group"]}`}>
+                              <div className={`input-group ${styles["input-group"]} flex-nowrap`}>
                                 <span
                                   className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                                   id="basic-addon1"

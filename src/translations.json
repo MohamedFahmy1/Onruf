@@ -120,7 +120,7 @@
       "enterStreet": "اكتب اسم الشارع",
       "enterCountryCode": " اكتب كود الدولة",
       "gettingQuestions": "تلقي أسئلة من العملاء عن المنتج ؟",
-      "advertisementType": "نوع الاعلان",
+      "salesType": "نوع البيع",
       "adFixed": "اعلان بسعر ثابت",
       "adAuct": "مزاد",
       "negotiation": "عروض تفاوض",
@@ -164,7 +164,10 @@
       "product_folders": "مجلدات المنتجات",
       "return_to_all_products_page": "رجوع الي صفحة جميع المنتجات",
       "added_product": "منتج مضاف",
-      "productsAlmostOut": "كمية اوشكت على النفاذ"
+      "productsAlmostOut": "كمية اوشكت على النفاذ",
+      "auction_start_price": "سعر بدء المزاد",
+      "minimum_price": "سعر الحد الادنى",
+      "auto_send_negotiation_offers_post_auction": "ارسال عروض تفاوض تلقائيا بعد انتهاء المزاد"
     },
     "Users": {
       "users": "العملاء",
@@ -623,7 +626,7 @@
       "productImages": "Product Images",
       "productDetails": "Product Details",
       "advertisementDetails": "Ad Details",
-      "sellingDetails": "Selling Details",
+      "sellingDetails": "Sale Details",
       "shippingOptions": "Shipping Options",
       "publishingPackages": "Publishing Packages",
       "mainImage": "Main Image",
@@ -656,7 +659,7 @@
       "enterStreet": "Enter Street Name",
       "enterCountryCode": "Enter Country Code",
       "gettingQuestions": "Do you want to receive questions from customers about the product?",
-      "advertisementType": "Advertisement Type",
+      "salesType": "Sales Type",
       "adFixed": "Advertising at a fixed price",
       "adAuct": "Auction",
       "negotiation": "Negotiation",
@@ -700,7 +703,10 @@
       "product_folders": "Product folders",
       "return_to_products_page": "Return to products page",
       "added_product": "added product",
-      "productsAlmostOut": "Almost sold out"
+      "productsAlmostOut": "Almost sold out",
+      "auction_start_price": "Auction Start Price",
+      "minimum_price": "Minimum Price",
+      "auto_send_negotiation_offers_post_auction": "Automatically send negotiation offers after auction ends"
     },
     "Users": {
       "users": "Users",
