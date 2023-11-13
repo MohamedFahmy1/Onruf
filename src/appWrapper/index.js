@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import axios from "axios"
 import { UnAuthorisedPage } from "../modules/404/Unauthorised"
 import { useSelector, useDispatch } from "react-redux"
 import { getTokensFromCookie } from "../appState/personalData/authActions"
 import { Fragment } from "react"
-import Cookies from "js-cookie"
+import { useRouter } from "next/router"
 
 export const AppWrapper = ({ children }) => {
+  const { locale } = useRouter()
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(getTokensFromCookie())
@@ -19,7 +20,8 @@ export const AppWrapper = ({ children }) => {
     axios.defaults.headers.common["Authorization"] = Token
     axios.defaults.headers.common["Provider-Id"] = providerId
     axios.defaults.headers.common["Business-Account-Id"] = buisnessAccountId
-  }, [Token, providerId, buisnessAccountId])
+    axios.defaults.headers.common["User-Language"] = locale
+  }, [Token, providerId, buisnessAccountId, locale])
 
   return <Fragment>{Token && buisnessAccountId ? children : <UnAuthorisedPage />}</Fragment>
 }

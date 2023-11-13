@@ -6,7 +6,7 @@
   overflow: hidden;
 }
 .p_select {
-  width: 7rem;
+  width: fit-content;
   background-color: white;
   border-radius: 7px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
@@ -15,7 +15,7 @@
   font-weight: 800;
   font-size: 16px;
   margin: 0;
-  padding: 10px 0;
+  padding: 10px;
 }
 .p_select p {
   font-weight: 800;

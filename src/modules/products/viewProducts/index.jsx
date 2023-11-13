@@ -89,6 +89,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       setDiscountDate(singleSelectedRow.disccountEndDate)
       setPriceValue(singleSelectedRow.priceDisc)
       setQuantityValue(singleSelectedRow.qty)
+      setQuantityValueInfinity(singleSelectedRow.qty === null ? true : false)
     }
   }, [singleSelectedRow])
   useEffect(() => {
@@ -140,7 +141,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         accessor: "qty",
         Cell: ({ row: { values, original } }) => (
           <div>
-            <h6 className="m-0 f-b">{propOr("-", ["qty"], values)}</h6>
+            <h6 className="m-0 f-b">{original?.qty === null ? "-" : original?.qty}</h6>
             <button
               className="info_"
               data-bs-toggle="modal"
@@ -162,15 +163,17 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
           <div>
             <span>
               <span>
-                <h6 className="m-0 f-b" style={{ textDecoration: original?.priceDisc ? "line-through" : "unset" }}>
+                <h6
+                  className="m-0 f-b"
+                  style={{ textDecoration: original?.priceDisc === original?.price ? undefined : "line-through" }}
+                >
                   {propOr("-", ["price"], values)} {pathOr("", [locale, "Products", "currency"], t)}
                 </h6>
               </span>
-              {!!original?.priceDisc && (
+              {original?.priceDisc !== original?.price && (
                 <span>
                   <h6 className="m-0 f-b">
-                    {propOr("-", ["price"], values) - propOr("-", ["priceDisc"], original)}{" "}
-                    {pathOr("", [locale, "Products", "currency"], t)}
+                    {propOr("-", ["priceDisc"], original)} {pathOr("", [locale, "Products", "currency"], t)}
                   </h6>
                 </span>
               )}
@@ -257,7 +260,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${
           singleSelectedRow?.id || singleSelectedRow?.productId
-        }${quantityValueInfinity ? "" : `&quantity=${quantityValue}`}`,
+        }${quantityValueInfinity ? `""` : `&quantity=${quantityValue}`}`,
         {},
       )
       setOpenQuantityModal(false)
@@ -274,6 +277,8 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const handleAddDiscount = async () => {
     try {
       if (priceValue > singleSelectedRow.price) return toast.error(`Discount should be <= ${singleSelectedRow.price}`)
+      if (!priceValue || !discountDate)
+        return toast.error(locale === "en" ? "Please Enter Missing Data!" : "من فضلك ادخل جميع البيانات")
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/ProductDiscount?productId=${singleSelectedRow?.id}&PriceDiscount=${priceValue}&discountEndDate=${discountDate}`,
         {},
@@ -367,31 +372,38 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                         type="checkbox"
                         role="switch"
                         id="flexSwitchCheckChecked"
-                        value={quantityValueInfinity}
+                        // checked={quantityValueInfinity}
+                        defaultChecked={singleSelectedRow?.qty === null ? true : false}
                         onChange={(e) => setQuantityValueInfinity(e.target.checked)}
                       />
                     </div>
                   </div>
-                  {!quantityValueInfinity && (
+                  {
                     <div className="inpt_numb my-3">
-                      <button className="btn_ plus" onClick={() => setQuantityValue((prev) => prev + 1)}>
+                      <button
+                        className="btn_ plus"
+                        onClick={() => setQuantityValue((prev) => prev + 1)}
+                        disabled={quantityValueInfinity}
+                      >
                         +
                       </button>
                       <input
                         type="number"
                         min="0"
                         className="form-control"
-                        value={quantityValue}
+                        value={quantityValueInfinity ? null : quantityValue}
                         onChange={(e) => setQuantityValue(e.target.value)}
+                        disabled={quantityValueInfinity}
                       />
                       <button
                         className="btn_ minus"
                         onClick={() => setQuantityValue((prev) => (quantityValue ? prev - 1 : 0))}
+                        disabled={quantityValueInfinity}
                       >
                         -
                       </button>
                     </div>
-                  )}
+                  }
                 </div>
               </Modal.Body>
               <Modal.Footer className="modal-footer">

@@ -1,13 +1,16 @@
-import React, { useState, useMemo, useEffect } from "react"
+import React, { useState, useMemo, useEffect, Fragment } from "react"
 import ViewProducts from "../../viewProducts"
 import { toast } from "react-toastify"
 import { useRouter } from "next/router"
 import axios from "axios"
+import { pathOr } from "ramda"
+import t from "../../../../translations.json"
 
 const SingleFolder = ({ data }) => {
   const { locale } = useRouter()
   const [products, setProducts] = useState()
   const [productsIds, setProductsIds] = useState([])
+  const [selectedRows, setSelectedRows] = useState({})
   const router = useRouter()
   const id = router.query.id
 
@@ -26,7 +29,7 @@ const SingleFolder = ({ data }) => {
 
   const handleRemoveProductFromFolder = async () => {
     if (!productsIds?.length)
-      return toast.warning(locale === "en" ? "No product was selected!" : "من فضلك قم بأضافة المنتجات")
+      return toast.warning(locale === "en" ? "No product was selected!" : "لم يتم اختيار اي منتج")
     try {
       await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/RemoveListProductsFolder`, {
         data: { folderId: Number(id), prductsIds: productsIds },
@@ -43,15 +46,21 @@ const SingleFolder = ({ data }) => {
       toast.error(error.response.data.message)
     }
   }
+  console.log(productsIds)
   return (
-    <>
-      <ViewProducts products={products && products} setProductsIds={setProductsIds} />
+    <Fragment>
+      <ViewProducts
+        products={products && products}
+        setProductsIds={setProductsIds}
+        selectedRows={selectedRows}
+        setSelectedRows={setSelectedRows}
+      />
       <div className="btns_fixeds">
         <button className="btn-main rounded-0" onClick={handleRemoveProductFromFolder}>
-          ازالة المنتج من المجلد
+          {pathOr("", [locale, "Products", "remove_product_from_folder"], t)}
         </button>
       </div>
-    </>
+    </Fragment>
   )
 }
 

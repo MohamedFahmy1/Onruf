@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, Fragment } from "react"
 import Modal from "react-bootstrap/Modal"
 import { Row, Col } from "react-bootstrap"
-// import folderImg from '../../../public/icons/folder.svg'
+import folderImg from "../../../public/icons/folder.svg"
 // import homeImg from '../../../public/images/home1.jpg'
 import rightArrow from "../../../public/icons/right-arrow (21).svg"
 import Link from "next/link"
@@ -16,6 +16,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { RiDeleteBin5Line } from "react-icons/ri"
 import { MdModeEdit } from "react-icons/md"
 import t from "../../../translations.json"
+import Image from "next/image"
 const Folders = () => {
   const { locale } = useRouter()
   const page = useRouter()?.query?.page || 1
@@ -76,7 +77,7 @@ const Folders = () => {
   const pageSize = 6
 
   return (
-    <>
+    <Fragment>
       <div className="body-content">
         <div>
           <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
@@ -129,7 +130,18 @@ const Folders = () => {
                         <div onClick={() => Router.push(`/products/folders/${folder?.id}`)}>
                           <div className="img_ alot-img">
                             {/* {folders?.fileList?.map((product) =>{ return <img src={product?.image} key={product?.id} />})} */}
-                            {<img src={folder.image} />}
+                            {
+                              <img
+                                src={
+                                  !folder.image || folder.image === "http://onrufwebsite2-001-site1.btempurl.com/"
+                                    ? folderImg.src
+                                    : folder.image
+                                }
+                                alt="folder"
+                                style={{ width: "185px", margin: "auto" }}
+                                className="d-block m-auto"
+                              />
+                            }
                           </div>
                           <div className="text-center">
                             <h6 className="f-b m-0">{folder?.name}</h6>
@@ -165,7 +177,9 @@ const Folders = () => {
       >
         <Modal.Header>
           <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
-            {!folders?.fileList?.length ? "اضافة مجلد  جديد" : "اختر المجلد"}
+            {!folders?.fileList?.length
+              ? pathOr("", [locale, "Products", "add_new_folder"], t)
+              : pathOr("", [locale, "Products", "choose_folder"], t)}
           </h5>
           <button
             type="button"
@@ -178,32 +192,32 @@ const Folders = () => {
           ></button>
         </Modal.Header>
         <Modal.Body>
-          <div className="form-group">
-            <label>اسم المجلد</label>
+          <div className="form-group" style={{ textAlign: locale === "en" ? "left" : "right" }}>
+            <label>{pathOr("", [locale, "Users", "folderName"], t)}</label>
             <input
               type="text"
               className="form-control"
-              placeholder="اكتب اسم المجلد"
+              placeholder={pathOr("", [locale, "Users", "writeFolderName"], t)}
               onChange={editModal ? (e) => setEditedFolderName(e.target.value) : (e) => setFolderName(e.target.value)}
               value={editModal ? editedFolderName : folderName}
             />
-            <input type="file" onChange={(e) => setFolderImage(e.target.files[0])} />
+            <input type="file" onChange={(e) => setFolderImage(e.target.files[0])} className="mt-3" />
           </div>
         </Modal.Body>
 
         <Modal.Footer className="modal-footer">
           {editModal ? (
             <button type="button" className="btn-main" onClick={editFolder}>
-              تعديل
+              {pathOr("", [locale, "Products", "editFolder"], t)}
             </button>
           ) : (
             <button type="button" className="btn-main" onClick={addNewFolder}>
-              حفظ
+              {pathOr("", [locale, "Products", "saveFolder"], t)}
             </button>
           )}
         </Modal.Footer>
       </Modal>
-    </>
+    </Fragment>
   )
 }
 

@@ -8,7 +8,7 @@ import t from "../../../../translations.json"
 import { Col, Row } from "react-bootstrap"
 import Alerto from "../../../../common/Alerto"
 import { toast } from "react-toastify"
-const AddProductStepOne = ({ next, product, editProduct }) => {
+const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps }) => {
   const {
     locale,
     query: { id },
@@ -47,6 +47,8 @@ const AddProductStepOne = ({ next, product, editProduct }) => {
   const handleNextStep = (e) => {
     e.preventDefault()
     next(selectedCatId)
+    const catProps = allCats.filter((item) => item.id === selectedCatId)
+    setSelectedCatProps(catProps[0])
   }
 
   const handleSelectChange = (e) => {

@@ -27,6 +27,7 @@ const Products = () => {
   }, [folders])
 
   const getProductsAndFolders = async () => {
+    axios.defaults.headers.common["User-Language"] = locale
     const [
       {
         data: { data: products },
@@ -40,13 +41,14 @@ const Products = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/ListFolder?type=1&pageIndex=1&PageRowsCount=10&lang=${locale}`,
       ),
     ])
+    console.log(products)
     setProducts(products)
     setFolders(folders)
   }
 
   useEffect(() => {
     getProductsAndFolders()
-  }, [])
+  }, [locale])
 
   const addNewFolder = async () => {
     try {
@@ -197,7 +199,7 @@ const Products = () => {
         <button
           onClick={() => {
             if (!productsIds?.length)
-              return toast.warning(locale === "en" ? "No products were selected!" : "من فضلك قم بأضافة المنتجات")
+              return toast.warning(locale === "en" ? "No products were selected!" : "لم يتم اختيار اي منتج")
             setOpenFolderModal(!openFolderModal)
           }}
           className="btn-main btn-main-w rounded-0"

@@ -1,35 +1,31 @@
-
-.box_pro_Folder{
-  border: 1px solid #EEE;
+.box_pro_Folder {
+  border: 1px solid #eee;
   border-radius: 20px;
-  padding:  15px;
+  padding: 15px;
   display: block;
   margin-bottom: 15px;
   cursor: pointer;
 }
 
-
-.box_pro_Folder .img_{
+.box_pro_Folder .img_ {
   width: 100%;
-  height: 120px;
+  height: 150px;
+  vertical-align: center;
   margin-bottom: 10px;
-  overflow: hidden
 }
 
-.box_pro_Folder .one-img{
+.box_pro_Folder .one-img {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-
-.box_pro_Folder .alot-img img{
+.box_pro_Folder .alot-img img {
   display: block;
   max-width: 100%;
-      float: right;
 }
 
-.box_pro_Folder .alot-img img{
+.box_pro_Folder .alot-img img {
   width: 60%;
   height: 60px;
   padding: 4px;
@@ -37,7 +33,7 @@
   object-fit: cover;
 }
 
-.box_pro_Folder .alot-img img:first-child{
+.box_pro_Folder .alot-img img:first-child {
   width: 100%;
   height: 100%;
 }
@@ -45,5 +41,5 @@
 .folder__actions__btn {
   display: flex;
   justify-content: space-between;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }

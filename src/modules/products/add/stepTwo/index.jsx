@@ -16,8 +16,10 @@ import BanksData from "./BanksData"
 import regionImage from "../../../../public/icons/008-maps.svg"
 import cityImage from "../../../../public/icons/neighboor.svg"
 import Image from "next/image"
+import AuctionClosingTimeComp from "./AuctionClosingTimeComp"
 
-const AddProductStepTwo = ({ catId, product }) => {
+const AddProductStepTwo = ({ catId, product, selectedCatProps }) => {
+  console.log(selectedCatProps)
   const { locale } = useRouter()
   const router = useRouter()
   const id = useId()
@@ -73,17 +75,17 @@ const AddProductStepTwo = ({ catId, product }) => {
     IsAuctionPaied: false,
     SendOfferForAuction: false,
     AuctionMinimumPrice: 0,
-    // AuctionNegotiateForWhom: "",
-    // AuctionNegotiatePrice: 0,
+    AuctionNegotiateForWhom: "",
+    AuctionNegotiatePrice: 0,
     "ProductPaymentDetailsDto.PakatId": 0,
     "ProductPaymentDetailsDto.AdditionalPakatId": 0,
-    "ProductPaymentDetailsDto.ProductPublishPrice": 0,
-    "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": 0,
-    "ProductPaymentDetailsDto.EnableAuctionFee": 0,
-    "ProductPaymentDetailsDto.EnableNegotiationFee": 0,
-    "ProductPaymentDetailsDto.ExtraProductImageFee": 0,
-    "ProductPaymentDetailsDto.ExtraProductVidoeFee": 0,
-    "ProductPaymentDetailsDto.SubTitleFee": 0,
+    "ProductPaymentDetailsDto.ProductPublishPrice": selectedCatProps.productPublishPrice,
+    "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": selectedCatProps.enableFixedPriceSaleFee,
+    "ProductPaymentDetailsDto.EnableAuctionFee": selectedCatProps.enableAuctionFee,
+    "ProductPaymentDetailsDto.EnableNegotiationFee": selectedCatProps.enableNegotiationFee,
+    "ProductPaymentDetailsDto.ExtraProductImageFee": selectedCatProps.extraProductImageFee,
+    "ProductPaymentDetailsDto.ExtraProductVidoeFee": selectedCatProps.extraProductVidoeFee,
+    "ProductPaymentDetailsDto.SubTitleFee": selectedCatProps.subTitleFee,
     "ProductPaymentDetailsDto.CouponId": 0,
     "ProductPaymentDetailsDto.CouponDiscountValue": 0,
     "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": 0,
@@ -242,7 +244,6 @@ const AddProductStepTwo = ({ catId, product }) => {
 
   const handleUploadImages = (e) => {
     let file = e.target.files[0]
-    console.log(file, mainImageIndex)
     if (file) {
       file.id = Date.now()
       setProductPayload((prev) => ({
@@ -480,6 +481,8 @@ const AddProductStepTwo = ({ catId, product }) => {
 
     if (hasTwoOrThree && !hasFourFiveOrSix) {
       toast.error("Please select the highlighted options!")
+    } else if (productPayload.ShippingOptions.length === 0) {
+      toast.error("Please select any shipping options!")
     } else setEventKey("5")
   }
   const countryFlag = countries?.find((item) => item.id === productPayload.countryId)?.countryFlag
@@ -801,6 +804,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
                         {pathOr("", [locale, "Products", "quantity"], t)}
+                        <RequiredSympol />
                       </label>
                       <div className="d-flex align-items-center justify-content-between mb-2">
                         <label htmlFor="unlimitedQuantity" className="f-b">
@@ -1118,6 +1122,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
                         {pathOr("", [locale, "Products", "salesType"], t)}
+                        <RequiredSympol />
                       </label>
                       <div className="row">
                         <div className="col-lg-4 col-md-6">
@@ -1210,6 +1215,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                           style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}
                         >
                           {pathOr("", [locale, "Products", "purchasingPrice"], t)}
+                          <RequiredSympol />
                         </label>
                         <div
                           className={`input-group ${styles["input-group"]}  flex-nowrap`}
@@ -1239,8 +1245,14 @@ const AddProductStepTwo = ({ catId, product }) => {
                       <div className="row">
                         <div className="col-md-6">
                           <div className="form-group">
-                            <label>{pathOr("", [locale, "Products", "auction_start_price"], t)}</label>
-                            <div className={`input-group ${styles["input-group"]}  flex-nowrap`}>
+                            <label>
+                              {pathOr("", [locale, "Products", "auction_start_price"], t)}
+                              <RequiredSympol />
+                            </label>
+                            <div
+                              className={`input-group ${styles["input-group"]}  flex-nowrap`}
+                              style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}
+                            >
                               <span
                                 className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                                 id="basic-addon1"
@@ -1262,8 +1274,14 @@ const AddProductStepTwo = ({ catId, product }) => {
                         </div>
                         <div className="col-md-6">
                           <div className="form-group">
-                            <label>{pathOr("", [locale, "Products", "minimum_price"], t)}</label>
-                            <div className={`input-group ${styles["input-group"]}  flex-nowrap`}>
+                            <label>
+                              {pathOr("", [locale, "Products", "minimum_price"], t)}
+                              <RequiredSympol />
+                            </label>
+                            <div
+                              className={`input-group ${styles["input-group"]}  flex-nowrap`}
+                              style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}
+                            >
                               <span
                                 className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                                 id="basic-addon1"
@@ -1288,7 +1306,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                       <div className="row">
                         <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-4 px-3">
-                          <span className="f-b">
+                          <span className="f-b fs-5">
                             {pathOr("", [locale, "Products", "auto_send_negotiation_offers_post_auction"], t)}
                           </span>
                           <div className="form-check form-switch p-0 m-0">
@@ -1297,9 +1315,7 @@ const AddProductStepTwo = ({ catId, product }) => {
                               type="checkbox"
                               role="switch"
                               id="flexSwitchCheckChecked"
-                              checked={
-                                productPayload.SendOfferForAuction === 0 ? " " : productPayload.SendOfferForAuction
-                              }
+                              checked={productPayload.SendOfferForAuction}
                               onChange={() =>
                                 setProductPayload({
                                   ...productPayload,
@@ -1310,6 +1326,27 @@ const AddProductStepTwo = ({ catId, product }) => {
                           </div>
                         </div>
                       </div>
+                      {
+                        <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-5 px-1">
+                          <span className="f-b fs-5">
+                            {pathOr("", [locale, "Products", "send_account_info_to_winner"], t)}
+                          </span>
+                          <div className="form-check form-switch p-0 m-0">
+                            <input
+                              className="form-check-input m-0"
+                              type="checkbox"
+                              role="switch"
+                              id="flexSwitchCheckChecked"
+                              onChange={(e) =>
+                                setProductPayload((prev) => ({
+                                  ...prev,
+                                  SendYourAccountInfoToAuctionWinner: e.target.checked,
+                                }))
+                              }
+                            />
+                          </div>
+                        </div>
+                      }
                     </div>
                   )}
                   {productPayload.IsNegotiationEnabled && (
@@ -1318,8 +1355,14 @@ const AddProductStepTwo = ({ catId, product }) => {
                         <div className="row">
                           <div className="col-md-6">
                             <div className="form-group">
-                              <label>أقل سعر</label>
-                              <div className={`input-group ${styles["input-group"]} flex-nowrap`}>
+                              <label>
+                                {pathOr("", [locale, "Products", "negotiation_price"], t)}
+                                <RequiredSympol />
+                              </label>
+                              <div
+                                className={`input-group ${styles["input-group"]} flex-nowrap`}
+                                style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}
+                              >
                                 <span
                                   className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                                   id="basic-addon1"
@@ -1343,95 +1386,43 @@ const AddProductStepTwo = ({ catId, product }) => {
                               </div>
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="form-group">
-                              <label>مدة العرض</label>
-                              <div className="d-flex gap-3">
-                                <div className="status-P">
-                                  <input
-                                    type="radio"
-                                    name="days"
-                                    value={"1"}
-                                    checked={productPayload.appointment === "1"}
-                                    onChange={() => setProductPayload({ ...productPayload, appointment: 1 })}
-                                  />
-                                  <span>اسبوع</span>
-                                  <span className="pord rounded-pill" />
-                                  <span className="back rounded-pill" />
-                                </div>
-                                <div className="status-P">
-                                  <input
-                                    type="radio"
-                                    name="days"
-                                    value={"2"}
-                                    checked={productPayload.appointment === "2"}
-                                    onChange={() => setProductPayload({ ...productPayload, appointment: "2" })}
-                                  />
-                                  <span>اسبوعين</span>
-                                  <span className="pord rounded-pill" />
-                                  <span className="back rounded-pill" />
-                                </div>
-                                <div className="status-P">
-                                  <input
-                                    type="radio"
-                                    name="days"
-                                    value={"3"}
-                                    checked={productPayload.appointment === "3"}
-                                    onChange={() => setProductPayload({ ...productPayload, appointment: "3" })}
-                                  />
-                                  <span>3 اسابيع</span>
-                                  <span className="pord rounded-pill" />
-                                  <span className="back rounded-pill" />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+
                           <div className="col-12">
                             <div className="form-group">
-                              <label>لمن تريد ارسال العرض</label>
-                              <div className="d-flex flex-wrap gap-3">
-                                <div className="status-P flex-grow-1">
-                                  <input
-                                    type="radio"
-                                    name="offer"
-                                    value={1}
-                                    defaultChecked={true}
-                                    checked={productPayload.AuctionNegotiateForWhom === 1}
-                                    onChange={(e) =>
-                                      setProductPayload({ ...productPayload, AuctionNegotiateForWhom: 1 })
-                                    }
-                                  />
-                                  <span>جميع المزايدين</span>
-                                  <span className="pord rounded-pill" />
-                                  <span className="back rounded-pill" />
+                              <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                                {pathOr("", [locale, "Products", "who_to_send_offer"], t)}
+                                <RequiredSympol />
+                              </label>
+                              <div className="d-flex gap-3 flex-wrap">
+                                <div
+                                  onClick={() =>
+                                    setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "All" })
+                                  }
+                                  className={`${styles.p_select} ${
+                                    productPayload.AuctionNegotiateForWhom == "All" ? styles.p_select_active : ""
+                                  }`}
+                                >
+                                  {pathOr("", [locale, "Products", "all_bidders"], t)}
                                 </div>
-                                <div className="status-P flex-grow-1">
-                                  <input
-                                    type="radio"
-                                    name="offer"
-                                    value={2}
-                                    checked={productPayload.AuctionNegotiateForWhom === 2}
-                                    onChange={(e) =>
-                                      setProductPayload({ ...productPayload, AuctionNegotiateForWhom: 2 })
-                                    }
-                                  />
-                                  <span>لاعلي 3 اسعار في المزايده</span>
-                                  <span className="pord rounded-pill" />
-                                  <span className="back rounded-pill" />
+                                <div
+                                  onClick={() =>
+                                    setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Highest3" })
+                                  }
+                                  className={`${styles.p_select} ${
+                                    productPayload.AuctionNegotiateForWhom == "Highest3" ? styles.p_select_active : ""
+                                  }`}
+                                >
+                                  {pathOr("", [locale, "Products", "top_three_bidders"], t)}
                                 </div>
-                                <div className="status-P flex-grow-1">
-                                  <input
-                                    type="radio"
-                                    name="offer"
-                                    value={3}
-                                    checked={productPayload.AuctionNegotiateForWhom === 3}
-                                    onChange={(e) =>
-                                      setProductPayload({ ...productPayload, AuctionNegotiateForWhom: 3 })
-                                    }
-                                  />
-                                  <span>للذين اضافو المنتج للمفضلة</span>
-                                  <span className="pord rounded-pill" />
-                                  <span className="back rounded-pill" />
+                                <div
+                                  onClick={() =>
+                                    setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Favorit" })
+                                  }
+                                  className={`${styles.p_select} ${
+                                    productPayload.AuctionNegotiateForWhom == "Favorit" ? styles.p_select_active : ""
+                                  }`}
+                                >
+                                  {pathOr("", [locale, "Products", "product_favorites"], t)}
                                 </div>
                               </div>
                             </div>
@@ -1440,23 +1431,13 @@ const AddProductStepTwo = ({ catId, product }) => {
                       </div>
                     </div>
                   )}
-                  {/* <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-2">
-                                        <span className="f-b">ارسال بيانات حسابك للفائز بالمزاد</span>
-                                        <div className="form-check form-switch p-0 m-0">
-                                            <input
-                                                className="form-check-input m-0"
-                                                type="checkbox"
-                                                role="switch"
-                                                id="flexSwitchCheckChecked"
-                                            />
-                                        </div>
-                                    </div> */}
                 </Row>
                 <Row>
                   <div className="col-12">
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
                         {pathOr("", [locale, "Products", "paymentOptions"], t)}
+                        <RequiredSympol />
                       </label>
                       <div className="row">
                         <div className="col-lg-6 col-md-6">
@@ -1576,6 +1557,7 @@ const AddProductStepTwo = ({ catId, product }) => {
             <div className="form-content">
               <form>
                 <Row>
+                  <AuctionClosingTimeComp productPayload={productPayload} setProductPayload={setProductPayload} />
                   <div className="col-lg-12 col-md-12">
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>

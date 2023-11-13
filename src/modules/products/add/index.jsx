@@ -11,6 +11,7 @@ const AddProduct = () => {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [selectedCatId, setSelectedCatId] = useState(null)
+  const [selectedCatProps, setSelectedCatProps] = useState({})
   const [product, setProduct] = useState()
   const { locale } = useRouter()
   const getProduct = async () => {
@@ -50,11 +51,12 @@ const AddProduct = () => {
           <AddProductStepOne
             product={product && product}
             next={(selectedCat) => handleNextStep(selectedCat)}
+            setSelectedCatProps={setSelectedCatProps}
             editProduct={false}
           />
         )}
         {(step === 2 || (product && product?.id)) && (
-          <AddProductStepTwo product={product && product} catId={selectedCatId} />
+          <AddProductStepTwo product={product && product} catId={selectedCatId} selectedCatProps={selectedCatProps} />
         )}
       </div>
     </div>
