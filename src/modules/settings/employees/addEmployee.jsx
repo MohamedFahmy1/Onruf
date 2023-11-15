@@ -109,12 +109,12 @@ const AddEmployee = () => {
           <div className="form-content">
             <form onSubmit={handleSubmit(handleAddEmployee)}>
               <div className="form-group">
-                <label>{pathOr("", [locale, "Users", "username"], t)}</label>
+                <label>{pathOr("", [locale, "Employee", "employeeName"], t)}</label>
                 <input
                   {...register("userName", { required: "Username is a required field" })}
                   type="text"
                   className="form-control"
-                  placeholder={pathOr("", [locale, "Users", "username"], t)}
+                  placeholder={pathOr("", [locale, "Employee", "employeeName"], t)}
                 />
                 <p className="errorMsg">{handleFormErrors(errors, "userName")}</p>
               </div>

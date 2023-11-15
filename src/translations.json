@@ -306,8 +306,9 @@
       "filterByRole": "فلتره حسب الصلاحيه",
       "addEmployee": "اضافه موظف",
       "employees": "الموظفين",
+      "employeeName": "اسم الموظف",
       "actions": "اجراءات",
-      "role": "الصلاحيه",
+      "role": "الصلاحيات",
       "cancel": "الغاء",
       "branch": "الفرع"
     },
@@ -888,7 +889,8 @@
       "employees": "Employees",
       "actions": "Actions",
       "cancel": "Cancel",
-      "branch": "Branch"
+      "branch": "Branch",
+      "employeeName": "Employee Name"
     },
     "Shipping": {
       "shippingCompanies": "Shipping Companies",
@@ -964,7 +966,7 @@
       "myBalance": "My Balance",
       "topUp": "Top Up Ballance",
       "withdraw": "Withdraw",
-      "latestProcesses": "Latest Processes",
+      "latestProcesses": "Recent Transaction",
       "process": "Process",
       "transaction_type": "Transaction Type:",
       "no": "#No:"
@@ -1085,7 +1087,7 @@
       "myPointsDetails": "My Points Details",
       "shareInviteCode": "Share Invite Code",
       "changePointsToCredit": "Change Points To Credit",
-      "lastProcesses": "Latest Processes",
+      "lastProcesses": "Recent Transaction",
       "send": "Transfer",
       "for_every_new_store": "For every new store",
       "and_get": "And get",

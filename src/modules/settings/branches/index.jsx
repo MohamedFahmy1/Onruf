@@ -34,7 +34,7 @@ const Branches = ({ branches: b = [] }) => {
 
   useEffect(() => {
     fetchBranches()
-  }, [locale])
+  }, [])
 
   const handleEditBranch = async (id, isActive, values) => {
     try {
@@ -184,7 +184,7 @@ const Branches = ({ branches: b = [] }) => {
         </div>
 
         <div className="contint_paner">
-          <Table columns={columns} data={branches} pageSize={10} />
+          <Table columns={columns} data={branches} pageSize={10} isCheckbox={false} />
           {branches?.length > 10 && <Pagination listLength={branches.length} pageSize={10} />}
         </div>
 

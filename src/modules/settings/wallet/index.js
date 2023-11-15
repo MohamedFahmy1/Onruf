@@ -26,13 +26,15 @@ const Wallet = () => {
 
   const { push, locale } = useRouter()
 
-  console.log(transType)
   const handleWalletSubmit = async (values) => {
     const formData = new FormData()
     for (let key in values) {
       formData.append("TransactionSource", transType === "In" ? "ChargeWallet" : "DrawFromWallet")
       formData.append("TransactionType", transType === "In" ? "In" : "Out")
       formData.append(key, values[key])
+    }
+    if (transType === "Out" && values.TransactionAmount > walletBalance) {
+      return toast.error(locale === "en" ? "Not enough wallet balance!" : "لا يوجد رصيد كافي بالمحفظة")
     }
     try {
       const result = await axios.post(
@@ -44,7 +46,7 @@ const Wallet = () => {
         //   ...values,
         // }
       )
-      toast.success("Done")
+      toast.success(locale === "en" ? "Transacation Done!" : "تمت العملية بنجاح")
       fetchWalletInfo()
     } catch (e) {
       toast.error("Error")
@@ -150,10 +152,32 @@ const Wallet = () => {
                 </ul>
                 <div className="my-2 po_R">
                   <input
-                    {...register("TransactionAmount", { required: "You can't submit empty field " })}
-                    type="number"
+                    {...register("TransactionAmount", {
+                      required: "You can't submit an empty field",
+                      pattern: {
+                        value: /^\d*(\.\d{0,2})?$/,
+                        message:
+                          locale === "en"
+                            ? "Invalid number. Please enter a valid number with up to two decimal places."
+                            : "رقم غير صحيح. الرجاء إدخال رقم صحيح مع وجود ما يصل إلى خانتين عشريتين فقط",
+                      },
+                    })}
+                    type="text"
                     className="form-control"
+                    onKeyDown={(e) => {
+                      // Allow only numbers, decimal point, backspace, and delete keys
+                      if (
+                        !["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "Backspace", "Delete"].includes(e.key)
+                      ) {
+                        e.preventDefault()
+                      }
+                      // Prevent more than one decimal point
+                      if (e.key === "." && e.target.value.includes(".")) {
+                        e.preventDefault()
+                      }
+                    }}
                   />
+
                   <span
                     className="icon_fa main-color"
                     style={{

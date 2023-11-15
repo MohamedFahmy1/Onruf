@@ -53,10 +53,14 @@ const PaymentCards = ({ bankTransfers }) => {
     try {
       await axios.delete(`${process.env.REACT_APP_API_URL}/RemoveBankTransfer`, { params: { id: bankId } })
       setBankTransferData([...bankTransferData.filter((b) => b.id !== bankId)])
-      toast.success("Bank transfer has been deleted successfully!")
+      toast.success(locale === "en" ? "Bank transfer has been deleted successfully!" : "تم مسح الحساب البنكي بنجاح")
       fetchBankTransfer()
     } catch (error) {
-      toast.error("Can't delete transfer as it's part of a product payment option!")
+      toast.error(
+        locale === "en"
+          ? "Can't delete transfer as it's part of a product payment option!"
+          : "لا يمكن مسح الحساب لانه مرتبط كوسيلة دفع لمنتج",
+      )
     }
   }
 
@@ -71,7 +75,7 @@ const PaymentCards = ({ bankTransfers }) => {
         setBankTransferData([...bankTransferData?.filter((b) => b.id !== id), { ...values }])
         setOpenModal(false)
         setId(undefined)
-        toast.success("Bank transfer has been edited successfully!")
+        toast.success(locale === "en" ? "Bank transfer has been edited successfully!" : "تم تعديل الحساب البنكي بنجاح")
         fetchBankTransfer()
       } else {
         try {
@@ -82,7 +86,7 @@ const PaymentCards = ({ bankTransfers }) => {
           await axios.post(process.env.REACT_APP_API_URL + "/AddBankTransfer", formData)
           setBankTransferData([...bankTransferData, { ...values }])
           setOpenModal(false)
-          toast.success("Bank transfer has been added successfully!")
+          toast.success(locale === "en" ? "Bank transfer has been added successfully!" : "تم اضافة الحساب البنكي بنجاح")
           fetchBankTransfer()
         } catch (error) {
           toast.error("Error!")
@@ -205,7 +209,9 @@ const PaymentCards = ({ bankTransfers }) => {
                     type="radio"
                     name="days"
                     value={3}
-                    {...register("paymentAccountType", { required: "This field is required" })}
+                    {...register("paymentAccountType", {
+                      required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
+                    })}
                   />
                   <span>{pathOr("", [locale, "BankAccounts", "creditCard"], t)}</span>
                   <span className="pord rounded-pill"></span>
@@ -215,7 +221,9 @@ const PaymentCards = ({ bankTransfers }) => {
                     type="radio"
                     name="days"
                     value={5}
-                    {...register("paymentAccountType", { required: "This field is required" })}
+                    {...register("paymentAccountType", {
+                      required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
+                    })}
                   />
 
                   <img src={StcPayImg.src} width="65px" />
@@ -226,7 +234,9 @@ const PaymentCards = ({ bankTransfers }) => {
                     type="radio"
                     name="days"
                     value={1}
-                    {...register("paymentAccountType", { required: "This field is required" })}
+                    {...register("paymentAccountType", {
+                      required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
+                    })}
                   />
                   <span> {pathOr("", [locale, "BankAccounts", "bankAccount"], t)} </span>
                   <span className="pord rounded-pill"></span>
@@ -243,7 +253,9 @@ const PaymentCards = ({ bankTransfers }) => {
                   <input
                     type="text"
                     className="form-control"
-                    {...register("bankHolderName", { required: "This field is required" })}
+                    {...register("bankHolderName", {
+                      required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
+                    })}
                   />
                   {errors["bankHolderName"] && <p className="errorMsg">{errors["bankHolderName"]["message"]}</p>}
                 </div>
@@ -254,7 +266,9 @@ const PaymentCards = ({ bankTransfers }) => {
                   <input
                     type="text"
                     className="form-control"
-                    {...register("bankName", { required: "This field is required" })}
+                    {...register("bankName", {
+                      required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
+                    })}
                   />
                   {errors["bankName"] && <p className="errorMsg">{errors["bankName"]["message"]}</p>}
                 </div>
@@ -263,9 +277,11 @@ const PaymentCards = ({ bankTransfers }) => {
                 <div className="mb-2">
                   <label className="f-b">{pathOr("", [locale, "BankAccounts", "AccountNumber"], t)}</label>
                   <input
-                    type="text"
+                    type="number"
                     className="form-control"
-                    {...register("accountNumber", { required: "This field is required" })}
+                    {...register("accountNumber", {
+                      required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
+                    })}
                   />
                   {errors["accountNumber"] && <p className="errorMsg">{errors["accountNumber"]["message"]}</p>}
                 </div>
@@ -276,7 +292,14 @@ const PaymentCards = ({ bankTransfers }) => {
                   <input
                     type="text"
                     className="form-control"
-                    {...register("ibanNumber", { required: "This field is required" })}
+                    {...register("ibanNumber", {
+                      required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
+                      pattern: {
+                        value: /^[A-Za-z0-9]+$/,
+                        message:
+                          locale === "en" ? "Invalid characters in IBAN number" : "أحرف غير صالحة في رقم الآيبان",
+                      },
+                    })}
                   />
                   {errors["ibanNumber"] && <p className="errorMsg">{errors["ibanNumber"]["message"]}</p>}
                 </div>
@@ -287,7 +310,14 @@ const PaymentCards = ({ bankTransfers }) => {
                   <input
                     type="text"
                     className="form-control"
-                    {...register("swiftCode", { required: "This field is required" })}
+                    {...register("swiftCode", {
+                      required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
+                      pattern: {
+                        value: /^[A-Za-z0-9]+$/,
+                        message:
+                          locale === "en" ? "Invalid characters in IBAN number" : "أحرف غير صالحة في رقم الآيبان",
+                      },
+                    })}
                   />
                   {errors["swiftCode"] && <p className="errorMsg">{errors["swiftCode"]["message"]}</p>}
                 </div>
@@ -300,7 +330,14 @@ const PaymentCards = ({ bankTransfers }) => {
                     className="form-control"
                     placeholder="Ex: 07/27"
                     {...register("expiaryDate", {
-                      required: "This field is required",
+                      required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
+                      pattern: {
+                        value: /^(0[1-9]|[12][0-9]|3[01])\/(2[3-9]|[3-8][0-9]|90)$/,
+                        message:
+                          locale === "en"
+                            ? "Invalid date format (DD/YY, days from 01 to 31)"
+                            : "تنسيق التاريخ غير صحيح (يوم/سنة، أيام من 01 إلى 31)",
+                      },
                     })}
                   />
                   {errors["expiaryDate"] && <p className="errorMsg">{errors["expiaryDate"]["message"]}</p>}
@@ -321,7 +358,6 @@ const PaymentCards = ({ bankTransfers }) => {
                           type="checkbox"
                           role="switch"
                           id="flexSwitchCheckChecked"
-                          {...register("saveForLaterUse", { required: "This field is required" })}
                         />
                       </div>
                     </div>

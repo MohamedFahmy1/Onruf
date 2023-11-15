@@ -49,28 +49,33 @@ const SingleFolder = () => {
   }
 
   useEffect(() => {
-    getFolderUsers()
-  }, [])
+    folderId && getFolderUsers()
+  }, [folderId])
 
   const columns = useMemo(
     () => [
       {
         Header: pathOr("", [locale, "Users", "username"], t),
-        accessor: "name",
+        accessor: "userName",
         Cell: ({
           row: {
-            original: { img, name, id },
+            original: { img, userName, id },
           },
         }) => (
-          <div className="d-flex align-items-center">
-            <img
-              src={img}
-              className="img_table img_table2 cursor-pointer"
-              onClick={() => Router.push(`/users/${id}`)}
-            />
-            <div className="f-b">{name}</div>
-          </div>
+          <a onClick={() => Router.push(`/users/${id}`)} className="d-flex align-items-center">
+            <img src={img} className="img_table img_table2 cursor-pointer" />
+            <div className="f-b">{userName}</div>
+          </a>
         ),
+      },
+      {
+        Header: pathOr("", [locale, "Users", "phone"], t),
+        accessor: "phone",
+        Cell: ({
+          row: {
+            original: { phone },
+          },
+        }) => <div className="f-b">{phone}</div>,
       },
       {
         Header: pathOr("", [locale, "Users", "email"], t),
@@ -82,13 +87,13 @@ const SingleFolder = () => {
         }) => <div className="f-b">{email}</div>,
       },
       {
-        Header: pathOr("", [locale, "Users", "phone"], t),
-        accessor: "phone",
+        Header: pathOr("", [locale, "Users", "memberSince"], t),
+        accessor: "memberSince",
         Cell: ({
           row: {
-            original: { phone },
+            original: { createdAt },
           },
-        }) => <div className="f-b">{phone}</div>,
+        }) => <div className="f-b">{createdAt.slice(0, 10).replaceAll("-", "/")}</div>,
       },
     ],
     [locale],
@@ -112,7 +117,14 @@ const SingleFolder = () => {
 
         <div className="contint_paner">
           <div className="outer_table">
-            <Table columns={columns} data={users} selectedRows={selectedRows} onSelectedRowsChange={setSelectedRows} />
+            {users && (
+              <Table
+                columns={columns}
+                data={users && users}
+                selectedRows={selectedRows}
+                onSelectedRowsChange={setSelectedRows}
+              />
+            )}
           </div>
         </div>
 

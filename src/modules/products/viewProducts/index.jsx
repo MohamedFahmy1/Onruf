@@ -20,6 +20,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     locale,
     query: { page = 1 },
   } = useRouter()
+  const id = router.query.id
 
   const [products, setProducts] = useState(p)
   const [selectedFilter, setSelectedFilter] = useState("avaliableProducts")
@@ -30,7 +31,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const [quantityValue, setQuantityValue] = useState(0)
   const [quantityValueInfinity, setQuantityValueInfinity] = useState(undefined)
   const [priceValue, setPriceValue] = useState(0)
-  const [discountDate, setDiscountDate] = useState(new Date())
+  const [discountDate, setDiscountDate] = useState()
   // const dispatch = useDispatch()
   // const folders = useSelector((state) => state.foldersSlice.folder)
   // const products = useSelector((state) => state.allProducts.products)
@@ -55,6 +56,19 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     return selectedRow?.[0]?.productId || selectedRow?.[0]?.id
   })
 
+  const getProductData = async () => {
+    if (id) {
+      const {
+        data: { data: getSingleFolder },
+      } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/GetFolderById?id=${id}&lang=${locale}`)
+      setProducts(getSingleFolder.listProduct)
+    } else {
+      const {
+        data: { data },
+      } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
+      setProducts(data)
+    }
+  }
   const handleDeleteProduct = useCallback(
     async (productId) => {
       try {
@@ -64,10 +78,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         if (!isDelete) return
         await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/RemoveProduct?id=${productId}`)
         toast.success(locale === "en" ? "Products has been deleted successfully!" : "تم حذف المنتج بنجاح")
-        const {
-          data: { data },
-        } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
-        setProducts(data.filter(({ id }) => id !== productId))
+        getProductData()
       } catch (error) {
         console.error(error)
         toast.error(error.response.data.message)
@@ -85,9 +96,9 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   // }, [products.length])
 
   useEffect(() => {
-    if (singleSelectedRow?.id) {
+    if (singleSelectedRow?.id || singleSelectedRow?.productId) {
       setDiscountDate(singleSelectedRow.disccountEndDate)
-      setPriceValue(singleSelectedRow.priceDisc)
+      setPriceValue(singleSelectedRow.priceDisc ? singleSelectedRow.priceDisc : singleSelectedRow.priceDiscount)
       setQuantityValue(singleSelectedRow.qty)
       setQuantityValueInfinity(singleSelectedRow.qty === null ? true : false)
     }
@@ -130,9 +141,9 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       {
         Header: pathOr("", [locale, "Products", "category"], t),
         accessor: "category",
-        Cell: ({ row: { values } }) => (
+        Cell: ({ row: { values, original } }) => (
           <div>
-            <h6 className="m-0 f-b">{propOr("-", ["category"], values)}</h6>
+            <h6 className="m-0 f-b">{original.categoryName || original.category}</h6>
           </div>
         ),
       },
@@ -165,15 +176,18 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               <span>
                 <h6
                   className="m-0 f-b"
-                  style={{ textDecoration: original?.priceDisc === original?.price ? undefined : "line-through" }}
+                  style={{
+                    textDecoration:
+                      (original?.priceDisc || original?.priceDiscount) === original?.price ? undefined : "line-through",
+                  }}
                 >
                   {propOr("-", ["price"], values)} {pathOr("", [locale, "Products", "currency"], t)}
                 </h6>
               </span>
-              {original?.priceDisc !== original?.price && (
+              {(original?.priceDisc || original?.priceDiscount) !== original?.price && (
                 <span>
                   <h6 className="m-0 f-b">
-                    {propOr("-", ["priceDisc"], original)} {pathOr("", [locale, "Products", "currency"], t)}
+                    {original?.priceDisc || original?.priceDiscount} {pathOr("", [locale, "Products", "currency"], t)}
                   </h6>
                 </span>
               )}
@@ -246,10 +260,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const handleChangeStatus = async (id) => {
     try {
       await axios.post(process.env.NEXT_PUBLIC_API_URL + `/ChangeStatusProduct?id=${id}`, {})
-      const {
-        data: { data },
-      } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
-      setProducts(data)
+      getProductData()
     } catch (err) {
       console.error(err)
       toast.error(err.response.data.message)
@@ -258,14 +269,14 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const handleEditProductQuantity = async () => {
     try {
       const idApi = +singleSelectedRow?.id || +singleSelectedRow?.productId
+      if (quantityValue < 1) {
+        return toast.error(locale === "en" ? "Please put quantity more than 0" : "من فضلك ادخل كمية اكبر من 0")
+      }
       const qtyApi = quantityValueInfinity ? "" : `&quantity=${quantityValue}`
       await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${idApi}${qtyApi}`)
       setOpenQuantityModal(false)
       toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
-      const {
-        data: { data },
-      } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
-      setProducts(data)
+      getProductData()
     } catch (err) {
       console.error(err)
       toast.error(err.response.data.message)
@@ -274,18 +285,17 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const handleAddDiscount = async () => {
     try {
       if (priceValue > singleSelectedRow.price) return toast.error(`Discount should be <= ${singleSelectedRow.price}`)
-      if (!priceValue || !discountDate)
+      if (!priceValue && !discountDate)
         return toast.error(locale === "en" ? "Please Enter Missing Data!" : "من فضلك ادخل جميع البيانات")
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/ProductDiscount?productId=${singleSelectedRow?.id}&PriceDiscount=${priceValue}&discountEndDate=${discountDate}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/ProductDiscount?productId=${
+          singleSelectedRow?.id || singleSelectedRow?.productId
+        }&PriceDiscount=${priceValue}&discountEndDate=${discountDate}`,
         {},
       )
       setOpenPriceModal(false)
       toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
-      const {
-        data: { data },
-      } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
-      setProducts(data)
+      getProductData()
     } catch (err) {
       console.error(err)
       toast.error(err.response.data.message)
@@ -386,10 +396,10 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                       </button>
                       <input
                         type="number"
-                        min="0"
+                        min="1"
                         className="form-control"
-                        value={quantityValueInfinity ? null : quantityValue}
-                        onChange={(e) => setQuantityValue(e.target.value)}
+                        value={quantityValueInfinity ? null : +quantityValue}
+                        onChange={(e) => setQuantityValue(+e.target.value)}
                         disabled={quantityValueInfinity}
                       />
                       <button

@@ -5,14 +5,15 @@ import { pathOr } from "ramda"
 import { formatDate } from "../../../common/functions"
 import axios from "axios"
 import { toast } from "react-toastify"
-// Assets
 import PointsIcon from "../../../assets/images/point_icon.svg"
 import Image from "next/image"
+import ShareModal from "./ShareModal"
 
 const MyPoints = () => {
   const { locale, push } = useRouter()
   const [points, setPoints] = useState(0)
   const [myPointsData, setPointsData] = useState({})
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const { newInvitationCode, pointsTransactionslist, invitationCodePoints, monyOfPointsTransfered, pointsBalance } =
     myPointsData
   const handleTransferPointsToMoney = async () => {
@@ -28,7 +29,7 @@ const MyPoints = () => {
           },
         },
       )
-      toast.success("Transaction Successfull")
+      toast.success(locale === "en" ? "Transaction Successfull" : "تمت العملية بنجاح")
       fetchMyPointsData()
     } catch (error) {
       toast.error(error.message)
@@ -57,7 +58,7 @@ const MyPoints = () => {
             <div className="col-lg-4">
               <div className="info_sec_">
                 <div className="icon">
-                  <Image src={PointsIcon} width={32} height={32} />
+                  <Image src={PointsIcon} width={32} height={32} alt="points" />
                 </div>
                 <h4 className="gray-color m-0">{pathOr("", [locale, "Points", "myPoints"], t)}</h4>
                 <h5 className="f-b m-0">{pointsBalance}</h5>
@@ -73,6 +74,7 @@ const MyPoints = () => {
                   width={32}
                   height={32}
                   className="img-fluid"
+                  alt="outline"
                 />
                 <h5 className="gray-color m-0">{pathOr("", [locale, "Points", "shareInviteCode"], t)}</h5>
                 <div className="font-11">
@@ -81,8 +83,8 @@ const MyPoints = () => {
                 </div>
                 <div className="shared d-flex gap-2 align-items-center">
                   <div className="num">{newInvitationCode}</div>
-                  <div className="img_">
-                    <Image src={require("../../../assets/images/share.svg")} className="img-fluid" />
+                  <div className="img_" onClick={() => setIsModalOpen(true)}>
+                    <Image src={require("../../../assets/images/share.svg")} className="img-fluid" alt="share" />
                   </div>
                 </div>
               </div>
@@ -136,6 +138,7 @@ const MyPoints = () => {
               </div>
             ))}
           </div>
+          <ShareModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} registrationCode={newInvitationCode} />
         </div>
       </div>
     </div>

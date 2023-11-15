@@ -102,7 +102,6 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => 
     // if (productPayload.PaymentOptions.includes(1)) {
     //   setProductPayload({ ...productPayload, IsCashEnabled: true })
     // } else setProductPayload({ ...productPayload, IsCashEnabled: false })
-    console.log(productFullData)
     productFullData.listImageFile.forEach((ele, indx) => {
       ele.id === productFullData.MainImageIndex && indx !== 0 && productFullData.listImageFile.move(indx, 0)
     })
@@ -236,11 +235,9 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => 
                       <span>
                         {productFullData && productFullData.qty === 1
                           ? pathOr("", [locale, "Home", "singleProduct"], t)
-                          : `${
-                              productFullData.qty
-                                ? productFullData.qty
-                                : pathOr("", [locale, "Products", "unLimited"], t)
-                            } ${pathOr("", [locale, "Home", "products"], t)}`}
+                          : productFullData.qty
+                          ? `${productFullData.qty} ${pathOr("", [locale, "Home", "products"], t)}`
+                          : pathOr("", [locale, "Products", "unLimited"], t)}
                       </span>
                     </div>
                   </div>

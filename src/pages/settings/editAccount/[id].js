@@ -28,19 +28,19 @@ const EditBussinessAccount = () => {
   const [businessAccountImage, setBusinessAccountImage] = useState(null)
   const [accountData, setAccountData] = useState()
   const { register, handleSubmit, setValue, reset } = useForm({ defaultValues: accountData })
-  const [registeryFile, setRegisteryFile] = useState(accountData?.CommercialRegisterFile)
+  const [registeryFile, setRegisteryFile] = useState()
   const [minDate, setMinDate] = useState("")
   const [countries, setCountries] = useState([])
   const [regions, setRegions] = useState([])
   const [neighbourhoods, setNeighbourhoods] = useState([])
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
-
   const getAccountData = async () => {
     const {
       data: { data: accountData },
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetBusinessAccountById", {
       params: { businessAccountId: buisnessAccountId },
     })
+    setRegisteryFile(accountData.businessAccountCertificates)
     setAccountData(accountData)
     reset(accountData)
   }
@@ -87,27 +87,41 @@ const EditBussinessAccount = () => {
   useEffect(() => {
     const today = new Date()
     const yyyy = today.getFullYear()
-    const mm = String(today.getMonth() + 1).padStart(2, "0") // January is 0!
+    const mm = String(today.getMonth() + 1).padStart(2, "0")
     const dd = String(today.getDate()).padStart(2, "0")
     setMinDate(`${yyyy}-${mm}-${dd}`)
   }, [])
   const toggleAccordionPanel = (eKey) => {
     eventKey === eKey ? setEventKey("") : setEventKey(eKey)
   }
-  const handleEditBusinessAccount = async ({ commercialRegisterFile, ...values }) => {
-    try {
-      const payload = {
-        ...values,
-        id: accountData?.id,
-        businessAccountCertificates: registeryFile,
-        businessAccountUserName: "test",
-        businessAccountNameEn: values.businessAccountName,
+  const handleEditBusinessAccount = async ({ ...values }) => {
+    const formData = new FormData()
+    Object.keys(values).forEach((key) => {
+      if (key === "BusinessAccountCertificates" || key === "businessAccountImage") {
+        if (values[key] && values[key].length > 0) {
+          formData.append(key, values[key][0])
+        }
+      } else if (key === "businessAccountUserName") {
+        formData.append(key, "test")
+      } else {
+        formData.append(key, values[key])
       }
-      if (businessAccountImage != null) {
-        payload.businessAccountImage = businessAccountImage
-      } else payload.businessAccountImage = accountData.businessAccountImage
+    })
+    formData.append("id", accountData?.id)
+    formData.append("BusinessAccountNameEn", values.businessAccountName)
+    try {
+      // const payload = {
+      //   ...values,
+      //   Id: accountData?.id,
+      //   // BusinessAccountCertificates: registeryFile,
+      //   businessAccountUserName: "test",
+      //   BusinessAccountNameEn: values.businessAccountName,
+      // }
+      // if (businessAccountImage != null) {
+      //   payload.businessAccountImage = businessAccountImage
+      // } else payload.businessAccountImage = accountData.businessAccountImage
 
-      const { data } = await axios.post(process.env.REACT_APP_API_URL + "/AddEditBusinessAccount", payload, {
+      const { data } = await axios.post(process.env.REACT_APP_API_URL + "/AddEditBusinessAccount", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -240,6 +254,9 @@ const EditBussinessAccount = () => {
                             }}
                             type="file"
                             required
+                            {...register("BusinessAccountCertificates", {
+                              value: accountData.BusinessAccountCertificates,
+                            })}
                           />
                         </div>
                       </div>
@@ -280,6 +297,7 @@ const EditBussinessAccount = () => {
                           <div className="btn_" style={{ minWidth: "130px" }}>
                             {pathOr("", [locale, "Settings", "change_logo"], t)}
                             <input
+                              {...register("businessAccountImage", { value: accountData.businessAccountImage })}
                               onChange={(e) => {
                                 setBusinessAccountImage(e.target.files[0])
                               }}

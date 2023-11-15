@@ -115,12 +115,12 @@ const EditEmployee = () => {
           <div className="form-content">
             <form onSubmit={handleSubmit(handleEditEmployee)}>
               <div className="form-group">
-                <label>{pathOr("", [locale, "Users", "username"], t)}</label>
+                <label>{pathOr("", [locale, "Employee", "employeeName"], t)}</label>
                 <input
                   {...register("userName", { required: "This field is required", value: userData?.userName })}
                   type="text"
                   className="form-control"
-                  placeholder={pathOr("", [locale, "Users", "username"], t)}
+                  placeholder={pathOr("", [locale, "Employee", "employeeName"], t)}
                   readOnly
                 />
                 {handleFormErrors("userName")}

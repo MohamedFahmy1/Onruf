@@ -1,7 +1,7 @@
 import React, { useId } from "react"
 import { useTable, useRowSelect, useMountedLayoutEffect } from "react-table"
 import Checkbox from "./tableCheckbox"
-import Router from "next/router"
+import Router, { useRouter } from "next/router"
 
 const Table = ({
   columns,
@@ -14,6 +14,7 @@ const Table = ({
   const id = useId()
   const route = Router?.router?.state
   const page = +route?.query?.page || 1
+  const { locale } = useRouter()
   const {
     getTableProps,
     getTableBodyProps,

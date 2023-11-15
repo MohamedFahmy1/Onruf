@@ -113,12 +113,15 @@ const Users = () => {
         userId: selectedUsersIds,
       })
       msg = message
-      toast.success(locale === "en" ? "Request has been made successfully!" : "تمت الاضافة الجديد بنجاح")
+      toast.success(locale === "en" ? "Request has been made successfully!" : "تمت اضافة العميل بنجاح")
       setOpenFolderModal(false)
       setSelectedRows({})
     } catch (error) {
-      console.error(error)
-      toast.error(error.response.data.message)
+      if (error.response && error.response.status === 400) {
+        toast.error(locale === "en" ? "User already exists in the folder!" : "العميل موجود بالفعل في المجلد")
+      } else {
+        toast.error(error.response.data.message)
+      }
     }
   }
   const filterUsers = () => {
@@ -358,9 +361,15 @@ const Users = () => {
           </Modal.Footer>
         )}
       </Modal>
-
       <div className="btns_fixeds">
-        <button className="btn-main rounded-0" onClick={() => setOpenNotificationModal(!openNotificationModal)}>
+        <button
+          className="btn-main rounded-0"
+          onClick={() => {
+            if (Object.keys(selectedRows).length === 0) {
+              toast.error(locale === "en" ? "Please choose 1 client at least" : "من فضلك اختر عميل واحد علي الاقل")
+            } else setOpenNotificationModal(!openNotificationModal)
+          }}
+        >
           {pathOr("", [locale, "Users", "sendNotfi"], t)}
           {/* <IoNotificationsSharp /> */}
         </button>
