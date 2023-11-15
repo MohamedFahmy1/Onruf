@@ -6,6 +6,7 @@ import axios from "axios"
 import { toast } from "react-toastify"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
+import AddProductReview from "./review"
 
 const AddProduct = () => {
   const router = useRouter()
@@ -14,6 +15,7 @@ const AddProduct = () => {
   const [selectedCatProps, setSelectedCatProps] = useState({})
   const [product, setProduct] = useState()
   const { locale } = useRouter()
+  const [productFullData, setProductFullData] = useState({})
   const getProduct = async () => {
     try {
       const res = await axios(
@@ -38,15 +40,24 @@ const AddProduct = () => {
     setSelectedCatId(selectedCatId)
   }
 
+  const handleGoToReviewPage = (productData) => {
+    setStep(3)
+    setProductFullData(productData)
+  }
+  const handleGoToSteptwo = (productData) => {
+    setStep(2)
+  }
   return (
     <div className="body-content">
       <div>
-        <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-          <h6 className="f-b m-0">{pathOr("", [locale, "Products", "addNewProduct"], t)}</h6>
-          <a onClick={handleBack} className="btn-main btn-main-o">
-            {pathOr("", [locale, "Products", "cancel"], t)}
-          </a>
-        </div>
+        {(step === 1 || step === 2) && (
+          <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+            <h6 className="f-b m-0">{pathOr("", [locale, "Products", "addNewProduct"], t)}</h6>
+            <a onClick={handleBack} className="btn-main btn-main-o">
+              {pathOr("", [locale, "Products", "cancel"], t)}
+            </a>
+          </div>
+        )}
         {step === 1 && !product?.id && (
           <AddProductStepOne
             product={product && product}
@@ -56,7 +67,19 @@ const AddProduct = () => {
           />
         )}
         {(step === 2 || (product && product?.id)) && (
-          <AddProductStepTwo product={product && product} catId={selectedCatId} selectedCatProps={selectedCatProps} />
+          <AddProductStepTwo
+            product={product && product}
+            catId={selectedCatId}
+            selectedCatProps={selectedCatProps}
+            handleGoToReviewPage={handleGoToReviewPage}
+          />
+        )}
+        {(step === 3 || (product && product?.id)) && (
+          <AddProductReview
+            selectedCatProps={selectedCatProps}
+            productFullData={productFullData}
+            handleBack={handleGoToSteptwo}
+          />
         )}
       </div>
     </div>

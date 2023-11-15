@@ -257,12 +257,9 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   }
   const handleEditProductQuantity = async () => {
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${
-          singleSelectedRow?.id || singleSelectedRow?.productId
-        }${quantityValueInfinity ? `""` : `&quantity=${quantityValue}`}`,
-        {},
-      )
+      const idApi = +singleSelectedRow?.id || +singleSelectedRow?.productId
+      const qtyApi = quantityValueInfinity ? "" : `&quantity=${quantityValue}`
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${idApi}${qtyApi}`)
       setOpenQuantityModal(false)
       toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
       const {

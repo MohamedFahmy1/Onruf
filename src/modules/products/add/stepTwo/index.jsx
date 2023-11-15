@@ -18,7 +18,7 @@ import cityImage from "../../../../public/icons/neighboor.svg"
 import Image from "next/image"
 import AuctionClosingTimeComp from "./AuctionClosingTimeComp"
 
-const AddProductStepTwo = ({ catId, product, selectedCatProps }) => {
+const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewPage }) => {
   console.log(selectedCatProps)
   const { locale } = useRouter()
   const router = useRouter()
@@ -77,6 +77,7 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps }) => {
     AuctionMinimumPrice: 0,
     AuctionNegotiateForWhom: "",
     AuctionNegotiatePrice: 0,
+    AuctionClosingTime: "",
     "ProductPaymentDetailsDto.PakatId": 0,
     "ProductPaymentDetailsDto.AdditionalPakatId": 0,
     "ProductPaymentDetailsDto.ProductPublishPrice": selectedCatProps.productPublishPrice,
@@ -336,6 +337,7 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps }) => {
     setSpeficationsPayload(updatedSpecififcations)
     setProductPayload((prev) => ({ ...prev, productSep: updatedSpecififcations }))
   }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     let formData = new FormData()
@@ -386,26 +388,6 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps }) => {
         const { data } = await axios.put(process.env.NEXT_PUBLIC_API_URL + "/EditProduct", formData)
         toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
         Router.push(`/${locale}/products`)
-      } else {
-        try {
-          const {
-            data: { data: id },
-          } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData, {
-            headers: {
-              accept: "*/*",
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-          // Router.push(`/${locale}/products/add/review/${id}`)
-          Router.push(`/${locale}/products`)
-        } catch (error) {
-          toast.error(
-            locale === "en"
-              ? "Error Please recheck the data you entered!"
-              : "حدث خطأ برجاء مراجعة البيانات و اعادة المحاولة",
-          )
-        }
       }
     } catch (err) {
       Alerto(err)
@@ -480,9 +462,13 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps }) => {
     const hasFourFiveOrSix = productPayload.ShippingOptions.some((id) => [4, 5, 6].includes(id))
 
     if (hasTwoOrThree && !hasFourFiveOrSix) {
-      toast.error("Please select the highlighted options!")
+      toast.error(
+        locale == "en" ? "Please select the highlighted options!" : "من فضلك اختر وسيلة شحن من الوسايل المحدده اعلاه",
+      )
     } else if (productPayload.ShippingOptions.length === 0) {
-      toast.error("Please select any shipping options!")
+      toast.error(locale == "en" ? "Please select any shipping options!" : "من فضلك اختر اي وسيلة شحن")
+    } else if (productPayload.AuctionClosingTime == "" && productPayload.IsAuctionEnabled) {
+      toast.error(locale == "en" ? "Please select Autction Duration!" : "رجاء اختر مدة المزاد")
     } else setEventKey("5")
   }
   const countryFlag = countries?.find((item) => item.id === productPayload.countryId)?.countryFlag
@@ -562,7 +548,7 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps }) => {
                     toast.error(
                       locale === "en"
                         ? "Please Enter Video Url or Remove the empty field it!"
-                        : "رجاءاً أدخل لينك الفيديو او امسح الحقل الفارغ",
+                        : "رجاء أدخل لينك الفيديو او امسح الحقل الفارغ",
                     )
                   }
                 }
@@ -1535,13 +1521,13 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps }) => {
               className="btn-main mt-3"
               type="button"
               onClick={() =>
-                productPayload.Price != " " ||
-                (productPayload.AuctionStartPrice && productPayload.AuctionMinimumPrice != " ") ||
-                productPayload.AuctionNegotiatePrice != " "
-                  ? productPayload.PaymentOptions.length > 0
-                    ? setEventKey("4")
-                    : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
-                  : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
+                (productPayload.IsFixedPriceEnabled && !productPayload.Price) ||
+                (productPayload.IsAuctionEnabled &&
+                  !productPayload.AuctionStartPrice &&
+                  !productPayload.AuctionMinimumPrice) ||
+                (productPayload.IsNegotiationEnabled && !productPayload.AuctionNegotiatePrice)
+                  ? toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
+                  : setEventKey("4")
               }
             >
               {pathOr("", [locale, "Products", "next"], t)}
@@ -1551,13 +1537,25 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps }) => {
         <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="4">
           <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("4")}>
             <span>5</span>
-            {pathOr("", [locale, "Products", "shippingOptions"], t)}
+            {pathOr("", [locale, "Products", "shippingAndDuration"], t)}
           </Accordion.Button>
           <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
             <div className="form-content">
               <form>
                 <Row>
-                  <AuctionClosingTimeComp productPayload={productPayload} setProductPayload={setProductPayload} />
+                  {productPayload?.IsAuctionEnabled && (
+                    <Fragment>
+                      <h5 className="f-b" style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                        {pathOr("", [locale, "Products", "offer_duration"], t)}
+                        <RequiredSympol />
+                      </h5>
+                      <AuctionClosingTimeComp
+                        productPayload={productPayload}
+                        setProductPayload={setProductPayload}
+                        selectedCatProps={selectedCatProps}
+                      />
+                    </Fragment>
+                  )}
                   <div className="col-lg-12 col-md-12">
                     <div className="form-group">
                       <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
@@ -1823,7 +1821,11 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps }) => {
               className="btn-main mt-3"
               style={{ display: "block", margin: "0 auto" }}
               type="button"
-              onClick={handleSubmit}
+              onClick={(e) => {
+                if (product?.id) {
+                  handleSubmit(e)
+                } else handleGoToReviewPage(productPayload)
+              }}
             >
               {router.pathname.includes("edit")
                 ? pathOr("", [locale, "Products", "edit"], t)
