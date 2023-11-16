@@ -2,13 +2,15 @@ import style from "./Unauth.module.css"
 import Logo from "../../public/images/Logo.png"
 import Image from "next/image"
 import { useEffect, useState } from "react"
+import { useRouter } from "next/router"
 
 export const UnAuthorisedPage = () => {
   const [message, setMessage] = useState("Loading ........")
-
+  const router = useRouter()
   useEffect(() => {
     const timer = setTimeout(() => {
       setMessage("Unauthorized")
+      router.push("http://onrufwebsite4-001-site1.htempurl.com")
     }, 5000)
 
     return () => clearTimeout(timer)

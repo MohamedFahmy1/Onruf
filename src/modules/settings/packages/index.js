@@ -93,26 +93,26 @@ const Packages = () => {
   // Handle Subscribe Package
   const handleSubscribePackage = async (pakaID) => {
     try {
-      const paymentTrans = await axios.post(process.env.REACT_APP_API_URL + "/PakatPaymentTransaction", {
-        params: {
-          pakatId: pakaID,
-          typePay: "Cash",
-        },
-      })
+      //     const paymentTrans = await axios.post(process.env.REACT_APP_API_URL + "/PakatPaymentTransaction", {
+      //       params: {
+      //         pakatId: pakaID,
+      //         typePay: "Cash",
+      //       },
+      //     })
 
       // If payment success do subsribe
-      if (paymentTrans.status === 200) {
-        try {
-          await axios.post(process.env.REACT_APP_API_URL + "/AddPakatSubcription", [pakaID])
-          toast.success(locale === "en" ? "You Subscribed Package!" : "!تم الاشتراك بنجاح بالباقة")
-          setPaymentModal(false)
-          fetchCurrentPakat()
-          fetchPublishPakat()
-          fetchSMSPakat()
-        } catch (error) {
-          toast.error(error.response.data.message)
-        }
+      // if (paymentTrans.status === 200) {
+      try {
+        await axios.post(process.env.REACT_APP_API_URL + "/AddPakatSubcription", [pakaID])
+        toast.success(locale === "en" ? "You Subscribed To Package!" : "!تم الاشتراك  بالباقة بنجاح")
+        setPaymentModal(false)
+        fetchCurrentPakat()
+        fetchPublishPakat()
+        fetchSMSPakat()
+      } catch (error) {
+        toast.error(error.response.data.message)
       }
+      // }
     } catch (error) {
       toast.error(error.response.data.message)
     }
@@ -187,7 +187,7 @@ const Packages = () => {
             style={{ width: "100%", backgroundColor: paka.isBusinessAccountSubscriped ? "#ccc" : undefined }}
             onClick={() => {
               !paka.isBusinessAccountSubscriped && setSelectedPaka(paka.id)
-              !paka.isBusinessAccountSubscriped && setPaymentModal(true)
+              handleSubscribePackage(selectedPaka)
             }}
           >
             {paka.isBusinessAccountSubscriped
