@@ -180,6 +180,7 @@ const Orders = () => {
   useEffect(() => {
     setSelectedOrders(selectedOrdersObj)
   }, [selectedRows])
+  console.log(selectedRows)
 
   // const changeSelectedOrdersStatus = async () => {
   //   if (selectedOrdersIds) {

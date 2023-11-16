@@ -16,7 +16,7 @@ const Notifications = () => {
             {pathOr("", [locale, "Notifications", "viewall"], t)}
           </a>
         </div>
-        <ul className="list_notifcation">
+        <ul className="list_notifcation px-3">
           <li className="item agree">
             <div className="gray-color mb-1">
               <span>{pathOr("", [locale, "Notifications", "neworder"], t)} </span>

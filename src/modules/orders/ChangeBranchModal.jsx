@@ -14,21 +14,24 @@ const ChangeBranchModal = ({
   orderBranch,
   getOrderData,
 }) => {
-  const { locale } = useRouter()
+  const {
+    locale,
+    query: { id },
+  } = useRouter()
   const changeOrderBranch = async (branchId) => {
-    if (branchesData) {
-      try {
-        await axios.post(`${process.env.REACT_APP_API_URL}/ChangeMultiOrderBranch?branchId=${branchId}`, ordersId, {
-          headers: {
-            "content-type": "application/json",
-          },
-        })
-        setOpenBranchModal(false)
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/ChangeMultiOrderBranch?branchId=${branchId}`, ordersId, {
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+      setOpenBranchModal(false)
+      if (id) {
         getOrderData(ordersId[0])
-        toast.success(locale === "en" ? "Branch Updated Successfully!" : "!تم تحديد الفرع بنجاح")
-      } catch (error) {
-        toast.error("Error")
       }
+      toast.success(locale === "en" ? "Branch Updated Successfully!" : "!تم تحديد الفرع بنجاح")
+    } catch (error) {
+      toast.error("Error")
     }
   }
   return (

@@ -24,7 +24,6 @@ const Branches = ({ branches: b = [] }) => {
       const {
         data: { data },
       } = await axios(`${process.env.REACT_APP_API_URL}/GetListBranche?lang=${locale}`)
-      console.log(data)
       setAllBranches(data)
       setBranches(data.filter((branch) => branch?.isActive))
     } catch (error) {
@@ -44,11 +43,11 @@ const Branches = ({ branches: b = [] }) => {
         isActive: isActive,
         nameAr: values?.name,
         nameEn: values?.name,
-        location: values?.streetName,
+        location: values?.location,
         regionCode: values?.regionCode,
-        lng: "Test",
-        lat: "Test",
-        streetName: "street Name",
+        lng: 0,
+        lat: 0,
+        streetName: values?.streetName,
       }
       const formData = new FormData()
       for (const key in value) {
@@ -70,13 +69,13 @@ const Branches = ({ branches: b = [] }) => {
   }
 
   const handleDeleteBranch = async (id) => {
-    const isDelete = confirm(
-      locale === "en" ? "Are you sure you want to delete this branch ?" : "هل ترغب في مسح الفرع ؟",
-    )
-    if (!isDelete) return
+    // const isDelete = confirm(
+    //   locale === "en" ? "Are you sure you want to delete this branch ?" : "هل ترغب في مسح الفرع ؟",
+    // )
+    // if (!isDelete) return
     try {
       await axios.delete(`${process.env.REACT_APP_API_URL}/RemoveBranche?id=${id}`)
-      toast.success("Branch has been deleted successfully!")
+      toast.success(locale === "en" ? "Branch has been deleted successfully!" : "تم مسح الفرع بنجاح")
       setBranches((prev) => prev.filter((branch) => branch?.id !== id))
     } catch (error) {
       console.error({ error })
@@ -188,8 +187,8 @@ const Branches = ({ branches: b = [] }) => {
           {branches?.length > 10 && <Pagination listLength={branches.length} pageSize={10} />}
         </div>
 
-        <Modal show={openModal} onHide={() => setOpenModal(false)}>
-          <Modal.Header>
+        <Modal style={{ marginTop: "250px", padding: "10px" }} show={openModal} onHide={() => setOpenModal(false)}>
+          <Modal.Header className="mb-4 px-3">
             <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
               {locale === "en" ? "Are you sure you want to delete this branch ?" : "هل تريد حذف الفرع ؟"}
             </h5>

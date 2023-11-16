@@ -57,6 +57,7 @@ const Wallet = () => {
     const {
       data: { data: userWalletState },
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetUserWalletTransactions")
+    console.log()
     setUserWalletState(userWalletState)
   }
 
@@ -200,17 +201,13 @@ const Wallet = () => {
           </Row>
           <div className="mt-4">
             <h5 className="mb-4">{pathOr("", [locale, "Wallet", "latestProcesses"], t)}</h5>
-            {walletTransactionslist?.map((transaction) => (
+            {walletTransactionslist?.slice(0, 15).map((transaction) => (
               <div className="item_Processes" key={transaction.id}>
                 <div className="f-b">
-                  <div>
-                    {pathOr("", [locale, "Wallet", "no"], t)} {transaction.id}
-                  </div>
-                  <div>
-                    {pathOr("", [locale, "Wallet", "process"], t)} : {transaction.transactionAmount}
-                  </div>
-                  <div className="gray-color">
-                    {pathOr("", [locale, "Wallet", "transaction_type"], t)} {transaction.transactionType}
+                  <div className="fs-5 f-b">
+                    {transaction.transactionType === "Out"
+                      ? pathOr("", [locale, "Wallet", "withdrawWallet"], t)
+                      : pathOr("", [locale, "Wallet", "chargeWallet"], t)}
                   </div>
                   <div className="gray-color">{formatDate(transaction.transactionDate)}</div>
                 </div>

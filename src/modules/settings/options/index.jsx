@@ -27,7 +27,6 @@ const Options = ({ userWalletState }) => {
   useEffect(() => {
     fetchMyPointsData()
   }, [])
-  console.log(myPointsData)
   return (
     <Col>
       <Row>
@@ -119,6 +118,8 @@ const Options = ({ userWalletState }) => {
 // Manage Account Popup - Better to be moved some where else
 const ManageAccountModal = ({ showModal, setShowModal }) => {
   const [accountData, setAccountData] = useState(null)
+  const { locale } = useRouter()
+
   const router = useRouter()
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
   const style = {
@@ -151,9 +152,11 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
         params: { businessAccountId: buisnessAccountId },
       })
       setShowModal(false)
-      toast.success("Account Successfully Deleted!")
-      Cookies.remove("id")
-      router.push("/")
+      toast.success(locale === "en" ? "Account Successfully Deleted!" : "تم حذف الاكونت بنجاح")
+      Cookies.remove("businessAccountId")
+      Cookies.remove("Token")
+      Cookies.remove("ProviderId")
+      router.push("http://onrufwebsite4-001-site1.htempurl.com")
     } catch (error) {
       Alerto(error)
     }

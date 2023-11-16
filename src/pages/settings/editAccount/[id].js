@@ -40,7 +40,7 @@ const EditBussinessAccount = () => {
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetBusinessAccountById", {
       params: { businessAccountId: buisnessAccountId },
     })
-    setRegisteryFile(accountData.businessAccountCertificates)
+    setRegisteryFile(accountData.BusinessAccountCertificates)
     setAccountData(accountData)
     reset(accountData)
   }
@@ -77,7 +77,7 @@ const EditBussinessAccount = () => {
       Alerto(e)
     }
   }
-
+  console.log("before :", accountData?.businessAccountCertificates)
   useEffect(() => {
     buisnessAccountId && getAccountData()
     buisnessAccountId && fetchCountries()
@@ -96,8 +96,15 @@ const EditBussinessAccount = () => {
   }
   const handleEditBusinessAccount = async ({ ...values }) => {
     const formData = new FormData()
-    Object.keys(values).forEach((key) => {
-      if (key === "BusinessAccountCertificates" || key === "businessAccountImage") {
+    console.log("after :", values.BusinessAccountCertificates)
+    for (const key of Object.keys(values)) {
+      if (key === "businessAccountImage" && businessAccountImage == null) {
+        formData.append(key, null)
+      } else if (key === "businessAccountImage") {
+        if (values[key] && values[key].length > 0) {
+          formData.append(key, values[key][0])
+        }
+      } else if (key === "BusinessAccountCertificates" || key === "businessAccountCertificates") {
         if (values[key] && values[key].length > 0) {
           formData.append(key, values[key][0])
         }
@@ -106,37 +113,21 @@ const EditBussinessAccount = () => {
       } else {
         formData.append(key, values[key])
       }
-    })
+    }
     formData.append("id", accountData?.id)
     formData.append("BusinessAccountNameEn", values.businessAccountName)
     try {
-      // const payload = {
-      //   ...values,
-      //   Id: accountData?.id,
-      //   // BusinessAccountCertificates: registeryFile,
-      //   businessAccountUserName: "test",
-      //   BusinessAccountNameEn: values.businessAccountName,
-      // }
-      // if (businessAccountImage != null) {
-      //   payload.businessAccountImage = businessAccountImage
-      // } else payload.businessAccountImage = accountData.businessAccountImage
-
       const { data } = await axios.post(process.env.REACT_APP_API_URL + "/AddEditBusinessAccount", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       })
-
       toast.success(locale === "en" ? "Your account data saved!" : "!تم حفظ البيانات بنجاح")
     } catch (error) {
-      toast.error(locale === "en" ? "Please Enter All Data!" : "الرجاء ادخال جميع البيانات")
+      toast.error(locale === "en" ? "Please Enter All Required Data!" : "من فضلك ادخل جميع البيانات اللازمة")
     }
   }
-  // const countryFlag = countries?.map((item) => {
-  //   if (item.id == productPayload.countryId) {
-  //     return item.countryFlag
-  //   }
-  // })
+
   return (
     <div className="body-content">
       {accountData && accountData.id && (
@@ -164,7 +155,6 @@ const EditBussinessAccount = () => {
                             <Image src={office} className="img-fluid" alt="" />
                           </span>
                           <select
-                            // defaultValue={accountData.registrationDocumentType}
                             {...register("registrationDocumentType", { value: accountData.registrationDocumentType })}
                             onChange={(e) => {
                               setValue("registrationDocumentType", e.target.value)
@@ -255,7 +245,7 @@ const EditBussinessAccount = () => {
                             type="file"
                             required
                             {...register("BusinessAccountCertificates", {
-                              value: accountData.BusinessAccountCertificates,
+                              value: accountData.businessAccountCertificates,
                             })}
                           />
                         </div>
@@ -324,7 +314,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "store_name"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={office.src} className="img-fluid" alt="" />
+                            <img src={office.src} className="img-fluid" alt="office" />
                           </span>
                           <input
                             {...register("businessAccountName", { value: accountData.businessAccountName })}
@@ -341,7 +331,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "store_name_ar"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={office.src} className="img-fluid" alt="" />
+                            <img src={office.src} className="img-fluid" alt="office" />
                           </span>
                           <input
                             {...register("businessAccountNameAr", { value: accountData.businessAccountNameAr })}
@@ -357,7 +347,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "email"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={email.src} className="img-fluid" alt="" />
+                            <img src={email.src} className="img-fluid" alt="email" />
                           </span>
                           <input
                             {...register("businessAccountEmail", { value: accountData.businessAccountEmail })}
@@ -371,7 +361,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "phone_number"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={Plate.src} className="img-fluid" alt="" />
+                            <img src={Plate.src} className="img-fluid" alt="Plate" />
                           </span>
                           <input
                             {...register("businessAccountPhoneNumber", {
@@ -387,7 +377,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "main_store_website"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={web.src} className="img-fluid" alt="" />
+                            <img src={web.src} className="img-fluid" alt="web" />
                           </span>
                           <input
                             {...register("businessAccountWebsite", { value: accountData.businessAccountWebsite })}
@@ -494,7 +484,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "street"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={web.src} className="img-fluid" alt="" />
+                            <img src={web.src} className="img-fluid" alt="web" />
                           </span>
                           <input
                             {...register("street", { value: accountData.street })}
@@ -508,7 +498,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "zip"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={web.src} className="img-fluid" alt="" />
+                            <img src={web.src} className="img-fluid" alt="web" />
                           </span>
                           <input
                             {...register("zipCode", { value: accountData.zipCode })}
@@ -522,7 +512,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "maroof"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={web.src} className="img-fluid" alt="" />
+                            <img src={web.src} className="img-fluid" alt="web" />
                           </span>
                           <input
                             {...register("maroof", { value: accountData.maroof })}
@@ -589,7 +579,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "instagram"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={instagram.src} className="img-fluid" alt="" />
+                            <img src={instagram.src} className="img-fluid" alt="instagram" />
                           </span>
                           <input
                             {...register("businessAccountInstagram", { value: accountData.businessAccountInstagram })}
@@ -603,7 +593,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "tiktok"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={tiktok.src} className="img-fluid" alt="" />
+                            <img src={tiktok.src} className="img-fluid" alt="tiktok" />
                           </span>
                           <input
                             {...register("businessAccountTikTok", { value: accountData.businessAccountTikTok })}
@@ -659,7 +649,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "snapchat"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={snapchat.src} className="img-fluid" alt="" />
+                            <img src={snapchat.src} className="img-fluid" alt="snapchat" />
                           </span>
                           <input
                             {...register("businessAccountSnapchat", { value: accountData.businessAccountSnapchat })}

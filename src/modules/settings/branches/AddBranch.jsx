@@ -3,10 +3,15 @@ import Router, { useRouter } from "next/router"
 import { useForm } from "react-hook-form"
 import axios from "axios"
 import GoogleMaps from "../../../common/GoogleMaps"
+import map from "../../../public/images/1366_2000.png"
+import region from "../../../public/icons/neighboor.svg"
+import city from "../../../public/icons/008-maps.svg"
 import Link from "next/link"
 import { toast } from "react-toastify"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
+import { FaFlag } from "react-icons/fa"
+import Image from "next/image"
 const AddBranch = () => {
   const [neighbourhoods, setNeighbourhoods] = useState([])
   const [regions, setRegions] = useState([])
@@ -89,6 +94,7 @@ const AddBranch = () => {
     isActive,
     streetName,
     regionCode,
+    location,
     ...values
   }) => {
     try {
@@ -100,11 +106,11 @@ const AddBranch = () => {
         regionId: +regionId,
         nameAr: name,
         nameEn: name,
-        location: streetName,
+        location: location,
+        streetName: streetName,
         regionCode: regionCode,
-        lng: "Test",
-        lat: "Test",
-        streetName: "street Name",
+        lng: 0,
+        lat: 0,
       }
       const formData = new FormData()
       for (const key in values) {
@@ -138,8 +144,9 @@ const AddBranch = () => {
 
   useEffect(() => {
     const countryId = watch().countryId
+    const regionId = watch().regionId
     if (countryId) {
-      handleFetchNeighbourhoodsOrRegions("ListNeighborhoodByRegionId", countryId, setNeighbourhoods)
+      handleFetchNeighbourhoodsOrRegions("ListNeighborhoodByRegionId", regionId, setNeighbourhoods)
       handleFetchNeighbourhoodsOrRegions("ListRegionsByCountryId", countryId, setRegions)
     }
   }, [watch("countryId")])
@@ -161,7 +168,8 @@ const AddBranch = () => {
           <div className="form-content">
             <form onSubmit={handleSubmit(createBranch)}>
               <div className="map mb-3">
-                <GoogleMaps isMarkerShown />
+                {/*<GoogleMaps isMarkerShown />*/}
+                {/*<Image src={map} alt="map" height={500} />*/}
               </div>
               <div className="form-group">
                 <label>{pathOr("", [locale, "Branch", "branchName"], t)}</label>
@@ -176,9 +184,9 @@ const AddBranch = () => {
               <div className="row">
                 <div className="col-md-6">
                   <div className="form-group">
-                    <div className="input-group">
+                    <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                       <span className="input-group-text" id="basic-addon1">
-                        <i className="fas fa-flag font-18"></i>
+                        <FaFlag size={25} />
                       </span>
                       <div className="po_R flex-grow-1">
                         <label>{pathOr("", [locale, "Branch", "country"], t)}</label>
@@ -186,7 +194,9 @@ const AddBranch = () => {
                           className="form-control form-select"
                           {...register("countryId", { required: "This field is required" })}
                         >
-                          <option value="">{pathOr("", [locale, "Branch", "select"], t)}</option>
+                          <option disabled hidden value="">
+                            {pathOr("", [locale, "Branch", "select"], t)}
+                          </option>
                           {countries &&
                             countries
                               .filter(({ isActive }) => isActive)
@@ -202,37 +212,12 @@ const AddBranch = () => {
                   </div>
 
                   <div className="form-group">
-                    <div className="input-group">
+                    <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                       <span className="input-group-text" id="basic-addon1">
-                        <i className="fas fa-flag font-18"></i>
+                        <Image src={region} alt="region" />
                       </span>
                       <div className="po_R flex-grow-1">
                         <label>{pathOr("", [locale, "Branch", "region"], t)}</label>
-                        <select
-                          className="form-control form-select"
-                          {...register("neighborhoodId", { required: "This field is required" })}
-                        >
-                          <option value="">{pathOr("", [locale, "Branch", "select"], t)}</option>
-                          {neighbourhoods
-                            .filter(({ isActive }) => isActive)
-                            .map(({ name, id }) => (
-                              <option key={id} value={id}>
-                                {name}
-                              </option>
-                            ))}
-                        </select>
-                        {errors?.neighborhoodId && errors?.neighborhoodId?.message}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="form-group">
-                    <div className="input-group">
-                      <span className="input-group-text" id="basic-addon1">
-                        <i className="fas fa-flag font-18"></i>
-                      </span>
-                      <div className="po_R flex-grow-1">
-                        <label>{pathOr("", [locale, "Branch", "neighbourhood"], t)}</label>
                         <select
                           className="form-control form-select"
                           {...register("regionId", { required: "This field is required" })}
@@ -250,6 +235,31 @@ const AddBranch = () => {
                       </div>
                     </div>
                   </div>
+
+                  <div className="form-group">
+                    <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
+                      <span className="input-group-text" id="basic-addon1">
+                        <Image src={city} alt="city" />
+                      </span>
+                      <div className="po_R flex-grow-1">
+                        <label>{pathOr("", [locale, "Branch", "neighbourhood"], t)}</label>
+                        <select
+                          className="form-control form-select"
+                          {...register("neighborhoodId", { required: "This field is required" })}
+                        >
+                          <option value="">{pathOr("", [locale, "Branch", "select"], t)}</option>
+                          {neighbourhoods
+                            .filter(({ isActive }) => isActive)
+                            .map(({ name, id }) => (
+                              <option key={id} value={id}>
+                                {name}
+                              </option>
+                            ))}
+                        </select>
+                        {errors?.neighborhoodId && errors?.neighborhoodId?.message}
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="col-md-6">
@@ -260,7 +270,6 @@ const AddBranch = () => {
                         type="text"
                         {...register("location", { required: "This field is required" })}
                         className="form-control"
-                        // placeholder="اكتب عنوان الفرعي المنتج"
                       />
                     </div>
                     {errors?.location && errors?.location?.message}
@@ -273,7 +282,6 @@ const AddBranch = () => {
                         type="text"
                         {...register("streetName", { required: "This field is required" })}
                         className="form-control"
-                        // placeholder="اكتب عنوان الفرعي المنتج"
                       />
                     </div>
                     {errors?.streetName && errors?.streetName?.message}
@@ -285,13 +293,12 @@ const AddBranch = () => {
                         type="text"
                         {...register("regionCode", {
                           required: "This field is required",
-                          pattern: { value: "/^-?d+.?d*$/", messgae: "Invalid value" },
+                          pattern: { value: "/^-?d+.?d*$/", message: "Invalid value" },
                         })}
                         className="form-control"
-                        // placeholder="اكتب عنوان الفرعي المنتج"
                       />
                     </div>
-                    {errors.regionCode && <p>{errors?.regionCode?.messgae}</p>}
+                    {errors.regionCode && <p>{errors?.regionCode?.message}</p>}
                   </div>
                 </div>
               </div>
