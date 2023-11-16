@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { Autocomplete, Chip, FormControl, MenuItem, OutlinedInput, Select, TextField } from "@mui/material"
 import { Box } from "@mui/system"
 import axios from "axios"
+import { toast } from "react-toastify"
 
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
@@ -26,24 +27,24 @@ function getStyles(name, categoryName, theme) {
   }
 }
 const JoinCampaign = () => {
-  const  {locale}= useRouter()
-  const router= useRouter()
+  const { locale } = useRouter()
+  const router = useRouter()
   const theme = useTheme()
-  const [offer , setOffer] = useState();
+  const [offer, setOffer] = useState()
 
-  const getOffer =async () => {
-        const { data: { data: offers } } = await axios(`${process.env.REACT_APP_API_URL}/GetCouponById?id=${router?.query?.id}`
-    )
+  const getOffer = async () => {
+    const {
+      data: { data: offers },
+    } = await axios(`${process.env.REACT_APP_API_URL}/GetCouponById?id=${router?.query?.id}`)
     setOffer(offers)
   }
 
   useEffect(() => {
     router.query.id && getOffer()
-  },[router.query.id])
-
+  }, [router.query.id])
 
   const [offerPayload, setOfferPayload] = useState({
-    id:router.query.id,
+    id: router.query.id,
     productIds: [],
     categoryIds: [],
     fileIds: [],
@@ -63,7 +64,6 @@ const JoinCampaign = () => {
 
     router.push("/marketing")
   }
-
 
   const handleChangeSelectedCat = (e) => {
     const {
@@ -92,7 +92,7 @@ const JoinCampaign = () => {
     const {
       data: { data: productsList },
     } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/ListProductByBusinessAccountId?currentPage=1&maxRows=10&lang=${locale}`,
+      `${process.env.REACT_APP_API_URL}/ListProductByBusinessAccountId?currentPage=1&maxRows=100&lang=${locale}`,
     )
 
     setProducts([...productsList])
@@ -117,8 +117,8 @@ const JoinCampaign = () => {
       const selectedProduct = products[+productIndex]
       if (!selectedProducts.find((product) => product === selectedProduct)) {
         setSelectedProducts([...selectedProducts, selectedProduct])
-           const selectedProductIds= selectedProducts.map((selectedProduct) => selectedProduct.id)
-        setOfferPayload({ ...offerPayload, productIds: [...selectedProductIds , selectedProduct.id] })
+        const selectedProductIds = selectedProducts.map((selectedProduct) => selectedProduct.id)
+        setOfferPayload({ ...offerPayload, productIds: [...selectedProductIds, selectedProduct.id] })
       }
     }
   }
@@ -137,12 +137,14 @@ const JoinCampaign = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const joinOffer = await axios.post(`${process.env.REACT_APP_API_URL}/BusinessAccountSubscribeInCoupon`,offerPayload)
-   
+    const joinOffer = await axios.post(
+      `${process.env.REACT_APP_API_URL}/BusinessAccountSubscribeInCoupon`,
+      offerPayload,
+    )
     const { data: joinOfferRes } = joinOffer
-
     if (joinOfferRes.status_code === 200) {
-      router.push("./")
+      toast.success(locale === "en" ? "You Subscribed To Coupon Successfully!" : "تم الاشتراك بالكوبون بنجاح")
+      router.push("/")
     }
   }
 
@@ -167,94 +169,106 @@ const JoinCampaign = () => {
     <div className="body-content">
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-          <h6 className="f-b m-0">الانضمام للقسيمة</h6>
+          <h6 className="f-b m-0">{pathOr("", [locale, "marketing", "join_the_coupon"], t)}</h6>
           <a onClick={handleBack} className="btn-main btn-main-o">
-            الغاء
+            {pathOr("", [locale, "marketing", "cancel"], t)}
           </a>
         </div>
         <Accordion activeKey={eventKey} flush>
           <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="0">
             <Accordion.Button bsPrefix={styles["header_Accord"]} disabled>
               <span>1</span>
-              بيانات الكوبون
-              <aside>(للأستطلاع فقط)</aside>
+              {pathOr("", [locale, "marketing", "coupon_details"], t)}
+              <aside>{pathOr("", [locale, "marketing", "for_survey_only"], t)}</aside>
             </Accordion.Button>
             <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
               <div className="row">
                 <div className="col-lg-5">
                   <div className={styles["info_boxo_"]}>
-                    <span>كود الكوبون</span>
+                    <span>{pathOr("", [locale, "marketing", "coupon_code"], t)}</span>
                     <span>{offer && offer.couponCode}</span>
                   </div>
-                  {offer && offer.discountTypeID === "FixedAmount"? (
+                  {offer && offer.discountTypeID === "FixedAmount" ? (
                     <div className={styles["info_boxo_"]}>
-                      <span>قيمة الخصم</span>
+                      <span>{pathOr("", [locale, "marketing", "discount_amount"], t)}</span>
                       <span>{offer && offer.discountValue}</span>
                     </div>
-                  ):(
+                  ) : (
                     <div className={styles["info_boxo_"]}>
-                      <span>نسبة الخصم</span>
+                      <span>{pathOr("", [locale, "marketing", "discount_prec"], t)}</span>
                       <span>{offer && offer.discountPercentage}%</span>
                     </div>
                   )}
                   <div className={styles["info_boxo_"]}>
-                                                <span>مع شحن مجاني</span>
-                                                <span>
-                                                    {offer && offer.isFreeDelivery ? "نعم":"لا"}
-                                                    <span className="font-18 main-color">
-                                                        <i className="fas fa-check-circle" />
-                                                    </span>
-                                                </span>
-                                            </div>
-                  <div className={styles["info_boxo_"]}>
-                    <span>تاريخ انتهاء التخفيض</span>
-                    <span>{offer && offer.expiryDate}</span>
-                  </div>
-                </div>
-                <div className="col-lg-7">
-                  <div className={styles["info_boxo_"]}>
-                    <span>نوع الكوبون</span>
+                    <span>{pathOr("", [locale, "marketing", "with_free_shipping"], t)}</span>
                     <span>
-                      {offer && offer.couponType === 1 ? "مبلغ ثابت من مجموع طلب العميل" : "نسبة من مجموع طلب العميل"}
+                      {offer && offer.isFreeDelivery
+                        ? pathOr("", [locale, "Branch", "yes"], t)
+                        : pathOr("", [locale, "Branch", "no"], t)}
                       <span className="font-18 main-color">
                         <i className="fas fa-check-circle" />
                       </span>
                     </span>
                   </div>
                   <div className={styles["info_boxo_"]}>
-                                                <span>الحد الأقصى للخصم</span>
-                                                <span>{offer && offer.maximumDiscount} ريال</span>
-                                            </div>
+                    <span>{pathOr("", [locale, "marketing", "discount_expiration_date"], t)}</span>
+                    <span>{offer && offer.expiryDate}</span>
+                  </div>
+                </div>
+                <div className="col-lg-7">
                   <div className={styles["info_boxo_"]}>
-                                                <span>استثناء المنتجات المخفضة</span>
-                                                <span>
-                                                    {offer && offer.excludeDiscountedProducts ? "نعم":"لا"}
-                                                    <span className="font-18 main-color">
-                                                        <i className="fas fa-check-circle" />
-                                                    </span>
-                                                </span>
-                                            </div>
+                    <span>{pathOr("", [locale, "marketing", "coupon_type"], t)}</span>
+                    <span>
+                      {offer && offer.couponType === 1
+                        ? pathOr("", [locale, "marketing", "fixed_amount_of_customer_order_total"], t)
+                        : pathOr("", [locale, "marketing", "percentage_of_customer_order_total"], t)}
+                      <span className="font-18 main-color">
+                        <i className="fas fa-check-circle" />
+                      </span>
+                    </span>
+                  </div>
                   <div className={styles["info_boxo_"]}>
-                    <span>عدد مرات الاستخدام للعميل الواحد</span>
-                    <span>{offer && offer.maxUseLimit === 0 ? 'لايوجد':`${offer && offer.maxUseLimit} مرة`} </span>
+                    <span>{pathOr("", [locale, "marketing", "maximum_discount_limit"], t)}</span>
+                    <span>
+                      {offer && offer.maximumDiscount} {pathOr("", [locale, "Products", "currency"], t)}
+                    </span>
+                  </div>
+                  <div className={styles["info_boxo_"]}>
+                    <span>{pathOr("", [locale, "marketing", "exclude_discounted_products"], t)}</span>
+                    <span>
+                      {offer && offer.excludeDiscountedProducts
+                        ? pathOr("", [locale, "Branch", "yes"], t)
+                        : pathOr("", [locale, "Branch", "no"], t)}
+                      <span className="font-18 main-color">
+                        <i className="fas fa-check-circle" />
+                      </span>
+                    </span>
+                  </div>
+                  <div className={styles["info_boxo_"]}>
+                    <span>{pathOr("", [locale, "marketing", "usage_per_customer"], t)}</span>
+                    <span>
+                      {offer && offer.maxUseLimit === 0
+                        ? pathOr("", [locale, "marketing", "none"], t)
+                        : `${offer && offer.maxUseLimit} ${pathOr("", [locale, "marketing", "once"], t)}`}{" "}
+                    </span>
                   </div>
                 </div>
               </div>
               <button className="btn-main mt-3" type="button" onClick={() => setEventKey("1")}>
-                التالي
+                {pathOr("", [locale, "marketing", "next"], t)}
               </button>
             </Accordion.Body>
           </Accordion.Item>
           <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="1">
             <Accordion.Button bsPrefix={styles["header_Accord"]} disabled>
               <span>2</span>
-              مشمول في الكوبون
+              {pathOr("", [locale, "marketing", "included_in_coupon"], t)}
             </Accordion.Button>
             <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
               <div className="form-content">
                 <form>
                   <div className="form-group">
-                    <label>تصنيفات مشمولة</label>
+                    <label>{pathOr("", [locale, "marketing", "included_categories"], t)}</label>
                     <FormControl
                       sx={{
                         m: 1,
@@ -297,7 +311,7 @@ const JoinCampaign = () => {
                     </FormControl>
                   </div>
                   <div className="form-group">
-                    <label>مجلدات مشمولة</label>
+                    <label>{pathOr("", [locale, "marketing", "included_folders"], t)}</label>
                     <FormControl
                       sx={{
                         m: 1,
@@ -340,7 +354,7 @@ const JoinCampaign = () => {
                     </FormControl>
                   </div>
                   <div className="form-group">
-                    <label>منتجات مشمولة</label>
+                    <label>{pathOr("", [locale, "marketing", "included_products"], t)}</label>
                     <div className="po_R">
                       <Autocomplete
                         disablePortal
@@ -377,9 +391,9 @@ const JoinCampaign = () => {
                   {Boolean(selectedProducts.length) && (
                     <div className="contint_paner">
                       <div className="d-flex align-items-center justify-content-between mb-3">
-                        <h5 className="f-b m-0">المنتجات المختارة</h5>
+                        <h5 className="f-b m-0">{pathOr("", [locale, "marketing", "selected_products"], t)}</h5>
                         <a onClick={handleRemoveAllSelectedProducts} className="main-color f-b font-18">
-                          حذف الكل
+                          {pathOr("", [locale, "marketing", "delete_all"], t)}
                         </a>
                       </div>
                       <ul>
@@ -407,7 +421,7 @@ const JoinCampaign = () => {
                     </div>
                   )}
                   <button className="btn-main mt-3" onClick={handleSubmit}>
-                    اضافة
+                    {pathOr("", [locale, "marketing", "add"], t)}
                   </button>
                 </form>
               </div>
