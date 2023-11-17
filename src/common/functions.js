@@ -10,7 +10,10 @@ export const formatDate = (date) => {
   const day = new Date(date)?.getDate()?.toString().padStart(2, "0")
   return ` ${day}/${+month + 1}/${year}`
 }
-
+export const minDate = () => {
+  const dateIntoArray = formatDate(new Date()).split("/")
+  return `${dateIntoArray[2]}-${dateIntoArray[1]}-${dateIntoArray[0].trim()}`
+}
 export const fetch = (url) => {
   return axios(url, {
     headers: {

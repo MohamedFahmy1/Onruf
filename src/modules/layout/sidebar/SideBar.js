@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Box, Button, List, Modal, Typography } from "@mui/material"
-import Logo from "../../../public/images/Logo.png"
+import Logo from "../../../public/images/Logo2x.png"
 import { StyledLogo, StyledSidebar } from "./styles"
 import ListItem from "./ListItem"
 import Router, { useRouter } from "next/router"

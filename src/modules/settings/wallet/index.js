@@ -168,7 +168,23 @@ const Wallet = () => {
                     onKeyDown={(e) => {
                       // Allow only numbers, decimal point, backspace, and delete keys
                       if (
-                        !["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "Backspace", "Delete"].includes(e.key)
+                        ![
+                          "0",
+                          "1",
+                          "2",
+                          "3",
+                          "4",
+                          "5",
+                          "6",
+                          "7",
+                          "8",
+                          "9",
+                          ".",
+                          "Backspace",
+                          "Delete",
+                          "ArrowRight",
+                          "ArrowLeft",
+                        ].includes(e.key)
                       ) {
                         e.preventDefault()
                       }

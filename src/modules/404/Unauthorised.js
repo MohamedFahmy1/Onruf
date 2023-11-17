@@ -1,5 +1,5 @@
 import style from "./Unauth.module.css"
-import Logo from "../../public/images/Logo.png"
+import Logo from "../../public/images/Logo2x.png"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/router"

@@ -4,7 +4,7 @@ import Pagination from "./../../../common/pagination"
 import Router, { useRouter } from "next/router"
 import { propOr, pathOr } from "ramda"
 import { MdModeEdit } from "react-icons/md"
-import { formatDate } from "../../../common/functions"
+import { formatDate, minDate } from "../../../common/functions"
 import Modal from "react-bootstrap/Modal"
 import axios from "axios"
 import { Button } from "react-bootstrap"
@@ -106,10 +106,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   useEffect(() => {
     p && setProducts(p)
   }, [p])
-  const minDate = () => {
-    const dateIntoArray = formatDate(new Date()).split("/")
-    return `${dateIntoArray[2]}-${dateIntoArray[1]}-${dateIntoArray[0].trim()}`
-  }
 
   const columns = useMemo(
     () => [
@@ -459,7 +455,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               </Modal.Body>
               <Modal.Footer className="modal-footer">
                 <button type="button" className="btn-main" onClick={handleAddDiscount}>
-                  حفظ
+                  {pathOr("", [locale, "Products", "save"], t)}
                 </button>
               </Modal.Footer>
             </Modal>

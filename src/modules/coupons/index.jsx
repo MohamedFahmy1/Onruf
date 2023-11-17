@@ -10,7 +10,6 @@ import Pagination from "../../common/pagination"
 import styles from "./coupons.module.css"
 import { toast } from "react-toastify"
 import { RiDeleteBin5Line } from "react-icons/ri"
-import { headersJson } from "../../../token"
 import t from "../../translations.json"
 import { pathOr } from "ramda"
 
@@ -32,6 +31,7 @@ const Coupons = () => {
       formData.append("id", couponId)
       const data = await axios.patch(`${process.env.REACT_APP_API_URL}/ChangeCouponStatus?couponId=${couponId}`, null)
       toast.success(locale === "en" ? "Coupon has been updated successfully!" : "تم تعديل الكوبون بنجاح")
+      getCopounsList()
     } catch (err) {
       toast.error(e.response.data.message)
       console.error(err)
@@ -80,7 +80,7 @@ const Coupons = () => {
   // }
   const getCopounsList = async () => {
     const data = await axios.get(
-      `${process.env.REACT_APP_API_URL}/ListBusinessAccountCoupons?pageIndex=1&PageRowsCount=10`,
+      `${process.env.REACT_APP_API_URL}/ListBusinessAccountCoupons?pageIndex=1&PageRowsCount=50`,
     )
     setCoupons(data.data.data)
   }

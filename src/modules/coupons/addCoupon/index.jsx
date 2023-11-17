@@ -13,6 +13,7 @@ import { Accordion } from "react-bootstrap"
 import { IoIosRemoveCircle } from "react-icons/io"
 import { toast } from "react-toastify"
 import { pathOr } from "ramda"
+import { minDate } from "../../../common/functions"
 import t from "../../../translations.json"
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
@@ -24,7 +25,15 @@ const MenuProps = {
     },
   },
 }
-
+const onlyNumbersInInputs = (e) => {
+  if (
+    !["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Backspace", "Delete", "ArrowRight", "ArrowLeft"].includes(
+      e.key,
+    )
+  ) {
+    e.preventDefault()
+  }
+}
 function getStyles(name, categoryName, theme) {
   return {
     fontWeight:
@@ -89,7 +98,7 @@ const AddCoupon = () => {
   const handleDecrease = (e, key) => {
     e.preventDefault()
     const value = e.target.previousSibling.valueAsNumber
-    setCouponPayload({ ...couponPayload, [key]: value >= 1 ? value - 1 : value })
+    setCouponPayload({ ...couponPayload, [key]: value > 1 ? value - 1 : value })
   }
 
   const handleChangeSelectedCat = ({ target: { value } }) => {
@@ -308,7 +317,10 @@ const AddCoupon = () => {
                         ? pathOr("", [locale, "Coupons", "discountAmount"], t)
                         : pathOr("", [locale, "Coupons", "discountPercentage"], t)}
                     </label>
-                    <div className={`${styles["input-group"]} input-group`}>
+                    <div
+                      className={`${styles["input-group"]} input-group`}
+                      style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}
+                    >
                       <span
                         className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                         id="basic-addon1"
@@ -319,10 +331,17 @@ const AddCoupon = () => {
                         <input
                           type="number"
                           className={`${styles["form-control"]} form-control`}
-                          min={couponPayload.discountTypeID == 2 ? 0 : undefined}
+                          min={1}
                           max={couponPayload.discountTypeID == 2 ? 100 : undefined}
                           value={couponPayload.discountValue}
-                          onChange={(e) => setCouponPayload({ ...couponPayload, discountValue: e.target.value })}
+                          onKeyDown={(e) => onlyNumbersInInputs(e)}
+                          onChange={(e) => {
+                            let value = e.target.value
+                            if (couponPayload.discountTypeID == 2 && value > 100) {
+                              value = 100
+                            }
+                            setCouponPayload({ ...couponPayload, discountValue: value })
+                          }}
                         />
                       </div>
                     </div>
@@ -362,7 +381,10 @@ const AddCoupon = () => {
                   </div>
                   <div className="form-group">
                     <label>{pathOr("", [locale, "Coupons", "minimumProductsAmount"], t)}</label>
-                    <div className={`${styles["input-group"]} input-group`}>
+                    <div
+                      className={`${styles["input-group"]} input-group`}
+                      style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}
+                    >
                       <span
                         className={`${styles["input-group-text"]} input-group-text main-color f-b`}
                         id="basic-addon1"
@@ -373,17 +395,16 @@ const AddCoupon = () => {
                         <input
                           type="number"
                           className={`${styles["form-control"]} form-control`}
-                          min={0}
+                          min={1}
                           max={couponPayload.discountTypeID == 2 ? 100 : undefined}
-                          value={couponPayload.discountValue}
+                          value={couponPayload.maximumDiscount}
+                          onKeyDown={(e) => onlyNumbersInInputs(e)}
                           onChange={(e) => {
                             let value = e.target.value
                             if (couponPayload.discountTypeID == 2 && value > 100) {
                               value = 100
-                            } else if (value < 0) {
-                              value = 0
                             }
-                            setCouponPayload({ ...couponPayload, discountValue: value })
+                            setCouponPayload({ ...couponPayload, maximumDiscount: value })
                           }}
                         />
                       </div>
@@ -396,6 +417,7 @@ const AddCoupon = () => {
                         label=""
                         value={couponPayload.ExpiryDate}
                         onChange={handleChangeDate}
+                        minDate={new Date()}
                         renderInput={(params) => (
                           <TextField
                             sx={{
@@ -408,8 +430,17 @@ const AddCoupon = () => {
                               border: "1px solid #ced4da",
                               borderRadius: "50px !important",
                               textIndent: 10,
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                border: "none", // Removes the border
+                              },
+                              "&:hover .MuiOutlinedInput-notchedOutline": {
+                                border: "none", // Removes the border on hover
+                              },
+                              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                                border: "none", // Removes the border on focus
+                                outline: "none", // Removes the outline on focus
+                              },
                             }}
-                            className="no-outline"
                             {...params}
                           />
                         )}
@@ -429,7 +460,8 @@ const AddCoupon = () => {
                             className="form-control"
                             value={couponPayload.maxUseLimit}
                             onChange={(e) => setCouponPayload({ ...couponPayload, maxUseLimit: e.target.value })}
-                            min={0}
+                            min={1}
+                            onKeyDown={(e) => onlyNumbersInInputs(e)}
                           />
                           <button onClick={(e) => handleDecrease(e, "maxUseLimit")} className="btn_ minus">
                             <FaMinus />
@@ -449,7 +481,8 @@ const AddCoupon = () => {
                             className="form-control"
                             value={couponPayload.maxUsePerClient}
                             onChange={(e) => setCouponPayload({ ...couponPayload, maxUsePerClient: e.target.value })}
-                            min={0}
+                            min={1}
+                            onKeyDown={(e) => onlyNumbersInInputs(e)}
                           />
                           <button onClick={(e) => handleDecrease(e, "maxUsePerClient")} className="btn_ minus">
                             <FaMinus />
