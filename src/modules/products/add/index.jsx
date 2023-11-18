@@ -13,9 +13,79 @@ const AddProduct = () => {
   const [step, setStep] = useState(1)
   const [selectedCatId, setSelectedCatId] = useState(null)
   const [selectedCatProps, setSelectedCatProps] = useState({})
+  const [speficationsPayload, setSpeficationsPayload] = useState([])
   const [product, setProduct] = useState()
   const { locale } = useRouter()
-  const [productFullData, setProductFullData] = useState({})
+  const [productPayload, setProductPayload] = useState({
+    nameAr: "",
+    nameEn: "",
+    subTitleAr: "",
+    subTitleEn: "",
+    descriptionAr: "",
+    descriptionEn: "",
+    qty: 1,
+    status: 1,
+    categoryId: selectedCatId,
+    countryId: null,
+    regionId: null,
+    neighborhoodId: null,
+    District: "",
+    Street: "",
+    GovernmentCode: "",
+    pakatId: null,
+    productSep: speficationsPayload,
+    listImageFile: [],
+    MainImageIndex: undefined,
+    videoUrl: [""],
+    ShippingOptions: [],
+    Lat: "30",
+    Lon: "30",
+    AcceptQuestion: false,
+    IsFixedPriceEnabled: true,
+    IsAuctionEnabled: false,
+    IsNegotiationEnabled: false,
+    Price: 0,
+    PaymentOptions: [3, 4],
+    ProductBankAccounts: [],
+    IsCashEnabled: false,
+    AuctionStartPrice: 0,
+    IsAuctionPaied: false,
+    SendOfferForAuction: false,
+    AuctionMinimumPrice: 0,
+    AuctionNegotiateForWhom: "",
+    AuctionNegotiatePrice: 0,
+    AuctionClosingTime: "",
+    "ProductPaymentDetailsDto.PakatId": 0,
+    "ProductPaymentDetailsDto.AdditionalPakatId": 0,
+    "ProductPaymentDetailsDto.ProductPublishPrice": selectedCatProps?.productPublishPrice,
+    "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": selectedCatProps?.enableFixedPriceSaleFee,
+    "ProductPaymentDetailsDto.EnableAuctionFee": selectedCatProps?.enableAuctionFee,
+    "ProductPaymentDetailsDto.EnableNegotiationFee": selectedCatProps?.enableNegotiationFee,
+    "ProductPaymentDetailsDto.ExtraProductImageFee": selectedCatProps?.extraProductImageFee,
+    "ProductPaymentDetailsDto.ExtraProductVidoeFee": selectedCatProps?.extraProductVidoeFee,
+    "ProductPaymentDetailsDto.SubTitleFee": selectedCatProps?.subTitleFee,
+    "ProductPaymentDetailsDto.CouponId": 0,
+    "ProductPaymentDetailsDto.CouponDiscountValue": 0,
+    "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": 0,
+    "ProductPaymentDetailsDto.TotalAmountAfterCoupon": 0,
+    "ProductPaymentDetailsDto.PaymentType": "Cash",
+    SendYourAccountInfoToAuctionWinner: false,
+    AlmostSoldOutQuantity: 1,
+  })
+  useEffect(() => {
+    setProductPayload((prev) => ({
+      ...prev,
+      categoryId: selectedCatId,
+      "ProductPaymentDetailsDto.ProductPublishPrice": selectedCatProps?.productPublishPrice,
+      "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": selectedCatProps?.enableFixedPriceSaleFee,
+      "ProductPaymentDetailsDto.EnableAuctionFee": selectedCatProps?.enableAuctionFee,
+      "ProductPaymentDetailsDto.EnableNegotiationFee": selectedCatProps?.enableNegotiationFee,
+      "ProductPaymentDetailsDto.ExtraProductImageFee": selectedCatProps?.extraProductImageFee,
+      "ProductPaymentDetailsDto.ExtraProductVidoeFee": selectedCatProps?.extraProductVidoeFee,
+      "ProductPaymentDetailsDto.SubTitleFee": selectedCatProps?.subTitleFee,
+    }))
+  }, [selectedCatProps, selectedCatId])
+
   const getProduct = async () => {
     try {
       const res = await axios(
@@ -40,11 +110,10 @@ const AddProduct = () => {
     setSelectedCatId(selectedCatId)
   }
 
-  const handleGoToReviewPage = (productData) => {
+  const handleGoToReviewPage = () => {
     setStep(3)
-    setProductFullData(productData)
   }
-  const handleGoToSteptwo = (productData) => {
+  const handleGoToSteptwo = () => {
     setStep(2)
   }
   return (
@@ -72,12 +141,16 @@ const AddProduct = () => {
             catId={selectedCatId}
             selectedCatProps={selectedCatProps}
             handleGoToReviewPage={handleGoToReviewPage}
+            productPayload={productPayload}
+            setProductPayload={setProductPayload}
+            speficationsPayload={speficationsPayload}
+            setSpeficationsPayload={setSpeficationsPayload}
           />
         )}
         {(step === 3 || (product && product?.id)) && (
           <AddProductReview
             selectedCatProps={selectedCatProps}
-            productFullData={productFullData}
+            productFullData={productPayload}
             handleBack={handleGoToSteptwo}
           />
         )}

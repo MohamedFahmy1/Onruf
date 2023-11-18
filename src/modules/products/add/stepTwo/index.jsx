@@ -18,83 +18,33 @@ import cityImage from "../../../../public/icons/neighboor.svg"
 import Image from "next/image"
 import AuctionClosingTimeComp from "./AuctionClosingTimeComp"
 
-const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewPage }) => {
-  console.log(selectedCatProps)
+const AddProductStepTwo = ({
+  catId,
+  product,
+  selectedCatProps,
+  handleGoToReviewPage,
+  productPayload,
+  setProductPayload,
+  speficationsPayload,
+  setSpeficationsPayload,
+}) => {
   const { locale } = useRouter()
   const router = useRouter()
   const id = useId()
   const [eventKey, setEventKey] = useState("0")
-  const [productName, setProductName] = useState("")
-  const [stateName, setStateName] = useState("")
   const [countries, setCountries] = useState([])
   const [regions, setRegions] = useState([])
   const [neighborhoods, setNeighborhoods] = useState([])
   const [packat, setPackat] = useState([])
   const [selectedPack, setselectedPack] = useState(packat?.length ? packat[0]?.id : 0)
   const [spesfications, setSpesfications] = useState([])
-  const [unlimtedQuantity, setUnlimtedQuantity] = useState(false)
+  const [unlimtedQuantity, setUnlimtedQuantity] = useState(productPayload.qty ? false : true)
   const [mainImgId, setMainImgId] = useState(null)
   const [mainImageIndex, setMainImageIndex] = useState(undefined)
-  const [speficationsPayload, setSpeficationsPayload] = useState([])
   const [userBanksData, setuserBanksData] = useState([])
   const [showBanksData, setShowBanksData] = useState(false)
   const [shippingOptions, setShippingOptions] = useState([])
-  const [productPayload, setProductPayload] = useState({
-    nameAr: "",
-    nameEn: "",
-    subTitleAr: "",
-    subTitleEn: "",
-    descriptionAr: "",
-    descriptionEn: "",
-    qty: 1,
-    status: 1,
-    categoryId: catId,
-    countryId: null,
-    regionId: null,
-    neighborhoodId: null,
-    District: "",
-    Street: "",
-    GovernmentCode: "",
-    pakatId: null,
-    productSep: speficationsPayload,
-    listImageFile: [],
-    MainImageIndex: undefined,
-    videoUrl: [""],
-    ShippingOptions: [],
-    Lat: "30",
-    Lon: "30",
-    AcceptQuestion: false,
-    IsFixedPriceEnabled: true,
-    IsAuctionEnabled: false,
-    IsNegotiationEnabled: false,
-    Price: 0,
-    PaymentOptions: [3, 4],
-    ProductBankAccounts: [],
-    IsCashEnabled: false,
-    AuctionStartPrice: 0,
-    IsAuctionPaied: false,
-    SendOfferForAuction: false,
-    AuctionMinimumPrice: 0,
-    AuctionNegotiateForWhom: "",
-    AuctionNegotiatePrice: 0,
-    AuctionClosingTime: "",
-    "ProductPaymentDetailsDto.PakatId": 0,
-    "ProductPaymentDetailsDto.AdditionalPakatId": 0,
-    "ProductPaymentDetailsDto.ProductPublishPrice": selectedCatProps.productPublishPrice,
-    "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": selectedCatProps.enableFixedPriceSaleFee,
-    "ProductPaymentDetailsDto.EnableAuctionFee": selectedCatProps.enableAuctionFee,
-    "ProductPaymentDetailsDto.EnableNegotiationFee": selectedCatProps.enableNegotiationFee,
-    "ProductPaymentDetailsDto.ExtraProductImageFee": selectedCatProps.extraProductImageFee,
-    "ProductPaymentDetailsDto.ExtraProductVidoeFee": selectedCatProps.extraProductVidoeFee,
-    "ProductPaymentDetailsDto.SubTitleFee": selectedCatProps.subTitleFee,
-    "ProductPaymentDetailsDto.CouponId": 0,
-    "ProductPaymentDetailsDto.CouponDiscountValue": 0,
-    "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": 0,
-    "ProductPaymentDetailsDto.TotalAmountAfterCoupon": 0,
-    "ProductPaymentDetailsDto.PaymentType": "Cash",
-    SendYourAccountInfoToAuctionWinner: false,
-    AlmostSoldOutQuantity: 1,
-  })
+
   const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
     try {
       const {
@@ -235,7 +185,6 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
             AuctionNegotiateForWhom: productMazadNegotiate?.forWhom || 0,
             AuctionNegotiatePrice: productMazadNegotiate?.price || 0,
           })
-          setStateName(regionName)
         }
       } catch (e) {
         Alerto(e)
@@ -285,7 +234,13 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
   }
 
   const toggleAccordionPanel = (eKey) => {
-    eventKey === eKey ? setEventKey("") : setEventKey(eKey)
+    if (eKey > eventKey) {
+      return toast.error(
+        locale === "en"
+          ? "Please enter all necessary data in current section to proceed!"
+          : "من فضلك ادخل جميع البيانات اللازمة في القسم الحالي قبل الانتقال الي القسم التالي",
+      )
+    } else setEventKey(eKey)
   }
 
   Array.prototype.move = function (from, to) {
@@ -408,8 +363,8 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
     return isInputEmpty
   }
   const productDetailsValidation = () => {
-    for (let i = 0; i < speficationsPayload.length; i++) {
-      if (speficationsPayload[i].ValueSpeAr === "") {
+    for (let i = 0; i < productPayload.productSep.length; i++) {
+      if (productPayload.productSep[i].ValueSpeAr === "") {
         return toast.error(locale === "en" ? "Please enter all necessary data" : "رجاء ادخال جميع البيانات")
       }
     }
@@ -492,11 +447,13 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                   <img src={product?.id ? img?.url : URL.createObjectURL(img)} />
                   <label htmlFor={img.id}>
                     <span> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
+                    {console.log(index, productPayload.MainImageIndex)}
                     <input
                       id={img.id}
                       type="radio"
                       name="isMain"
-                      checked={img?.id === mainImgId}
+                      defaultChecked={index === +productPayload.MainImageIndex}
+                      checked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
                       onChange={() => handleMainImage(img.id, index)}
                     />
                   </label>
@@ -579,7 +536,11 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                         <select
                           required={spesfication.isRequired}
                           id={index}
-                          // value={productPayload?.listProductSep[1]?.valueSpa}
+                          value={
+                            locale === "en"
+                              ? productPayload?.productSep[index]?.ValueSpeEn
+                              : productPayload?.productSep[index]?.ValueSpeAr
+                          }
                           className={`${styles["form-control"]} form-control form-select`}
                           onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
                         >
@@ -590,13 +551,18 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                             spesfication.subSpecifications.map((subSpecification) => (
                               <option
                                 defaultValue={
-                                  productPayload?.productSep?.find(({ headerSpe }) => headerSpe === spesfication?.name)
-                                    ?.valueSpe
+                                  locale == "en"
+                                    ? productPayload?.productSep?.find(
+                                        ({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.name,
+                                      )?.ValueSpeEn
+                                    : productPayload?.productSep?.find(
+                                        ({ HeaderSpeAr }) => HeaderSpeAr === spesfication?.name,
+                                      )?.ValueSpeAr
                                 }
                                 key={subSpecification?.id}
                                 value={subSpecification.id}
                               >
-                                {subSpecification.nameAr}
+                                {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
                               </option>
                             ))}
                         </select>
@@ -605,9 +571,14 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                         <input
                           type={"text"}
                           id={index}
-                          defaultValue={
-                            productPayload?.productSep?.find(({ headerSpe }) => headerSpe === spesfication?.name)
-                              ?.valueSpe
+                          value={
+                            locale === "en"
+                              ? productPayload?.productSep?.find(
+                                  ({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.name,
+                                )?.ValueSpeEn
+                              : productPayload?.productSep?.find(
+                                  ({ HeaderSpeAr }) => HeaderSpeAr === spesfication?.name,
+                                )?.ValueSpeAr
                           }
                           required={spesfication.isRequired}
                           placeholder={spesfication.placeHolder}
@@ -1026,9 +997,8 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                             id="District"
                             className={`form-control ${styles["form-control"]}`}
                             placeholder={pathOr("", [locale, "Products", "enterArea"], t)}
-                            value={stateName}
+                            value={productPayload.District}
                             onChange={(e) => {
-                              setStateName(e.target.value)
                               setProductPayload({ ...productPayload, District: e.target.value })
                             }}
                           />
@@ -1072,7 +1042,6 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                       className="form-check-input m-0"
                       type="checkbox"
                       id="flexSwitchCheckCheck"
-                      value={productPayload.AcceptQuestion}
                       checked={productPayload.AcceptQuestion}
                       onChange={() =>
                         setProductPayload({ ...productPayload, AcceptQuestion: !productPayload.AcceptQuestion })
@@ -1323,6 +1292,7 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                               type="checkbox"
                               role="switch"
                               id="flexSwitchCheckChecked"
+                              checked={productPayload.SendYourAccountInfoToAuctionWinner}
                               onChange={(e) =>
                                 setProductPayload((prev) => ({
                                   ...prev,
@@ -1711,26 +1681,48 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                                 {pathOr("", [locale, "Products", "freeDelivery"], t)}
                               </button>
                             </div>
-                            <div className={styles["time"]}>
-                              <div>
-                                <span>01</span> Day
+                            {productPayload.AuctionClosingTime && (
+                              <div className={styles["time"]}>
+                                <div>
+                                  <span>
+                                    {Math.floor(
+                                      (new Date(productPayload.AuctionClosingTime) - new Date()) /
+                                        (1000 * 60 * 60 * 24),
+                                    )}
+                                  </span>{" "}
+                                  Day
+                                </div>
+                                <div>
+                                  <span>
+                                    {Math.floor(
+                                      ((new Date(productPayload.AuctionClosingTime) - new Date()) %
+                                        (1000 * 60 * 60 * 24)) /
+                                        (1000 * 60 * 60),
+                                    )}
+                                  </span>{" "}
+                                  Hour
+                                </div>
+                                <div>
+                                  <span>
+                                    {Math.floor(
+                                      ((new Date(productPayload.AuctionClosingTime) - new Date()) % (1000 * 60 * 60)) /
+                                        (1000 * 60),
+                                    )}
+                                  </span>{" "}
+                                  min
+                                </div>
                               </div>
-                              <div>
-                                <span>12</span> Hour
-                              </div>
-                              <div>
-                                <span>20</span> man
-                              </div>
-                            </div>
+                            )}
                             <button className={styles["btn-star"]}>
                               <FaStar />
                             </button>
                           </div>
                           <div className={styles["info"]}>
                             <div className="mb-3">
-                              <h5 className="f-b mb-1">{productName}</h5>
+                              <h5 className="f-b mb-1">{productPayload?.nameAr}</h5>
                               <div className="font-18 gray-color">
-                                {productPayload?.productPayload?.regionId} - {new Date().toLocaleDateString()}
+                                {regions?.find((item) => +item.id === +productPayload?.regionId)?.name} -{" "}
+                                {new Date().toLocaleDateString()}
                               </div>
                             </div>
                             <div className="row">
@@ -1742,12 +1734,17 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                                   </div>
                                 </div>
                               </div>
-                              <div className="col-md-6">
-                                <div className="font-18">
-                                  <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
-                                  <div className="f-b">290 {pathOr("", [locale, "Products", "currency"], t)}</div>
+                              {productPayload?.HighestBidPrice && (
+                                <div className="col-md-6">
+                                  <div className="font-18">
+                                    <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
+                                    <div className="f-b">
+                                      {productPayload?.HighestBidPrice}{" "}
+                                      {pathOr("", [locale, "Products", "currency"], t)}
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -1771,26 +1768,54 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                                 {pathOr("", [locale, "Products", "freeDelivery"], t)}
                               </button>
                             </div>
-                            <div className={styles["time"]}>
-                              <div>
-                                <span>01</span> Day
+                            {/*          const auctionClosingTime = new Date(auctionClosingTimeStr)
+                              const currentTime = new Date()
+                              const timeDifference = auctionClosingTime - currentTime
+                              const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
+                              const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+                              const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60))*/}
+                            {productPayload.AuctionClosingTime && (
+                              <div className={styles["time"]}>
+                                <div>
+                                  <span>
+                                    {Math.floor(
+                                      (new Date(productPayload.AuctionClosingTime) - new Date()) /
+                                        (1000 * 60 * 60 * 24),
+                                    )}
+                                  </span>{" "}
+                                  Day
+                                </div>
+                                <div>
+                                  <span>
+                                    {Math.floor(
+                                      ((new Date(productPayload.AuctionClosingTime) - new Date()) %
+                                        (1000 * 60 * 60 * 24)) /
+                                        (1000 * 60 * 60),
+                                    )}
+                                  </span>{" "}
+                                  Hour
+                                </div>
+                                <div>
+                                  <span>
+                                    {Math.floor(
+                                      ((new Date(productPayload.AuctionClosingTime) - new Date()) % (1000 * 60 * 60)) /
+                                        (1000 * 60),
+                                    )}
+                                  </span>{" "}
+                                  min
+                                </div>
                               </div>
-                              <div>
-                                <span>12</span> Hour
-                              </div>
-                              <div>
-                                <span>20</span> man
-                              </div>
-                            </div>
+                            )}
                             <button className={styles["btn-star"]}>
                               <FaStar />
                             </button>
                           </div>
                           <div className={styles["info"]}>
                             <div className="mb-3">
-                              <h5 className="f-b mb-1">{productName}</h5>
+                              <h5 className="f-b mb-1">{productPayload?.nameAr}</h5>
                               <div className="font-18 gray-color">
-                                {productPayload?.regionId} - {new Date().toLocaleDateString()}
+                                {regions?.find((item) => +item.id === +productPayload?.regionId)?.name} -{" "}
+                                {new Date().toLocaleDateString()}
                               </div>
                             </div>
                             <div className="row">
@@ -1802,12 +1827,17 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
                                   </div>
                                 </div>
                               </div>
-                              <div className="col-md-6">
-                                <div className="font-18">
-                                  <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
-                                  <div className="f-b">290 {pathOr("", [locale, "Products", "currency"], t)}</div>
+                              {productPayload?.HighestBidPrice && (
+                                <div className="col-md-6">
+                                  <div className="font-18">
+                                    <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
+                                    <div className="f-b">
+                                      {productPayload?.HighestBidPrice}{" "}
+                                      {pathOr("", [locale, "Products", "currency"], t)}
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -1824,7 +1854,10 @@ const AddProductStepTwo = ({ catId, product, selectedCatProps, handleGoToReviewP
               onClick={(e) => {
                 if (product?.id) {
                   handleSubmit(e)
-                } else handleGoToReviewPage(productPayload)
+                } else {
+                  handleGoToReviewPage()
+                  setEventKey("0")
+                }
               }}
             >
               {router.pathname.includes("edit")

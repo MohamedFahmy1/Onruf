@@ -42,8 +42,8 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const productsCount = products?.length
   const avaliableProducts = (productsCount > 0 && products?.filter(({ isActive }) => isActive)) || []
   const inActiveProducts = (productsCount > 0 && products?.filter(({ isActive }) => !isActive)) || []
-  const productsAlmostOut = (productsCount > 0 && products?.filter(({ qty }) => qty < 2)) || []
-
+  const productsAlmostOut = (productsCount > 0 && products?.filter(({ qty }) => qty < 2 && qty != null)) || []
+  console.log(products)
   const filterProducts =
     selectedFilter === "avaliableProducts"
       ? avaliableProducts
@@ -168,37 +168,46 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         accessor: "price",
         Cell: ({ row: { values, original } }) => (
           <div>
-            <span>
-              <span>
-                <h6
-                  className="m-0 f-b"
-                  style={{
-                    textDecoration:
-                      (original?.priceDisc || original?.priceDiscount) === original?.price ? undefined : "line-through",
-                  }}
-                >
-                  {propOr("-", ["price"], values)} {pathOr("", [locale, "Products", "currency"], t)}
-                </h6>
-              </span>
-              {(original?.priceDisc || original?.priceDiscount) !== original?.price && (
+            {original?.isFixedPriceEnabled ? (
+              <div>
                 <span>
-                  <h6 className="m-0 f-b">
-                    {original?.priceDisc || original?.priceDiscount} {pathOr("", [locale, "Products", "currency"], t)}
-                  </h6>
+                  <span>
+                    <h6
+                      className="m-0 f-b"
+                      style={{
+                        textDecoration:
+                          (original?.priceDisc || original?.priceDiscount) === original?.price
+                            ? undefined
+                            : "line-through",
+                      }}
+                    >
+                      {propOr("-", ["price"], values)} {pathOr("", [locale, "Products", "currency"], t)}
+                    </h6>
+                  </span>
+                  {(original?.priceDisc || original?.priceDiscount) !== original?.price && (
+                    <span>
+                      <h6 className="m-0 f-b">
+                        {original?.priceDisc || original?.priceDiscount}{" "}
+                        {pathOr("", [locale, "Products", "currency"], t)}
+                      </h6>
+                    </span>
+                  )}
                 </span>
-              )}
-            </span>
-            <button
-              className="info_"
-              data-bs-toggle="modal"
-              onClick={() => {
-                setOpenPriceModal(!openPriceModal)
-                setSingleSelectedRow(original)
-              }}
-              data-bs-target="#Quantity-reduction"
-            >
-              {pathOr("", [locale, "Products", "discount"], t)}
-            </button>
+                <button
+                  className="info_"
+                  data-bs-toggle="modal"
+                  onClick={() => {
+                    setOpenPriceModal(!openPriceModal)
+                    setSingleSelectedRow(original)
+                  }}
+                  data-bs-target="#Quantity-reduction"
+                >
+                  {pathOr("", [locale, "Products", "discount"], t)}
+                </button>
+              </div>
+            ) : (
+              "-"
+            )}
           </div>
         ),
       },

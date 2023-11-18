@@ -273,7 +273,7 @@ export const OrderDetails = () => {
                 <span className="f-b">{pathOr("", [locale, "Orders", "free_shipping_in_saudi"], t)}</span>
               </div>
               <div className="info_shan">
-                <span>{pathOr("", [locale, "Orders", "payment_method"], t)}</span>{" "}
+                <span>{pathOr("", [locale, "Orders", "payment_method"], t)}</span> {console.log(paymentType)}
                 <span className="f-b">{paymentTypesTranslation(paymentType, locale)}</span>
               </div>
               <div className="po_R upload_filo my-3">

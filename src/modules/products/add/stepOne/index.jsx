@@ -13,15 +13,19 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps }) 
     locale,
     query: { id },
   } = useRouter()
-
   const router = useRouter()
-
   const [catSearchInputVal, setCatSearchInputVal] = useState("")
   const [allCats, setAllCats] = useState([])
   const [categoriesAndSubListByName, setCategoriesAndSubListByName] = useState([])
   const [selectedCatId, setSelectedCatId] = useState(null)
   const [selectedCat, setSelectedCat] = useState(null)
   const [categoriesAndSubList, setCategoriesAndSubList] = useState([])
+  console.log("catSearchInputVal: ", catSearchInputVal)
+  console.log("allCats: ", allCats)
+  console.log("categoriesAndSubListByName: ", categoriesAndSubListByName)
+  console.log("selectedCatId: ", selectedCatId)
+  console.log("selectedCat: ", selectedCat)
+  console.log("categoriesAndSubList: ", categoriesAndSubList)
   useEffect(() => {
     if (router.pathname.includes("edit")) {
       setCatSearchInputVal(product.name)
@@ -61,6 +65,7 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps }) 
     if (selected?.list?.length && !categoriesAndSubList?.find((category) => category?.id === selected?.id)) {
       setCategoriesAndSubList([...categoriesAndSubList, selected])
     } else if (allCats.find((cat) => cat?.id === selected?.id)) {
+      console.log("Hello there!")
       setCategoriesAndSubList([])
     }
   }

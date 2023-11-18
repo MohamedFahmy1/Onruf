@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { FiPlusCircle } from "react-icons/fi"
 import { BiChart } from "react-icons/bi"
 import { useRouter } from "next/router"
-import { propOr } from "ramda"
+import { propOr, pathOr } from "ramda"
 import axios from "axios"
 import Table from "../../common/table"
 import Pagination from "../../common/pagination"
@@ -11,7 +11,6 @@ import styles from "./coupons.module.css"
 import { toast } from "react-toastify"
 import { RiDeleteBin5Line } from "react-icons/ri"
 import t from "../../translations.json"
-import { pathOr } from "ramda"
 
 const Coupons = () => {
   const router = useRouter()
