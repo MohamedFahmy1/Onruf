@@ -17,6 +17,7 @@ import regionImage from "../../../../public/icons/008-maps.svg"
 import cityImage from "../../../../public/icons/neighboor.svg"
 import Image from "next/image"
 import AuctionClosingTimeComp from "./AuctionClosingTimeComp"
+import { onlyNumbersInInputs } from "../../../../common/functions"
 
 const AddProductStepTwo = ({
   catId,
@@ -795,6 +796,7 @@ const AddProductStepTwo = ({
                           disabled={unlimtedQuantity}
                           className={`form-control ${styles["form-control"]} ${unlimtedQuantity ? "disabled" : ""}`}
                           value={productPayload.qty == null ? "" : productPayload.qty}
+                          onKeyDown={(e) => onlyNumbersInInputs(e)}
                           onChange={(e) => setProductPayload({ ...productPayload, qty: +e.target.value })}
                         />
                         <button
@@ -835,6 +837,7 @@ const AddProductStepTwo = ({
                             type="unlimtedQuantity ? 'text' : 'number'"
                             className={`form-control ${styles["form-control"]}`}
                             value={productPayload.AlmostSoldOutQuantity == 0 ? 1 : productPayload.AlmostSoldOutQuantity}
+                            onKeyDown={(e) => onlyNumbersInInputs(e)}
                             onChange={(e) =>
                               setProductPayload({ ...productPayload, AlmostSoldOutQuantity: +e.target.value })
                             }
@@ -1186,6 +1189,7 @@ const AddProductStepTwo = ({
                             <input
                               id="Price"
                               type="number"
+                              onKeyDown={(e) => onlyNumbersInInputs(e)}
                               value={productPayload.Price === 0 ? "" : productPayload.Price}
                               onChange={(e) => setProductPayload({ ...productPayload, Price: +e.target.value })}
                               className={`form-control ${styles["form-control"]}`}
@@ -1217,6 +1221,7 @@ const AddProductStepTwo = ({
                               <div className="po_R flex-grow-1">
                                 <input
                                   type="number"
+                                  onKeyDown={(e) => onlyNumbersInInputs(e)}
                                   value={productPayload.AuctionStartPrice === 0 ? "" : productPayload.AuctionStartPrice}
                                   onChange={(e) =>
                                     setProductPayload({ ...productPayload, AuctionStartPrice: +e.target.value })
@@ -1246,6 +1251,7 @@ const AddProductStepTwo = ({
                               <div className="po_R flex-grow-1">
                                 <input
                                   type="number"
+                                  onKeyDown={(e) => onlyNumbersInInputs(e)}
                                   value={
                                     productPayload.AuctionMinimumPrice === 0 ? " " : productPayload.AuctionMinimumPrice
                                   }
@@ -1329,6 +1335,7 @@ const AddProductStepTwo = ({
                                   <input
                                     type="number"
                                     className={`form-control ${styles["form-control"]}`}
+                                    onKeyDown={(e) => onlyNumbersInInputs(e)}
                                     value={
                                       productPayload.AuctionNegotiatePrice === 0
                                         ? ""

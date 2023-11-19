@@ -1,6 +1,6 @@
-import { Fragment, useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback } from "react"
 import axios from "axios"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/router"
 import styles from "./stepOne.module.css"
 import { FaTimes } from "react-icons/fa"
 import { pathOr, propOr } from "ramda"
@@ -20,12 +20,7 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps }) 
   const [selectedCatId, setSelectedCatId] = useState(null)
   const [selectedCat, setSelectedCat] = useState(null)
   const [categoriesAndSubList, setCategoriesAndSubList] = useState([])
-  console.log("catSearchInputVal: ", catSearchInputVal)
-  console.log("allCats: ", allCats)
-  console.log("categoriesAndSubListByName: ", categoriesAndSubListByName)
-  console.log("selectedCatId: ", selectedCatId)
-  console.log("selectedCat: ", selectedCat)
-  console.log("categoriesAndSubList: ", categoriesAndSubList)
+
   useEffect(() => {
     if (router.pathname.includes("edit")) {
       setCatSearchInputVal(product.name)
@@ -65,11 +60,26 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps }) 
     if (selected?.list?.length && !categoriesAndSubList?.find((category) => category?.id === selected?.id)) {
       setCategoriesAndSubList([...categoriesAndSubList, selected])
     } else if (allCats.find((cat) => cat?.id === selected?.id)) {
-      console.log("Hello there!")
       setCategoriesAndSubList([])
     }
   }
-
+  const handleSelectChangeCat = (e) => {
+    setSelectedCatId(+e.target.value)
+    let selected =
+      selectedCat && selectedCat.list.length
+        ? selectedCat?.list?.find((cat) => cat?.id?.toString() === e.target.value)
+        : allCats.find((cat) => cat?.id?.toString() === e.target.value)
+    setSelectedCat(selected || allCats.find((cat) => cat?.id?.toString() === e.target.value))
+    if (selected?.list?.length && !categoriesAndSubList?.find((category) => category?.id === selected?.id)) {
+      if (allCats.some((item) => +item.id === +e.target.value) && categoriesAndSubList.length >= 1) {
+        setCategoriesAndSubList([selected])
+      } else {
+        setCategoriesAndSubList([...categoriesAndSubList, selected])
+      }
+    } else if (allCats.find((cat) => cat?.id === selected?.id)) {
+      setCategoriesAndSubList([])
+    }
+  }
   const hanldeReset = () => {
     setSelectedCat(null)
     setSelectedCatId(null)
@@ -183,11 +193,14 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps }) 
                     <label className="d-block text-center">
                       {pathOr("", [locale, "Products", "selectCategory"], t)}
                     </label>
-                    <select value={selectedCatId} className="form-control form-select" onChange={handleSelectChange}>
+                    <select
+                      value={categoriesAndSubList[0]?.id}
+                      className="form-control form-select"
+                      onChange={handleSelectChangeCat}
+                    >
                       <option disabled selected value>
                         {pathOr("", [locale, "Products", "selectOption"], t)}
                       </option>
-
                       {allCats.map((cat, index) => (
                         <option key={cat?.id} value={cat?.id}>
                           {cat?.name}
@@ -204,10 +217,12 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps }) 
                 {Boolean(categoriesAndSubList.length) &&
                   categoriesAndSubList.map((category) => (
                     <div className="form-group" key={category?.id}>
-                      <label className="d-block text-center">القسم الفرعي</label>
+                      <label className="d-block text-center">
+                        {pathOr("", [locale, "Products", "subcategory"], t)}
+                      </label>
                       <select className="form-control form-select" onChange={handleSelectChange} defaultValue={0}>
-                        <option disabled value={0}>
-                          اختر قسم
+                        <option disabled hidden value={0}>
+                          {pathOr("", [locale, "Products", "choose_department"], t)}
                         </option>
                         {category?.list?.map((subCategory) => (
                           <option key={subCategory?.id} value={subCategory?.id}>

@@ -13,7 +13,7 @@ import { Accordion } from "react-bootstrap"
 import { IoIosRemoveCircle } from "react-icons/io"
 import { toast } from "react-toastify"
 import { pathOr } from "ramda"
-import { minDate } from "../../../common/functions"
+import { onlyNumbersInInputs } from "../../../common/functions"
 import t from "../../../translations.json"
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
@@ -25,15 +25,7 @@ const MenuProps = {
     },
   },
 }
-const onlyNumbersInInputs = (e) => {
-  if (
-    !["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Backspace", "Delete", "ArrowRight", "ArrowLeft"].includes(
-      e.key,
-    )
-  ) {
-    e.preventDefault()
-  }
-}
+
 function getStyles(name, categoryName, theme) {
   return {
     fontWeight:

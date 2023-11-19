@@ -43,7 +43,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const avaliableProducts = (productsCount > 0 && products?.filter(({ isActive }) => isActive)) || []
   const inActiveProducts = (productsCount > 0 && products?.filter(({ isActive }) => !isActive)) || []
   const productsAlmostOut = (productsCount > 0 && products?.filter(({ qty }) => qty < 2 && qty != null)) || []
-  console.log(products)
   const filterProducts =
     selectedFilter === "avaliableProducts"
       ? avaliableProducts

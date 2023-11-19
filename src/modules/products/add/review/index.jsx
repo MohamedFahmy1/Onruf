@@ -48,12 +48,14 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => 
     setShippingOptions(shippingNames)
   }
   const getPackage = async () => {
-    const data = await axios.get(
-      process.env.NEXT_PUBLIC_API_URL +
-        `/GetPakaById?Pakatid=${productFullData.pakatId}
-    `,
-    )
-    setPackageDetails(data?.data?.data)
+    if (productFullData.pakatId) {
+      const data = await axios.get(
+        process.env.NEXT_PUBLIC_API_URL +
+          `/GetPakaById?Pakatid=${productFullData.pakatId}
+      `,
+      )
+      setPackageDetails(data?.data?.data)
+    }
   }
 
   const applyCoupon = async () => {
@@ -128,7 +130,7 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => 
           })
       }
       // if any value is empty don't send it to the api
-      else if (value === "") {
+      else if (value === "" || value === null) {
         continue
       } else {
         formData.append(key, value)

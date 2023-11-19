@@ -238,7 +238,9 @@
       "additional_product_videos_fee": "رسوم فيديوهات المنتج الإضافية",
       "couponCode": "كود الكوبون",
       "coupon_discount": "خصم الكوبون",
-      "tax": "الضريبة المضافة (%12)"
+      "tax": "الضريبة المضافة (%12)",
+      "subcategory": "القسم الفرعي",
+      "choose_department": "اختر قسم"
     },
     "Users": {
       "users": "العملاء",
@@ -853,7 +855,9 @@
       "additional_product_videos_fee": "Additional Product Videos Fee",
       "couponCode": "Coupon Code",
       "coupon_discount": "Coupon Discount",
-      "tax": "VAT (12%)"
+      "tax": "VAT (12%)",
+      "subcategory": "Subcategory",
+      "choose_department": "Choose Subcategory"
     },
     "Users": {
       "users": "Clients",
