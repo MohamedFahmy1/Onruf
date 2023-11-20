@@ -8,7 +8,7 @@ module.exports = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ["onrufwebsite6-001-site1.htempurl.com"],
+    domains: ["onrufwebsite6-001-site1.htempurl.com", "onruf.vercel.app"],
   },
   // distDir: "build",
   nextConfig,
