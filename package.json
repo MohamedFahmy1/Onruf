@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next -p 3030",
     "export": "next export",
-    "build": "npm install -g n && n 17 && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
