@@ -76,7 +76,7 @@ const LatestOrders = ({ orders }) => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <div className="f-b main-color" style={{ cursor: "pointer" }}>
-              {orderStatusTranslate(original?.status, locale)}
+              {original?.status && orderStatusTranslate(original?.status, locale)}
             </div>
           </Link>
         ),

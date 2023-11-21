@@ -29,7 +29,8 @@ const Navbar = () => {
     axios.defaults.headers.common["Authorization"] = token
     axios.defaults.headers.common["Provider-Id"] = providerId
     axios.defaults.headers.common["Business-Account-Id"] = buisnessAccountId
-  }, [token, providerId, buisnessAccountId])
+    axios.defaults.headers.common["User-Language"] = locale
+  }, [token, providerId, buisnessAccountId, locale])
 
   const getAllBuisnessAccounts = async (id) => {
     const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/GatAllBusinessAccounts`)
@@ -50,11 +51,11 @@ const Navbar = () => {
 
   useEffect(() => {
     getAllBuisnessAccounts()
-  }, [])
+  }, [locale])
 
   useEffect(() => {
     businessAccountList && accountData()
-  }, [businessAccountList])
+  }, [businessAccountList, locale])
 
   const onClick = () => {
     setToggleBusinessAccountList(!toggleBusinessAccountList)

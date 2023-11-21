@@ -54,19 +54,19 @@ export const orderStatusTranslate = (statusFromApi, locale) => {
     case "Canceled":
       return pathOr("", [locale, "Orders", "canceled"], t)
     default:
-      if (typeFromApi.match(/payment/gi)) {
+      if (statusFromApi?.match(/payment/gi) || statusFromApi === "بانتظار الدفع") {
         return pathOr("", [locale, "Orders", "waiting_for_payment"], t)
-      } else if (typeFromApi.match(/review/gi)) {
+      } else if (statusFromApi?.match(/review/gi) || statusFromApi === "بانتظار المراجعة") {
         return pathOr("", [locale, "Orders", "waiting_for_review"], t)
-      } else if (typeFromApi.match(/in progress/gi)) {
+      } else if (statusFromApi?.match(/in progress/gi) || statusFromApi === "فى تقدم") {
         return pathOr("", [locale, "Orders", "in_progress"], t)
-      } else if (typeFromApi.match(/ready/gi)) {
+      } else if (statusFromApi?.match(/ready/gi) || statusFromApi === "جاهزة للتسليم") {
         return pathOr("", [locale, "Orders", "ready_for_delivery"], t)
-      } else if (typeFromApi.match(/delivery in/gi)) {
+      } else if (statusFromApi?.match(/delivery in/gi) || statusFromApi === "التسليم قيد التقدم") {
         return pathOr("", [locale, "Orders", "delivery_in_progress"], t)
-      } else if (typeFromApi.match(/delivered/gi)) {
+      } else if (statusFromApi?.match(/delivered/gi) || statusFromApi === "تم تسليم الطلب") {
         return pathOr("", [locale, "Orders", "delivered"], t)
-      } else if (typeFromApi.match(/cancel/gi)) {
+      } else if (statusFromApi?.match(/cancel/gi) || statusFromApi === "ملغية") {
         return pathOr("", [locale, "Orders", "canceled"], t)
       } else return "Unknown payment type"
   }
@@ -97,11 +97,11 @@ export const paymentTypesTranslation = (typeFromApi, locale) => {
 }
 
 export const orderTypesTranslation = (typeFromApi, locale) => {
-  if (typeFromApi.match(/Fixed/gi)) {
+  if (typeFromApi?.match(/Fixed/gi)) {
     return pathOr("", [locale, "Orders", "fixedPrice"], t)
-  } else if (typeFromApi.match(/negotiation/gi)) {
+  } else if (typeFromApi?.match(/negotiation/gi)) {
     return pathOr("", [locale, "Orders", "negotiation"], t)
-  } else if (typeFromApi.match(/auction/gi)) {
+  } else if (typeFromApi?.match(/auction/gi)) {
     return pathOr("", [locale, "Orders", "auction"], t)
   } else return "Unknown order type"
 }

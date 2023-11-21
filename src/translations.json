@@ -5,6 +5,11 @@
       "switch": "تغيير الحساب",
       "enter": "دخول"
     },
+    "negotiation": {
+      "negotiationOffers": "عروض التفاوض",
+      "recieved": "المستلمة",
+      "sent": "المرسلة"
+    },
     "sidebar": {
       "home": "الرئيسية",
       "products": "المنتجات",
@@ -622,6 +627,11 @@
       "search": "Search by order number, product",
       "switch": "Switch accounts",
       "enter": "Enter"
+    },
+    "negotiation": {
+      "negotiationOffers": "Negotiation offers",
+      "recieved": "Received",
+      "sent": "Sent"
     },
     "sidebar": {
       "home": "Home",
