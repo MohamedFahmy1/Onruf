@@ -10,15 +10,15 @@ function NegotiationOffers() {
   const [selectedTab, setSelectedTab] = useState(0)
   const [offersData, setOffersData] = useState()
   const { locale } = useRouter()
+  const getOffers = async () => {
+    const {
+      data: { data: offers },
+    } = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/GetSaleProductsOffers?isSent=${selectedTab == 0 ? "false" : "true"}`,
+    )
+    setOffersData(offers)
+  }
   useEffect(() => {
-    const getOffers = async () => {
-      const {
-        data: { data: offers },
-      } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/GetSaleProductsOffers?isSent=${selectedTab == 0 ? "false" : "true"}`,
-      )
-      setOffersData(offers)
-    }
     getOffers()
   }, [locale, selectedTab])
 
@@ -66,7 +66,7 @@ function NegotiationOffers() {
       </Tabs>
       <Grid container spacing={2} sx={{ px: 3 }}>
         {offersData?.map((item, index) => (
-          <OfferCard offer={offersData[index]} key={item.id} />
+          <OfferCard offer={offersData[index]} key={item.offerId} getOffers={getOffers} selectedTab={selectedTab} />
         ))}
       </Grid>
     </Box>

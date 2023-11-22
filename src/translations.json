@@ -13,15 +13,18 @@
       "new": "جديد",
       "waiting_for_your_response": "في انتظار ردك",
       "lost": "ضائع",
+      "Purchcased": "تم الشراء",
       "canceled": "ملغي",
       "purchased": "مشترى",
+      "Accepted": "مقبول",
       "accept": "قبول",
       "reject": "رفض",
       "accept_negotiation_offer": "قبول عرض التفاوض",
       "please_select_expiration_hours": "يرجى تحديد ساعات الانتهاء",
       "reject_negotiation_offer": "رفض عرض التفاوض",
-      "please_add_reason": "يرجى إضافة سبب",
-      "write_reject_reason": "اكتب سبب الرفض"
+      "please_add_reason": "من فضلك أضف سبب",
+      "write_reject_reason": "اكتب سبب الرفض",
+      "seller": "بائع"
     },
     "sidebar": {
       "home": "الرئيسية",
@@ -651,13 +654,16 @@
       "lost": "Lost",
       "canceled": "Canceled",
       "purchased": "Purchased",
+      "Accepted": "Accepted",
+      "Purchcased": "Purchcased",
       "accept": "Accept",
       "reject": "Reject",
       "accept_negotiation_offer": "Accept Negotiation Offer",
       "please_select_expiration_hours": "Please select expiration hours",
       "reject_negotiation_offer": "Reject Negotiation Offer",
       "please_add_reason": "Please add reason",
-      "write_reject_reason": "Write Reject Reason"
+      "write_reject_reason": "Write Reject Reason",
+      "seller": "Seller"
     },
     "sidebar": {
       "home": "Home",
