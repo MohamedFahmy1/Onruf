@@ -8,7 +8,20 @@
     "negotiation": {
       "negotiationOffers": "عروض التفاوض",
       "recieved": "المستلمة",
-      "sent": "المرسلة"
+      "sent": "المرسلة",
+      "expired": "منتهي",
+      "new": "جديد",
+      "waiting_for_your_response": "في انتظار ردك",
+      "lost": "ضائع",
+      "canceled": "ملغي",
+      "purchased": "مشترى",
+      "accept": "قبول",
+      "reject": "رفض",
+      "accept_negotiation_offer": "قبول عرض التفاوض",
+      "please_select_expiration_hours": "يرجى تحديد ساعات الانتهاء",
+      "reject_negotiation_offer": "رفض عرض التفاوض",
+      "please_add_reason": "يرجى إضافة سبب",
+      "write_reject_reason": "اكتب سبب الرفض"
     },
     "sidebar": {
       "home": "الرئيسية",
@@ -629,9 +642,22 @@
       "enter": "Enter"
     },
     "negotiation": {
-      "negotiationOffers": "Negotiation offers",
+      "negotiationOffers": "Negotiation Offers",
       "recieved": "Received",
-      "sent": "Sent"
+      "sent": "Sent",
+      "expired": "Expired",
+      "new": "New",
+      "waiting_for_your_response": "Waiting for Your response",
+      "lost": "Lost",
+      "canceled": "Canceled",
+      "purchased": "Purchased",
+      "accept": "Accept",
+      "reject": "Reject",
+      "accept_negotiation_offer": "Accept Negotiation Offer",
+      "please_select_expiration_hours": "Please select expiration hours",
+      "reject_negotiation_offer": "Reject Negotiation Offer",
+      "please_add_reason": "Please add reason",
+      "write_reject_reason": "Write Reject Reason"
     },
     "sidebar": {
       "home": "Home",

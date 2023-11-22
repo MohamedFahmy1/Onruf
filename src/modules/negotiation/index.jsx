@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Tabs, Tab, Box, Typography } from "@mui/material"
+import { Tabs, Tab, Box, Typography, Grid } from "@mui/material"
 import OfferCard from "./OfferCard"
 import { pathOr } from "ramda"
 import t from "../../translations.json"
@@ -10,13 +10,12 @@ function NegotiationOffers() {
   const [selectedTab, setSelectedTab] = useState(0)
   const [offersData, setOffersData] = useState()
   const { locale } = useRouter()
-  console.log(offersData)
   useEffect(() => {
     const getOffers = async () => {
       const {
         data: { data: offers },
       } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/GetPurchaseProductsOffers?isSent=${selectedTab == 0 ? "false" : "true"}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/GetSaleProductsOffers?isSent=${selectedTab == 0 ? "false" : "true"}`,
       )
       setOffersData(offers)
     }
@@ -65,21 +64,11 @@ function NegotiationOffers() {
         <Tab label={pathOr("", [locale, "negotiation", "recieved"], t)} />
         <Tab label={pathOr("", [locale, "negotiation", "sent"], t)} />
       </Tabs>
-      <Box sx={{ p: 3 }}>
-        {selectedTab === 0 && (
-          <OfferCard offer={{ title: "Cat1", location: "Riyadh", price: "400 S.R", status: "Expired" }} />
-        )}
-        {selectedTab === 1 && (
-          <OfferCard
-            offer={{
-              title: "Women new product",
-              location: "Riyadh",
-              price: "120 S.R",
-              status: "Waiting for Your response",
-            }}
-          />
-        )}
-      </Box>
+      <Grid container spacing={2} sx={{ px: 3 }}>
+        {offersData?.map((item, index) => (
+          <OfferCard offer={offersData[index]} key={item.id} />
+        ))}
+      </Grid>
     </Box>
   )
 }

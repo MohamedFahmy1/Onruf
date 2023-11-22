@@ -49,6 +49,12 @@ const Sidebar = () => {
       darkIcon: ProductsDarkIcon,
     },
     {
+      name: locale === "en" ? "Negotiation offers" : "عروض التفاوض",
+      link: "/negotiation",
+      lightIcon: ProductsLightIcon,
+      darkIcon: ProductsDarkIcon,
+    },
+    {
       name: pathOr("", [locale, "sidebar", "orders"], t),
       link: "/orders",
       lightIcon: OrdersLightIcon,
