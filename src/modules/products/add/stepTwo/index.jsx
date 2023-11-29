@@ -195,6 +195,10 @@ const AddProductStepTwo = ({
 
   const handleUploadImages = (e) => {
     let file = e.target.files[0]
+    const allowedTypes = ["image/jpeg", "image/png", "image/gif"]
+    if (!allowedTypes.includes(file.type)) {
+      return toast.error(locale === "en" ? "Only image files are allowed!" : "مسموح برفع الصور")
+    }
     if (file) {
       file.id = Date.now()
       setProductPayload((prev) => ({
@@ -462,7 +466,12 @@ const AddProductStepTwo = ({
               ))}
               <div className={styles["btn_apload_img"]}>
                 <FaCamera />
-                <input type="file" onChange={(e) => handleUploadImages(e)} multiple={selectedPack?.countImage >= 1} />
+                <input
+                  type="file"
+                  accept="image/jpeg, image/png, image/gif"
+                  onChange={(e) => handleUploadImages(e)}
+                  multiple={selectedPack?.countImage >= 1}
+                />
               </div>
             </div>
             <div className={styles.container}>
