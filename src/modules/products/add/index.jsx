@@ -57,13 +57,13 @@ const AddProduct = () => {
     AuctionClosingTime: "",
     "ProductPaymentDetailsDto.PakatId": 0,
     "ProductPaymentDetailsDto.AdditionalPakatId": 0,
-    "ProductPaymentDetailsDto.ProductPublishPrice": selectedCatProps?.productPublishPrice,
-    "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": selectedCatProps?.enableFixedPriceSaleFee,
-    "ProductPaymentDetailsDto.EnableAuctionFee": selectedCatProps?.enableAuctionFee,
-    "ProductPaymentDetailsDto.EnableNegotiationFee": selectedCatProps?.enableNegotiationFee,
-    "ProductPaymentDetailsDto.ExtraProductImageFee": selectedCatProps?.extraProductImageFee,
-    "ProductPaymentDetailsDto.ExtraProductVidoeFee": selectedCatProps?.extraProductVidoeFee,
-    "ProductPaymentDetailsDto.SubTitleFee": selectedCatProps?.subTitleFee,
+    "ProductPaymentDetailsDto.ProductPublishPrice": 0,
+    "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": 0,
+    "ProductPaymentDetailsDto.EnableAuctionFee": 0,
+    "ProductPaymentDetailsDto.EnableNegotiationFee": 0,
+    "ProductPaymentDetailsDto.ExtraProductImageFee": 0,
+    "ProductPaymentDetailsDto.ExtraProductVidoeFee": 0,
+    "ProductPaymentDetailsDto.SubTitleFee": 0,
     "ProductPaymentDetailsDto.CouponId": 0,
     "ProductPaymentDetailsDto.CouponDiscountValue": 0,
     "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": 0,
@@ -72,20 +72,6 @@ const AddProduct = () => {
     SendYourAccountInfoToAuctionWinner: false,
     AlmostSoldOutQuantity: 1,
   })
-  useEffect(() => {
-    setProductPayload((prev) => ({
-      ...prev,
-      categoryId: selectedCatId,
-      "ProductPaymentDetailsDto.ProductPublishPrice": selectedCatProps?.productPublishPrice,
-      "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": selectedCatProps?.enableFixedPriceSaleFee,
-      "ProductPaymentDetailsDto.EnableAuctionFee": selectedCatProps?.enableAuctionFee,
-      "ProductPaymentDetailsDto.EnableNegotiationFee": selectedCatProps?.enableNegotiationFee,
-      "ProductPaymentDetailsDto.ExtraProductImageFee": selectedCatProps?.extraProductImageFee,
-      "ProductPaymentDetailsDto.ExtraProductVidoeFee": selectedCatProps?.extraProductVidoeFee,
-      "ProductPaymentDetailsDto.SubTitleFee": selectedCatProps?.subTitleFee,
-    }))
-  }, [selectedCatProps, selectedCatId])
-
   const getProduct = async () => {
     try {
       const res = await axios(
@@ -132,6 +118,7 @@ const AddProduct = () => {
             product={product && product}
             next={(selectedCat) => handleNextStep(selectedCat)}
             setSelectedCatProps={setSelectedCatProps}
+            setProductPayload={setProductPayload}
             editProduct={false}
           />
         )}

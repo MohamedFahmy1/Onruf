@@ -8,7 +8,7 @@ import t from "../../../../translations.json"
 import { Col, Row } from "react-bootstrap"
 import Alerto from "../../../../common/Alerto"
 import { toast } from "react-toastify"
-const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps }) => {
+const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps, setProductPayload }) => {
   const {
     locale,
     query: { id },
@@ -41,13 +41,24 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps }) 
   useEffect(() => {
     fetchCategories()
     editProduct && catSearchInputVal && hanldeSearchProduct()
-  }, [fetchCategories, id, locale])
+  }, [fetchCategories, id, locale, selectedCatId])
 
   const handleNextStep = (e) => {
     e.preventDefault()
     next(selectedCatId)
-    const catProps = allCats.filter((item) => item.id === selectedCatId)
-    setSelectedCatProps(catProps[0])
+    const catProps = allCats.find((item) => item.id === selectedCatId)
+    setProductPayload((prev) => ({
+      ...prev,
+      categoryId: selectedCatId,
+      "ProductPaymentDetailsDto.ProductPublishPrice": catProps?.productPublishPrice,
+      "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": catProps?.enableFixedPriceSaleFee,
+      "ProductPaymentDetailsDto.EnableAuctionFee": catProps?.enableAuctionFee,
+      "ProductPaymentDetailsDto.EnableNegotiationFee": catProps?.enableNegotiationFee,
+      "ProductPaymentDetailsDto.ExtraProductImageFee": catProps?.extraProductImageFee,
+      "ProductPaymentDetailsDto.ExtraProductVidoeFee": catProps?.extraProductVidoeFee,
+      "ProductPaymentDetailsDto.SubTitleFee": catProps?.subTitleFee,
+    }))
+    setSelectedCatProps(catProps)
   }
 
   const handleSelectChange = (e) => {

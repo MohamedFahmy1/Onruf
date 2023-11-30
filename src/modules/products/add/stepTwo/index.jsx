@@ -452,7 +452,6 @@ const AddProductStepTwo = ({
                   <img src={product?.id ? img?.url : URL.createObjectURL(img)} />
                   <label htmlFor={img.id}>
                     <span> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
-                    {console.log(index, productPayload.MainImageIndex)}
                     <input
                       id={img.id}
                       type="radio"
