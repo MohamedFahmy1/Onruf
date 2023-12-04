@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/router"
 import Link from "next/link"
 import { AiOutlinePoweroff } from "react-icons/ai"
@@ -24,6 +24,7 @@ const Navbar = () => {
   const token = useSelector((state) => state.authSlice.token)
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
   const providerId = useSelector((state) => state.authSlice.providerId)
+  const dropdownRef = useRef(null)
 
   useEffect(() => {
     axios.defaults.headers.common["Authorization"] = token
@@ -60,6 +61,17 @@ const Navbar = () => {
   const onClick = () => {
     setToggleBusinessAccountList(!toggleBusinessAccountList)
   }
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setToggleLangMenu(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
   return (
     <header id="header">
       <div className="d-flex align-items-center flex-grow-1">
@@ -103,7 +115,7 @@ const Navbar = () => {
           )}
         </div>
 
-        <div className="dropdown lang_">
+        <div className="dropdown lang_" ref={dropdownRef}>
           <button
             onClick={() => setToggleLangMenu(!toggleLangMenu)}
             className="btn dropdown-toggle"
@@ -112,9 +124,9 @@ const Navbar = () => {
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            {locale === "ar" ? "AR" : "EN"}
+            <span className="mx-1">{locale === "ar" ? t[locale]?.Settings.arLang : t[locale]?.Settings.enLang}</span>
           </button>
-          <ul className={`dropdown-menu ${toggleLangMenu ? "show" : ""}`} aria-labelledby="dropdownMenuButton1">
+          <ul className={`dropdown-menu ${toggleLangMenu ? "show" : ""} mt-2`} aria-labelledby="dropdownMenuButton1">
             <li
               onClick={() => {
                 // push({ locale: "ar" })
