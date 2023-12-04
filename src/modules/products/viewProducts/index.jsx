@@ -13,6 +13,7 @@ import { FaPlusCircle } from "react-icons/fa"
 import Link from "next/link"
 import { toast } from "react-toastify"
 import t from "../../../translations.json"
+import { useFetch } from "../../../hooks/useFetch"
 
 const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelectedRows }) => {
   const router = useRouter()
@@ -24,6 +25,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
 
   const [products, setProducts] = useState(p)
   const [selectedFilter, setSelectedFilter] = useState("avaliableProducts")
+  const { data: didnotSellProducts, fetchData: fetchedDidnotSellProducts } = useFetch("/ListDidntSellProducts")
   const [openQuantityModal, setOpenQuantityModal] = useState(false)
   const [openPriceModal, setOpenPriceModal] = useState(false)
   const [singleSelectedRow, setSingleSelectedRow] = useState({})
@@ -43,11 +45,14 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const avaliableProducts = (productsCount > 0 && products?.filter(({ isActive }) => isActive)) || []
   const inActiveProducts = (productsCount > 0 && products?.filter(({ isActive }) => !isActive)) || []
   const productsAlmostOut = (productsCount > 0 && products?.filter(({ qty }) => qty < 2 && qty != null)) || []
+  const didnotSell = didnotSellProducts
   const filterProducts =
     selectedFilter === "avaliableProducts"
       ? avaliableProducts
       : selectedFilter === "productsAlmostOut"
       ? productsAlmostOut
+      : selectedFilter === "didnotSell"
+      ? didnotSell
       : inActiveProducts
   const rows = Object.keys(selectedRows ? selectedRows : {})
   const selectedProductsIds = rows.map((row) => {
@@ -114,17 +119,9 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         Cell: ({ row: { original } }) => (
           <div className="d-flex align-items-center">
             {router.pathname.includes("folders") ? (
-              <img src={original.image} className="img_table" alt="folder" />
+              <img src={original.image || original.productImage} className="img_table" alt="folder" />
             ) : (
-              <img
-                src={pathOr(
-                  "https://miro.medium.com/max/600/0*jGmQzOLaEobiNklD",
-                  ["listMedia", 0, "url"] || image,
-                  original,
-                )}
-                className="img_table"
-                alt="folder"
-              />
+              <img src={original.image || original.productImage} className="img_table" alt="folder" />
             )}
             <div>
               <h6 className="m-0 f-b"> {propOr("-", ["name"], original)} </h6>
@@ -240,34 +237,37 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         }) => {
           return (
             <div className="d-flex align-items-center gap-2 flex-column">
-              <div className="form-check form-switch p-0 m-0 d-flex">
-                <MdModeEdit className="btn_Measures" onClick={() => Router.push(`/edit/${productId || id}`)} />
-                <RiDeleteBin5Line className="btn_Measures" onClick={() => handleDeleteProduct(productId || id)} />
-                <input
-                  readOnly
-                  className="form-check-input m-0 btn_Measures"
-                  onChange={(e) => handleChangeStatus(productId || id)}
-                  // checked={isActive}
-                  defaultChecked={isActive}
-                  type="checkbox"
-                  role="switch"
-                  id="flexSwitchCheckChecked"
-                />
-              </div>
-              <div>
-                <button type="button" className="info_ mx-1">
-                  {pathOr("", [locale, "Products", "repost"], t)}
-                </button>
-                <button type="button" className="info_">
-                  {pathOr("", [locale, "Products", "send_offer"], t)}
-                </button>
-              </div>
+              {selectedFilter === "didnotSell" ? (
+                <div>
+                  <button type="button" className="info_ mx-1">
+                    {pathOr("", [locale, "Products", "repost"], t)}
+                  </button>
+                  <button type="button" className="info_">
+                    {pathOr("", [locale, "Products", "send_offer"], t)}
+                  </button>
+                </div>
+              ) : (
+                <div className="form-check form-switch p-0 m-0 d-flex">
+                  <MdModeEdit className="btn_Measures" onClick={() => Router.push(`/edit/${productId || id}`)} />
+                  <RiDeleteBin5Line className="btn_Measures" onClick={() => handleDeleteProduct(productId || id)} />
+                  <input
+                    readOnly
+                    className="form-check-input m-0 btn_Measures"
+                    onChange={(e) => handleChangeStatus(productId || id)}
+                    // checked={isActive}
+                    defaultChecked={isActive}
+                    type="checkbox"
+                    role="switch"
+                    id="flexSwitchCheckChecked"
+                  />
+                </div>
+              )}
             </div>
           )
         },
       },
     ],
-    [locale, openPriceModal, openQuantityModal, handleDeleteProduct],
+    [locale, openPriceModal, openQuantityModal, selectedFilter, handleDeleteProduct],
   )
   const handleChangeStatus = async (id) => {
     try {
@@ -362,6 +362,15 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               }}
             >
               {pathOr("", [locale, "Products", "inActiveProducts"], t)} ({inActiveProducts?.length})
+            </button>
+            <button
+              className={`btn-main ${selectedFilter === "didnotSell" ? "active" : ""}`}
+              onClick={() => {
+                setSelectedFilter("didnotSell")
+                router.push({ query: { page: 1 } })
+              }}
+            >
+              {pathOr("", [locale, "Products", "didnt_sell"], t)} ({didnotSell?.length})
             </button>
           </div>
           <div className="contint_paner">
@@ -480,6 +489,9 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
             )}
             {selectedFilter == "productsAlmostOut" && productsAlmostOut.length > 5 && (
               <Pagination listLength={productsAlmostOut.length} pageSize={5} />
+            )}
+            {selectedFilter == "didnotSell" && didnotSell.length > 5 && (
+              <Pagination listLength={didnotSell.length} pageSize={5} />
             )}
             {selectedFilter == "" && inActiveProducts.length > 5 && (
               <Pagination listLength={inActiveProducts.length} pageSize={5} />
