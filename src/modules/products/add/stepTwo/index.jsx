@@ -1181,7 +1181,7 @@ const AddProductStepTwo = ({
                       </div>
                     </div>
                   </div>
-                  {productPayload.IsFixedPriceEnabled && (
+                  {(productPayload.IsFixedPriceEnabled || productPayload.IsNegotiationEnabled) && (
                     <div className="col-md-6">
                       <div className="form-group">
                         <label
@@ -1281,94 +1281,29 @@ const AddProductStepTwo = ({
                           </div>
                         </div>
                       </div>
-                      <div className="row">
-                        <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-4 px-3">
-                          <span className="f-b fs-5">
-                            {pathOr("", [locale, "Products", "auto_send_negotiation_offers_post_auction"], t)}
-                          </span>
-                          <div className="form-check form-switch p-0 m-0">
-                            <input
-                              className="form-check-input m-0"
-                              type="checkbox"
-                              role="switch"
-                              id="flexSwitchCheckChecked"
-                              checked={productPayload.SendOfferForAuction}
-                              onChange={() =>
-                                setProductPayload({
-                                  ...productPayload,
-                                  SendOfferForAuction: !productPayload.SendOfferForAuction,
-                                })
-                              }
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      {
-                        <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-2 px-1">
-                          <span className="f-b fs-5">
-                            {pathOr("", [locale, "Products", "send_account_info_to_winner"], t)}
-                          </span>
-                          <div className="form-check form-switch p-0 m-0">
-                            <input
-                              className="form-check-input m-0"
-                              type="checkbox"
-                              role="switch"
-                              id="flexSwitchCheckChecked"
-                              checked={productPayload.SendYourAccountInfoToAuctionWinner}
-                              onChange={(e) =>
-                                setProductPayload((prev) => ({
-                                  ...prev,
-                                  SendYourAccountInfoToAuctionWinner: e.target.checked,
-                                }))
-                              }
-                            />
-                          </div>
-                        </div>
-                      }
-
-                      <div className="col-12">
-                        <div className="form-group">
-                          <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
-                            {pathOr("", [locale, "Products", "who_to_send_offer"], t)}
-                            <RequiredSympol />
-                          </label>
-                          <div className="d-flex gap-3 flex-wrap">
-                            <div
-                              onClick={() => setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "All" })}
-                              className={`${styles.p_select} ${
-                                productPayload.AuctionNegotiateForWhom == "All" ? styles.p_select_active : ""
-                              }`}
-                            >
-                              {pathOr("", [locale, "Products", "all_bidders"], t)}
-                            </div>
-                            <div
-                              onClick={() =>
-                                setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Highest3" })
-                              }
-                              className={`${styles.p_select} ${
-                                productPayload.AuctionNegotiateForWhom == "Highest3" ? styles.p_select_active : ""
-                              }`}
-                            >
-                              {pathOr("", [locale, "Products", "top_three_bidders"], t)}
-                            </div>
-                            <div
-                              onClick={() =>
-                                setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Favorit" })
-                              }
-                              className={`${styles.p_select} ${
-                                productPayload.AuctionNegotiateForWhom == "Favorit" ? styles.p_select_active : ""
-                              }`}
-                            >
-                              {pathOr("", [locale, "Products", "product_favorites"], t)}
+                      <div className="contint_paner">
+                        <div className="row">
+                          <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-4 px-3">
+                            <span className="f-b fs-5">
+                              {pathOr("", [locale, "Products", "auto_send_negotiation_offers_post_auction"], t)}
+                            </span>
+                            <div className="form-check form-switch p-0 m-0">
+                              <input
+                                className="form-check-input m-0"
+                                type="checkbox"
+                                role="switch"
+                                id="flexSwitchCheckChecked"
+                                checked={productPayload.SendOfferForAuction}
+                                onChange={() =>
+                                  setProductPayload({
+                                    ...productPayload,
+                                    SendOfferForAuction: !productPayload.SendOfferForAuction,
+                                  })
+                                }
+                              />
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  )}
-                  {productPayload.IsNegotiationEnabled && (
-                    <div className="contint_paner col-12 px-0">
-                      <div className="px-3">
                         <div className="row">
                           <div className="col-md-6">
                             <div className="form-group">
@@ -1405,6 +1340,66 @@ const AddProductStepTwo = ({
                             </div>
                           </div>
                         </div>
+                        <div className="col-12">
+                          <div className="form-group">
+                            <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                              {pathOr("", [locale, "Products", "who_to_send_offer"], t)}
+                              <RequiredSympol />
+                            </label>
+                            <div className="d-flex gap-3 flex-wrap">
+                              <div
+                                onClick={() => setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "All" })}
+                                className={`${styles.p_select} ${
+                                  productPayload.AuctionNegotiateForWhom == "All" ? styles.p_select_active : ""
+                                }`}
+                              >
+                                {pathOr("", [locale, "Products", "all_bidders"], t)}
+                              </div>
+                              <div
+                                onClick={() =>
+                                  setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Highest3" })
+                                }
+                                className={`${styles.p_select} ${
+                                  productPayload.AuctionNegotiateForWhom == "Highest3" ? styles.p_select_active : ""
+                                }`}
+                              >
+                                {pathOr("", [locale, "Products", "top_three_bidders"], t)}
+                              </div>
+                              <div
+                                onClick={() =>
+                                  setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Favorit" })
+                                }
+                                className={`${styles.p_select} ${
+                                  productPayload.AuctionNegotiateForWhom == "Favorit" ? styles.p_select_active : ""
+                                }`}
+                              >
+                                {pathOr("", [locale, "Products", "product_favorites"], t)}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {
+                          <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-2 px-1">
+                            <span className="f-b fs-5">
+                              {pathOr("", [locale, "Products", "send_account_info_to_winner"], t)}
+                            </span>
+                            <div className="form-check form-switch p-0 m-0">
+                              <input
+                                className="form-check-input m-0"
+                                type="checkbox"
+                                role="switch"
+                                id="flexSwitchCheckChecked"
+                                checked={productPayload.SendYourAccountInfoToAuctionWinner}
+                                onChange={(e) =>
+                                  setProductPayload((prev) => ({
+                                    ...prev,
+                                    SendYourAccountInfoToAuctionWinner: e.target.checked,
+                                  }))
+                                }
+                              />
+                            </div>
+                          </div>
+                        }
                       </div>
                     </div>
                   )}
@@ -1514,9 +1509,10 @@ const AddProductStepTwo = ({
               onClick={() =>
                 (productPayload.IsFixedPriceEnabled && !productPayload.Price) ||
                 (productPayload.IsAuctionEnabled &&
-                  !productPayload.AuctionStartPrice &&
-                  !productPayload.AuctionMinimumPrice) ||
-                (productPayload.IsNegotiationEnabled && !productPayload.AuctionNegotiatePrice)
+                  (!productPayload.AuctionStartPrice ||
+                    !productPayload.AuctionMinimumPrice ||
+                    !productPayload.AuctionNegotiatePrice)) ||
+                (productPayload.IsNegotiationEnabled && !productPayload.Price)
                   ? toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
                   : setEventKey("4")
               }

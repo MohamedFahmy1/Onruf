@@ -167,7 +167,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         accessor: "price",
         Cell: ({ row: { values, original } }) => (
           <div>
-            {original?.isFixedPriceEnabled ? (
+            {original?.isFixedPriceEnabled || original?.isNegotiationEnabled ? (
               <div>
                 <span>
                   <span>
@@ -206,13 +206,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               </div>
             ) : (
               "-"
-            )}
-            {original?.isNegotiationEnabled && (
-              <span>
-                <h6 className="m-0 f-b">
-                  {original?.auctionNegotiatePrice} {pathOr("", [locale, "Products", "currency"], t)}
-                </h6>
-              </span>
             )}
           </div>
         ),
