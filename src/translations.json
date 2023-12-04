@@ -261,7 +261,10 @@
       "coupon_discount": "خصم الكوبون",
       "tax": "الضريبة المضافة (%12)",
       "subcategory": "القسم الفرعي",
-      "choose_department": "اختر قسم"
+      "choose_department": "اختر قسم",
+      "didnt_sell": "لم يتم البيع",
+      "repost": "إعادة نشر",
+      "send_offer": "إرسال عرض"
     },
     "Users": {
       "users": "العملاء",
@@ -899,7 +902,10 @@
       "coupon_discount": "Coupon Discount",
       "tax": "VAT (12%)",
       "subcategory": "Subcategory",
-      "choose_department": "Choose Subcategory"
+      "choose_department": "Choose Subcategory",
+      "didnt_sell": "Didn't sell",
+      "repost": "Repost",
+      "send_offer": "Send Offer"
     },
     "Users": {
       "users": "Clients",

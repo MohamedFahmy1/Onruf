@@ -126,7 +126,11 @@ const Navbar = () => {
           >
             <span className="mx-1">{locale === "ar" ? t[locale]?.Settings.arLang : t[locale]?.Settings.enLang}</span>
           </button>
-          <ul className={`dropdown-menu ${toggleLangMenu ? "show" : ""} mt-2`} aria-labelledby="dropdownMenuButton1">
+          <ul
+            className={`dropdown-menu ${toggleLangMenu ? "show" : ""} mt-2`}
+            style={{ left: "50%", transform: "translateX(-50%)" }}
+            aria-labelledby="dropdownMenuButton1"
+          >
             <li
               onClick={() => {
                 // push({ locale: "ar" })

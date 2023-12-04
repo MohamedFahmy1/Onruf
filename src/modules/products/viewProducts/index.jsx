@@ -207,6 +207,13 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
             ) : (
               "-"
             )}
+            {original?.isNegotiationEnabled && (
+              <span>
+                <h6 className="m-0 f-b">
+                  {original?.auctionNegotiatePrice} {pathOr("", [locale, "Products", "currency"], t)}
+                </h6>
+              </span>
+            )}
           </div>
         ),
       },
@@ -239,7 +246,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
           },
         }) => {
           return (
-            <div className="d-flex align-items-center gap-2">
+            <div className="d-flex align-items-center gap-2 flex-column">
               <div className="form-check form-switch p-0 m-0 d-flex">
                 <MdModeEdit className="btn_Measures" onClick={() => Router.push(`/edit/${productId || id}`)} />
                 <RiDeleteBin5Line className="btn_Measures" onClick={() => handleDeleteProduct(productId || id)} />
@@ -253,6 +260,14 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                   role="switch"
                   id="flexSwitchCheckChecked"
                 />
+              </div>
+              <div>
+                <button type="button" className="info_ mx-1">
+                  {pathOr("", [locale, "Products", "repost"], t)}
+                </button>
+                <button type="button" className="info_">
+                  {pathOr("", [locale, "Products", "send_offer"], t)}
+                </button>
               </div>
             </div>
           )
@@ -311,7 +326,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         <div>
           <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
             <div className="d-flex align-items-center">
-              <h6 className="f-b m-0">
+              <h6 className="f-b mx-2">
                 {locale === "en" ? "Products" : "المنتجات"} ({productsCount})
               </h6>
               <Link href="/products/folders">
