@@ -360,6 +360,7 @@ const AddProductStepTwo = ({
     productPayload.countryId,
     productPayload.regionId,
     productPayload.neighborhoodId,
+    productPayload.qty,
   ]
 
   const inputsChecker = (inputs) => {
@@ -1066,6 +1067,13 @@ const AddProductStepTwo = ({
               className="btn-main mt-3"
               type="button"
               onClick={() => {
+                if (productPayload.qty <= 0) {
+                  return toast.error(
+                    locale === "en"
+                      ? "You can't add product with quantity less than 1"
+                      : "لا يمكنك اضافة منتج بكمية اقل من 1",
+                  )
+                }
                 inputsChecker(productDetailsInputs)
                   ? setEventKey("3")
                   : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات  ")
@@ -1296,7 +1304,7 @@ const AddProductStepTwo = ({
                         </div>
                       </div>
                       {
-                        <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-5 px-1">
+                        <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-2 px-1">
                           <span className="f-b fs-5">
                             {pathOr("", [locale, "Products", "send_account_info_to_winner"], t)}
                           </span>
@@ -1317,6 +1325,45 @@ const AddProductStepTwo = ({
                           </div>
                         </div>
                       }
+
+                      <div className="col-12">
+                        <div className="form-group">
+                          <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                            {pathOr("", [locale, "Products", "who_to_send_offer"], t)}
+                            <RequiredSympol />
+                          </label>
+                          <div className="d-flex gap-3 flex-wrap">
+                            <div
+                              onClick={() => setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "All" })}
+                              className={`${styles.p_select} ${
+                                productPayload.AuctionNegotiateForWhom == "All" ? styles.p_select_active : ""
+                              }`}
+                            >
+                              {pathOr("", [locale, "Products", "all_bidders"], t)}
+                            </div>
+                            <div
+                              onClick={() =>
+                                setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Highest3" })
+                              }
+                              className={`${styles.p_select} ${
+                                productPayload.AuctionNegotiateForWhom == "Highest3" ? styles.p_select_active : ""
+                              }`}
+                            >
+                              {pathOr("", [locale, "Products", "top_three_bidders"], t)}
+                            </div>
+                            <div
+                              onClick={() =>
+                                setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Favorit" })
+                              }
+                              className={`${styles.p_select} ${
+                                productPayload.AuctionNegotiateForWhom == "Favorit" ? styles.p_select_active : ""
+                              }`}
+                            >
+                              {pathOr("", [locale, "Products", "product_favorites"], t)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   )}
                   {productPayload.IsNegotiationEnabled && (
@@ -1353,47 +1400,6 @@ const AddProductStepTwo = ({
                                       setProductPayload({ ...productPayload, AuctionNegotiatePrice: +e.target.value })
                                     }
                                   />
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="col-12">
-                            <div className="form-group">
-                              <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
-                                {pathOr("", [locale, "Products", "who_to_send_offer"], t)}
-                                <RequiredSympol />
-                              </label>
-                              <div className="d-flex gap-3 flex-wrap">
-                                <div
-                                  onClick={() =>
-                                    setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "All" })
-                                  }
-                                  className={`${styles.p_select} ${
-                                    productPayload.AuctionNegotiateForWhom == "All" ? styles.p_select_active : ""
-                                  }`}
-                                >
-                                  {pathOr("", [locale, "Products", "all_bidders"], t)}
-                                </div>
-                                <div
-                                  onClick={() =>
-                                    setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Highest3" })
-                                  }
-                                  className={`${styles.p_select} ${
-                                    productPayload.AuctionNegotiateForWhom == "Highest3" ? styles.p_select_active : ""
-                                  }`}
-                                >
-                                  {pathOr("", [locale, "Products", "top_three_bidders"], t)}
-                                </div>
-                                <div
-                                  onClick={() =>
-                                    setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Favorit" })
-                                  }
-                                  className={`${styles.p_select} ${
-                                    productPayload.AuctionNegotiateForWhom == "Favorit" ? styles.p_select_active : ""
-                                  }`}
-                                >
-                                  {pathOr("", [locale, "Products", "product_favorites"], t)}
                                 </div>
                               </div>
                             </div>
@@ -1877,7 +1883,7 @@ const AddProductStepTwo = ({
             >
               {router.pathname.includes("edit")
                 ? pathOr("", [locale, "Products", "edit"], t)
-                : pathOr("", [locale, "Products", "addNewProduct"], t)}
+                : pathOr("", [locale, "Products", "next"], t)}
             </button>
           </Accordion.Body>
         </Accordion.Item>
