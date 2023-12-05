@@ -1,9 +1,8 @@
-/* eslint-disable react/jsx-key */
 import { useState, useEffect, useId, Fragment } from "react"
 import axios from "axios"
 import styles from "./stepTwo.module.css"
 import { FaCamera, FaCheckCircle, FaFlag, FaMinus, FaPlus, FaStar } from "react-icons/fa"
-import { IoIosRemoveCircle } from "react-icons/io"
+import { IoIosClose } from "react-icons/io"
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"
 import { Accordion, Row, Col } from "react-bootstrap"
 import bigger from "../../../../public/images/screencaptur.png"
@@ -28,6 +27,8 @@ const AddProductStepTwo = ({
   setProductPayload,
   speficationsPayload,
   setSpeficationsPayload,
+  editModeOn,
+  setEditModeOn,
 }) => {
   const { locale } = useRouter()
   const router = useRouter()
@@ -76,7 +77,7 @@ const AddProductStepTwo = ({
       // )
       const { data: packatData } = await axios(
         process.env.NEXT_PUBLIC_API_URL +
-          `/getAllPakatsList?lang=${locale}&categoryId=${catId}&isAdmin=${true}&PakatType=Additional`,
+          `/getAllPakatsList?lang=${locale}&categoryId=${catId}&isAdmin=${false}&PakatType=Additional`,
       )
       const { data: packatList } = packatData
       setPackat(packatList)
@@ -239,7 +240,9 @@ const AddProductStepTwo = ({
   }
 
   const toggleAccordionPanel = (eKey) => {
-    if (eKey > eventKey) {
+    if (editModeOn) {
+      return setEventKey(eKey)
+    } else if (eKey > eventKey) {
       return toast.error(
         locale === "en"
           ? "Please enter all necessary data in current section to proceed!"
@@ -446,13 +449,21 @@ const AddProductStepTwo = ({
             <div className={styles["all_upload_Image"]}>
               {productPayload?.listImageFile?.map((img, index) => (
                 <div key={id + index} className={styles["the_img_upo"]}>
-                  <IoIosRemoveCircle
-                    style={{ cursor: "pointer", position: "absolute", top: 5, right: 5, background: "white" }}
+                  <IoIosClose
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      top: 5,
+                      right: 5,
+                      background: "white",
+                      borderRadius: "50%",
+                    }}
+                    size={20}
                     onClick={() => handleRemoveImage(index)}
                   />
-                  <img src={product?.id ? img?.url : URL.createObjectURL(img)} />
+                  <img src={product?.id ? img?.url : URL.createObjectURL(img)} alt="product" />
                   <label htmlFor={img.id}>
-                    <span> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
+                    <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
                     <input
                       id={img.id}
                       type="radio"
@@ -1873,7 +1884,7 @@ const AddProductStepTwo = ({
                   handleSubmit(e)
                 } else {
                   handleGoToReviewPage()
-                  setEventKey("0")
+                  setEditModeOn(true)
                 }
               }}
             >

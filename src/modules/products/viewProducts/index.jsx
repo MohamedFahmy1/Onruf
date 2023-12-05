@@ -14,6 +14,7 @@ import Link from "next/link"
 import { toast } from "react-toastify"
 import t from "../../../translations.json"
 import { useFetch } from "../../../hooks/useFetch"
+import SendOfferModal from "../SendOfferModal"
 
 const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelectedRows }) => {
   const router = useRouter()
@@ -25,22 +26,17 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
 
   const [products, setProducts] = useState(p)
   const [selectedFilter, setSelectedFilter] = useState("avaliableProducts")
-  const { data: didnotSellProducts, fetchData: fetchedDidnotSellProducts } = useFetch("/ListDidntSellProducts")
+  const { data: didnotSellProducts } = useFetch("/ListDidntSellProducts")
   const [openQuantityModal, setOpenQuantityModal] = useState(false)
   const [openPriceModal, setOpenPriceModal] = useState(false)
+  const [sendOfferModal, setSendOfferModal] = useState(false)
   const [singleSelectedRow, setSingleSelectedRow] = useState({})
   // const [selectedRows, setSelectedRows] = useState({})
   const [quantityValue, setQuantityValue] = useState(0)
   const [quantityValueInfinity, setQuantityValueInfinity] = useState(undefined)
   const [priceValue, setPriceValue] = useState(0)
   const [discountDate, setDiscountDate] = useState()
-  // const dispatch = useDispatch()
-  // const folders = useSelector((state) => state.foldersSlice.folder)
-  // const products = useSelector((state) => state.allProducts.products)
-  // useEffect(()=>{
-  //   dispatch(getFolderList(locale))
-  //   dispatch(getProductsList())
-  // })
+
   const productsCount = products?.length
   const avaliableProducts = (productsCount > 0 && products?.filter(({ isActive }) => isActive)) || []
   const inActiveProducts = (productsCount > 0 && products?.filter(({ isActive }) => !isActive)) || []
@@ -242,9 +238,15 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                   <button type="button" className="info_ mx-1">
                     {pathOr("", [locale, "Products", "repost"], t)}
                   </button>
-                  <button type="button" className="info_">
+                  <button type="button" className="info_" onClick={() => setSendOfferModal(true)}>
                     {pathOr("", [locale, "Products", "send_offer"], t)}
+                    {console.log(sendOfferModal)}
                   </button>
+                  <SendOfferModal
+                    sendOfferModal={sendOfferModal}
+                    setSendOfferModal={setSendOfferModal}
+                    id={productId || id}
+                  />
                 </div>
               ) : (
                 <div className="form-check form-switch p-0 m-0 d-flex">
@@ -267,7 +269,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         },
       },
     ],
-    [locale, openPriceModal, openQuantityModal, selectedFilter, handleDeleteProduct],
+    [locale, openPriceModal, openQuantityModal, selectedFilter, sendOfferModal, handleDeleteProduct],
   )
   const handleChangeStatus = async (id) => {
     try {
@@ -440,7 +442,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                 </button>
               </Modal.Footer>
             </Modal>
-            <Modal show={openPriceModal} onHide={() => setOpenPriceModal(false)}>
+            <Modal show={openPriceModal} onHide={() => setOpenPriceModal(false)} centered>
               <Modal.Header>
                 <h5 className="disc-header">{pathOr("", [locale, "Products", "discount"], t)}</h5>
                 <button type="button" className="btn-close" onClick={() => setOpenPriceModal(false)}></button>

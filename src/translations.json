@@ -264,7 +264,8 @@
       "choose_department": "اختر قسم",
       "didnt_sell": "لم يتم البيع",
       "repost": "إعادة نشر",
-      "send_offer": "إرسال عرض"
+      "send_offer": "إرسال عرض",
+      "negotiationOffers": "عروض التفاوض"
     },
     "Users": {
       "users": "العملاء",
@@ -758,7 +759,7 @@
       "currentPrice": "current price",
       "adjustQty": "adjust quantity",
       "unLimited": "unlimited quantity",
-      "addNewFolder": "Add new folder",
+      "addNewFolder": "Add New Folder",
       "save": "Save",
       "selectFolder": "Select folder",
       "folderName": "Folder name",
@@ -773,7 +774,7 @@
       "search": "search",
       "selectOption": "-- Select an option --",
       "selectCategory": "Select category or section",
-      "addNewProduct": "Add new product",
+      "addNewProduct": "Add New Product",
       "cancel": "Cancel",
       "next": "Next",
       "productImages": "Product Images",
@@ -905,7 +906,8 @@
       "choose_department": "Choose Subcategory",
       "didnt_sell": "Didn't sell",
       "repost": "Repost",
-      "send_offer": "Send Offer"
+      "send_offer": "Send Offer",
+      "negotiationOffers": "Negotiation Offers"
     },
     "Users": {
       "users": "Clients",

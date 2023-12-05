@@ -15,6 +15,7 @@ const AddProduct = () => {
   const [selectedCatProps, setSelectedCatProps] = useState({})
   const [speficationsPayload, setSpeficationsPayload] = useState([])
   const [product, setProduct] = useState()
+  const [editModeOn, setEditModeOn] = useState(false)
   const { locale } = useRouter()
   const [productPayload, setProductPayload] = useState({
     nameAr: "",
@@ -132,6 +133,8 @@ const AddProduct = () => {
             setProductPayload={setProductPayload}
             speficationsPayload={speficationsPayload}
             setSpeficationsPayload={setSpeficationsPayload}
+            editModeOn={editModeOn}
+            setEditModeOn={setEditModeOn}
           />
         )}
         {(step === 3 || (product && product?.id)) && (
@@ -139,6 +142,7 @@ const AddProduct = () => {
             selectedCatProps={selectedCatProps}
             productFullData={productPayload}
             handleBack={handleGoToSteptwo}
+            setProductPayload={setProductPayload}
           />
         )}
       </div>

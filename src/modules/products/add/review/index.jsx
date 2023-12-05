@@ -1,9 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react"
 import styles from "./productReview.module.css"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/router"
 import { Row, Col } from "react-bootstrap"
-import Link from "next/link"
-import masterCardImg from "../../../../public/images/MasterCard.png"
 import dateImage from "../../../../public/icons/Copyright_expiry.svg"
 import { FaCheckCircle } from "react-icons/fa"
 import axios from "axios"
@@ -12,11 +10,10 @@ import { useSelector, useDispatch } from "react-redux"
 import { getProductById, getProductPack, getProductCategory } from "../../../../appState/product/productActions"
 import { pathOr } from "ramda"
 import t from "../../../../translations.json"
-import { formatDate } from "../../../../common/functions"
 import Image from "next/image"
 import moment from "moment/moment"
 
-const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => {
+const AddProductReview = ({ selectedCatProps, productFullData, handleBack, setProductPayload }) => {
   const router = useRouter()
   const { locale } = useRouter()
   const productId = router.query.id
@@ -31,17 +28,32 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => 
   // const category = useSelector((state) => state?.productCategory)
   const dispatch = useDispatch()
 
-  // const getAdditionalPakat = async () => {
-  //   try {
-  //     const data = await axios.get(
-  //       process.env.NEXT_PUBLIC_API_URL +
-  //         `/CheckOutAdditionalPakat?pakatId=${product.pakatId}&categoryId=${product.categoryId}`,
-  //     )
-  //     setAdditionalPakat(data?.data?.data)
-  //   } catch (error) {
-  //     toast.error(error.response.data.message)
-  //   }
-  // }
+  const totalImageFee =
+    productFullData?.listImageFile.length > selectedCatProps?.freeProductImagesCount
+      ? selectedCatProps?.extraProductImageFee *
+        (productFullData?.listImageFile.length - selectedCatProps?.freeProductImagesCount)
+      : 0
+  const totalVideoFee =
+    productFullData?.videoUrl.length > selectedCatProps?.freeProductVidoesCount
+      ? selectedCatProps.extraProductVidoeFee *
+        (productFullData?.videoUrl.length - selectedCatProps?.freeProductVidoesCount)
+      : 0
+  const autctionFee = productFullData?.IsAuctionEnabled ? selectedCatProps?.enableAuctionFee : 0
+  const negotiationFee = productFullData?.IsNegotiationEnabled ? selectedCatProps?.enableNegotiationFee : 0
+  const fixedFee = productFullData?.IsFixedPriceEnabled ? selectedCatProps?.enableFixedPriceSaleFee : 0
+  const pakaFee = productFullData?.pakatId ? packageDetails?.price : 0
+  const couponDiscount = couponData ? couponData.discountValue : 0
+  const totalCost =
+    +selectedCatProps?.productPublishPrice +
+    +selectedCatProps.subTitleFee +
+    +totalImageFee +
+    +totalVideoFee +
+    +autctionFee +
+    +negotiationFee +
+    +fixedFee +
+    +pakaFee -
+    +couponDiscount
+
   const getShippingOptions = async () => {
     const data = await axios.get(process.env.NEXT_PUBLIC_API_URL + `/GetAllShippingOptions`)
     const shippingNames = data?.data?.data.filter((item) => productFullData.ShippingOptions.includes(item.id))
@@ -61,7 +73,15 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => 
   const applyCoupon = async () => {
     try {
       const res = await axios.get(process.env.NEXT_PUBLIC_API_URL + `/GetCouponByCode?couponCode=${couponCode}`)
-      setCouponData(res?.data?.data)
+      const coponData = res?.data?.data
+      setCouponData(coponData)
+      setProductPayload((prev) => ({
+        ...prev,
+        "ProductPaymentDetailsDto.CouponId": coponData.id,
+        "ProductPaymentDetailsDto.CouponDiscountValue": coponData.discountValue,
+        "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": totalCost,
+        "ProductPaymentDetailsDto.TotalAmountAfterCoupon": totalCost - coponData.discountValue,
+      }))
       setCouponCode("")
     } catch (err) {
       toast.error(locale === "en" ? "Please enter correct coupon!" : "من فضلك ادخل الكوبون بشكل صحيح")
@@ -157,49 +177,28 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => 
       )
     }
   }
-  const totalImageFee =
-    productFullData?.listImageFile.length > selectedCatProps?.freeProductImagesCount
-      ? selectedCatProps?.extraProductImageFee *
-        (productFullData?.listImageFile.length - selectedCatProps?.freeProductImagesCount)
-      : 0
-  const totalVideoFee =
-    productFullData?.videoUrl.length > selectedCatProps?.freeProductVidoesCount
-      ? selectedCatProps.extraProductVidoeFee *
-        (productFullData?.videoUrl.length - selectedCatProps?.freeProductVidoesCount)
-      : 0
-  const autctionFee = productFullData?.IsAuctionEnabled ? selectedCatProps?.enableAuctionFee : 0
-  const negotiationFee = productFullData?.IsNegotiationEnabled ? selectedCatProps?.enableNegotiationFee : 0
-  const fixedFee = productFullData?.IsFixedPriceEnabled ? selectedCatProps?.enableFixedPriceSaleFee : 0
-  const pakaFee = productFullData?.pakatId ? packageDetails?.price : 0
 
-  const couponDiscount = couponData ? couponData.discountValue : 0
-  const totalCost =
-    +selectedCatProps?.productPublishPrice +
-    +selectedCatProps.subTitleFee +
-    +totalImageFee +
-    +totalVideoFee +
-    +autctionFee +
-    +negotiationFee +
-    +fixedFee +
-    +pakaFee -
-    +couponDiscount
   return (
     <div className="body-content">
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
           <h6 className="f-b m-0">{pathOr("", [locale, "Products", "review_product_before_adding"], t)}</h6>
-          <p onClick={handleBack} className="btn-main btn-main-o">
-            {pathOr("", [locale, "Products", "cancel"], t)}
-          </p>
+          <button>
+            <p onClick={handleBack} className="btn-main btn-main-o">
+              {pathOr("", [locale, "Products", "cancel"], t)}
+            </p>
+          </button>
         </div>
         <Row>
           <Col lg={9}>
             <div className="contint_paner">
               <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
                 <h6 className="f-b fs-4 m-0">{pathOr("", [locale, "Products", "productDetails"], t)}</h6>
-                <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
-                  {pathOr("", [locale, "Products", "editFolder"], t)}
-                </p>
+                <button>
+                  <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
+                    {pathOr("", [locale, "Products", "editFolder"], t)}
+                  </p>
+                </button>
               </div>
               <Row className="align-items-center">
                 <Col lg={6}>
@@ -252,9 +251,11 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => 
             <div className="contint_paner">
               <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
                 <h6 className="f-b fs-4 m-0">{pathOr("", [locale, "Products", "sellingDetails"], t)}</h6>
-                <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
-                  {pathOr("", [locale, "Products", "editFolder"], t)}
-                </p>
+                <button>
+                  <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
+                    {pathOr("", [locale, "Products", "editFolder"], t)}
+                  </p>
+                </button>
               </div>
               <Row>
                 <Col md={6}>
@@ -372,9 +373,11 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => 
             <div className="contint_paner">
               <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
                 <h6 className="f-b fs-4  m-0">{pathOr("", [locale, "Products", "selected_package"], t)}</h6>
-                <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
-                  {pathOr("", [locale, "Products", "editFolder"], t)}
-                </p>
+                <button>
+                  <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
+                    {pathOr("", [locale, "Products", "editFolder"], t)}
+                  </p>
+                </button>
               </div>
               <div className={styles["info_boxo_"]}>
                 <span>{productFullData && (locale == "en" ? packageDetails?.nameEn : packageDetails?.nameAr)}</span>
@@ -386,9 +389,11 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack }) => 
             <div className="contint_paner">
               <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
                 <h6 className="f-b fs-4 m-0">{pathOr("", [locale, "Products", "shippingAndDuration"], t)}</h6>
-                <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
-                  {pathOr("", [locale, "Products", "editFolder"], t)}
-                </p>
+                <button>
+                  <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
+                    {pathOr("", [locale, "Products", "editFolder"], t)}
+                  </p>
+                </button>
               </div>
               {productFullData.IsAuctionEnabled && (
                 <Row>

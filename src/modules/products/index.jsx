@@ -26,27 +26,26 @@ const Products = () => {
     setCreateNewFolder(folders?.fileList?.length)
   }, [folders])
 
-  const getProductsAndFolders = async () => {
-    axios.defaults.headers.common["User-Language"] = locale
-    const [
-      {
-        data: { data: products },
-      },
-      {
-        data: { data: folders },
-      },
-    ] = await Promise.all([
-      await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`),
-      await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/ListFolder?type=1&pageIndex=1&PageRowsCount=10&lang=${locale}`,
-      ),
-    ])
-    console.log(products)
-    setProducts(products)
-    setFolders(folders)
-  }
-
   useEffect(() => {
+    const getProductsAndFolders = async () => {
+      const [
+        {
+          data: { data: products },
+        },
+        {
+          data: { data: folders },
+        },
+      ] = await Promise.all([
+        await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`,
+        ),
+        await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/ListFolder?type=1&pageIndex=1&PageRowsCount=10&lang=${locale}`,
+        ),
+      ])
+      setProducts(products)
+      setFolders(folders)
+    }
     getProductsAndFolders()
   }, [locale])
 
@@ -158,7 +157,7 @@ const Products = () => {
                 .map(({ id, image, name, fileProducts }, index) => (
                   <li className="item" key={index}>
                     <div>
-                      <img src={image} />
+                      <img src={image} alt="folder" />
                       <div>
                         <h6 className="f-b">{name}</h6>
                         <div className="gray-color">

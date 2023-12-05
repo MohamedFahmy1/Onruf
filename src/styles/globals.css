@@ -2052,3 +2052,7 @@ body::-webkit-scrollbar-thumb:hover,
 .orange-border {
   border: 2px solid orange;
 }
+/* Send Offer Modal Background */
+.unique-send-offer-modal + .modal-backdrop.show {
+  opacity: 0.2;
+}
