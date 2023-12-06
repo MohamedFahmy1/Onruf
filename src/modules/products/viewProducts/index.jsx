@@ -227,6 +227,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         Cell: ({
           row: {
             values: { isActive },
+            original,
             original: { productId },
             original: { id },
           },
@@ -235,18 +236,27 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
             <div className="d-flex align-items-center gap-2 flex-column">
               {selectedFilter === "didnotSell" ? (
                 <div>
-                  <button type="button" className="info_ mx-1">
+                  <button
+                    type="button"
+                    className="info_ mx-1"
+                    onClick={() => {
+                      Router.push(`/products/productDetails/${productId || id}`)
+                    }}
+                  >
                     {pathOr("", [locale, "Products", "repost"], t)}
                   </button>
-                  <button type="button" className="info_" onClick={() => setSendOfferModal(true)}>
-                    {pathOr("", [locale, "Products", "send_offer"], t)}
-                    {console.log(sendOfferModal)}
-                  </button>
-                  <SendOfferModal
-                    sendOfferModal={sendOfferModal}
-                    setSendOfferModal={setSendOfferModal}
-                    id={productId || id}
-                  />
+                  {original.isAuctionEnabled && (
+                    <button
+                      type="button"
+                      className="info_"
+                      onClick={() => {
+                        setSendOfferModal(true)
+                        setSingleSelectedRow(original)
+                      }}
+                    >
+                      {pathOr("", [locale, "Products", "send_offer"], t)}
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div className="form-check form-switch p-0 m-0 d-flex">
@@ -269,7 +279,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         },
       },
     ],
-    [locale, openPriceModal, openQuantityModal, selectedFilter, sendOfferModal, handleDeleteProduct],
+    [locale, openPriceModal, openQuantityModal, selectedFilter, handleDeleteProduct],
   )
   const handleChangeStatus = async (id) => {
     try {
@@ -497,6 +507,13 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
             )}
             {selectedFilter == "" && inActiveProducts.length > 5 && (
               <Pagination listLength={inActiveProducts.length} pageSize={5} />
+            )}
+            {sendOfferModal && (
+              <SendOfferModal
+                sendOfferModal={sendOfferModal}
+                setSendOfferModal={setSendOfferModal}
+                id={singleSelectedRow.productId || singleSelectedRow.id}
+              />
             )}
           </div>
         </div>

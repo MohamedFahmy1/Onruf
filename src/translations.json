@@ -265,7 +265,9 @@
       "didnt_sell": "لم يتم البيع",
       "repost": "إعادة نشر",
       "send_offer": "إرسال عرض",
-      "negotiationOffers": "عروض التفاوض"
+      "negotiationOffers": "عروض التفاوض",
+      "user": "عميل",
+      "selectAll": "اختر الكل"
     },
     "Users": {
       "users": "العملاء",
@@ -907,7 +909,9 @@
       "didnt_sell": "Didn't sell",
       "repost": "Repost",
       "send_offer": "Send Offer",
-      "negotiationOffers": "Negotiation Offers"
+      "negotiationOffers": "Negotiation Offers",
+      "user": "User",
+      "selectAll": "Select All"
     },
     "Users": {
       "users": "Clients",
