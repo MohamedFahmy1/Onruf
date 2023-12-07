@@ -33,7 +33,6 @@ const clientSideEmotionCache = createEmotionCache()
 const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache }) => {
   const [queryClient] = React.useState(() => new QueryClient())
   const { locale } = useRouter()
-
   useEffect(() => {
     store.dispatch(getTokensFromCookie())
   }, [])

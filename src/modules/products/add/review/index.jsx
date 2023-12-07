@@ -35,7 +35,7 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack, setPr
       : 0
   const totalVideoFee =
     productFullData?.videoUrl.length > selectedCatProps?.freeProductVidoesCount
-      ? selectedCatProps.extraProductVidoeFee *
+      ? selectedCatProps?.extraProductVidoeFee *
         (productFullData?.videoUrl.length - selectedCatProps?.freeProductVidoesCount)
       : 0
   const autctionFee = productFullData?.IsAuctionEnabled ? selectedCatProps?.enableAuctionFee : 0
@@ -45,7 +45,7 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack, setPr
   const couponDiscount = couponData ? couponData.discountValue : 0
   const totalCost =
     +selectedCatProps?.productPublishPrice +
-    +selectedCatProps.subTitleFee +
+    +selectedCatProps?.subTitleFee +
     +totalImageFee +
     +totalVideoFee +
     +autctionFee +
@@ -370,22 +370,24 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack, setPr
                 </Col>
               </Row>
             </div>
-            <div className="contint_paner">
-              <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-                <h6 className="f-b fs-4  m-0">{pathOr("", [locale, "Products", "selected_package"], t)}</h6>
-                <button>
-                  <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
-                    {pathOr("", [locale, "Products", "editFolder"], t)}
-                  </p>
-                </button>
+            {packageDetails && (
+              <div className="contint_paner">
+                <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+                  <h6 className="f-b fs-4  m-0">{pathOr("", [locale, "Products", "selected_package"], t)}</h6>
+                  <button>
+                    <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
+                      {pathOr("", [locale, "Products", "editFolder"], t)}
+                    </p>
+                  </button>
+                </div>
+                <div className={styles["info_boxo_"]}>
+                  <span>{productFullData && (locale == "en" ? packageDetails?.nameEn : packageDetails?.nameAr)}</span>
+                  <span className="font-18 main-color">
+                    <FaCheckCircle />
+                  </span>
+                </div>
               </div>
-              <div className={styles["info_boxo_"]}>
-                <span>{productFullData && (locale == "en" ? packageDetails?.nameEn : packageDetails?.nameAr)}</span>
-                <span className="font-18 main-color">
-                  <FaCheckCircle />
-                </span>
-              </div>
-            </div>
+            )}
             <div className="contint_paner">
               <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
                 <h6 className="f-b fs-4 m-0">{pathOr("", [locale, "Products", "shippingAndDuration"], t)}</h6>
@@ -407,7 +409,7 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack, setPr
                 </Row>
               )}
               <Row>
-                <h6 className="f-b m-0">{pathOr("", [locale, "Products", "shippingOptions"], t)}</h6>
+                <h6 className="f-b mt-3">{pathOr("", [locale, "Products", "shippingOptions"], t)}</h6>
                 {shippingOptions?.map((item) => (
                   <Col md={6} key={item.id}>
                     <div className={styles["info_boxo_"]} key={item.id}>
@@ -523,7 +525,8 @@ const AddProductReview = ({ selectedCatProps, productFullData, handleBack, setPr
                   <li>
                     <span>{pathOr("", [locale, "Products", "tax"], t)}</span>{" "}
                     <span>
-                      {totalCost < 0 ? 0 : totalCost * (12 / 100)} {pathOr("", [locale, "Products", "currency"], t)}
+                      {totalCost < 0 ? 0 : (totalCost * (12 / 100)).toFixed(2)}{" "}
+                      {pathOr("", [locale, "Products", "currency"], t)}
                     </span>
                   </li>
                   <li>

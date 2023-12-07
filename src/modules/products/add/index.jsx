@@ -89,7 +89,7 @@ const AddProduct = () => {
 
   const handleBack = (e) => {
     e.preventDefault()
-    router.push("./")
+    step > 1 ? setStep((prev) => prev - 1) : router.push("./")
   }
 
   const handleNextStep = (selectedCatId) => {

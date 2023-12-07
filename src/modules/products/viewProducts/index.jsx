@@ -26,7 +26,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
 
   const [products, setProducts] = useState(p)
   const [selectedFilter, setSelectedFilter] = useState("avaliableProducts")
-  const { data: didnotSellProducts } = useFetch("/ListDidntSellProducts")
+  const { data: didnotSellProducts } = useFetch("/ListDidntSellProducts", false)
   const [openQuantityModal, setOpenQuantityModal] = useState(false)
   const [openPriceModal, setOpenPriceModal] = useState(false)
   const [sendOfferModal, setSendOfferModal] = useState(false)

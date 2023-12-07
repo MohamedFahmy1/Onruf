@@ -40,8 +40,8 @@ const EditProduct = () => {
     MainImageIndex: undefined,
     videoUrl: [""],
     ShippingOptions: [],
-    Lat: "30",
-    Lon: "30",
+    Lat: "0",
+    Lon: "0",
     AcceptQuestion: false,
     IsFixedPriceEnabled: true,
     IsAuctionEnabled: false,
@@ -64,16 +64,19 @@ const EditProduct = () => {
 
   const handleBack = (e) => {
     e.preventDefault()
-    router.push("./")
+    step > 1 ? setStep((prev) => prev - 1) : router.push("/products")
   }
 
   useEffect(() => {
     if (productData) {
       setProductPayload((prev) => ({
         ...prev,
-        name: productData.name,
-        subTitle: productData.subTitle,
-        description: productData.description,
+        nameAr: productData.nameAr,
+        nameEn: productData.nameEn,
+        subTitleAr: productData.subTitleAr,
+        subTitleEn: productData.subTitleEn,
+        descriptionAr: productData.descriptionAr,
+        descriptionEn: productData.descriptionEn,
         qty: productData.qty,
         status: productData.status,
         categoryId: productData.categoryId,
@@ -106,21 +109,37 @@ const EditProduct = () => {
         AuctionClosingTime: productData.auctionClosingTime,
         SendYourAccountInfoToAuctionWinner: productData.sendYourAccountInfoToAuctionWinner,
         AlmostSoldOutQuantity: productData.almostSoldOutQuantity,
+        productImage: productData.productImage,
       }))
     }
-  }, [productData])
+    const fetchCatProps = async () => {
+      if (productData) {
+        try {
+          const {
+            data: { data: data },
+          } = await axios(
+            `${process.env.NEXT_PUBLIC_API_URL}/GetCategoryById?id=${productData?.categoryId}&lang=${locale}`,
+          )
+          setSelectedCatProps(data)
+        } catch (error) {
+          Alerto(error)
+        }
+      }
+    }
+    fetchCatProps()
+  }, [productData, locale])
 
   return (
     <div className="body-content">
       <div>
-        {/*(step === 3 || (product && product?.id)) && (
+        {step === 1 && (
           <ProductDetails
             selectedCatProps={selectedCatProps}
+            handleBack={handleBack}
             productFullData={productPayload}
-            handleBack={handleGoToSteptwo}
             setProductPayload={setProductPayload}
           />
-        )*/}
+        )}
       </div>
     </div>
   )

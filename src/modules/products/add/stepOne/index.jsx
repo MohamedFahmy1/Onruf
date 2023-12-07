@@ -205,11 +205,12 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps, se
                       {pathOr("", [locale, "Products", "selectCategory"], t)}
                     </label>
                     <select
+                      defaultValue={""}
                       value={categoriesAndSubList[0]?.id}
                       className="form-control form-select"
                       onChange={handleSelectChangeCat}
                     >
-                      <option disabled selected value>
+                      <option disabled hidden value={""}>
                         {pathOr("", [locale, "Products", "selectOption"], t)}
                       </option>
                       {allCats.map((cat, index) => (

@@ -267,7 +267,10 @@
       "send_offer": "إرسال عرض",
       "negotiationOffers": "عروض التفاوض",
       "user": "عميل",
-      "selectAll": "اختر الكل"
+      "selectAll": "اختر الكل",
+      "please_write_price_quantity": "يرجى كتابة السعر والكمية للعرض",
+      "write_price": "من فضلك اكتب السعر",
+      "write_quantity": "من فضلك اكتب الكمية"
     },
     "Users": {
       "users": "العملاء",
@@ -911,7 +914,10 @@
       "send_offer": "Send Offer",
       "negotiationOffers": "Negotiation Offers",
       "user": "User",
-      "selectAll": "Select All"
+      "selectAll": "Select All",
+      "please_write_price_quantity": "Please write the price and the quantity of the offer",
+      "write_price": "Please Write Price",
+      "write_quantity": "Please Write Quantity"
     },
     "Users": {
       "users": "Clients",

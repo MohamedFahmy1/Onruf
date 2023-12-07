@@ -413,7 +413,7 @@ body {
   color: #495057;
   background-color: #fff !important;
   border: 1px solid #ced4da;
-  border-radius: 50px !important;
+  border-radius: 50px;
   background-position: left 0.75rem center;
   text-indent: 10px;
 }
@@ -1638,11 +1638,11 @@ body::-webkit-scrollbar-thumb:hover,
 
 /* Edit Account Page  */
 .input-group .form-control {
-  border-radius: 50px 0 0 50px !important;
+  border-radius: 50px 0 0 50px;
 }
 
 .input-group-text {
-  border-radius: 0 50px 50px 0 !important;
+  border-radius: 0 50px 50px 0;
   background: #fff;
   padding: 5px 20px;
   border-inline-end: 0;

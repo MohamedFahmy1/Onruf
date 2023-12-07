@@ -17,6 +17,7 @@ import cityImage from "../../../../public/icons/neighboor.svg"
 import Image from "next/image"
 import AuctionClosingTimeComp from "./AuctionClosingTimeComp"
 import { onlyNumbersInInputs } from "../../../../common/functions"
+import { textAlignStyle } from "../../../../styles/stylesObjects"
 
 const AddProductStepTwo = ({
   catId,
@@ -468,7 +469,6 @@ const AddProductStepTwo = ({
                       id={img.id}
                       type="radio"
                       name="isMain"
-                      defaultChecked={index === +productPayload.MainImageIndex}
                       checked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
                       onChange={() => handleMainImage(img.id, index)}
                     />
@@ -547,10 +547,7 @@ const AddProductStepTwo = ({
                 {Boolean(spesfications?.length) &&
                   spesfications.map((spesfication, index) => (
                     <div className="form-group" key={spesfication?.id}>
-                      <label
-                        htmlFor={index}
-                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
-                      >
+                      <label htmlFor={index} style={{ ...textAlignStyle(locale), display: "block" }}>
                         {spesfication.name}
                       </label>
                       {spesfication.type === 1 && (
@@ -558,31 +555,19 @@ const AddProductStepTwo = ({
                           required={spesfication.isRequired}
                           id={index}
                           value={
-                            locale === "en"
+                            (locale === "en"
                               ? productPayload?.productSep[index]?.ValueSpeEn
-                              : productPayload?.productSep[index]?.ValueSpeAr
+                              : productPayload?.productSep[index]?.ValueSpeAr) || "" // Initialize with an empty string
                           }
                           className={`${styles["form-control"]} form-control form-select`}
                           onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
                         >
-                          <option value="" disabled selected hidden>
+                          <option value="" disabled hidden>
                             {spesfication?.placeHolder}
                           </option>
                           {Boolean(spesfication?.subSpecifications?.length) &&
                             spesfication.subSpecifications.map((subSpecification) => (
-                              <option
-                                defaultValue={
-                                  locale == "en"
-                                    ? productPayload?.productSep?.find(
-                                        ({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.name,
-                                      )?.ValueSpeEn
-                                    : productPayload?.productSep?.find(
-                                        ({ HeaderSpeAr }) => HeaderSpeAr === spesfication?.name,
-                                      )?.ValueSpeAr
-                                }
-                                key={subSpecification?.id}
-                                value={subSpecification.id}
-                              >
+                              <option key={subSpecification?.id} value={subSpecification?.id}>
                                 {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
                               </option>
                             ))}
@@ -593,13 +578,13 @@ const AddProductStepTwo = ({
                           type={"text"}
                           id={index}
                           value={
-                            locale === "en"
+                            (locale === "en"
                               ? productPayload?.productSep?.find(
                                   ({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.name,
                                 )?.ValueSpeEn
                               : productPayload?.productSep?.find(
                                   ({ HeaderSpeAr }) => HeaderSpeAr === spesfication?.name,
-                                )?.ValueSpeAr
+                                )?.ValueSpeAr) || "" // Initialize with an empty string
                           }
                           required={spesfication.isRequired}
                           placeholder={spesfication.placeHolder}
@@ -627,10 +612,7 @@ const AddProductStepTwo = ({
                 <Row>
                   <Col md={6}>
                     <div className="form-group">
-                      <label
-                        htmlFor="nameAr"
-                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
-                      >
+                      <label htmlFor="nameAr" style={{ ...textAlignStyle(locale), display: "block" }}>
                         {pathOr("", [locale, "Products", "productAddressAr"], t)}
                         <RequiredSympol />
                       </label>
@@ -644,10 +626,7 @@ const AddProductStepTwo = ({
                       />
                     </div>
                     <div className="form-group">
-                      <label
-                        htmlFor="subTitleAr"
-                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
-                      >
+                      <label htmlFor="subTitleAr" style={{ ...textAlignStyle(locale), display: "block" }}>
                         {pathOr("", [locale, "Products", "productSecondaryAddressAr"], t)}
                       </label>
                       <input
@@ -667,10 +646,7 @@ const AddProductStepTwo = ({
                   </Col>
                   <Col md={6}>
                     <div className="form-group">
-                      <label
-                        htmlFor="descriptionAr"
-                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
-                      >
+                      <label htmlFor="descriptionAr" style={{ ...textAlignStyle(locale), display: "block" }}>
                         {pathOr("", [locale, "Products", "productDetailsAr"], t)}
                       </label>
                       <textarea
@@ -691,10 +667,7 @@ const AddProductStepTwo = ({
                 <Row>
                   <Col md={6}>
                     <div className="form-group">
-                      <label
-                        htmlFor="nameEn"
-                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
-                      >
+                      <label htmlFor="nameEn" style={{ ...textAlignStyle(locale), display: "block" }}>
                         {pathOr("", [locale, "Products", "productAddressEn"], t)}
                         <RequiredSympol />
                       </label>
@@ -708,10 +681,7 @@ const AddProductStepTwo = ({
                       />
                     </div>
                     <div className="form-group">
-                      <label
-                        htmlFor="subTitleEn"
-                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
-                      >
+                      <label htmlFor="subTitleEn" style={{ ...textAlignStyle(locale), display: "block" }}>
                         {pathOr("", [locale, "Products", "productSecondaryAddressEn"], t)}
                       </label>
                       <input
@@ -731,10 +701,7 @@ const AddProductStepTwo = ({
                   </Col>
                   <Col md={6}>
                     <div className="form-group">
-                      <label
-                        htmlFor="descriptionEn"
-                        style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}
-                      >
+                      <label htmlFor="descriptionEn" style={{ ...textAlignStyle(locale), display: "block" }}>
                         {pathOr("", [locale, "Products", "productDetailsEn"], t)}
                       </label>
                       <textarea
@@ -754,7 +721,7 @@ const AddProductStepTwo = ({
 
                   <Col>
                     <div className="form-group">
-                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                      <label style={{ ...textAlignStyle(locale), display: "block" }}>
                         {pathOr("", [locale, "Products", "itemStatus"], t)}
                       </label>
                       <div className="d-flex gap-3">
@@ -780,7 +747,7 @@ const AddProductStepTwo = ({
 
                   <Col md={6}>
                     <div className="form-group">
-                      <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                      <label style={{ ...textAlignStyle(locale), display: "block" }}>
                         {pathOr("", [locale, "Products", "quantity"], t)}
                         <RequiredSympol />
                       </label>
@@ -837,7 +804,7 @@ const AddProductStepTwo = ({
                   <Row>
                     <Col md={6}>
                       <div className="form-group">
-                        <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                        <label style={{ ...textAlignStyle(locale), display: "block" }}>
                           {pathOr("", [locale, "Products", "productsAlmostOut"], t)}
                         </label>
                         <div className="inpt_numb">
@@ -881,7 +848,7 @@ const AddProductStepTwo = ({
                   </Row>
                 )}
                 <div className="form-group">
-                  <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                  <label style={{ ...textAlignStyle(locale), display: "block" }}>
                     {" "}
                     {pathOr("", [locale, "Products", "address"], t)}
                   </label>
@@ -910,8 +877,7 @@ const AddProductStepTwo = ({
                             <select
                               id="countryId"
                               className={`${styles["form-control"]} form-control form-select`}
-                              value={productPayload.countryId}
-                              defaultValue={""}
+                              value={productPayload.countryId || ""}
                               onChange={(e) => {
                                 setProductPayload({ ...productPayload, countryId: +e.target.value })
                                 handleFetchNeighbourhoodsOrRegions(
@@ -951,7 +917,7 @@ const AddProductStepTwo = ({
                             <select
                               id="regionId"
                               className={`${styles["form-control"]} form-control form-select`}
-                              value={productPayload.regionId}
+                              value={productPayload.regionId || ""}
                               onChange={(e) => {
                                 setProductPayload({ ...productPayload, regionId: +e.target.value })
                                 handleFetchNeighbourhoodsOrRegions(
@@ -991,7 +957,7 @@ const AddProductStepTwo = ({
                             <select
                               id="neighborhoodId"
                               className={`${styles["form-control"]} form-control form-select`}
-                              value={productPayload?.neighborhoodId}
+                              value={productPayload?.neighborhoodId || ""}
                               onChange={(e) => {
                                 setProductPayload({ ...productPayload, neighborhoodId: +e.target.value })
                               }}
@@ -1353,7 +1319,7 @@ const AddProductStepTwo = ({
                         </div>
                         <div className="col-12">
                           <div className="form-group">
-                            <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                            <label style={{ ...textAlignStyle(locale), display: "block" }}>
                               {pathOr("", [locale, "Products", "who_to_send_offer"], t)}
                               <RequiredSympol />
                             </label>
@@ -1543,7 +1509,7 @@ const AddProductStepTwo = ({
                 <Row>
                   {productPayload?.IsAuctionEnabled && (
                     <Fragment>
-                      <h5 className="f-b" style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
+                      <h5 className="f-b" style={{ ...textAlignStyle(locale), display: "block" }}>
                         {pathOr("", [locale, "Products", "offer_duration"], t)}
                         <RequiredSympol />
                       </h5>

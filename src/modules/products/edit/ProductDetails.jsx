@@ -27,7 +27,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       : 0
   const totalVideoFee =
     productFullData?.videoUrl.length > selectedCatProps?.freeProductVidoesCount
-      ? selectedCatProps.extraProductVidoeFee *
+      ? selectedCatProps?.extraProductVidoeFee *
         (productFullData?.videoUrl.length - selectedCatProps?.freeProductVidoesCount)
       : 0
   const autctionFee = productFullData?.IsAuctionEnabled ? selectedCatProps?.enableAuctionFee : 0
@@ -37,7 +37,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
   const couponDiscount = couponData ? couponData.discountValue : 0
   const totalCost =
     +selectedCatProps?.productPublishPrice +
-    +selectedCatProps.subTitleFee +
+    +selectedCatProps?.subTitleFee +
     +totalImageFee +
     +totalVideoFee +
     +autctionFee +
@@ -166,15 +166,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
               <Row className="align-items-center">
                 <Col lg={6}>
                   <div className="d-flex align-items-center gap-1">
-                    <img
-                      src={
-                        productFullData.listImageFile
-                          ? URL.createObjectURL(productFullData.listImageFile[0])
-                          : "https://miro.medium.com/max/600/0*jGmQzOLaEobiNklD"
-                      }
-                      className="img_table"
-                      alt="product"
-                    />
+                    <img src={productFullData.productImage} className="img_table" alt="product" />
                     <div>
                       <div className="gray-color">{selectedCatProps?.name}</div>
                       <div className="f-b">{locale == "en" ? productFullData?.nameEn : productFullData?.nameAr}</div>
@@ -408,7 +400,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                   <li>
                     <span>{pathOr("", [locale, "Products", "publishing_price"], t)}</span>{" "}
                     <span>
-                      {selectedCatProps.productPublishPrice} {pathOr("", [locale, "Products", "currency"], t)}
+                      {selectedCatProps?.productPublishPrice} {pathOr("", [locale, "Products", "currency"], t)}
                     </span>
                   </li>
                   {couponData && (
@@ -419,25 +411,25 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                   <li>
                     <span>{pathOr("", [locale, "Products", "subtitle_fee"], t)}</span>{" "}
                     <span>
-                      {selectedCatProps.subTitleFee} {pathOr("", [locale, "Products", "currency"], t)}
+                      {selectedCatProps?.subTitleFee} {pathOr("", [locale, "Products", "currency"], t)}
                     </span>
                   </li>
-                  {productFullData.listImageFile.length > selectedCatProps.freeProductImagesCount && (
+                  {productFullData.listImageFile.length > selectedCatProps?.freeProductImagesCount && (
                     <li>
                       <span>{pathOr("", [locale, "Products", "additional_product_images_fee"], t)}</span>{" "}
                       <span>
-                        {selectedCatProps.extraProductImageFee *
-                          (productFullData.listImageFile.length - selectedCatProps.freeProductImagesCount)}{" "}
+                        {selectedCatProps?.extraProductImageFee *
+                          (productFullData.listImageFile.length - selectedCatProps?.freeProductImagesCount)}{" "}
                         {pathOr("", [locale, "Products", "currency"], t)}
                       </span>
                     </li>
                   )}
-                  {productFullData.videoUrl.length > selectedCatProps.freeProductVidoesCount && (
+                  {productFullData.videoUrl.length > selectedCatProps?.freeProductVidoesCount && (
                     <li>
                       <span>{pathOr("", [locale, "Products", "additional_product_videos_fee"], t)}</span>{" "}
                       <span>
-                        {selectedCatProps.extraProductVidoeFee *
-                          (productFullData.videoUrl.length - selectedCatProps.freeProductVidoesCount)}{" "}
+                        {selectedCatProps?.extraProductVidoeFee *
+                          (productFullData.videoUrl.length - selectedCatProps?.freeProductVidoesCount)}{" "}
                         {pathOr("", [locale, "Products", "currency"], t)}
                       </span>
                     </li>
@@ -446,7 +438,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                     <li>
                       <span>{pathOr("", [locale, "Products", "auction_fee"], t)}</span>{" "}
                       <span>
-                        {selectedCatProps.enableAuctionFee} {pathOr("", [locale, "Products", "currency"], t)}
+                        {selectedCatProps?.enableAuctionFee} {pathOr("", [locale, "Products", "currency"], t)}
                       </span>
                     </li>
                   )}
@@ -454,7 +446,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                     <li>
                       <span>{pathOr("", [locale, "Products", "negotiation_fee"], t)}</span>{" "}
                       <span>
-                        {selectedCatProps.enableNegotiationFee} {pathOr("", [locale, "Products", "currency"], t)}
+                        {selectedCatProps?.enableNegotiationFee} {pathOr("", [locale, "Products", "currency"], t)}
                       </span>
                     </li>
                   )}
@@ -462,7 +454,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                     <li>
                       <span>{pathOr("", [locale, "Products", "fixed_price_selling_fee"], t)}</span>{" "}
                       <span>
-                        {selectedCatProps.enableFixedPriceSaleFee} {pathOr("", [locale, "Products", "currency"], t)}
+                        {selectedCatProps?.enableFixedPriceSaleFee} {pathOr("", [locale, "Products", "currency"], t)}
                       </span>
                     </li>
                   )}

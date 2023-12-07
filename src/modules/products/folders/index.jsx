@@ -17,6 +17,7 @@ import { RiDeleteBin5Line } from "react-icons/ri"
 import { MdModeEdit } from "react-icons/md"
 import t from "../../../translations.json"
 import Image from "next/image"
+import { textAlignStyle } from "../../../styles/stylesObjects"
 const Folders = () => {
   const { locale } = useRouter()
   const page = useRouter()?.query?.page || 1
@@ -164,9 +165,7 @@ const Folders = () => {
           </div>
         </div>
       </div>
-
       {/* Folder Modal */}
-
       <Modal
         show={openFolderModal}
         onHide={() => {
@@ -192,7 +191,7 @@ const Folders = () => {
           ></button>
         </Modal.Header>
         <Modal.Body>
-          <div className="form-group" style={{ textAlign: locale === "en" ? "left" : "right" }}>
+          <div className="form-group" style={textAlignStyle(locale)}>
             <label>{pathOr("", [locale, "Users", "folderName"], t)}</label>
             <input
               type="text"
