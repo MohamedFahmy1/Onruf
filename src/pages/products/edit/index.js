@@ -2,7 +2,7 @@ import Head from "next/head"
 import React, { Fragment } from "react"
 import EditProduct from "../../../modules/products/edit"
 
-const ProductDetailsPage = () => {
+const EditPage = () => {
   return (
     <Fragment>
       <Head>
@@ -13,4 +13,4 @@ const ProductDetailsPage = () => {
   )
 }
 
-export default ProductDetailsPage
+export default EditPage

@@ -13,7 +13,7 @@ export const useFetch = (apiPath, dynamicPage) => {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${apiPath}`)
       setData(response.data.data)
     } catch (error) {
-      Alerto(error) || toast.error(error.response.data.message)
+      Alerto(error)
     }
   }, [apiPath])
 

@@ -10,14 +10,13 @@ import { useFetch } from "../../../hooks/useFetch"
 import ProductDetails from "./ProductDetails"
 
 const EditProduct = () => {
-  const router = useRouter()
+  const { locale, query, push } = useRouter()
   const [step, setStep] = useState(1)
-  const [selectedCatId, setSelectedCatId] = useState(null)
-  const [selectedCatProps, setSelectedCatProps] = useState({})
+  const { data: productData } = useFetch(`/GetProductById?id=${query.id}&lang=${locale}`, true)
+  const { data: shippingOptions } = useFetch(`/GetProductShippingOptions?productId=${query.id}`, true)
+  const { data: paymentOptions } = useFetch(`/GetProductPaymentOptions?productId=${query.id}`, true)
   const [speficationsPayload, setSpeficationsPayload] = useState([])
   const [product, setProduct] = useState()
-  const [editModeOn, setEditModeOn] = useState(false)
-  const { locale, query } = useRouter()
   const [productPayload, setProductPayload] = useState({
     nameAr: "",
     nameEn: "",
@@ -60,17 +59,16 @@ const EditProduct = () => {
     SendYourAccountInfoToAuctionWinner: false,
     AlmostSoldOutQuantity: 1,
   })
-  const { data: productData } = useFetch(`/GetProductById?id=${query.id}&lang=${locale}`, true)
 
-  const handleBack = (e) => {
-    e.preventDefault()
-    step > 1 ? setStep((prev) => prev - 1) : router.push("/products")
+  const handleBack = () => {
+    step > 1 ? setStep((prev) => prev - 1) : push("/products")
   }
 
   useEffect(() => {
-    if (productData) {
+    if (productData && shippingOptions && paymentOptions) {
       setProductPayload((prev) => ({
         ...prev,
+        id: query.id,
         nameAr: productData.nameAr,
         nameEn: productData.nameEn,
         subTitleAr: productData.subTitleAr,
@@ -89,7 +87,7 @@ const EditProduct = () => {
         productSep: productData.listProductSep,
         listImageFile: productData.listMedia,
         // videoUrl: productData.videoUrl,
-        // ShippingOptions: productData.productShippingOptions,
+        ShippingOptions: shippingOptions.map((item) => item.shippingOptionId),
         Lat: productData.lat,
         Lon: productData.lon,
         AcceptQuestion: productData.acceptQuestion,
@@ -97,7 +95,7 @@ const EditProduct = () => {
         IsAuctionEnabled: productData.isAuctionEnabled,
         IsNegotiationEnabled: productData.isNegotiationEnabled,
         Price: productData.price,
-        // PaymentOptions: productData.paymentOptions,
+        PaymentOptions: paymentOptions.map((item) => item.paymentOptionId),
         // ProductBankAccounts: productData.productBankAccounts,
         IsCashEnabled: productData.isCashEnabled,
         AuctionStartPrice: productData.auctionStartPrice,
@@ -110,34 +108,47 @@ const EditProduct = () => {
         SendYourAccountInfoToAuctionWinner: productData.sendYourAccountInfoToAuctionWinner,
         AlmostSoldOutQuantity: productData.almostSoldOutQuantity,
         productImage: productData.productImage,
+        "ProductPaymentDetailsDto.ProductPublishPrice": productData?.categoryDto.productPublishPrice,
+        "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": productData?.categoryDto.enableFixedPriceSaleFee,
+        "ProductPaymentDetailsDto.EnableAuctionFee": productData?.categoryDto.enableAuctionFee,
+        "ProductPaymentDetailsDto.EnableNegotiationFee": productData?.categoryDto.enableNegotiationFee,
+        "ProductPaymentDetailsDto.ExtraProductImageFee": productData?.categoryDto.extraProductImageFee,
+        "ProductPaymentDetailsDto.ExtraProductVidoeFee": productData?.categoryDto.extraProductVidoeFee,
+        "ProductPaymentDetailsDto.SubTitleFee": productData?.categoryDto.subTitleFee,
       }))
     }
-    const fetchCatProps = async () => {
-      if (productData) {
-        try {
-          const {
-            data: { data: data },
-          } = await axios(
-            `${process.env.NEXT_PUBLIC_API_URL}/GetCategoryById?id=${productData?.categoryId}&lang=${locale}`,
-          )
-          setSelectedCatProps(data)
-        } catch (error) {
-          Alerto(error)
-        }
-      }
-    }
-    fetchCatProps()
-  }, [productData, locale])
+  }, [productData, locale, shippingOptions, paymentOptions, query.id])
 
   return (
     <div className="body-content">
+      <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+        <h6 className="f-b m-0">{pathOr("", [locale, "Products", "review_product_before_adding"], t)}</h6>
+        <button>
+          <p onClick={() => push("/products")} className="btn-main btn-main-o">
+            {pathOr("", [locale, "Products", "cancel"], t)}
+          </p>
+        </button>
+      </div>
       <div>
-        {step === 1 && (
+        {step === 1 && productData && paymentOptions && shippingOptions && (
           <ProductDetails
-            selectedCatProps={selectedCatProps}
+            selectedCatProps={{ ...productData?.categoryDto }}
             handleBack={handleBack}
             productFullData={productPayload}
             setProductPayload={setProductPayload}
+          />
+        )}
+        {step === 2 && (
+          <AddProductStepTwo
+            product={product && product}
+            catId={productData?.categoryId}
+            selectedCatProps={{ ...productData?.categoryDto }}
+            handleGoToReviewPage={handleBack}
+            productPayload={productPayload}
+            setProductPayload={setProductPayload}
+            speficationsPayload={speficationsPayload}
+            setSpeficationsPayload={setSpeficationsPayload}
+            editModeOn={true}
           />
         )}
       </div>
@@ -146,35 +157,3 @@ const EditProduct = () => {
 }
 
 export default EditProduct
-
-// {(step === 1 || step === 2) && (
-//     <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-//       <h6 className="f-b m-0">{pathOr("", [locale, "Products", "addNewProduct"], t)}</h6>
-//       <a onClick={handleBack} className="btn-main btn-main-o">
-//         {pathOr("", [locale, "Products", "cancel"], t)}
-//       </a>
-//     </div>
-//   )}
-//   {step === 1 && !product?.id && (
-//     <AddProductStepOne
-//       product={product && product}
-//       next={(selectedCat) => handleNextStep(selectedCat)}
-//       setSelectedCatProps={setSelectedCatProps}
-//       setProductPayload={setProductPayload}
-//       editProduct={false}
-//     />
-//   )}
-//   {(step === 2 || (product && product?.id)) && (
-//     <AddProductStepTwo
-//       product={product && product}
-//       catId={selectedCatId}
-//       selectedCatProps={selectedCatProps}
-//       handleGoToReviewPage={handleGoToReviewPage}
-//       productPayload={productPayload}
-//       setProductPayload={setProductPayload}
-//       speficationsPayload={speficationsPayload}
-//       setSpeficationsPayload={setSpeficationsPayload}
-//       editModeOn={editModeOn}
-//       setEditModeOn={setEditModeOn}
-//     />
-//   )}

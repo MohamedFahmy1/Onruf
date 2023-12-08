@@ -73,12 +73,9 @@ const AddProductStepTwo = ({
   }
   const fetchPakatList = async () => {
     try {
-      // const { data: packatData } = await axios(
-      //   process.env.NEXT_PUBLIC_API_URL + `/getAllPakatsList?lang=${locale}&currentPage=1`,
-      // )
       const { data: packatData } = await axios(
         process.env.NEXT_PUBLIC_API_URL +
-          `/getAllPakatsList?lang=${locale}&categoryId=${catId}&isAdmin=${false}&PakatType=Additional`,
+          `/getAllPakatsList?lang=${locale}&categoryId=${catId}&isAdmin=${true}&PakatType=Additional`,
       )
       const { data: packatList } = packatData
       setPackat(packatList)

@@ -26,7 +26,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
 
   const [products, setProducts] = useState(p)
   const [selectedFilter, setSelectedFilter] = useState("avaliableProducts")
-  const { data: didnotSellProducts } = useFetch("/ListDidntSellProducts", false)
+  const { data: didnotSellProducts, fetchData: fetchDidntSell } = useFetch("/ListDidntSellProducts", false)
   const [openQuantityModal, setOpenQuantityModal] = useState(false)
   const [openPriceModal, setOpenPriceModal] = useState(false)
   const [sendOfferModal, setSendOfferModal] = useState(false)
@@ -79,6 +79,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/RemoveProduct?id=${productId}`)
         toast.success(locale === "en" ? "Products has been deleted successfully!" : "تم حذف المنتج بنجاح")
         getProductData()
+        fetchDidntSell()
       } catch (error) {
         console.error(error)
         toast.error(error.response.data.message)
@@ -260,7 +261,10 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                 </div>
               ) : (
                 <div className="form-check form-switch p-0 m-0 d-flex">
-                  <MdModeEdit className="btn_Measures" onClick={() => Router.push(`/edit/${productId || id}`)} />
+                  <MdModeEdit
+                    className="btn_Measures"
+                    onClick={() => Router.push(`/products/edit/${productId || id}`)}
+                  />
                   <RiDeleteBin5Line className="btn_Measures" onClick={() => handleDeleteProduct(productId || id)} />
                   <input
                     readOnly

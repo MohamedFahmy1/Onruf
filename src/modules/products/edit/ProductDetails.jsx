@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react"
+import React, { Fragment, useCallback, useEffect, useState } from "react"
 import styles from "../add/review/productReview.module.css"
 import { useRouter } from "next/router"
 import { Row, Col } from "react-bootstrap"
@@ -6,16 +6,15 @@ import dateImage from "../../../public/icons/Copyright_expiry.svg"
 import { FaCheckCircle } from "react-icons/fa"
 import axios from "axios"
 import { toast } from "react-toastify"
-import { pathOr } from "ramda"
+import { path, pathOr } from "ramda"
 import t from "../../../translations.json"
 import Image from "next/image"
 import moment from "moment/moment"
 
 const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProductPayload }) => {
   const router = useRouter()
-  const { locale } = useRouter()
-  const productId = router.query.id
-  const [shippingOptions, setShippingOptions] = useState()
+  const { locale, pathname } = useRouter()
+  const [shippingOptions, setShippingOptions] = useState([])
   const [packageDetails, setPackageDetails] = useState()
   const [couponData, setCouponData] = useState()
   const [couponCode, setCouponCode] = useState("")
@@ -46,12 +45,13 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
     +pakaFee -
     +couponDiscount
 
-  const getShippingOptions = async () => {
+  const getShippingOptions = useCallback(async () => {
     const data = await axios.get(process.env.NEXT_PUBLIC_API_URL + `/GetAllShippingOptions`)
-    const shippingNames = data?.data?.data.filter((item) => productFullData.ShippingOptions.includes(item.id))
+    const shippingNames = (data?.data?.data).filter((item) => productFullData.ShippingOptions.includes(item.id))
     setShippingOptions(shippingNames)
-  }
-  const getPackage = async () => {
+  }, [productFullData.ShippingOptions])
+
+  const getPackage = useCallback(async () => {
     if (productFullData.pakatId) {
       const data = await axios.get(
         process.env.NEXT_PUBLIC_API_URL +
@@ -60,7 +60,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       )
       setPackageDetails(data?.data?.data)
     }
-  }
+  }, [productFullData.pakatId])
 
   const applyCoupon = async () => {
     try {
@@ -80,9 +80,11 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
     }
   }
   useEffect(() => {
-    productFullData && getShippingOptions()
-    productFullData && getPackage()
-  }, [productFullData])
+    productFullData.ShippingOptions.length > 0 && getShippingOptions()
+  }, [productFullData.ShippingOptions, getShippingOptions])
+  useEffect(() => {
+    productFullData.pakatId && getPackage()
+  }, [productFullData.pakatId, getPackage])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -113,218 +115,238 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
           })
       }
       // if any value is empty don't send it to the api
-      else if (value === "" || value === null) {
+      else if (value === "" || value === null || key === "productImage") {
         continue
       } else {
         formData.append(key, value)
       }
     }
     console.log("formData", formData)
-
-    try {
-      const {
-        data: { data: id },
-      } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData, {
-        headers: {
-          accept: "*/*",
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-      router.push(`/${locale}/products`)
-    } catch (error) {
-      toast.error(
-        locale === "en"
-          ? "Error Please recheck the data you entered!"
-          : "حدث خطأ برجاء مراجعة البيانات و اعادة المحاولة",
-      )
+    if (pathname.includes("add")) {
+      try {
+        const {
+          data: { data: id },
+        } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData, {
+          headers: {
+            accept: "*/*",
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
+        router.push(`/${locale}/products`)
+      } catch (error) {
+        toast.error(
+          locale === "en"
+            ? "Error Please recheck the data you entered!"
+            : "حدث خطأ برجاء مراجعة البيانات و اعادة المحاولة",
+        )
+      }
+    } else {
+      try {
+        const {
+          data: { data: id },
+        } = await axios.put(process.env.NEXT_PUBLIC_API_URL + "/EditProduct", formData, {
+          headers: {
+            accept: "*/*",
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
+        router.push(`/${locale}/products`)
+      } catch (error) {
+        toast.error(
+          locale === "en"
+            ? "Error Please recheck the data you entered!"
+            : "حدث خطأ برجاء مراجعة البيانات و اعادة المحاولة",
+        )
+      }
     }
   }
 
   return (
     <div className="body-content">
-      <div>
-        <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-          <h6 className="f-b m-0">{pathOr("", [locale, "Products", "review_product_before_adding"], t)}</h6>
-          <button>
-            <p onClick={handleBack} className="btn-main btn-main-o">
-              {pathOr("", [locale, "Products", "cancel"], t)}
-            </p>
-          </button>
-        </div>
-        <Row>
-          <Col lg={9}>
-            <div className="contint_paner">
-              <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-                <h6 className="f-b fs-4 m-0">{pathOr("", [locale, "Products", "productDetails"], t)}</h6>
-                <button>
-                  <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
-                    {pathOr("", [locale, "Products", "editFolder"], t)}
-                  </p>
-                </button>
-              </div>
-              <Row className="align-items-center">
-                <Col lg={6}>
-                  <div className="d-flex align-items-center gap-1">
-                    <img src={productFullData.productImage} className="img_table" alt="product" />
-                    <div>
-                      <div className="gray-color">{selectedCatProps?.name}</div>
-                      <div className="f-b">{locale == "en" ? productFullData?.nameEn : productFullData?.nameAr}</div>
-                      <div className="gray-color">
-                        {locale == "en" ? productFullData?.subTitleEn : productFullData?.subTitleAr}
-                      </div>
-                    </div>
-                  </div>
-                </Col>
-                <Col lg={6}>
+      <Row>
+        <Col lg={9}>
+          <div className="contint_paner">
+            <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+              <h6 className="f-b fs-4 m-0">{pathOr("", [locale, "Products", "productDetails"], t)}</h6>
+              <button>
+                <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
+                  {pathOr("", [locale, "Products", "editFolder"], t)}
+                </p>
+              </button>
+            </div>
+            <Row className="align-items-center">
+              <Col lg={6}>
+                <div className="d-flex align-items-center gap-1">
+                  {productFullData.productImage && (
+                    <Image
+                      src={productFullData.productImage}
+                      className="img_table"
+                      alt="product"
+                      width={130}
+                      height={100}
+                    />
+                  )}
                   <div>
-                    <div className={styles["info_boxo_"]}>
-                      <span>{pathOr("", [locale, "Products", "itemStatus"], t)}</span>
-                      <span>
-                        {productFullData && productFullData.status === 1
-                          ? pathOr("", [locale, "Products", "used"], t)
-                          : pathOr("", [locale, "Products", "new"], t)}
-                      </span>
-                    </div>
-                    <div className={styles["info_boxo_"]}>
-                      <span>{pathOr("", [locale, "Products", "quantity"], t)}</span>
-                      <span>
-                        {productFullData && productFullData.qty === 1
-                          ? pathOr("", [locale, "Home", "singleProduct"], t)
-                          : productFullData.qty
-                          ? `${productFullData.qty} ${pathOr("", [locale, "Home", "products"], t)}`
-                          : pathOr("", [locale, "Products", "unLimited"], t)}
-                      </span>
+                    <div className="gray-color">{selectedCatProps?.name}</div>
+                    <div className="f-b">{locale == "en" ? productFullData?.nameEn : productFullData?.nameAr}</div>
+                    <div className="gray-color">
+                      {locale == "en" ? productFullData?.subTitleEn : productFullData?.subTitleAr}
                     </div>
                   </div>
-                </Col>
-              </Row>
-              <p className="mt-4">
-                {productFullData && (locale == "en" ? productFullData?.descriptionEn : productFullData?.descriptionAr)}
-              </p>
-            </div>
-            <div className="contint_paner">
-              <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-                <h6 className="f-b fs-4 m-0">{pathOr("", [locale, "Products", "sellingDetails"], t)}</h6>
-                <button>
-                  <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
-                    {pathOr("", [locale, "Products", "editFolder"], t)}
-                  </p>
-                </button>
-              </div>
-              <Row>
-                <Col md={6}>
+                </div>
+              </Col>
+              <Col lg={6}>
+                <div>
                   <div className={styles["info_boxo_"]}>
-                    <span>{pathOr("", [locale, "Products", "salesType"], t)}</span>
+                    <span>{pathOr("", [locale, "Products", "itemStatus"], t)}</span>
+                    <span>
+                      {productFullData && productFullData.status === 1
+                        ? pathOr("", [locale, "Products", "used"], t)
+                        : pathOr("", [locale, "Products", "new"], t)}
+                    </span>
+                  </div>
+                  <div className={styles["info_boxo_"]}>
+                    <span>{pathOr("", [locale, "Products", "quantity"], t)}</span>
+                    <span>
+                      {productFullData && productFullData.qty === 1
+                        ? pathOr("", [locale, "Home", "singleProduct"], t)
+                        : productFullData.qty
+                        ? `${productFullData.qty} ${pathOr("", [locale, "Home", "products"], t)}`
+                        : pathOr("", [locale, "Products", "unLimited"], t)}
+                    </span>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            <p className="mt-4">
+              {productFullData && (locale == "en" ? productFullData?.descriptionEn : productFullData?.descriptionAr)}
+            </p>
+          </div>
+          <div className="contint_paner">
+            <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+              <h6 className="f-b fs-4 m-0">{pathOr("", [locale, "Products", "sellingDetails"], t)}</h6>
+              <button>
+                <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
+                  {pathOr("", [locale, "Products", "editFolder"], t)}
+                </p>
+              </button>
+            </div>
+            <Row>
+              <Col md={6}>
+                <div className={styles["info_boxo_"]}>
+                  <span>{pathOr("", [locale, "Products", "salesType"], t)}</span>
+                  <div className="d-flex gap-2">
+                    {Boolean(productFullData && productFullData.IsNegotiationEnabled) && (
+                      <span>
+                        {pathOr("", [locale, "Products", "negotiation"], t)}
+                        <span className="font-18 main-color mx-1">
+                          <FaCheckCircle />
+                        </span>
+                      </span>
+                    )}
+                    {Boolean(productFullData && productFullData.IsFixedPriceEnabled) && (
+                      <span>
+                        {pathOr("", [locale, "Products", "fixed"], t)}
+                        <span className="font-18 main-color mx-1">
+                          <FaCheckCircle />
+                        </span>
+                      </span>
+                    )}
+                    {Boolean(productFullData && productFullData.IsAuctionEnabled) && (
+                      <span>
+                        {pathOr("", [locale, "Products", "adAuct"], t)}
+                        <span className="font-18 main-color mx-1">
+                          <FaCheckCircle />
+                        </span>
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Col>
+              <Col md={6}>
+                <div className={styles["info_boxo_"]}>
+                  <span>
+                    <p>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</p>
+                  </span>
+                  <span>
+                    {productFullData && productFullData?.Price} {pathOr("", [locale, "Products", "currency"], t)}
+                  </span>
+                </div>
+              </Col>
+              {Boolean(productFullData && productFullData.IsAuctionEnabled) && (
+                <Fragment>
+                  <Col md={6}>
+                    <div className={styles["info_boxo_"]}>
+                      <span>
+                        <p>{pathOr("", [locale, "Products", "minimum_price"], t)}</p>
+                      </span>
+                      <span>
+                        {productFullData && productFullData?.AuctionMinimumPrice}{" "}
+                        {pathOr("", [locale, "Products", "currency"], t)}
+                      </span>
+                    </div>
+                  </Col>
+                  <Col md={6}>
+                    <div className={styles["info_boxo_"]}>
+                      <span>
+                        <p>{pathOr("", [locale, "Products", "auction_start_price"], t)}</p>
+                      </span>
+                      <span>
+                        {productFullData && productFullData?.AuctionStartPrice}{" "}
+                        {pathOr("", [locale, "Products", "currency"], t)}
+                      </span>
+                    </div>
+                  </Col>
+                </Fragment>
+              )}
+              <Col md={12}>
+                <div className={styles["info_boxo_"]}>
+                  <span>
+                    <p>{pathOr("", [locale, "Products", "paymentOptions"], t)}</p>
+                  </span>
+                  <span>
                     <div className="d-flex gap-2">
-                      {Boolean(productFullData && productFullData.IsNegotiationEnabled) && (
+                      {Boolean(productFullData && productFullData.PaymentOptions.includes(1)) && (
                         <span>
-                          {pathOr("", [locale, "Products", "negotiation"], t)}
+                          {pathOr("", [locale, "Products", "cash"], t)}
                           <span className="font-18 main-color mx-1">
                             <FaCheckCircle />
                           </span>
                         </span>
                       )}
-                      {Boolean(productFullData && productFullData.IsFixedPriceEnabled) && (
+                      {Boolean(productFullData && productFullData.PaymentOptions.includes(2)) && (
                         <span>
-                          {pathOr("", [locale, "Products", "fixed"], t)}
+                          {pathOr("", [locale, "Products", "bankTransfer"], t)}
                           <span className="font-18 main-color mx-1">
                             <FaCheckCircle />
                           </span>
                         </span>
                       )}
-                      {Boolean(productFullData && productFullData.IsAuctionEnabled) && (
+                      {Boolean(productFullData && productFullData.PaymentOptions.includes(3)) && (
                         <span>
-                          {pathOr("", [locale, "Products", "adAuct"], t)}
+                          {pathOr("", [locale, "Products", "creditCard"], t)}
+                          <span className="font-18 main-color mx-1">
+                            <FaCheckCircle />
+                          </span>
+                        </span>
+                      )}
+                      {Boolean(productFullData && productFullData.PaymentOptions.includes(4)) && (
+                        <span>
+                          {pathOr("", [locale, "Products", "mada"], t)}
                           <span className="font-18 main-color mx-1">
                             <FaCheckCircle />
                           </span>
                         </span>
                       )}
                     </div>
-                  </div>
-                </Col>
-                <Col md={6}>
-                  <div className={styles["info_boxo_"]}>
-                    <span>
-                      <p>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</p>
-                    </span>
-                    <span>
-                      {productFullData && productFullData?.Price} {pathOr("", [locale, "Products", "currency"], t)}
-                    </span>
-                  </div>
-                </Col>
-                {Boolean(productFullData && productFullData.IsAuctionEnabled) && (
-                  <Fragment>
-                    <Col md={6}>
-                      <div className={styles["info_boxo_"]}>
-                        <span>
-                          <p>{pathOr("", [locale, "Products", "minimum_price"], t)}</p>
-                        </span>
-                        <span>
-                          {productFullData && productFullData?.AuctionMinimumPrice}{" "}
-                          {pathOr("", [locale, "Products", "currency"], t)}
-                        </span>
-                      </div>
-                    </Col>
-                    <Col md={6}>
-                      <div className={styles["info_boxo_"]}>
-                        <span>
-                          <p>{pathOr("", [locale, "Products", "auction_start_price"], t)}</p>
-                        </span>
-                        <span>
-                          {productFullData && productFullData?.AuctionStartPrice}{" "}
-                          {pathOr("", [locale, "Products", "currency"], t)}
-                        </span>
-                      </div>
-                    </Col>
-                  </Fragment>
-                )}
-                <Col md={12}>
-                  <div className={styles["info_boxo_"]}>
-                    <span>
-                      <p>{pathOr("", [locale, "Products", "paymentOptions"], t)}</p>
-                    </span>
-                    <span>
-                      <div className="d-flex gap-2">
-                        {Boolean(productFullData && productFullData.PaymentOptions.includes(1)) && (
-                          <span>
-                            {pathOr("", [locale, "Products", "cash"], t)}
-                            <span className="font-18 main-color mx-1">
-                              <FaCheckCircle />
-                            </span>
-                          </span>
-                        )}
-                        {Boolean(productFullData && productFullData.PaymentOptions.includes(2)) && (
-                          <span>
-                            {pathOr("", [locale, "Products", "bankTransfer"], t)}
-                            <span className="font-18 main-color mx-1">
-                              <FaCheckCircle />
-                            </span>
-                          </span>
-                        )}
-                        {Boolean(productFullData && productFullData.PaymentOptions.includes(3)) && (
-                          <span>
-                            {pathOr("", [locale, "Products", "creditCard"], t)}
-                            <span className="font-18 main-color mx-1">
-                              <FaCheckCircle />
-                            </span>
-                          </span>
-                        )}
-                        {Boolean(productFullData && productFullData.PaymentOptions.includes(4)) && (
-                          <span>
-                            {pathOr("", [locale, "Products", "mada"], t)}
-                            <span className="font-18 main-color mx-1">
-                              <FaCheckCircle />
-                            </span>
-                          </span>
-                        )}
-                      </div>
-                    </span>
-                  </div>
-                </Col>
-              </Row>
-            </div>
+                  </span>
+                </div>
+              </Col>
+            </Row>
+          </div>
+          {packageDetails && (
             <div className="contint_paner">
               <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
                 <h6 className="f-b fs-4  m-0">{pathOr("", [locale, "Products", "selected_package"], t)}</h6>
@@ -341,43 +363,45 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                 </span>
               </div>
             </div>
-            <div className="contint_paner">
-              <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-                <h6 className="f-b fs-4 m-0">{pathOr("", [locale, "Products", "shippingAndDuration"], t)}</h6>
-                <button>
-                  <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
-                    {pathOr("", [locale, "Products", "editFolder"], t)}
-                  </p>
-                </button>
-              </div>
-              {productFullData.IsAuctionEnabled && (
-                <Row>
-                  <h6 className="f-b m-0">{pathOr("", [locale, "Products", "offer_duration"], t)}</h6>
-                  <div className={styles["info_boxo_"]}>
-                    <span>{productFullData && moment(productFullData.AuctionClosingTime).format("LLL")}</span>
+          )}
+          <div className="contint_paner">
+            <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+              <h6 className="f-b fs-4 m-0">{pathOr("", [locale, "Products", "shippingAndDuration"], t)}</h6>
+              <button>
+                <p className="f-b fs-5 main-color" onClick={() => handleBack()}>
+                  {pathOr("", [locale, "Products", "editFolder"], t)}
+                </p>
+              </button>
+            </div>
+            {productFullData.IsAuctionEnabled && (
+              <Row>
+                <h6 className="f-b m-0">{pathOr("", [locale, "Products", "offer_duration"], t)}</h6>
+                <div className={styles["info_boxo_"]}>
+                  <span>{productFullData && moment(productFullData.AuctionClosingTime).format("LLL")}</span>
+                  <span className="font-18 main-color">
+                    <Image src={dateImage} alt="calendar" width={20} height={20} />
+                  </span>
+                </div>
+              </Row>
+            )}
+            <Row>
+              <h6 className="f-b m-0">{pathOr("", [locale, "Products", "shippingOptions"], t)}</h6>
+              {shippingOptions?.map((item) => (
+                <Col md={6} key={item.id}>
+                  <div className={styles["info_boxo_"]} key={item.id}>
+                    <span>{productFullData && item.shippingOptionName}</span>
                     <span className="font-18 main-color">
-                      <Image src={dateImage} alt="calendar" width={20} height={20} />
+                      <FaCheckCircle />
                     </span>
                   </div>
-                </Row>
-              )}
-              <Row>
-                <h6 className="f-b m-0">{pathOr("", [locale, "Products", "shippingOptions"], t)}</h6>
-                {shippingOptions?.map((item) => (
-                  <Col md={6} key={item.id}>
-                    <div className={styles["info_boxo_"]} key={item.id}>
-                      <span>{productFullData && item.shippingOptionName}</span>
-                      <span className="font-18 main-color">
-                        <FaCheckCircle />
-                      </span>
-                    </div>
-                  </Col>
-                ))}
-              </Row>
-            </div>
-          </Col>
-          <Col lg={3}>
-            <div className="contint_paner p-2">
+                </Col>
+              ))}
+            </Row>
+          </div>
+        </Col>
+        <Col lg={3}>
+          <div className="contint_paner p-2">
+            {!pathname.includes("edit") && (
               <div className={styles["Payment-details"]}>
                 <div className="f-b mb-2">{pathOr("", [locale, "Products", "have_discount_coupon"], t)} </div>
                 <div className={`po_R overflow-hidden mb-3 ${styles["search_P"]}`}>
@@ -478,7 +502,8 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                   <li>
                     <span>{pathOr("", [locale, "Products", "tax"], t)}</span>{" "}
                     <span>
-                      {totalCost < 0 ? 0 : totalCost * (12 / 100)} {pathOr("", [locale, "Products", "currency"], t)}
+                      {totalCost < 0 ? 0 : (totalCost * (12 / 100)).toFixed(2)}{" "}
+                      {pathOr("", [locale, "Products", "currency"], t)}
                     </span>
                   </li>
                   <li>
@@ -489,7 +514,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                           {totalCost + couponDiscount} {pathOr("", [locale, "Products", "currency"], t)}
                         </span>
                       )}{" "}
-                      <span>{totalCost < 0 ? 0 : totalCost}</span> {pathOr("", [locale, "Products", "currency"], t)}
+                      <span>{totalCost <= 0 ? 0 : totalCost}</span> {pathOr("", [locale, "Products", "currency"], t)}
                     </span>
                   </li>
                 </ul>
@@ -528,19 +553,21 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                   </label>
 
                 </div>*/}
-                <button
-                  className={`${styles["btn-main"]} btn-main mt-2 w-100`}
-                  data-bs-toggle="modal"
-                  data-bs-target="#add-product_"
-                  onClick={(e) => handleSubmit(e)}
-                >
-                  {pathOr("", [locale, "Products", "addNewProduct"], t)}
-                </button>
               </div>
-            </div>
-          </Col>
-        </Row>
-      </div>
+            )}
+            <button
+              className={`${styles["btn-main"]} btn-main mt-2 w-100`}
+              data-bs-toggle="modal"
+              data-bs-target="#add-product_"
+              onClick={(e) => handleSubmit(e)}
+            >
+              {pathname.includes("add") && pathOr("", [locale, "Products", "addNewProduct"], t)}
+              {pathname.includes("edit") && pathOr("", [locale, "Products", "edit_product"], t)}
+              {pathname.includes("repost") && pathOr("", [locale, "Products", "repost_product"], t)}
+            </button>
+          </div>
+        </Col>
+      </Row>
     </div>
   )
 }
