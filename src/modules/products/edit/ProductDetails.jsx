@@ -6,7 +6,7 @@ import dateImage from "../../../public/icons/Copyright_expiry.svg"
 import { FaCheckCircle } from "react-icons/fa"
 import axios from "axios"
 import { toast } from "react-toastify"
-import { path, pathOr } from "ramda"
+import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import Image from "next/image"
 import moment from "moment/moment"
@@ -92,6 +92,8 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
     productFullData.listImageFile.forEach((ele, indx) => {
       ele.id === productFullData.MainImageIndex && indx !== 0 && productFullData.listImageFile.move(indx, 0)
     })
+    pathname.includes("edit") && formData.append("EditOrRepost", 1)
+    pathname.includes("repost") && formData.append("EditOrRepost", 2)
     for (let key in productFullData) {
       const value = productFullData[key]
       if (key === "listImageFile") {
@@ -179,7 +181,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
             <Row className="align-items-center">
               <Col lg={6}>
                 <div className="d-flex align-items-center gap-1">
-                  {productFullData.productImage && (
+                  {productFullData.productImage && !pathname.includes("add") && (
                     <Image
                       src={productFullData.productImage}
                       className="img_table"
@@ -188,7 +190,16 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                       height={100}
                     />
                   )}
-                  <div>
+                  {pathname.includes("add") && (
+                    <Image
+                      src={URL.createObjectURL(productFullData.listImageFile[productFullData.MainImageIndex])}
+                      className="img_table"
+                      alt="product"
+                      width={130}
+                      height={100}
+                    />
+                  )}
+                  <div className="mx-3">
                     <div className="gray-color">{selectedCatProps?.name}</div>
                     <div className="f-b">{locale == "en" ? productFullData?.nameEn : productFullData?.nameAr}</div>
                     <div className="gray-color">

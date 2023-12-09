@@ -241,7 +241,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                     type="button"
                     className="info_ mx-1"
                     onClick={() => {
-                      Router.push(`/products/productDetails/${productId || id}`)
+                      Router.push(`/products/repost/${productId || id}`)
                     }}
                   >
                     {pathOr("", [locale, "Products", "repost"], t)}

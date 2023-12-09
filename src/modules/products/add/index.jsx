@@ -6,14 +6,13 @@ import axios from "axios"
 import { toast } from "react-toastify"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
-import AddProductReview from "./review"
+import ProductDetails from "../edit/ProductDetails"
 
 const AddProduct = () => {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [selectedCatId, setSelectedCatId] = useState(null)
   const [selectedCatProps, setSelectedCatProps] = useState({})
-  const [speficationsPayload, setSpeficationsPayload] = useState([])
   const [product, setProduct] = useState()
   const [editModeOn, setEditModeOn] = useState(false)
   const { locale } = useRouter()
@@ -34,7 +33,7 @@ const AddProduct = () => {
     Street: "",
     GovernmentCode: "",
     pakatId: null,
-    productSep: speficationsPayload,
+    productSep: [],
     listImageFile: [],
     MainImageIndex: undefined,
     videoUrl: [""],
@@ -131,14 +130,12 @@ const AddProduct = () => {
             handleGoToReviewPage={handleGoToReviewPage}
             productPayload={productPayload}
             setProductPayload={setProductPayload}
-            speficationsPayload={speficationsPayload}
-            setSpeficationsPayload={setSpeficationsPayload}
             editModeOn={editModeOn}
             setEditModeOn={setEditModeOn}
           />
         )}
         {(step === 3 || (product && product?.id)) && (
-          <AddProductReview
+          <ProductDetails
             selectedCatProps={selectedCatProps}
             productFullData={productPayload}
             handleBack={handleGoToSteptwo}

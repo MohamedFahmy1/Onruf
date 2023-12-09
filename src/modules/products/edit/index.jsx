@@ -1,9 +1,6 @@
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
-import AddProductStepOne from "../../../modules/products/add/stepOne"
 import AddProductStepTwo from "../../../modules/products/add/stepTwo"
-import axios from "axios"
-import { toast } from "react-toastify"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { useFetch } from "../../../hooks/useFetch"
@@ -15,7 +12,6 @@ const EditProduct = () => {
   const { data: productData } = useFetch(`/GetProductById?id=${query.id}&lang=${locale}`, true)
   const { data: shippingOptions } = useFetch(`/GetProductShippingOptions?productId=${query.id}`, true)
   const { data: paymentOptions } = useFetch(`/GetProductPaymentOptions?productId=${query.id}`, true)
-  const [speficationsPayload, setSpeficationsPayload] = useState([])
   const [product, setProduct] = useState()
   const [productPayload, setProductPayload] = useState({
     nameAr: "",
@@ -61,7 +57,7 @@ const EditProduct = () => {
   })
 
   const handleBack = () => {
-    step > 1 ? setStep((prev) => prev - 1) : push("/products")
+    step > 1 ? setStep((prev) => prev - 1) : setStep((prev) => prev + 1)
   }
 
   useEffect(() => {
@@ -85,7 +81,7 @@ const EditProduct = () => {
         Street: productData.street,
         GovernmentCode: productData.governmentCode,
         productSep: productData.listProductSep,
-        listImageFile: productData.listMedia,
+        listMedia: productData.listMedia,
         // videoUrl: productData.videoUrl,
         ShippingOptions: shippingOptions.map((item) => item.shippingOptionId),
         Lat: productData.lat,
@@ -118,7 +114,6 @@ const EditProduct = () => {
       }))
     }
   }, [productData, locale, shippingOptions, paymentOptions, query.id])
-
   return (
     <div className="body-content">
       <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
@@ -146,8 +141,6 @@ const EditProduct = () => {
             handleGoToReviewPage={handleBack}
             productPayload={productPayload}
             setProductPayload={setProductPayload}
-            speficationsPayload={speficationsPayload}
-            setSpeficationsPayload={setSpeficationsPayload}
             editModeOn={true}
           />
         )}

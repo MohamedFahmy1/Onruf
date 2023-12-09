@@ -6,7 +6,7 @@ import { IoIosClose } from "react-icons/io"
 import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"
 import { Accordion, Row, Col } from "react-bootstrap"
 import bigger from "../../../../public/images/screencaptur.png"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/router"
 import { omit, pathOr } from "ramda"
 import t from "../../../../translations.json"
 import { toast } from "react-toastify"
@@ -26,13 +26,10 @@ const AddProductStepTwo = ({
   handleGoToReviewPage,
   productPayload,
   setProductPayload,
-  speficationsPayload,
-  setSpeficationsPayload,
   editModeOn,
   setEditModeOn,
 }) => {
-  const { locale } = useRouter()
-  const router = useRouter()
+  const { locale, pathname } = useRouter()
   const id = useId()
   const [eventKey, setEventKey] = useState("0")
   const [countries, setCountries] = useState([])
@@ -47,6 +44,7 @@ const AddProductStepTwo = ({
   const [userBanksData, setuserBanksData] = useState([])
   const [showBanksData, setShowBanksData] = useState(false)
   const [shippingOptions, setShippingOptions] = useState([])
+  const [speficationsPayload, setSpeficationsPayload] = useState([])
 
   const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
     try {
@@ -55,7 +53,7 @@ const AddProductStepTwo = ({
       } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
       setState(data)
     } catch (e) {
-      if (!router.pathname.includes("edit")) {
+      if (!pathname.includes("edit")) {
         Alerto(e)
       }
     }
@@ -131,7 +129,7 @@ const AddProductStepTwo = ({
         fetchShippingOptions()
         fetchCountries()
         fetchPakatList()
-        router.pathname.includes("edit") && setProductPayload(product)
+        // pathname.includes("edit") && setProductPayload(product)
         if (product?.id) {
           handleFetchNeighbourhoodsOrRegions(
             "ListNeighborhoodByRegionId",
@@ -299,62 +297,6 @@ const AddProductStepTwo = ({
     setProductPayload((prev) => ({ ...prev, productSep: updatedSpecififcations }))
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    let formData = new FormData()
-    // if video url is empty don't send it to the api
-    if (productPayload.videoUrl[0] === "") {
-      const filteredUrls = productPayload.videoUrl.filter((item) => item.trim() === "")
-      setProductPayload({ ...productPayload, videoUrl: filteredUrls })
-    }
-    if (productPayload.PaymentOptions.includes(1)) {
-      setProductPayload({ ...productPayload, IsCashEnabled: true })
-    } else setProductPayload({ ...productPayload, IsCashEnabled: false })
-    productPayload.listImageFile.forEach((ele, indx) => {
-      ele.id === mainImgId && indx !== 0 && productPayload.listImageFile.move(indx, 0)
-    })
-    for (let key in productPayload) {
-      const value = productPayload[key]
-      if (key === "listImageFile") {
-        for (const image of value) {
-          formData.append("listImageFile", image)
-        }
-      } else if (key === "productSep") {
-        formData.append(key, JSON.stringify(value))
-      } else if (Array.isArray(value)) {
-        if (key == "ShippingOptions") {
-          value.forEach((item) => {
-            formData.append(key, Number(item))
-          })
-        }
-        // if array is empty don't send it to the api
-        else if (value[0] === "") {
-          continue
-        } else
-          value.forEach((item) => {
-            formData.append(key, item)
-          })
-      }
-      // if any value is empty don't send it to the api
-      else if (value === "") {
-        continue
-      } else {
-        formData.append(key, value)
-      }
-    }
-    console.log("formData", formData)
-    try {
-      if (product?.id) {
-        formData.delete("listMedia")
-        const { data } = await axios.put(process.env.NEXT_PUBLIC_API_URL + "/EditProduct", formData)
-        toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
-        Router.push(`/${locale}/products`)
-      }
-    } catch (err) {
-      Alerto(err)
-    }
-  }
-
   const productDetailsInputs = [
     productPayload.nameAr,
     productPayload.nameEn,
@@ -419,10 +361,10 @@ const AddProductStepTwo = ({
       setProductPayload((prev) => ({ ...prev, IsCashEnabled: true }))
     } else setProductPayload((prev) => ({ ...prev, IsCashEnabled: false }))
   }, [PaymentOptions])
+
   const shippingOptionsErrorHandling = () => {
     const hasTwoOrThree = productPayload.ShippingOptions.includes(2) || productPayload.ShippingOptions.includes(3)
     const hasFourFiveOrSix = productPayload.ShippingOptions.some((id) => [4, 5, 6].includes(id))
-
     if (hasTwoOrThree && !hasFourFiveOrSix) {
       toast.error(
         locale == "en" ? "Please select the highlighted options!" : "من فضلك اختر وسيلة شحن من الوسايل المحدده اعلاه",
@@ -431,7 +373,7 @@ const AddProductStepTwo = ({
       toast.error(locale == "en" ? "Please select any shipping options!" : "من فضلك اختر اي وسيلة شحن")
     } else if (productPayload.AuctionClosingTime == "" && productPayload.IsAuctionEnabled) {
       toast.error(locale == "en" ? "Please select Autction Duration!" : "رجاء اختر مدة المزاد")
-    } else setEventKey("5")
+    } else !pathname.includes("edit") ? setEventKey("5") : handleGoToReviewPage()
   }
   const countryFlag = countries?.find((item) => item.id === productPayload.countryId)?.countryFlag
   console.log("productPayload", productPayload)
@@ -444,46 +386,87 @@ const AddProductStepTwo = ({
             {pathOr("", [locale, "Products", "productImages"], t)}
           </Accordion.Button>
           <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
-            <div className={styles["all_upload_Image"]}>
-              {productPayload?.listImageFile?.map((img, index) => (
-                <div key={id + index} className={styles["the_img_upo"]}>
-                  <IoIosClose
-                    style={{
-                      cursor: "pointer",
-                      position: "absolute",
-                      top: 5,
-                      right: 5,
-                      background: "white",
-                      borderRadius: "50%",
-                    }}
-                    size={20}
-                    onClick={() => handleRemoveImage(index)}
-                  />
-                  <img src={product?.id ? img?.url : URL.createObjectURL(img)} alt="product" />
-                  <label htmlFor={img.id}>
-                    <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
-                    <input
-                      id={img.id}
-                      type="radio"
-                      name="isMain"
-                      checked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
-                      onChange={() => handleMainImage(img.id, index)}
+            {pathname.includes("add") ? (
+              <div className={styles["all_upload_Image"]}>
+                {productPayload?.listImageFile?.map((img, index) => (
+                  <div key={id + index} className={styles["the_img_upo"]}>
+                    <IoIosClose
+                      style={{
+                        cursor: "pointer",
+                        position: "absolute",
+                        top: 5,
+                        right: 5,
+                        background: "white",
+                        borderRadius: "50%",
+                      }}
+                      size={20}
+                      onClick={() => handleRemoveImage(index)}
                     />
-                  </label>
+                    <img src={pathname.includes("add") ? URL.createObjectURL(img) : img?.url} alt="product" />
+                    <label htmlFor={img.id}>
+                      <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
+                      <input
+                        id={img.id}
+                        type="radio"
+                        name="isMain"
+                        checked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
+                        onChange={() => handleMainImage(img.id, index)}
+                      />
+                    </label>
+                  </div>
+                ))}
+                <div className={styles["btn_apload_img"]}>
+                  <FaCamera />
+                  <input
+                    type="file"
+                    accept="image/jpeg, image/png, image/gif"
+                    onChange={(e) => handleUploadImages(e)}
+                    multiple={selectedPack?.countImage >= 1}
+                  />
                 </div>
-              ))}
-              <div className={styles["btn_apload_img"]}>
-                <FaCamera />
-                <input
-                  type="file"
-                  accept="image/jpeg, image/png, image/gif"
-                  onChange={(e) => handleUploadImages(e)}
-                  multiple={selectedPack?.countImage >= 1}
-                />
               </div>
-            </div>
+            ) : (
+              <div className={styles["all_upload_Image"]}>
+                {productPayload?.listImageFile?.map((img, index) => (
+                  <div key={id + index} className={styles["the_img_upo"]}>
+                    <IoIosClose
+                      style={{
+                        cursor: "pointer",
+                        position: "absolute",
+                        top: 5,
+                        right: 5,
+                        background: "white",
+                        borderRadius: "50%",
+                      }}
+                      size={20}
+                      onClick={() => handleRemoveImage(index)}
+                    />
+                    <img src={pathname.includes("add") ? URL.createObjectURL(img) : img?.url} alt="product" />
+                    <label htmlFor={img.id}>
+                      <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
+                      <input
+                        id={img.id}
+                        type="radio"
+                        name="isMain"
+                        checked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
+                        onChange={() => handleMainImage(img.id, index)}
+                      />
+                    </label>
+                  </div>
+                ))}
+                <div className={styles["btn_apload_img"]}>
+                  <FaCamera />
+                  <input
+                    type="file"
+                    accept="image/jpeg, image/png, image/gif"
+                    onChange={(e) => handleUploadImages(e)}
+                    multiple={selectedPack?.countImage >= 1}
+                  />
+                </div>
+              </div>
+            )}
             <div className={styles.container}>
-              {productPayload.videoUrl.map((url, index) => (
+              {productPayload?.videoUrl?.map((url, index) => (
                 <div key={index} className={styles.urlInputContainer}>
                   <input
                     type="text"
@@ -1504,7 +1487,7 @@ const AddProductStepTwo = ({
             <div className="form-content">
               <form>
                 <Row>
-                  {productPayload?.IsAuctionEnabled && (
+                  {productPayload?.IsAuctionEnabled && !pathname.includes("edit") && (
                     <Fragment>
                       <h5 className="f-b" style={{ ...textAlignStyle(locale), display: "block" }}>
                         {pathOr("", [locale, "Products", "offer_duration"], t)}
@@ -1523,7 +1506,8 @@ const AddProductStepTwo = ({
                         {pathOr("", [locale, "Products", "shippingOptions"], t)}
                       </label>
                       <div className="row">
-                        {productPayload.ShippingOptions.includes(2) || productPayload.ShippingOptions.includes(3)
+                        {console.log(productPayload.ShippingOptions)}
+                        {productPayload.ShippingOptions?.includes(2) || productPayload.ShippingOptions?.includes(3)
                           ? shippingOptions.map((item) => (
                               <div className="col-lg-6 col-md-6" key={item.id}>
                                 <div className="form-group">
@@ -1538,7 +1522,7 @@ const AddProductStepTwo = ({
                                         type="checkbox"
                                         role="switch"
                                         id={item.id + " ShippingOptions"}
-                                        checked={productPayload.ShippingOptions.includes(item.id)}
+                                        checked={productPayload.ShippingOptions?.includes(item.id)}
                                         onChange={() => handleShippingOptions(item.id)}
                                       />
                                       <label htmlFor={item.id + " ShippingOptions"}>{item.shippingOptionName}</label>
@@ -1560,7 +1544,7 @@ const AddProductStepTwo = ({
                                           type="checkbox"
                                           role="switch"
                                           id={item.id + " ShippingOptions"}
-                                          checked={productPayload.ShippingOptions.includes(item.id)}
+                                          checked={productPayload.ShippingOptions?.includes(item.id)}
                                           onChange={() => handleShippingOptions(item.id)}
                                         />
                                         <label htmlFor={item.id + " ShippingOptions"}>{item.shippingOptionName}</label>
@@ -1577,286 +1561,288 @@ const AddProductStepTwo = ({
               </form>
             </div>
             <button className="btn-main mt-3" type="button" onClick={() => shippingOptionsErrorHandling()}>
-              {pathOr("", [locale, "Products", "next"], t)}
+              {pathname.includes("add")
+                ? pathOr("", [locale, "Products", "next"], t)
+                : pathOr("", [locale, "Products", "edit"], t)}
             </button>
           </Accordion.Body>
         </Accordion.Item>
-        <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="5">
-          <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("5")}>
-            <span>6</span>
-            {pathOr("", [locale, "Products", "publishingPackages"], t)}
-          </Accordion.Button>
-          <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
-            <div className="form-content">
-              <div>
-                <div className="text-center mt-4 mb-5">
-                  <h4 className="f-b"> {pathOr("", [locale, "Products", "choosepaka"], t)}</h4>
-                  <h5>{pathOr("", [locale, "Products", "getBenefits"], t)}</h5>
-                </div>
-                <Row className="justify-content-center">
-                  <Col lg={9}>
-                    <div className="row justify-content-center">
-                      {Boolean(packat?.length) &&
-                        packat.map((pack, index) => (
-                          <Col md={6} key={pack?.id}>
-                            <div
-                              className={`${styles["box-Bouquet"]} ${pack.popular ? styles["box-Bouquet-gold"] : ""} ${
-                                selectedPack?.id == pack.id ? styles["activePack"] : ""
-                              }`}
-                              onClick={() => handleChoosePackat(pack)}
-                            >
-                              <div className={styles["head"]}>
-                                <div>{pack.name}</div>
-                                <div>
-                                  {pack.price} {pathOr("", [locale, "Products", "currency"], t)}
-                                </div>
-                              </div>
-                              <ul className={styles["info"]}>
-                                {Boolean(pack.countImage) && (
-                                  <li>
-                                    <FaStar />
-                                    {pathOr("", [locale, "Products", "numPics"], t)}: {pack.countImage}
-                                  </li>
-                                )}
-                                {Boolean(pack.countVideo) && (
-                                  <li>
-                                    <FaStar />
-                                    {pathOr("", [locale, "Products", "numVideos"], t)}: {pack.countVideo}
-                                  </li>
-                                )}
-                                {Boolean(pack.isSms) && (
-                                  <li>
-                                    <FaStar />
-                                    {pathOr("", [locale, "Products", "sendSms"], t)}
-                                  </li>
-                                )}
-                                {Boolean(pack.numMonth) && (
-                                  <li>
-                                    <FaStar />
-                                    {pathOr("", [locale, "Products", "numMonth"], t)}: {pack.numMonth}
-                                  </li>
-                                )}
-                              </ul>
-                              {pack.popular && <aside className={styles["Tinf"]}>شائع</aside>}
-                              <input
-                                type="radio"
-                                name="Bouquet"
-                                checked={productPayload.pakatId === +pack?.id}
-                                value={+pack?.id}
-                              />
-                              <span className={styles["check"]}>
-                                <FaCheckCircle />
-                              </span>
-                              <span className={styles["pord"]} />
-                            </div>
-                          </Col>
-                        ))}
-                    </div>
-                  </Col>
-                </Row>
-                {selectedPack?.productSize === 1 && (
-                  <div className="mt-4">
-                    <h5 className="mb-3 f-b text-center">{pathOr("", [locale, "Products", "findChange"], t)}</h5>
-                    <Row className="align-items-center">
-                      <Col md={5}>
-                        <div className={styles["box-product"]}>
-                          <div className={styles["imge"]}>
-                            {Boolean(productPayload?.listImageFile?.length) && (
-                              <img src={URL.createObjectURL(productPayload.listImageFile[0])} />
-                            )}
-                            <div className={styles["two_btn_"]}>
-                              <button className={styles["btn_"]}>
-                                {pathOr("", [locale, "Products", "merchant"], t)}
-                              </button>
-                              <button className={styles["btn_"]}>
-                                {pathOr("", [locale, "Products", "freeDelivery"], t)}
-                              </button>
-                            </div>
-                            {productPayload.AuctionClosingTime && (
-                              <div className={styles["time"]}>
-                                <div>
-                                  <span>
-                                    {Math.floor(
-                                      (new Date(productPayload.AuctionClosingTime) - new Date()) /
-                                        (1000 * 60 * 60 * 24),
-                                    )}
-                                  </span>{" "}
-                                  Day
-                                </div>
-                                <div>
-                                  <span>
-                                    {Math.floor(
-                                      ((new Date(productPayload.AuctionClosingTime) - new Date()) %
-                                        (1000 * 60 * 60 * 24)) /
-                                        (1000 * 60 * 60),
-                                    )}
-                                  </span>{" "}
-                                  Hour
-                                </div>
-                                <div>
-                                  <span>
-                                    {Math.floor(
-                                      ((new Date(productPayload.AuctionClosingTime) - new Date()) % (1000 * 60 * 60)) /
-                                        (1000 * 60),
-                                    )}
-                                  </span>{" "}
-                                  min
-                                </div>
-                              </div>
-                            )}
-                            <button className={styles["btn-star"]}>
-                              <FaStar />
-                            </button>
-                          </div>
-                          <div className={styles["info"]}>
-                            <div className="mb-3">
-                              <h5 className="f-b mb-1">{productPayload?.nameAr}</h5>
-                              <div className="font-18 gray-color">
-                                {regions?.find((item) => +item.id === +productPayload?.regionId)?.name} -{" "}
-                                {new Date().toLocaleDateString()}
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div className="col-md-6">
-                                <div className="font-18">
-                                  <div>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</div>
-                                  <div className="f-b main-color">
-                                    {productPayload?.Price} {pathOr("", [locale, "Products", "currency"], t)}
+        {!pathname.includes("edit") && (
+          <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="5">
+            <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("5")}>
+              <span>6</span>
+              {pathOr("", [locale, "Products", "publishingPackages"], t)}
+            </Accordion.Button>
+            <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
+              <div className="form-content">
+                <div>
+                  <div className="text-center mt-4 mb-5">
+                    <h4 className="f-b"> {pathOr("", [locale, "Products", "choosepaka"], t)}</h4>
+                    <h5>{pathOr("", [locale, "Products", "getBenefits"], t)}</h5>
+                  </div>
+                  <Row className="justify-content-center">
+                    <Col lg={9}>
+                      <div className="row justify-content-center">
+                        {Boolean(packat?.length) &&
+                          packat.map((pack, index) => (
+                            <Col md={6} key={pack?.id}>
+                              <div
+                                className={`${styles["box-Bouquet"]} ${
+                                  pack.popular ? styles["box-Bouquet-gold"] : ""
+                                } ${selectedPack?.id == pack.id ? styles["activePack"] : ""}`}
+                                onClick={() => handleChoosePackat(pack)}
+                              >
+                                <div className={styles["head"]}>
+                                  <div>{pack.name}</div>
+                                  <div>
+                                    {pack.price} {pathOr("", [locale, "Products", "currency"], t)}
                                   </div>
                                 </div>
+                                <ul className={styles["info"]}>
+                                  {Boolean(pack.countImage) && (
+                                    <li>
+                                      <FaStar />
+                                      {pathOr("", [locale, "Products", "numPics"], t)}: {pack.countImage}
+                                    </li>
+                                  )}
+                                  {Boolean(pack.countVideo) && (
+                                    <li>
+                                      <FaStar />
+                                      {pathOr("", [locale, "Products", "numVideos"], t)}: {pack.countVideo}
+                                    </li>
+                                  )}
+                                  {Boolean(pack.isSms) && (
+                                    <li>
+                                      <FaStar />
+                                      {pathOr("", [locale, "Products", "sendSms"], t)}
+                                    </li>
+                                  )}
+                                  {Boolean(pack.numMonth) && (
+                                    <li>
+                                      <FaStar />
+                                      {pathOr("", [locale, "Products", "numMonth"], t)}: {pack.numMonth}
+                                    </li>
+                                  )}
+                                </ul>
+                                {pack.popular && <aside className={styles["Tinf"]}>شائع</aside>}
+                                <input
+                                  type="radio"
+                                  name="Bouquet"
+                                  checked={productPayload.pakatId === +pack?.id}
+                                  value={+pack?.id}
+                                />
+                                <span className={styles["check"]}>
+                                  <FaCheckCircle />
+                                </span>
+                                <span className={styles["pord"]} />
                               </div>
-                              {productPayload?.HighestBidPrice && (
-                                <div className="col-md-6">
-                                  <div className="font-18">
-                                    <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
-                                    <div className="f-b">
-                                      {productPayload?.HighestBidPrice}{" "}
-                                      {pathOr("", [locale, "Products", "currency"], t)}
-                                    </div>
+                            </Col>
+                          ))}
+                      </div>
+                    </Col>
+                  </Row>
+                  {selectedPack?.productSize === 1 && (
+                    <div className="mt-4">
+                      <h5 className="mb-3 f-b text-center">{pathOr("", [locale, "Products", "findChange"], t)}</h5>
+                      <Row className="align-items-center">
+                        <Col md={5}>
+                          <div className={styles["box-product"]}>
+                            <div className={styles["imge"]}>
+                              {Boolean(productPayload?.listImageFile?.length) && (
+                                <img src={URL.createObjectURL(productPayload.listImageFile[0])} />
+                              )}
+                              <div className={styles["two_btn_"]}>
+                                <button className={styles["btn_"]}>
+                                  {pathOr("", [locale, "Products", "merchant"], t)}
+                                </button>
+                                <button className={styles["btn_"]}>
+                                  {pathOr("", [locale, "Products", "freeDelivery"], t)}
+                                </button>
+                              </div>
+                              {productPayload.AuctionClosingTime && (
+                                <div className={styles["time"]}>
+                                  <div>
+                                    <span>
+                                      {Math.floor(
+                                        (new Date(productPayload.AuctionClosingTime) - new Date()) /
+                                          (1000 * 60 * 60 * 24),
+                                      )}
+                                    </span>{" "}
+                                    Day
+                                  </div>
+                                  <div>
+                                    <span>
+                                      {Math.floor(
+                                        ((new Date(productPayload.AuctionClosingTime) - new Date()) %
+                                          (1000 * 60 * 60 * 24)) /
+                                          (1000 * 60 * 60),
+                                      )}
+                                    </span>{" "}
+                                    Hour
+                                  </div>
+                                  <div>
+                                    <span>
+                                      {Math.floor(
+                                        ((new Date(productPayload.AuctionClosingTime) - new Date()) %
+                                          (1000 * 60 * 60)) /
+                                          (1000 * 60),
+                                      )}
+                                    </span>{" "}
+                                    min
                                   </div>
                                 </div>
                               )}
+                              <button className={styles["btn-star"]}>
+                                <FaStar />
+                              </button>
+                            </div>
+                            <div className={styles["info"]}>
+                              <div className="mb-3">
+                                <h5 className="f-b mb-1">{productPayload?.nameAr}</h5>
+                                <div className="font-18 gray-color">
+                                  {regions?.find((item) => +item.id === +productPayload?.regionId)?.name} -{" "}
+                                  {new Date().toLocaleDateString()}
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-6">
+                                  <div className="font-18">
+                                    <div>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</div>
+                                    <div className="f-b main-color">
+                                      {productPayload?.Price} {pathOr("", [locale, "Products", "currency"], t)}
+                                    </div>
+                                  </div>
+                                </div>
+                                {productPayload?.HighestBidPrice && (
+                                  <div className="col-md-6">
+                                    <div className="font-18">
+                                      <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
+                                      <div className="f-b">
+                                        {productPayload?.HighestBidPrice}{" "}
+                                        {pathOr("", [locale, "Products", "currency"], t)}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Col>
-                      <Col lg={2}>
-                        <div className="text-center mt-3">
-                          <img src={bigger.src} className="img-fluid" />
-                        </div>
-                      </Col>
-                      <Col md={5} lg={4}>
-                        <div className={`${styles["box-product"]} ${styles["box-product2"]}`}>
-                          <div className={styles["imge"]}>
-                            {Boolean(productPayload?.listImageFile?.length) && (
-                              <img src={URL.createObjectURL(productPayload?.listImageFile?.[0])} />
-                            )}
-                            <div className={styles["two_btn_"]}>
-                              <button className={styles["btn_"]}>
-                                {pathOr("", [locale, "Products", "merchant"], t)}
-                              </button>
-                              <button className={styles["btn_"]}>
-                                {pathOr("", [locale, "Products", "freeDelivery"], t)}
-                              </button>
-                            </div>
-                            {/*          const auctionClosingTime = new Date(auctionClosingTimeStr)
+                        </Col>
+                        <Col lg={2}>
+                          <div className="text-center mt-3">
+                            <img src={bigger.src} className="img-fluid" />
+                          </div>
+                        </Col>
+                        <Col md={5} lg={4}>
+                          <div className={`${styles["box-product"]} ${styles["box-product2"]}`}>
+                            <div className={styles["imge"]}>
+                              {Boolean(productPayload?.listImageFile?.length) && (
+                                <img src={URL.createObjectURL(productPayload?.listImageFile?.[0])} />
+                              )}
+                              <div className={styles["two_btn_"]}>
+                                <button className={styles["btn_"]}>
+                                  {pathOr("", [locale, "Products", "merchant"], t)}
+                                </button>
+                                <button className={styles["btn_"]}>
+                                  {pathOr("", [locale, "Products", "freeDelivery"], t)}
+                                </button>
+                              </div>
+                              {/*          const auctionClosingTime = new Date(auctionClosingTimeStr)
                               const currentTime = new Date()
                               const timeDifference = auctionClosingTime - currentTime
                               const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
                               const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
                               const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60))*/}
-                            {productPayload.AuctionClosingTime && (
-                              <div className={styles["time"]}>
-                                <div>
-                                  <span>
-                                    {Math.floor(
-                                      (new Date(productPayload.AuctionClosingTime) - new Date()) /
-                                        (1000 * 60 * 60 * 24),
-                                    )}
-                                  </span>{" "}
-                                  Day
-                                </div>
-                                <div>
-                                  <span>
-                                    {Math.floor(
-                                      ((new Date(productPayload.AuctionClosingTime) - new Date()) %
-                                        (1000 * 60 * 60 * 24)) /
-                                        (1000 * 60 * 60),
-                                    )}
-                                  </span>{" "}
-                                  Hour
-                                </div>
-                                <div>
-                                  <span>
-                                    {Math.floor(
-                                      ((new Date(productPayload.AuctionClosingTime) - new Date()) % (1000 * 60 * 60)) /
-                                        (1000 * 60),
-                                    )}
-                                  </span>{" "}
-                                  min
-                                </div>
-                              </div>
-                            )}
-                            <button className={styles["btn-star"]}>
-                              <FaStar />
-                            </button>
-                          </div>
-                          <div className={styles["info"]}>
-                            <div className="mb-3">
-                              <h5 className="f-b mb-1">{productPayload?.nameAr}</h5>
-                              <div className="font-18 gray-color">
-                                {regions?.find((item) => +item.id === +productPayload?.regionId)?.name} -{" "}
-                                {new Date().toLocaleDateString()}
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div className="col-md-6">
-                                <div className="font-18">
-                                  <div>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</div>
-                                  <div className="f-b main-color">
-                                    {productPayload?.Price} {pathOr("", [locale, "Products", "currency"], t)}
+                              {productPayload.AuctionClosingTime && (
+                                <div className={styles["time"]}>
+                                  <div>
+                                    <span>
+                                      {Math.floor(
+                                        (new Date(productPayload.AuctionClosingTime) - new Date()) /
+                                          (1000 * 60 * 60 * 24),
+                                      )}
+                                    </span>{" "}
+                                    Day
                                   </div>
-                                </div>
-                              </div>
-                              {productPayload?.HighestBidPrice && (
-                                <div className="col-md-6">
-                                  <div className="font-18">
-                                    <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
-                                    <div className="f-b">
-                                      {productPayload?.HighestBidPrice}{" "}
-                                      {pathOr("", [locale, "Products", "currency"], t)}
-                                    </div>
+                                  <div>
+                                    <span>
+                                      {Math.floor(
+                                        ((new Date(productPayload.AuctionClosingTime) - new Date()) %
+                                          (1000 * 60 * 60 * 24)) /
+                                          (1000 * 60 * 60),
+                                      )}
+                                    </span>{" "}
+                                    Hour
+                                  </div>
+                                  <div>
+                                    <span>
+                                      {Math.floor(
+                                        ((new Date(productPayload.AuctionClosingTime) - new Date()) %
+                                          (1000 * 60 * 60)) /
+                                          (1000 * 60),
+                                      )}
+                                    </span>{" "}
+                                    min
                                   </div>
                                 </div>
                               )}
+                              <button className={styles["btn-star"]}>
+                                <FaStar />
+                              </button>
+                            </div>
+                            <div className={styles["info"]}>
+                              <div className="mb-3">
+                                <h5 className="f-b mb-1">{productPayload?.nameAr}</h5>
+                                <div className="font-18 gray-color">
+                                  {regions?.find((item) => +item.id === +productPayload?.regionId)?.name} -{" "}
+                                  {new Date().toLocaleDateString()}
+                                </div>
+                              </div>
+                              <div className="row">
+                                <div className="col-md-6">
+                                  <div className="font-18">
+                                    <div>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</div>
+                                    <div className="f-b main-color">
+                                      {productPayload?.Price} {pathOr("", [locale, "Products", "currency"], t)}
+                                    </div>
+                                  </div>
+                                </div>
+                                {productPayload?.HighestBidPrice && (
+                                  <div className="col-md-6">
+                                    <div className="font-18">
+                                      <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
+                                      <div className="f-b">
+                                        {productPayload?.HighestBidPrice}{" "}
+                                        {pathOr("", [locale, "Products", "currency"], t)}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Col>
-                    </Row>
-                  </div>
-                )}
+                        </Col>
+                      </Row>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-            <button
-              className="btn-main mt-3"
-              style={{ display: "block", margin: "0 auto" }}
-              type="button"
-              onClick={(e) => {
-                if (product?.id) {
-                  handleSubmit(e)
-                } else {
+              <button
+                className="btn-main mt-3"
+                style={{ display: "block", margin: "0 auto" }}
+                type="button"
+                onClick={(e) => {
                   handleGoToReviewPage()
                   setEditModeOn(true)
-                }
-              }}
-            >
-              {router.pathname.includes("edit")
-                ? pathOr("", [locale, "Products", "edit"], t)
-                : pathOr("", [locale, "Products", "next"], t)}
-            </button>
-          </Accordion.Body>
-        </Accordion.Item>
+                }}
+              >
+                {pathname.includes("add")
+                  ? pathOr("", [locale, "Products", "next"], t)
+                  : pathOr("", [locale, "Products", "edit"], t)}
+              </button>
+            </Accordion.Body>
+          </Accordion.Item>
+        )}
       </Accordion>
     </Fragment>
   )

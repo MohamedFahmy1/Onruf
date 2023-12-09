@@ -12,21 +12,20 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps, se
   const {
     locale,
     query: { id },
+    pathname,
   } = useRouter()
-  const router = useRouter()
   const [catSearchInputVal, setCatSearchInputVal] = useState("")
   const [allCats, setAllCats] = useState([])
   const [categoriesAndSubListByName, setCategoriesAndSubListByName] = useState([])
   const [selectedCatId, setSelectedCatId] = useState(null)
   const [selectedCat, setSelectedCat] = useState(null)
   const [categoriesAndSubList, setCategoriesAndSubList] = useState([])
-
-  useEffect(() => {
-    if (router.pathname.includes("edit")) {
-      setCatSearchInputVal(product.name)
-      setSelectedCatId(product.categoryId)
-    }
-  }, [product?.id, product?.category, locale])
+  console.log("1: ", catSearchInputVal)
+  console.log("2: ", allCats)
+  console.log("3: ", categoriesAndSubListByName)
+  console.log("4: ", selectedCatId)
+  console.log("5: ", selectedCat)
+  console.log("6: ", categoriesAndSubList)
 
   const fetchCategories = useCallback(async () => {
     const {
@@ -43,10 +42,26 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps, se
     editProduct && catSearchInputVal && hanldeSearchProduct()
   }, [fetchCategories, id, locale, selectedCatId])
 
+  const findCategoryById = (categories, id) => {
+    for (const category of categories) {
+      // if id is for main category return it
+      if (category.id === id) {
+        return category
+      }
+      // if id is for subcategory go to list property and search for the subcategory
+      if (category.list && category.list.length > 0) {
+        const foundSubCategory = findCategoryById(category.list, id)
+        if (foundSubCategory) {
+          return foundSubCategory
+        }
+      }
+    }
+    return null
+  }
   const handleNextStep = (e) => {
     e.preventDefault()
     next(selectedCatId)
-    const catProps = allCats.find((item) => item.id === selectedCatId)
+    const catProps = findCategoryById(allCats, selectedCatId)
     setProductPayload((prev) => ({
       ...prev,
       categoryId: selectedCatId,
