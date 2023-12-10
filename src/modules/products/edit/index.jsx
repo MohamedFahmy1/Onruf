@@ -12,6 +12,7 @@ const EditProduct = () => {
   const { data: productData } = useFetch(`/GetProductById?id=${query.id}&lang=${locale}`, true)
   const { data: shippingOptions } = useFetch(`/GetProductShippingOptions?productId=${query.id}`, true)
   const { data: paymentOptions } = useFetch(`/GetProductPaymentOptions?productId=${query.id}`, true)
+  const { data: bankAccounts } = useFetch(`/GetProductBankAccounts?productId=${query.id}`, true)
   const [product, setProduct] = useState()
   const [productPayload, setProductPayload] = useState({
     nameAr: "",
@@ -29,7 +30,6 @@ const EditProduct = () => {
     District: "",
     Street: "",
     GovernmentCode: "",
-    pakatId: null,
     productSep: [],
     listImageFile: [],
     MainImageIndex: undefined,
@@ -83,8 +83,8 @@ const EditProduct = () => {
         Street: productData.street,
         GovernmentCode: productData.governmentCode,
         productSep: productData.listProductSep,
-        listMedia: productData.listMedia,
-        // videoUrl: productData.videoUrl,
+        listMedia: productData.listMedia.filter((item) => item.type === 1),
+        videoUrl: productData.listMedia.filter((item) => item.type === 2),
         ShippingOptions: shippingOptions.map((item) => item.shippingOptionId),
         Lat: productData.lat,
         Lon: productData.lon,
@@ -94,7 +94,7 @@ const EditProduct = () => {
         IsNegotiationEnabled: productData.isNegotiationEnabled,
         Price: productData.price,
         PaymentOptions: paymentOptions.map((item) => item.paymentOptionId),
-        // ProductBankAccounts: productData.productBankAccounts,
+        ProductBankAccounts: bankAccounts.map((item) => item.bankAccountId),
         IsCashEnabled: productData.isCashEnabled,
         AuctionStartPrice: productData.auctionStartPrice,
         IsAuctionPaied: productData.isAuctionPaied,
@@ -113,10 +113,11 @@ const EditProduct = () => {
         "ProductPaymentDetailsDto.ExtraProductImageFee": productData?.categoryDto.extraProductImageFee,
         "ProductPaymentDetailsDto.ExtraProductVidoeFee": productData?.categoryDto.extraProductVidoeFee,
         "ProductPaymentDetailsDto.SubTitleFee": productData?.categoryDto.subTitleFee,
+        "ProductPaymentDetailsDto.AdditionalPakatId": productData?.categoryDto.additionalPakatId,
         IsAuctionClosingTimeFixed: productData.IsAuctionClosingTimeFixed,
       }))
     }
-  }, [productData, locale, shippingOptions, paymentOptions, query.id])
+  }, [productData, locale, shippingOptions, paymentOptions, query.id, bankAccounts])
   return (
     <div className="body-content">
       <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">

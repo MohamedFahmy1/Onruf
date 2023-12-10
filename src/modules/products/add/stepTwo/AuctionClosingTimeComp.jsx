@@ -56,9 +56,9 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
             onClick={() => {
               setFixedLength(true)
               setActiveElementIndex(null)
-              setProductPayload({ ...productPayload, AuctionClosingTime: "" })
+              setProductPayload({ ...productPayload, AuctionClosingTime: "", IsAuctionClosingTimeFixed: true })
             }}
-            checked={fixedLength}
+            checked={productPayload?.IsAuctionClosingTimeFixed}
           />
         </div>
         <div className="d-flex gap-3">
@@ -77,6 +77,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
                       setProductPayload({
                         ...productPayload,
                         AuctionClosingTime: auctionClosingTimeIso,
+                        IsAuctionClosingTimeFixed: true,
                       })
                       setActiveElementIndex(+item)
                     } else
@@ -102,6 +103,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
                       setProductPayload({
                         ...productPayload,
                         AuctionClosingTime: auctionClosingTimeIso,
+                        IsAuctionClosingTimeFixed: true,
                       })
                       setActiveElementIndex(+item)
                     } else
@@ -127,6 +129,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
                       setProductPayload({
                         ...productPayload,
                         AuctionClosingTime: auctionClosingTimeIso,
+                        IsAuctionClosingTimeFixed: true,
                       })
                       setActiveElementIndex(+item)
                     } else
@@ -157,9 +160,9 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
             onClick={() => {
               setFixedLength(false)
               setActiveElementIndex(null)
-              setProductPayload({ ...productPayload, AuctionClosingTime: "" })
+              setProductPayload({ ...productPayload, AuctionClosingTime: "", IsAuctionClosingTimeFixed: false })
             }}
-            checked={!fixedLength}
+            checked={!productPayload?.IsAuctionClosingTimeFixed}
           />
         </div>
         <p style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>{`+ ${
@@ -169,7 +172,11 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
           type="datetime-local"
           onChange={(e) => {
             if (!fixedLength) {
-              setProductPayload({ ...productPayload, AuctionClosingTime: e.target.value })
+              setProductPayload({
+                ...productPayload,
+                AuctionClosingTime: e.target.value,
+                IsAuctionClosingTimeFixed: false,
+              })
             } else return toast.error(locale === "en" ? "Please Select Duration Type First!" : "رجاء اختر نوع المدة")
           }}
           disabled={fixedLength}

@@ -32,7 +32,6 @@ const AddProduct = () => {
     District: "",
     Street: "",
     GovernmentCode: "",
-    pakatId: null,
     productSep: [],
     listImageFile: [],
     MainImageIndex: undefined,

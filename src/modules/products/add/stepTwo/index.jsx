@@ -227,10 +227,10 @@ const AddProductStepTwo = ({
   }
   const handleChoosePackat = (pack) => {
     if (productPayload.pakatId) {
-      setProductPayload({ ...productPayload, pakatId: null })
+      setProductPayload({ ...productPayload, pakatId: null, "ProductPaymentDetailsDto.AdditionalPakatId": 0 })
       setselectedPack(null)
     } else {
-      setProductPayload({ ...productPayload, pakatId: pack.id })
+      setProductPayload({ ...productPayload, pakatId: pack.id, "ProductPaymentDetailsDto.AdditionalPakatId": pack.id })
       setselectedPack(pack)
     }
   }
@@ -427,6 +427,33 @@ const AddProductStepTwo = ({
               </div>
             ) : (
               <div className={styles["all_upload_Image"]}>
+                {productPayload?.listMedia?.map((img, index) => (
+                  <div key={id + index} className={styles["the_img_upo"]}>
+                    <IoIosClose
+                      style={{
+                        cursor: "pointer",
+                        position: "absolute",
+                        top: 5,
+                        right: 5,
+                        background: "white",
+                        borderRadius: "50%",
+                      }}
+                      size={20}
+                      onClick={() => handleRemoveImage(index)}
+                    />
+                    <Image src={img?.url} alt="product" width={200} height={120} />
+                    <label htmlFor={img.id}>
+                      <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
+                      <input
+                        id={img.id}
+                        type="radio"
+                        name="isMain"
+                        checked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
+                        onChange={() => handleMainImage(img.id, index)}
+                      />
+                    </label>
+                  </div>
+                ))}
                 {productPayload?.listImageFile?.map((img, index) => (
                   <div key={id + index} className={styles["the_img_upo"]}>
                     <IoIosClose
@@ -441,7 +468,7 @@ const AddProductStepTwo = ({
                       size={20}
                       onClick={() => handleRemoveImage(index)}
                     />
-                    <img src={pathname.includes("add") ? URL.createObjectURL(img) : img?.url} alt="product" />
+                    <Image src={URL.createObjectURL(img)} alt="product" width={200} height={180} />
                     <label htmlFor={img.id}>
                       <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
                       <input

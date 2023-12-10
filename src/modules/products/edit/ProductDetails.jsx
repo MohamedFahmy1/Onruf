@@ -52,15 +52,17 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
   }, [productFullData.ShippingOptions])
 
   const getPackage = useCallback(async () => {
-    if (productFullData.pakatId) {
+    if (productFullData.pakatId || productFullData["ProductPaymentDetailsDto.AdditionalPakatId"]) {
       const data = await axios.get(
         process.env.NEXT_PUBLIC_API_URL +
-          `/GetPakaById?Pakatid=${productFullData.pakatId}
+          `/GetPakaById?Pakatid=${
+            productFullData.pakatId || productFullData["ProductPaymentDetailsDto.AdditionalPakatId"]
+          }
       `,
       )
       setPackageDetails(data?.data?.data)
     }
-  }, [productFullData.pakatId])
+  }, [productFullData])
 
   const applyCoupon = async () => {
     try {
@@ -116,8 +118,8 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
             formData.append(key, item)
           })
       }
-      // if any value is empty don't send it to the api
-      else if (value === "" || value === null || key === "productImage") {
+      // if any value is empty don't send it to the api || and don't send productImage & listMedia
+      else if (value === "" || value === null || key === "productImage" || key === "listMedia") {
         continue
       } else {
         formData.append(key, value)
@@ -147,7 +149,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       try {
         const {
           data: { data: id },
-        } = await axios.put(process.env.NEXT_PUBLIC_API_URL + "/EditProduct", formData, {
+        } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/EditProduct", formData, {
           headers: {
             accept: "*/*",
             "Content-Type": "multipart/form-data",
