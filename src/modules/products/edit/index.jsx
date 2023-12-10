@@ -54,6 +54,8 @@ const EditProduct = () => {
     AuctionClosingTime: "",
     SendYourAccountInfoToAuctionWinner: false,
     AlmostSoldOutQuantity: 1,
+    DeletedMedias: [],
+    IsAuctionClosingTimeFixed: null,
   })
 
   const handleBack = () => {
@@ -111,6 +113,7 @@ const EditProduct = () => {
         "ProductPaymentDetailsDto.ExtraProductImageFee": productData?.categoryDto.extraProductImageFee,
         "ProductPaymentDetailsDto.ExtraProductVidoeFee": productData?.categoryDto.extraProductVidoeFee,
         "ProductPaymentDetailsDto.SubTitleFee": productData?.categoryDto.subTitleFee,
+        IsAuctionClosingTimeFixed: productData.IsAuctionClosingTimeFixed,
       }))
     }
   }, [productData, locale, shippingOptions, paymentOptions, query.id])

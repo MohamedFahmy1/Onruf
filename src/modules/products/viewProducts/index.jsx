@@ -1,7 +1,7 @@
 import React, { Fragment, useState, useMemo, useEffect, useCallback } from "react"
 import Table from "../../../common/table"
 import Pagination from "./../../../common/pagination"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/router"
 import { propOr, pathOr } from "ramda"
 import { MdModeEdit } from "react-icons/md"
 import { formatDate, minDate } from "../../../common/functions"
@@ -21,6 +21,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const {
     locale,
     query: { page = 1 },
+    push,
   } = useRouter()
   const id = router.query.id
 
@@ -115,11 +116,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         accessor: "name",
         Cell: ({ row: { original } }) => (
           <div className="d-flex align-items-center">
-            {router.pathname.includes("folders") ? (
-              <img src={original.image || original.productImage} className="img_table" alt="folder" />
-            ) : (
-              <img src={original.image || original.productImage} className="img_table" alt="folder" />
-            )}
+            <img src={original.image || original.productImage} className="img_table" alt="product" />
             <div>
               <h6 className="m-0 f-b"> {propOr("-", ["name"], original)} </h6>
               <div className="gray-color">{formatDate(propOr("-", ["createdAt"], original))}</div>
@@ -241,7 +238,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                     type="button"
                     className="info_ mx-1"
                     onClick={() => {
-                      Router.push(`/products/repost/${productId || id}`)
+                      push(`/products/repost/${productId || id}`)
                     }}
                   >
                     {pathOr("", [locale, "Products", "repost"], t)}
@@ -261,16 +258,12 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                 </div>
               ) : (
                 <div className="form-check form-switch p-0 m-0 d-flex">
-                  <MdModeEdit
-                    className="btn_Measures"
-                    onClick={() => Router.push(`/products/edit/${productId || id}`)}
-                  />
+                  <MdModeEdit className="btn_Measures" onClick={() => push(`/products/edit/${productId || id}`)} />
                   <RiDeleteBin5Line className="btn_Measures" onClick={() => handleDeleteProduct(productId || id)} />
                   <input
                     readOnly
                     className="form-check-input m-0 btn_Measures"
                     onChange={(e) => handleChangeStatus(productId || id)}
-                    // checked={isActive}
                     defaultChecked={isActive}
                     type="checkbox"
                     role="switch"
@@ -346,8 +339,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
             </div>
             <Link href={"/products/add"}>
               <Button className="btn-main" variant={"contained"}>
-                {locale === "en" ? "Add Product" : "اضافه منتج"}
-                <FaPlusCircle className="me-2" />
+                {locale === "en" ? "Add Product" : "اضافه منتج"} <FaPlusCircle className="me-2" />
               </Button>
             </Link>
           </div>
@@ -356,7 +348,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               className={`btn-main ${selectedFilter === "avaliableProducts" ? "active" : ""}`}
               onClick={() => {
                 setSelectedFilter("avaliableProducts")
-                router.push({ query: { page: 1 } })
+                push({ query: { page: 1 } })
               }}
             >
               {pathOr("", [locale, "Products", "availableProducts"], t)} ({avaliableProducts?.length})
@@ -365,7 +357,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               className={`btn-main ${selectedFilter === "productsAlmostOut" ? "active" : ""}`}
               onClick={() => {
                 setSelectedFilter("productsAlmostOut")
-                router.push({ query: { page: 1 } })
+                push({ query: { page: 1 } })
               }}
             >
               {pathOr("", [locale, "Products", "almostOut"], t)} ({productsAlmostOut?.length})
@@ -374,7 +366,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               className={`btn-main ${!selectedFilter ? "active" : ""}`}
               onClick={() => {
                 setSelectedFilter("")
-                router.push({ query: { page: 1 } })
+                push({ query: { page: 1 } })
               }}
             >
               {pathOr("", [locale, "Products", "inActiveProducts"], t)} ({inActiveProducts?.length})
@@ -383,7 +375,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
               className={`btn-main ${selectedFilter === "didnotSell" ? "active" : ""}`}
               onClick={() => {
                 setSelectedFilter("didnotSell")
-                router.push({ query: { page: 1 } })
+                push({ query: { page: 1 } })
               }}
             >
               {pathOr("", [locale, "Products", "didnt_sell"], t)} ({didnotSell?.length})

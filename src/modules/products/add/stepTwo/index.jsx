@@ -1074,6 +1074,7 @@ const AddProductStepTwo = ({
                                       IsFixedPriceEnabled: !productPayload.IsFixedPriceEnabled,
                                     })
                                   }
+                                  disabled={pathname.includes("edit")}
                                 />
                                 <label htmlFor="IsFixedPriceEnabled">
                                   {pathOr("", [locale, "Products", "adFixed"], t)}
@@ -1099,6 +1100,7 @@ const AddProductStepTwo = ({
                                       IsAuctionEnabled: !productPayload.IsAuctionEnabled,
                                     })
                                   }
+                                  disabled={pathname.includes("edit")}
                                 />
                                 <label htmlFor="IsAuctionEnabled">
                                   {pathOr("", [locale, "Products", "adAuct"], t)}
@@ -1126,6 +1128,7 @@ const AddProductStepTwo = ({
                                       IsNegotiationEnabled: !productPayload.IsNegotiationEnabled,
                                     })
                                   }
+                                  disabled={pathname.includes("edit")}
                                 />
                                 <label htmlFor="IsNegotiationEnabled">
                                   {pathOr("", [locale, "Products", "negotiation"], t)}

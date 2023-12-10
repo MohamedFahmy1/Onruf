@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import axios from "axios"
 import { useRouter } from "next/router"
 import styles from "./stepOne.module.css"
@@ -8,39 +8,33 @@ import t from "../../../../translations.json"
 import { Col, Row } from "react-bootstrap"
 import Alerto from "../../../../common/Alerto"
 import { toast } from "react-toastify"
-const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps, setProductPayload }) => {
+
+const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProductPayload }) => {
   const {
     locale,
     query: { id },
-    pathname,
   } = useRouter()
+  const mainCatRef = useRef(null)
   const [catSearchInputVal, setCatSearchInputVal] = useState("")
   const [allCats, setAllCats] = useState([])
   const [categoriesAndSubListByName, setCategoriesAndSubListByName] = useState([])
   const [selectedCatId, setSelectedCatId] = useState(null)
   const [selectedCat, setSelectedCat] = useState(null)
   const [categoriesAndSubList, setCategoriesAndSubList] = useState([])
-  console.log("1: ", catSearchInputVal)
-  console.log("2: ", allCats)
-  console.log("3: ", categoriesAndSubListByName)
-  console.log("4: ", selectedCatId)
-  console.log("5: ", selectedCat)
-  console.log("6: ", categoriesAndSubList)
+  const [returnedSavedData, setReturnedSavedData] = useState(false)
+  const [returnedSavedDataValue, setReturnedSavedDataValue] = useState([])
 
   const fetchCategories = useCallback(async () => {
     const {
       data: { data: cats },
     } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/ListCategoryAndSub?lang=${locale}&currentPage=1`)
     setAllCats(cats)
-    if (id) {
-      setSelectedCatId(product?.categoryId)
-    }
-  }, [id, locale])
+  }, [locale])
 
   useEffect(() => {
     fetchCategories()
-    editProduct && catSearchInputVal && hanldeSearchProduct()
-  }, [fetchCategories, id, locale, selectedCatId])
+    // catSearchInputVal && hanldeSearchProduct()
+  }, [fetchCategories, locale])
 
   const findCategoryById = (categories, id) => {
     for (const category of categories) {
@@ -58,6 +52,26 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps, se
     }
     return null
   }
+  const arrayOfCatAndSubcat = useCallback((categories, id, array = []) => {
+    for (const category of categories) {
+      // Add the current category to the array
+      const newPath = array.concat(category)
+      // Check if the current category's id matches the searched id
+      if (category.id === id) {
+        return newPath
+      }
+      // If this category has subcategories, search within them recursively
+      if (category.list && category.list.length > 0) {
+        const foundPath = arrayOfCatAndSubcat(category.list, id, newPath)
+        if (foundPath) {
+          return foundPath
+        }
+      }
+    }
+    // if the id of the category is not found
+    return null
+  }, [])
+
   const handleNextStep = (e) => {
     e.preventDefault()
     next(selectedCatId)
@@ -112,6 +126,8 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps, se
     setCatSearchInputVal("")
     setCategoriesAndSubList([])
     setCategoriesAndSubListByName([])
+    setReturnedSavedDataValue([])
+    mainCatRef.current.value = ""
     fetchCategories()
   }
 
@@ -131,6 +147,16 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps, se
       Alerto(e)
     }
   }
+  useEffect(() => {
+    const selectedCatAndSub = arrayOfCatAndSubcat(allCats, productPayload.categoryId)
+    if (!returnedSavedData && selectedCatAndSub?.length > 0) {
+      setReturnedSavedDataValue(selectedCatAndSub)
+      setSelectedCatId(selectedCatAndSub[selectedCatAndSub.length - 1].id)
+      setSelectedCat(selectedCatAndSub[selectedCatAndSub.length - 1])
+      setCategoriesAndSubList(selectedCatAndSub.filter((item, index) => index !== selectedCatAndSub.length - 1))
+      setReturnedSavedData(true)
+    }
+  }, [productPayload.categoryId, allCats, returnedSavedData, arrayOfCatAndSubcat])
 
   return (
     <div className="contint_paner">
@@ -220,10 +246,10 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps, se
                       {pathOr("", [locale, "Products", "selectCategory"], t)}
                     </label>
                     <select
-                      defaultValue={""}
+                      ref={mainCatRef}
+                      onChange={handleSelectChangeCat}
                       value={categoriesAndSubList[0]?.id}
                       className="form-control form-select"
-                      onChange={handleSelectChangeCat}
                     >
                       <option disabled hidden value={""}>
                         {pathOr("", [locale, "Products", "selectOption"], t)}
@@ -242,12 +268,16 @@ const AddProductStepOne = ({ next, product, editProduct, setSelectedCatProps, se
                   </div>
                 )}
                 {Boolean(categoriesAndSubList.length) &&
-                  categoriesAndSubList.map((category) => (
+                  categoriesAndSubList.map((category, index) => (
                     <div className="form-group" key={category?.id}>
                       <label className="d-block text-center">
                         {pathOr("", [locale, "Products", "subcategory"], t)}
                       </label>
-                      <select className="form-control form-select" onChange={handleSelectChange} defaultValue={0}>
+                      <select
+                        className="form-control form-select"
+                        onChange={handleSelectChange}
+                        defaultValue={returnedSavedDataValue?.length > 0 ? categoriesAndSubList[index + 1]?.id : 0}
+                      >
                         <option disabled hidden value={0}>
                           {pathOr("", [locale, "Products", "choose_department"], t)}
                         </option>

@@ -82,12 +82,12 @@ const Folders = () => {
       <div className="body-content">
         <div>
           <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center ">
               <h6 className="f-b m-0">
                 {pathOr("", [locale, "Products", "product_folders"], t)} ({totalNumberOfProducts})
               </h6>
               <Link href="/products">
-                <a className="btn-main btn-main-w mr-20">
+                <a className="btn-main btn-main-w mr-20 mx-3">
                   {pathOr("", [locale, "Products", "return_to_products_page"], t)} <img src={rightArrow.src} />
                 </a>
               </Link>

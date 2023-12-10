@@ -115,11 +115,10 @@ const AddProduct = () => {
         )}
         {step === 1 && !product?.id && (
           <AddProductStepOne
-            product={product && product}
             next={(selectedCat) => handleNextStep(selectedCat)}
             setSelectedCatProps={setSelectedCatProps}
+            productPayload={productPayload}
             setProductPayload={setProductPayload}
-            editProduct={false}
           />
         )}
         {(step === 2 || (product && product?.id)) && (
