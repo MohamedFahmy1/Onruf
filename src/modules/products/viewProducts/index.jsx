@@ -427,10 +427,11 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                         type="number"
                         min="1"
                         className="form-control"
-                        value={quantityValueInfinity ? null : +quantityValue}
+                        value={quantityValueInfinity ? "" : +quantityValue}
                         onChange={(e) => setQuantityValue(+e.target.value)}
                         disabled={quantityValueInfinity}
                       />
+                      {console.log(quantityValueInfinity)}
                       <button
                         className="btn_ minus"
                         onClick={() => setQuantityValue((prev) => (quantityValue ? prev - 1 : 0))}
@@ -468,7 +469,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                       className="form-control"
                       onChange={(e) => setPriceValue(e.target.value)}
                       value={priceValue}
-                      placeholder="0.00"
+                      placeholder="0"
                     />
                     <button className="btn_ minus" onClick={() => setPriceValue((prev) => (priceValue ? prev - 1 : 0))}>
                       -

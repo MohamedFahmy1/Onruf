@@ -53,12 +53,12 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
             type="radio"
             name="AuctionDuration"
             id="AuctionDuration"
-            onClick={() => {
+            onChange={() => {
               setFixedLength(true)
               setActiveElementIndex(null)
               setProductPayload({ ...productPayload, AuctionClosingTime: "", IsAuctionClosingTimeFixed: true })
             }}
-            checked={productPayload?.IsAuctionClosingTimeFixed}
+            checked={productPayload?.IsAuctionClosingTimeFixed || false}
           />
         </div>
         <div className="d-flex gap-3">
@@ -144,6 +144,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
           })}
         </div>
       </div>
+      {console.log(productPayload.isAuctionClosingTimeFixed)}
       <div
         className={`form-group contint_paner w-100 ${styles.p_select} ${
           fixedLength == false ? styles.p_select_active : ""
@@ -157,12 +158,12 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
             type="radio"
             name="AuctionDuration"
             id="AuctionDuration"
-            onClick={() => {
+            onChange={() => {
+              setProductPayload({ ...productPayload, AuctionClosingTime: "", IsAuctionClosingTimeFixed: false })
               setFixedLength(false)
               setActiveElementIndex(null)
-              setProductPayload({ ...productPayload, AuctionClosingTime: "", IsAuctionClosingTimeFixed: false })
             }}
-            checked={!productPayload?.IsAuctionClosingTimeFixed}
+            checked={!productPayload?.IsAuctionClosingTimeFixed || false}
           />
         </div>
         <p style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>{`+ ${

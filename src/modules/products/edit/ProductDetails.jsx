@@ -25,9 +25,9 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
         (productFullData?.listImageFile.length - selectedCatProps?.freeProductImagesCount)
       : 0
   const totalVideoFee =
-    productFullData?.videoUrl.length > selectedCatProps?.freeProductVidoesCount
+    productFullData?.videoUrl?.length > selectedCatProps?.freeProductVidoesCount
       ? selectedCatProps?.extraProductVidoeFee *
-        (productFullData?.videoUrl.length - selectedCatProps?.freeProductVidoesCount)
+        (productFullData?.videoUrl?.length - selectedCatProps?.freeProductVidoesCount)
       : 0
   const autctionFee = productFullData?.IsAuctionEnabled ? selectedCatProps?.enableAuctionFee : 0
   const negotiationFee = productFullData?.IsNegotiationEnabled ? selectedCatProps?.enableNegotiationFee : 0
@@ -461,7 +461,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                       </span>
                     </li>
                   )}
-                  {productFullData.videoUrl.length > selectedCatProps?.freeProductVidoesCount && (
+                  {productFullData.videoUrl?.length > selectedCatProps?.freeProductVidoesCount && (
                     <li>
                       <span>{pathOr("", [locale, "Products", "additional_product_videos_fee"], t)}</span>{" "}
                       <span>

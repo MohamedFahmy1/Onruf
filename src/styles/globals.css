@@ -289,6 +289,9 @@ input[type="radio"]:checked::after {
 input[type="radio"]:checked::before {
   border-color: var(--main);
 }
+input[type="radio"]:checked:disabled::after {
+  background: grey !important;
+}
 
 input[type="radio"]:checked + span {
   font-weight: 600;

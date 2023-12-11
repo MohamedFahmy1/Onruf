@@ -7,39 +7,36 @@ import Alerto from "../../../../common/Alerto"
 import axios from "axios"
 import { pathOr } from "ramda"
 import t from "../../../../translations.json"
-const BanksData = ({ data, setShowBanksData, setProductPayload }) => {
+const BanksData = ({ data, setShowBanksData, productPayload, setProductPayload }) => {
   const { locale } = useRouter()
-  const [selectedBank, setSelectedBank] = useState([])
   const [showAddAcc, setShowAddAcc] = useState(false)
   const [userData, setuserData] = useState([])
   const [fetchNewData, setfetchNewData] = useState(false)
 
   const changeHandler = (bankId) => {
-    setSelectedBank((prev) => {
-      if (prev.includes(bankId)) {
-        return prev.filter((id) => id !== bankId)
-      } else {
-        return [...prev, bankId]
-      }
-    })
-  }
-
-  const submitBanksDataHanler = (event) => {
-    event.preventDefault()
-    setShowBanksData(false)
-    if (selectedBank.length > 0) {
+    if (productPayload.ProductBankAccounts.includes(bankId)) {
       setProductPayload((prev) => ({
         ...prev,
-        ProductBankAccounts: [...prev.ProductBankAccounts, ...selectedBank],
+        ProductBankAccounts: productPayload.ProductBankAccounts.filter((id) => id !== bankId),
       }))
     } else {
       setProductPayload((prev) => ({
         ...prev,
-        PaymentOptions: prev.PaymentOptions.filter((value) => value !== 2),
+        ProductBankAccounts: [...productPayload.ProductBankAccounts, bankId],
+      }))
+    }
+  }
+
+  const submitBanksDataHanler = () => {
+    if (productPayload.ProductBankAccounts.length === 0) {
+      setProductPayload((prev) => ({
+        ...prev,
+        PaymentOptions: productPayload.PaymentOptions.filter((value) => value !== 2),
         ProductBankAccounts: [],
       }))
       toast.error(locale === "en" ? "You didn't choose one account at least" : "اختر حساب واحد علي الاقل")
     }
+    setShowBanksData(false)
   }
 
   useEffect(() => {
@@ -60,7 +57,7 @@ const BanksData = ({ data, setShowBanksData, setProductPayload }) => {
   return (
     <div className={styles.banksData}>
       {!showAddAcc && (
-        <form className={styles.box} onSubmit={submitBanksDataHanler}>
+        <div className={styles.box} onSubmit={submitBanksDataHanler}>
           <h2>{pathOr("", [locale, "Products", "ChooseTheBankAccount"], t)}</h2>
           {userData.map((bank) => (
             <div key={bank.id} className={styles.bankItem} style={{ textAlign: locale === "ar" ? "right" : "left" }}>
@@ -88,7 +85,7 @@ const BanksData = ({ data, setShowBanksData, setProductPayload }) => {
                 type="checkbox"
                 id={`bank-${bank.id}`}
                 name="bank"
-                value={bank.id}
+                checked={productPayload.ProductBankAccounts.includes(+bank.id)}
                 onChange={() => changeHandler(bank.id)}
               />
             </div>
@@ -114,7 +111,7 @@ const BanksData = ({ data, setShowBanksData, setProductPayload }) => {
           >
             {pathOr("", [locale, "Products", "done"], t)}
           </button>
-        </form>
+        </div>
       )}
       {showAddAcc && <AddNewBankAcc setShowAddAcc={setShowAddAcc} setfetchNewData={setfetchNewData} />}
     </div>

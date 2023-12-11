@@ -23,7 +23,8 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
   const [categoriesAndSubList, setCategoriesAndSubList] = useState([])
   const [returnedSavedData, setReturnedSavedData] = useState(false)
   const [returnedSavedDataValue, setReturnedSavedDataValue] = useState([])
-
+  console.log("1: ", returnedSavedDataValue)
+  console.log("1: ", categoriesAndSubList)
   const fetchCategories = useCallback(async () => {
     const {
       data: { data: cats },
@@ -102,6 +103,7 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
     } else if (allCats.find((cat) => cat?.id === selected?.id)) {
       setCategoriesAndSubList([])
     }
+    setReturnedSavedDataValue([])
   }
   const handleSelectChangeCat = (e) => {
     setSelectedCatId(+e.target.value)
@@ -130,6 +132,11 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
     mainCatRef.current.value = ""
     fetchCategories()
   }
+  // useEffect(() => {
+  //   if (categoriesAndSubList.length === 0 && returnedSavedDataValue.length > 0) {
+  //     mainCatRef.current.value = returnedSavedDataValue[0].id
+  //   }
+  // }, [categoriesAndSubList, returnedSavedDataValue])
 
   const hanldeSearchProduct = async () => {
     try {
@@ -151,9 +158,15 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
     const selectedCatAndSub = arrayOfCatAndSubcat(allCats, productPayload.categoryId)
     if (!returnedSavedData && selectedCatAndSub?.length > 0) {
       setReturnedSavedDataValue(selectedCatAndSub)
-      setSelectedCatId(selectedCatAndSub[selectedCatAndSub.length - 1].id)
-      setSelectedCat(selectedCatAndSub[selectedCatAndSub.length - 1])
-      setCategoriesAndSubList(selectedCatAndSub.filter((item, index) => index !== selectedCatAndSub.length - 1))
+      if (selectedCatAndSub.length === 1) {
+        setSelectedCatId(selectedCatAndSub[0].id)
+        setSelectedCat(selectedCatAndSub[0])
+        setCategoriesAndSubList(selectedCatAndSub)
+      } else {
+        setSelectedCatId(selectedCatAndSub[selectedCatAndSub.length - 1].id)
+        setSelectedCat(selectedCatAndSub[selectedCatAndSub.length - 1])
+        setCategoriesAndSubList(selectedCatAndSub.slice(0, selectedCatAndSub.length - 1))
+      }
       setReturnedSavedData(true)
     }
   }, [productPayload.categoryId, allCats, returnedSavedData, arrayOfCatAndSubcat])
@@ -268,6 +281,7 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
                   </div>
                 )}
                 {Boolean(categoriesAndSubList.length) &&
+                  Boolean(categoriesAndSubList[0].list.length) &&
                   categoriesAndSubList.map((category, index) => (
                     <div className="form-group" key={category?.id}>
                       <label className="d-block text-center">
@@ -276,7 +290,11 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
                       <select
                         className="form-control form-select"
                         onChange={handleSelectChange}
-                        defaultValue={returnedSavedDataValue?.length > 0 ? categoriesAndSubList[index + 1]?.id : 0}
+                        defaultValue={
+                          returnedSavedDataValue?.length > 0 && returnedSavedData
+                            ? categoriesAndSubList[index + 1]?.id
+                            : 0
+                        }
                       >
                         <option disabled hidden value={0}>
                           {pathOr("", [locale, "Products", "choose_department"], t)}

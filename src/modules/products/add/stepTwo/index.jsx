@@ -225,6 +225,13 @@ const AddProductStepTwo = ({
       setProductPayload((prev) => ({ ...prev, videoUrl: newVideoUrls }))
     }
   }
+  const removeUrlFieldFromListmedia = (id) => {
+    setProductPayload((prev) => ({
+      ...prev,
+      listMedia: productPayload.listMedia?.filter((item) => item.id !== id),
+      DeletedMedias: [...productPayload.DeletedMedias, id],
+    }))
+  }
   const handleChoosePackat = (pack) => {
     if (productPayload.pakatId) {
       setProductPayload({ ...productPayload, pakatId: null, "ProductPaymentDetailsDto.AdditionalPakatId": 0 })
@@ -263,6 +270,13 @@ const AddProductStepTwo = ({
         ...productPayload,
         listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index),
       })
+  }
+  const handleRemoveImageFromListmedia = (id) => {
+    setProductPayload({
+      ...productPayload,
+      listMedia: productPayload.listMedia?.filter((item) => item.id !== id),
+      DeletedMedias: [...productPayload.DeletedMedias, id],
+    })
   }
 
   const handleMainImage = (id, index) => {
@@ -320,7 +334,12 @@ const AddProductStepTwo = ({
     return setEventKey("2")
   }
   const paymentOptionsHandler = (optionIndex) => {
-    if (!productPayload.PaymentOptions?.includes(optionIndex)) {
+    if (optionIndex === 2) {
+      setProductPayload((prev) => ({
+        ...prev,
+        PaymentOptions: [...prev.PaymentOptions, 2],
+      }))
+    } else if (!productPayload.PaymentOptions?.includes(optionIndex)) {
       setProductPayload((prev) => ({
         ...prev,
         PaymentOptions: [...prev.PaymentOptions, optionIndex],
@@ -375,6 +394,34 @@ const AddProductStepTwo = ({
       toast.error(locale == "en" ? "Please select Autction Duration!" : "رجاء اختر مدة المزاد")
     } else !pathname.includes("edit") ? setEventKey("5") : handleGoToReviewPage()
   }
+
+  const validateProductImages = () => {
+    if (!pathname.includes("add")) {
+      productPayload?.listImageFile.length === 0 &&
+      productPayload?.listMedia?.filter((item) => item.type === 1).length === 0
+        ? toast.error(locale === "en" ? "No photo uploaded for the product" : "لايوجد صور للمنتج")
+        : setEventKey("1")
+    } else if (
+      productPayload?.listImageFile.length > 0 &&
+      productPayload?.MainImageIndex !== null &&
+      // check that videoUrl array doesn't have empty fileds or user didn't enter any then it's accepted
+      (productPayload.videoUrl.every((url) => url.trim() !== "") || productPayload.videoUrl.length === 1)
+    ) {
+      setEventKey("1")
+    } else {
+      if (productPayload?.listImageFile.length <= 0) {
+        toast.error(locale === "en" ? "No photo uploaded for the product" : "لايوجد صور للمنتج")
+      } else if (productPayload?.MainImageIndex === null) {
+        toast.error(locale === "en" ? "No main photo selected" : "لم يتم اختيار صورة رئيسية")
+      } else if (!productPayload.videoUrl.every((url) => url.trim() !== "")) {
+        toast.error(
+          locale === "en"
+            ? "Please Enter Video Url or Remove the empty field it!"
+            : "رجاء أدخل لينك الفيديو او امسح الحقل الفارغ",
+        )
+      }
+    }
+  }
   const countryFlag = countries?.find((item) => item.id === productPayload.countryId)?.countryFlag
   console.log("productPayload", productPayload)
   return (
@@ -427,33 +474,35 @@ const AddProductStepTwo = ({
               </div>
             ) : (
               <div className={styles["all_upload_Image"]}>
-                {productPayload?.listMedia?.map((img, index) => (
-                  <div key={id + index} className={styles["the_img_upo"]}>
-                    <IoIosClose
-                      style={{
-                        cursor: "pointer",
-                        position: "absolute",
-                        top: 5,
-                        right: 5,
-                        background: "white",
-                        borderRadius: "50%",
-                      }}
-                      size={20}
-                      onClick={() => handleRemoveImage(index)}
-                    />
-                    <Image src={img?.url} alt="product" width={200} height={120} />
-                    <label htmlFor={img.id}>
-                      <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
-                      <input
-                        id={img.id}
-                        type="radio"
-                        name="isMain"
-                        checked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
-                        onChange={() => handleMainImage(img.id, index)}
+                {productPayload?.listMedia
+                  ?.filter((item) => item.type === 1)
+                  .map((img, index) => (
+                    <div key={id + index} className={styles["the_img_upo"]}>
+                      <IoIosClose
+                        style={{
+                          cursor: "pointer",
+                          position: "absolute",
+                          top: 5,
+                          right: 5,
+                          background: "white",
+                          borderRadius: "50%",
+                        }}
+                        size={20}
+                        onClick={() => handleRemoveImageFromListmedia(img.id)}
                       />
-                    </label>
-                  </div>
-                ))}
+                      <img src={img?.url} alt="product" width={200} height={120} />
+                      <label htmlFor={img.id}>
+                        <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
+                        <input
+                          id={img.id}
+                          type="radio"
+                          disabled
+                          checked={img.isMainMadia}
+                          onChange={() => setProductPayload((prev) => ({ ...prev, MainImageIndex: null }))}
+                        />
+                      </label>
+                    </div>
+                  ))}
                 {productPayload?.listImageFile?.map((img, index) => (
                   <div key={id + index} className={styles["the_img_upo"]}>
                     <IoIosClose
@@ -468,7 +517,7 @@ const AddProductStepTwo = ({
                       size={20}
                       onClick={() => handleRemoveImage(index)}
                     />
-                    <Image src={URL.createObjectURL(img)} alt="product" width={200} height={180} />
+                    <img src={URL.createObjectURL(img)} alt="product" width={200} height={180} />
                     <label htmlFor={img.id}>
                       <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
                       <input
@@ -493,52 +542,68 @@ const AddProductStepTwo = ({
               </div>
             )}
             <div className={styles.container}>
-              {productPayload?.videoUrl?.map((url, index) => (
-                <div key={index} className={styles.urlInputContainer}>
-                  <input
-                    type="text"
-                    value={url}
-                    onChange={(e) => handleUrlChange(index, e)}
-                    placeholder="Please enter a video link"
-                    className={styles.urlInput}
-                  />
-                  {productPayload.videoUrl.length > 1 && (
-                    <button onClick={() => removeUrlField(index)} className={styles.button}>
-                      <AiOutlineMinus />
+              {pathname.includes("add") ? (
+                productPayload?.videoUrl?.map((url, index) => (
+                  <div key={index} className={styles.urlInputContainer}>
+                    <input
+                      type="text"
+                      value={url}
+                      onChange={(e) => handleUrlChange(index, e)}
+                      placeholder={locale === "en" ? "Please enter a video link" : "ادخل رابط الفيديو"}
+                      className={styles.urlInput}
+                    />
+                    {productPayload.videoUrl.length > 1 && (
+                      <button onClick={() => removeUrlField(index)} className={styles.button}>
+                        <AiOutlineMinus />
+                      </button>
+                    )}
+                    <button onClick={addUrlField} className={styles.button}>
+                      <AiOutlinePlus />
                     </button>
-                  )}
-                  <button onClick={addUrlField} className={styles.button}>
-                    <AiOutlinePlus />
-                  </button>
-                </div>
-              ))}
+                  </div>
+                ))
+              ) : (
+                <Fragment>
+                  {productPayload?.listMedia
+                    ?.filter((item) => item.type === 2)
+                    .map((item, index) => (
+                      <div key={index + id} className={styles.urlInputContainer}>
+                        <input
+                          type="text"
+                          value={item.url}
+                          onChange={(e) => handleUrlChange(index, e)}
+                          placeholder={locale === "en" ? "Please enter a video link" : "ادخل رابط الفيديو"}
+                          className={styles.urlInput}
+                          disabled
+                        />
+                        <button onClick={() => removeUrlFieldFromListmedia(item.id)} className={styles.button}>
+                          <AiOutlineMinus />
+                        </button>
+                      </div>
+                    ))}
+                  {productPayload?.videoUrl?.map((url, index) => (
+                    <div key={index + id} className={styles.urlInputContainer}>
+                      <input
+                        type="text"
+                        value={url}
+                        onChange={(e) => handleUrlChange(index, e)}
+                        placeholder={locale === "en" ? "Please enter a video link" : "ادخل رابط الفيديو"}
+                        className={styles.urlInput}
+                      />
+                      {productPayload.videoUrl.length > 1 && (
+                        <button onClick={() => removeUrlField(index)} className={styles.button}>
+                          <AiOutlineMinus />
+                        </button>
+                      )}
+                      <button onClick={addUrlField} className={styles.button}>
+                        <AiOutlinePlus />
+                      </button>
+                    </div>
+                  ))}
+                </Fragment>
+              )}
             </div>
-            <button
-              className="btn-main mt-3 btn-disabled"
-              type="button"
-              onClick={() => {
-                if (
-                  productPayload?.listImageFile.length > 0 &&
-                  productPayload?.MainImageIndex !== undefined &&
-                  // check that videoUrl array doesn't have empty fileds or user didn't enter any then it's accepted
-                  (productPayload.videoUrl.every((url) => url.trim() !== "") || productPayload.videoUrl.length === 1)
-                ) {
-                  setEventKey("1")
-                } else {
-                  if (productPayload?.listImageFile.length <= 0) {
-                    toast.error(locale === "en" ? "No photo uploaded for the product" : "لايوجد صور للمنتج")
-                  } else if (productPayload?.MainImageIndex === undefined) {
-                    toast.error(locale === "en" ? "No main photo selected" : "لم يتم اختيار صورة رئيسية")
-                  } else if (!productPayload.videoUrl.every((url) => url.trim() !== "")) {
-                    toast.error(
-                      locale === "en"
-                        ? "Please Enter Video Url or Remove the empty field it!"
-                        : "رجاء أدخل لينك الفيديو او امسح الحقل الفارغ",
-                    )
-                  }
-                }
-              }}
-            >
+            <button className="btn-main mt-3 btn-disabled" type="button" onClick={validateProductImages}>
               {pathOr("", [locale, "Products", "next"], t)}
             </button>
           </Accordion.Body>
@@ -551,56 +616,105 @@ const AddProductStepTwo = ({
           <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
             <div className="form-content">
               <form>
-                {Boolean(spesfications?.length) &&
-                  spesfications.map((spesfication, index) => (
-                    <div className="form-group" key={spesfication?.id}>
-                      <label htmlFor={index} style={{ ...textAlignStyle(locale), display: "block" }}>
-                        {spesfication.name}
-                      </label>
-                      {spesfication.type === 1 && (
-                        <select
-                          required={spesfication.isRequired}
-                          id={index}
-                          value={
-                            (locale === "en"
-                              ? productPayload?.productSep[index]?.ValueSpeEn
-                              : productPayload?.productSep[index]?.ValueSpeAr) || "" // Initialize with an empty string
-                          }
-                          className={`${styles["form-control"]} form-control form-select`}
-                          onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
-                        >
-                          <option value="" disabled hidden>
-                            {spesfication?.placeHolder}
-                          </option>
-                          {Boolean(spesfication?.subSpecifications?.length) &&
-                            spesfication.subSpecifications.map((subSpecification) => (
-                              <option key={subSpecification?.id} value={subSpecification?.id}>
-                                {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
-                              </option>
-                            ))}
-                        </select>
-                      )}
-                      {spesfication.type === 2 && (
-                        <input
-                          type={"text"}
-                          id={index}
-                          value={
-                            (locale === "en"
-                              ? productPayload?.productSep?.find(
-                                  ({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.name,
-                                )?.ValueSpeEn
-                              : productPayload?.productSep?.find(
-                                  ({ HeaderSpeAr }) => HeaderSpeAr === spesfication?.name,
-                                )?.ValueSpeAr) || "" // Initialize with an empty string
-                          }
-                          required={spesfication.isRequired}
-                          placeholder={spesfication.placeHolder}
-                          onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
-                          className={`${styles["form-control"]} form-control`}
-                        />
-                      )}
-                    </div>
-                  ))}
+                {Boolean(spesfications?.length) && pathname.includes("add")
+                  ? spesfications.map((spesfication, index) => (
+                      <div className="form-group" key={spesfication?.id}>
+                        <label htmlFor={index} style={{ ...textAlignStyle(locale), display: "block" }}>
+                          {spesfication.name}
+                        </label>
+                        {spesfication.type === 1 && (
+                          <select
+                            required={spesfication.isRequired}
+                            id={index}
+                            value={
+                              (locale === "en"
+                                ? productPayload?.productSep[index]?.ValueSpeEn
+                                : productPayload?.productSep[index]?.ValueSpeAr) || ""
+                            }
+                            className={`${styles["form-control"]} form-control form-select`}
+                            onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
+                          >
+                            <option value="" disabled hidden>
+                              {spesfication?.placeHolder}
+                            </option>
+                            {Boolean(spesfication?.subSpecifications?.length) &&
+                              spesfication.subSpecifications.map((subSpecification) => (
+                                <option key={subSpecification?.id} value={subSpecification?.id}>
+                                  {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
+                                </option>
+                              ))}
+                          </select>
+                        )}
+                        {spesfication.type === 2 && (
+                          <input
+                            type={"text"}
+                            id={index}
+                            value={
+                              (locale === "en"
+                                ? productPayload?.productSep?.find(
+                                    ({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.name,
+                                  )?.ValueSpeEn
+                                : productPayload?.productSep?.find(
+                                    ({ HeaderSpeAr }) => HeaderSpeAr === spesfication?.name,
+                                  )?.ValueSpeAr) || ""
+                            }
+                            required={spesfication.isRequired}
+                            placeholder={spesfication.placeHolder}
+                            onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
+                            className={`${styles["form-control"]} form-control`}
+                          />
+                        )}
+                      </div>
+                    ))
+                  : spesfications.map((spesfication, index) => (
+                      <div className="form-group" key={spesfication?.id}>
+                        <label htmlFor={index} style={{ ...textAlignStyle(locale), display: "block" }}>
+                          {spesfication.name}
+                        </label>
+                        {spesfication.type === 1 && (
+                          <select
+                            required={spesfication.isRequired}
+                            id={index}
+                            value={
+                              (locale === "en"
+                                ? productPayload?.productSep[index]?.valueSpeEn
+                                : productPayload?.productSep[index]?.valueSpeAr) || ""
+                            }
+                            className={`${styles["form-control"]} form-control form-select`}
+                            onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
+                          >
+                            <option value="" disabled hidden>
+                              {spesfication?.placeHolder}
+                            </option>
+                            {Boolean(spesfication?.subSpecifications?.length) &&
+                              spesfication.subSpecifications.map((subSpecification) => (
+                                <option key={subSpecification?.id} value={subSpecification?.id}>
+                                  {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
+                                </option>
+                              ))}
+                          </select>
+                        )}
+                        {spesfication.type === 2 && (
+                          <input
+                            type={"text"}
+                            id={index}
+                            value={
+                              (locale === "en"
+                                ? productPayload?.productSep?.find(
+                                    ({ headerSpeEn }) => headerSpeEn === spesfication?.name,
+                                  )?.valueSpeEn
+                                : productPayload?.productSep?.find(
+                                    ({ headerSpeAr }) => headerSpeAr === spesfication?.name,
+                                  )?.valueSpeAr) || ""
+                            }
+                            required={spesfication.isRequired}
+                            placeholder={spesfication.placeHolder}
+                            onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
+                            className={`${styles["form-control"]} form-control`}
+                          />
+                        )}
+                      </div>
+                    ))}
               </form>
             </div>
             <button className="btn-main mt-3" type="button" onClick={productDetailsValidation}>
@@ -1051,7 +1165,7 @@ const AddProductStepTwo = ({
               className="btn-main mt-3"
               type="button"
               onClick={() => {
-                if (productPayload.qty <= 0) {
+                if (productPayload.qty <= 0 && productPayload.qty !== null) {
                   return toast.error(
                     locale === "en"
                       ? "You can't add product with quantity less than 1"
@@ -1443,6 +1557,7 @@ const AddProductStepTwo = ({
                         <BanksData
                           data={userBanksData}
                           setShowBanksData={setShowBanksData}
+                          productPayload={productPayload}
                           setProductPayload={setProductPayload}
                         />
                       )}
@@ -1591,7 +1706,7 @@ const AddProductStepTwo = ({
               </form>
             </div>
             <button className="btn-main mt-3" type="button" onClick={() => shippingOptionsErrorHandling()}>
-              {pathname.includes("add")
+              {!pathname.includes("edit")
                 ? pathOr("", [locale, "Products", "next"], t)
                 : pathOr("", [locale, "Products", "edit"], t)}
             </button>

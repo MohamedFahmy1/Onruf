@@ -55,7 +55,6 @@ const EditProduct = () => {
     SendYourAccountInfoToAuctionWinner: false,
     AlmostSoldOutQuantity: 1,
     DeletedMedias: [],
-    IsAuctionClosingTimeFixed: null,
   })
 
   const handleBack = () => {
@@ -63,7 +62,7 @@ const EditProduct = () => {
   }
 
   useEffect(() => {
-    if (productData && shippingOptions && paymentOptions) {
+    if (productData && shippingOptions && paymentOptions && bankAccounts) {
       setProductPayload((prev) => ({
         ...prev,
         id: query.id,
@@ -83,8 +82,7 @@ const EditProduct = () => {
         Street: productData.street,
         GovernmentCode: productData.governmentCode,
         productSep: productData.listProductSep,
-        listMedia: productData.listMedia.filter((item) => item.type === 1),
-        videoUrl: productData.listMedia.filter((item) => item.type === 2),
+        listMedia: productData.listMedia,
         ShippingOptions: shippingOptions.map((item) => item.shippingOptionId),
         Lat: productData.lat,
         Lon: productData.lon,
@@ -114,7 +112,7 @@ const EditProduct = () => {
         "ProductPaymentDetailsDto.ExtraProductVidoeFee": productData?.categoryDto.extraProductVidoeFee,
         "ProductPaymentDetailsDto.SubTitleFee": productData?.categoryDto.subTitleFee,
         "ProductPaymentDetailsDto.AdditionalPakatId": productData?.categoryDto.additionalPakatId,
-        IsAuctionClosingTimeFixed: productData.IsAuctionClosingTimeFixed,
+        IsAuctionClosingTimeFixed: productData.isAuctionClosingTimeFixed,
       }))
     }
   }, [productData, locale, shippingOptions, paymentOptions, query.id, bankAccounts])
@@ -129,7 +127,7 @@ const EditProduct = () => {
         </button>
       </div>
       <div>
-        {step === 1 && productData && paymentOptions && shippingOptions && (
+        {step === 1 && productData && paymentOptions && shippingOptions && bankAccounts && (
           <ProductDetails
             selectedCatProps={{ ...productData?.categoryDto }}
             handleBack={handleBack}
