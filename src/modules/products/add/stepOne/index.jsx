@@ -23,8 +23,7 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
   const [categoriesAndSubList, setCategoriesAndSubList] = useState([])
   const [returnedSavedData, setReturnedSavedData] = useState(false)
   const [returnedSavedDataValue, setReturnedSavedDataValue] = useState([])
-  console.log("1: ", returnedSavedDataValue)
-  console.log("1: ", categoriesAndSubList)
+
   const fetchCategories = useCallback(async () => {
     const {
       data: { data: cats },
@@ -34,7 +33,6 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
 
   useEffect(() => {
     fetchCategories()
-    // catSearchInputVal && hanldeSearchProduct()
   }, [fetchCategories, locale])
 
   const findCategoryById = (categories, id) => {
@@ -123,37 +121,51 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
     }
   }
   const hanldeReset = () => {
+    if (!catSearchInputVal) {
+      mainCatRef.current.value = ""
+    }
     setSelectedCat(null)
     setSelectedCatId(null)
     setCatSearchInputVal("")
     setCategoriesAndSubList([])
     setCategoriesAndSubListByName([])
     setReturnedSavedDataValue([])
-    mainCatRef.current.value = ""
     fetchCategories()
   }
-  // useEffect(() => {
-  //   if (categoriesAndSubList.length === 0 && returnedSavedDataValue.length > 0) {
-  //     mainCatRef.current.value = returnedSavedDataValue[0].id
-  //   }
-  // }, [categoriesAndSubList, returnedSavedDataValue])
 
-  const hanldeSearchProduct = async () => {
+  const abortControllerRef = useRef(new AbortController())
+  const handleSearchProduct = useCallback(async () => {
+    const { signal } = abortControllerRef.current
     try {
       const {
         data: { data: filteredCategories },
       } = await axios(
         `${process.env.NEXT_PUBLIC_API_URL}/GetListCategoriesByProductName?productName=${catSearchInputVal}&lang=${locale}`,
+        { signal },
       )
       !filteredCategories?.[0] && toast.error("no data found")
       setCategoriesAndSubListByName(filteredCategories)
       setSelectedCatId(filteredCategories[0]?.productCategoryId)
       setCategoriesAndSubList([])
       setAllCats([])
-    } catch (e) {
-      Alerto(e)
+    } catch (error) {
+      if (!axios.isCancel(error)) {
+        Alerto(error)
+      }
     }
-  }
+  }, [locale, catSearchInputVal])
+
+  useEffect(() => {
+    if (catSearchInputVal) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = new AbortController()
+      handleSearchProduct()
+    }
+    return () => {
+      abortControllerRef.current.abort()
+    }
+  }, [handleSearchProduct, catSearchInputVal])
+
   useEffect(() => {
     const selectedCatAndSub = arrayOfCatAndSubcat(allCats, productPayload.categoryId)
     if (!returnedSavedData && selectedCatAndSub?.length > 0) {
@@ -206,7 +218,7 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
                         }`}
                         disabled={selectedCatId && selectedCat}
                         type="button"
-                        onClick={hanldeSearchProduct}
+                        onClick={handleSearchProduct}
                         style={locale === "en" ? { right: 0 } : { left: 0 }}
                       >
                         {pathOr("", [locale, "Products", "search"], t)}

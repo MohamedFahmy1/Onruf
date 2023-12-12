@@ -102,6 +102,10 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
         for (const image of value) {
           formData.append("listImageFile", image)
         }
+      }
+      // if any value is empty don't send it to the api || and don't send productImage & listMedia
+      else if (value === "" || value === null || key === "productImage" || key === "listMedia") {
+        continue
       } else if (key === "productSep") {
         formData.append(key, JSON.stringify(value))
       } else if (Array.isArray(value)) {
@@ -117,10 +121,6 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
           value.forEach((item) => {
             formData.append(key, item)
           })
-      }
-      // if any value is empty don't send it to the api || and don't send productImage & listMedia
-      else if (value === "" || value === null || key === "productImage" || key === "listMedia") {
-        continue
       } else {
         formData.append(key, value)
       }
@@ -188,6 +188,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                       src={productFullData.productImage}
                       className="img_table"
                       alt="product"
+                      priority
                       width={130}
                       height={100}
                     />
@@ -197,6 +198,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                       src={URL.createObjectURL(productFullData.listImageFile[productFullData.MainImageIndex])}
                       className="img_table"
                       alt="product"
+                      priority
                       width={130}
                       height={100}
                     />
@@ -527,7 +529,8 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                           {totalCost + couponDiscount} {pathOr("", [locale, "Products", "currency"], t)}
                         </span>
                       )}{" "}
-                      <span>{totalCost <= 0 ? 0 : totalCost}</span> {pathOr("", [locale, "Products", "currency"], t)}
+                      {totalCost && <span>{totalCost <= 0 ? 0 : totalCost}</span>}{" "}
+                      {pathOr("", [locale, "Products", "currency"], t)}
                     </span>
                   </li>
                 </ul>

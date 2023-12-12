@@ -1,19 +1,21 @@
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import AddProductStepTwo from "../../../modules/products/add/stepTwo"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { useFetch } from "../../../hooks/useFetch"
 import ProductDetails from "./ProductDetails"
+import axios from "axios"
 
 const EditProduct = () => {
   const { locale, query, push } = useRouter()
   const [step, setStep] = useState(1)
-  const { data: productData } = useFetch(`/GetProductById?id=${query.id}&lang=${locale}`, true)
+  // const { data: productData } = useFetch(`/GetProductById?id=${query.id}&lang=${locale}`, true)
+  const localeRef = useRef(locale)
+  const [selectedCatProps, setSelectedCatProps] = useState()
   const { data: shippingOptions } = useFetch(`/GetProductShippingOptions?productId=${query.id}`, true)
   const { data: paymentOptions } = useFetch(`/GetProductPaymentOptions?productId=${query.id}`, true)
   const { data: bankAccounts } = useFetch(`/GetProductBankAccounts?productId=${query.id}`, true)
-  const [product, setProduct] = useState()
   const [productPayload, setProductPayload] = useState({
     nameAr: "",
     nameEn: "",
@@ -32,7 +34,7 @@ const EditProduct = () => {
     GovernmentCode: "",
     productSep: [],
     listImageFile: [],
-    MainImageIndex: undefined,
+    MainImageIndex: null,
     videoUrl: [""],
     ShippingOptions: [],
     Lat: "0",
@@ -62,60 +64,96 @@ const EditProduct = () => {
   }
 
   useEffect(() => {
-    if (productData && shippingOptions && paymentOptions && bankAccounts) {
+    localeRef.current = locale
+  }, [locale])
+
+  useEffect(() => {
+    const getProductData = async () => {
+      try {
+        if (query.id) {
+          const currentLocale = localeRef.current
+          const { data } = await axios(
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            `${process.env.NEXT_PUBLIC_API_URL}/GetProductById?id=${query.id}&lang=${currentLocale}`,
+          )
+          const productData = data.data
+          setSelectedCatProps({ ...productData.categoryDto })
+          setProductPayload((prev) => ({
+            ...prev,
+            id: query.id,
+            nameAr: productData.nameAr,
+            nameEn: productData.nameEn,
+            subTitleAr: productData.subTitleAr,
+            subTitleEn: productData.subTitleEn,
+            descriptionAr: productData.descriptionAr,
+            descriptionEn: productData.descriptionEn,
+            qty: productData.qty,
+            status: productData.status,
+            categoryId: productData.categoryId,
+            countryId: productData.countryId,
+            regionId: productData.regionId,
+            neighborhoodId: productData.neighborhoodId,
+            District: productData.district,
+            Street: productData.street,
+            GovernmentCode: productData.governmentCode,
+            productSep: productData.listProductSep.map((item) => {
+              return {
+                HeaderSpeAr: item.headerSpeAr,
+                HeaderSpeEn: item.headerSpeEn,
+                SpecificationId: item.specificationId,
+                Type: item.type,
+                ValueSpeAr: item.valueSpeAr,
+                ValueSpeEn: item.valueSpeEn,
+              }
+            }),
+            listMedia: productData.listMedia,
+            Lat: productData.lat,
+            Lon: productData.lon,
+            AcceptQuestion: productData.acceptQuestion,
+            IsFixedPriceEnabled: productData.isFixedPriceEnabled,
+            IsAuctionEnabled: productData.isAuctionEnabled,
+            IsNegotiationEnabled: productData.isNegotiationEnabled,
+            Price: productData.price,
+            IsCashEnabled: productData.isCashEnabled,
+            AuctionStartPrice: productData.auctionStartPrice,
+            IsAuctionPaied: productData.isAuctionPaied,
+            SendOfferForAuction: productData.sendOfferForAuction,
+            AuctionMinimumPrice: productData.auctionMinimumPrice,
+            AuctionNegotiateForWhom: productData.auctionNegotiateForWhom,
+            AuctionNegotiatePrice: productData.auctionNegotiatePrice,
+            AuctionClosingTime: productData.auctionClosingTime,
+            SendYourAccountInfoToAuctionWinner: productData.sendYourAccountInfoToAuctionWinner,
+            AlmostSoldOutQuantity: productData.almostSoldOutQuantity,
+            productImage: productData.productImage,
+            "ProductPaymentDetailsDto.ProductPublishPrice": productData.categoryDto.productPublishPrice,
+            "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": productData.categoryDto.enableFixedPriceSaleFee,
+            "ProductPaymentDetailsDto.EnableAuctionFee": productData.categoryDto.enableAuctionFee,
+            "ProductPaymentDetailsDto.EnableNegotiationFee": productData.categoryDto.enableNegotiationFee,
+            "ProductPaymentDetailsDto.ExtraProductImageFee": productData.categoryDto.extraProductImageFee,
+            "ProductPaymentDetailsDto.ExtraProductVidoeFee": productData.categoryDto.extraProductVidoeFee,
+            "ProductPaymentDetailsDto.SubTitleFee": productData.categoryDto.subTitleFee,
+            "ProductPaymentDetailsDto.AdditionalPakatId": productData.categoryDto.additionalPakatId || null,
+            IsAuctionClosingTimeFixed: productData.isAuctionClosingTimeFixed,
+          }))
+        }
+      } catch (error) {
+        Alerto(error)
+      }
+    }
+    query.id && getProductData()
+    // Don't add locale to the depndencies as it will overide the data
+  }, [query.id])
+
+  useEffect(() => {
+    if (shippingOptions && paymentOptions && bankAccounts) {
       setProductPayload((prev) => ({
         ...prev,
-        id: query.id,
-        nameAr: productData.nameAr,
-        nameEn: productData.nameEn,
-        subTitleAr: productData.subTitleAr,
-        subTitleEn: productData.subTitleEn,
-        descriptionAr: productData.descriptionAr,
-        descriptionEn: productData.descriptionEn,
-        qty: productData.qty,
-        status: productData.status,
-        categoryId: productData.categoryId,
-        countryId: productData.countryId,
-        regionId: productData.regionId,
-        neighborhoodId: productData.neighborhoodId,
-        District: productData.district,
-        Street: productData.street,
-        GovernmentCode: productData.governmentCode,
-        productSep: productData.listProductSep,
-        listMedia: productData.listMedia,
         ShippingOptions: shippingOptions.map((item) => item.shippingOptionId),
-        Lat: productData.lat,
-        Lon: productData.lon,
-        AcceptQuestion: productData.acceptQuestion,
-        IsFixedPriceEnabled: productData.isFixedPriceEnabled,
-        IsAuctionEnabled: productData.isAuctionEnabled,
-        IsNegotiationEnabled: productData.isNegotiationEnabled,
-        Price: productData.price,
         PaymentOptions: paymentOptions.map((item) => item.paymentOptionId),
         ProductBankAccounts: bankAccounts.map((item) => item.bankAccountId),
-        IsCashEnabled: productData.isCashEnabled,
-        AuctionStartPrice: productData.auctionStartPrice,
-        IsAuctionPaied: productData.isAuctionPaied,
-        SendOfferForAuction: productData.sendOfferForAuction,
-        AuctionMinimumPrice: productData.auctionMinimumPrice,
-        AuctionNegotiateForWhom: productData.auctionNegotiateForWhom,
-        AuctionNegotiatePrice: productData.auctionNegotiatePrice,
-        AuctionClosingTime: productData.auctionClosingTime,
-        SendYourAccountInfoToAuctionWinner: productData.sendYourAccountInfoToAuctionWinner,
-        AlmostSoldOutQuantity: productData.almostSoldOutQuantity,
-        productImage: productData.productImage,
-        "ProductPaymentDetailsDto.ProductPublishPrice": productData?.categoryDto.productPublishPrice,
-        "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": productData?.categoryDto.enableFixedPriceSaleFee,
-        "ProductPaymentDetailsDto.EnableAuctionFee": productData?.categoryDto.enableAuctionFee,
-        "ProductPaymentDetailsDto.EnableNegotiationFee": productData?.categoryDto.enableNegotiationFee,
-        "ProductPaymentDetailsDto.ExtraProductImageFee": productData?.categoryDto.extraProductImageFee,
-        "ProductPaymentDetailsDto.ExtraProductVidoeFee": productData?.categoryDto.extraProductVidoeFee,
-        "ProductPaymentDetailsDto.SubTitleFee": productData?.categoryDto.subTitleFee,
-        "ProductPaymentDetailsDto.AdditionalPakatId": productData?.categoryDto.additionalPakatId,
-        IsAuctionClosingTimeFixed: productData.isAuctionClosingTimeFixed,
       }))
     }
-  }, [productData, locale, shippingOptions, paymentOptions, query.id, bankAccounts])
+  }, [shippingOptions, paymentOptions, query.id, bankAccounts])
   return (
     <div className="body-content">
       <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
@@ -127,9 +165,9 @@ const EditProduct = () => {
         </button>
       </div>
       <div>
-        {step === 1 && productData && paymentOptions && shippingOptions && bankAccounts && (
+        {step === 1 && productPayload && paymentOptions && shippingOptions && bankAccounts && (
           <ProductDetails
-            selectedCatProps={{ ...productData?.categoryDto }}
+            selectedCatProps={selectedCatProps}
             handleBack={handleBack}
             productFullData={productPayload}
             setProductPayload={setProductPayload}
@@ -137,9 +175,8 @@ const EditProduct = () => {
         )}
         {step === 2 && (
           <AddProductStepTwo
-            product={product && product}
-            catId={productData?.categoryId}
-            selectedCatProps={{ ...productData?.categoryDto }}
+            catId={productPayload.categoryId}
+            selectedCatProps={selectedCatProps}
             handleGoToReviewPage={handleBack}
             productPayload={productPayload}
             setProductPayload={setProductPayload}

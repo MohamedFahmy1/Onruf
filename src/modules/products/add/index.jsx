@@ -1,9 +1,7 @@
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import AddProductStepOne from "../../../modules/products/add/stepOne"
 import AddProductStepTwo from "../../../modules/products/add/stepTwo"
-import axios from "axios"
-import { toast } from "react-toastify"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import ProductDetails from "../edit/ProductDetails"
@@ -13,7 +11,6 @@ const AddProduct = () => {
   const [step, setStep] = useState(1)
   const [selectedCatId, setSelectedCatId] = useState(null)
   const [selectedCatProps, setSelectedCatProps] = useState({})
-  const [product, setProduct] = useState()
   const [editModeOn, setEditModeOn] = useState(false)
   const { locale } = useRouter()
   const [productPayload, setProductPayload] = useState({
@@ -71,19 +68,6 @@ const AddProduct = () => {
     SendYourAccountInfoToAuctionWinner: false,
     AlmostSoldOutQuantity: 1,
   })
-  const getProduct = async () => {
-    try {
-      const res = await axios(
-        `${process.env.NEXT_PUBLIC_API_URL}/Provider_GetProductById?id=${router.query.id}&lang=${locale}`,
-      )
-      setProduct(res?.data?.data)
-    } catch (error) {
-      toast.error(error.response.data.message)
-    }
-  }
-  useEffect(() => {
-    router.query.id && getProduct()
-  }, [router.query.id])
 
   const handleBack = (e) => {
     e.preventDefault()
@@ -112,7 +96,7 @@ const AddProduct = () => {
             </a>
           </div>
         )}
-        {step === 1 && !product?.id && (
+        {step === 1 && (
           <AddProductStepOne
             next={(selectedCat) => handleNextStep(selectedCat)}
             setSelectedCatProps={setSelectedCatProps}
@@ -120,9 +104,8 @@ const AddProduct = () => {
             setProductPayload={setProductPayload}
           />
         )}
-        {(step === 2 || (product && product?.id)) && (
+        {step === 2 && (
           <AddProductStepTwo
-            product={product && product}
             catId={selectedCatId}
             selectedCatProps={selectedCatProps}
             handleGoToReviewPage={handleGoToReviewPage}
@@ -132,7 +115,7 @@ const AddProduct = () => {
             setEditModeOn={setEditModeOn}
           />
         )}
-        {(step === 3 || (product && product?.id)) && (
+        {step === 3 && (
           <ProductDetails
             selectedCatProps={selectedCatProps}
             productFullData={productPayload}

@@ -6,7 +6,6 @@ import t from "../../../../translations.json"
 import { toast } from "react-toastify"
 const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCatProps }) => {
   const { locale } = useRouter()
-  const [fixedLength, setFixedLength] = useState(true)
   const [activeElementIndex, setActiveElementIndex] = useState(null)
   function renderFixedLengthDays(item) {
     switch (item) {
@@ -42,7 +41,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
     <div className="col-md-12 col-lg-6 d-flex flex-wrap flex-lg-nowrap w-100 gap-5 mb-4">
       <div
         className={`form-group contint_paner w-100 ${styles.p_select} ${
-          fixedLength == true ? styles.p_select_active : ""
+          productPayload.IsAuctionClosingTimeFixed ? styles.p_select_active : ""
         }`}
       >
         <div className="d-flex justify-content-between p-2">
@@ -54,14 +53,13 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
             name="AuctionDuration"
             id="AuctionDuration"
             onChange={() => {
-              setFixedLength(true)
               setActiveElementIndex(null)
               setProductPayload({ ...productPayload, AuctionClosingTime: "", IsAuctionClosingTimeFixed: true })
             }}
-            checked={productPayload?.IsAuctionClosingTimeFixed || false}
+            checked={productPayload.IsAuctionClosingTimeFixed}
           />
         </div>
-        <div className="d-flex gap-3">
+        <div className="d-flex gap-3 flex-wrap">
           {selectedCatProps.auctionClosingPeriods.split(",").map((item, index) => {
             if (selectedCatProps.auctionClosingPeriodsUnit == 1) {
               const daysToAdd = item * 1
@@ -73,7 +71,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
                 <div
                   key={index}
                   onClick={() => {
-                    if (fixedLength) {
+                    if (productPayload.IsAuctionClosingTimeFixed) {
                       setProductPayload({
                         ...productPayload,
                         AuctionClosingTime: auctionClosingTimeIso,
@@ -99,7 +97,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
                 <div
                   key={index}
                   onClick={() => {
-                    if (fixedLength) {
+                    if (productPayload.IsAuctionClosingTimeFixed) {
                       setProductPayload({
                         ...productPayload,
                         AuctionClosingTime: auctionClosingTimeIso,
@@ -125,7 +123,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
                 <div
                   key={index}
                   onClick={() => {
-                    if (fixedLength) {
+                    if (productPayload.IsAuctionClosingTimeFixed) {
                       setProductPayload({
                         ...productPayload,
                         AuctionClosingTime: auctionClosingTimeIso,
@@ -144,10 +142,9 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
           })}
         </div>
       </div>
-      {console.log(productPayload.isAuctionClosingTimeFixed)}
       <div
         className={`form-group contint_paner w-100 ${styles.p_select} ${
-          fixedLength == false ? styles.p_select_active : ""
+          !productPayload.IsAuctionClosingTimeFixed ? styles.p_select_active : ""
         }`}
       >
         <div className="d-flex justify-content-between p-2">
@@ -160,10 +157,9 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
             id="AuctionDuration"
             onChange={() => {
               setProductPayload({ ...productPayload, AuctionClosingTime: "", IsAuctionClosingTimeFixed: false })
-              setFixedLength(false)
               setActiveElementIndex(null)
             }}
-            checked={!productPayload?.IsAuctionClosingTimeFixed || false}
+            checked={!productPayload.IsAuctionClosingTimeFixed}
           />
         </div>
         <p style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>{`+ ${
@@ -172,7 +168,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
         <input
           type="datetime-local"
           onChange={(e) => {
-            if (!fixedLength) {
+            if (!productPayload.IsAuctionClosingTimeFixed) {
               setProductPayload({
                 ...productPayload,
                 AuctionClosingTime: e.target.value,
@@ -180,7 +176,8 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
               })
             } else return toast.error(locale === "en" ? "Please Select Duration Type First!" : "رجاء اختر نوع المدة")
           }}
-          disabled={fixedLength}
+          value={productPayload.AuctionClosingTime}
+          disabled={productPayload.IsAuctionClosingTimeFixed}
           className="rounded"
         />
       </div>

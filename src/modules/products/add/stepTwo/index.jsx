@@ -7,7 +7,7 @@ import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"
 import { Accordion, Row, Col } from "react-bootstrap"
 import bigger from "../../../../public/images/screencaptur.png"
 import { useRouter } from "next/router"
-import { omit, pathOr } from "ramda"
+import { pathOr } from "ramda"
 import t from "../../../../translations.json"
 import { toast } from "react-toastify"
 import Alerto from "../../../../common/Alerto"
@@ -21,7 +21,6 @@ import { textAlignStyle } from "../../../../styles/stylesObjects"
 
 const AddProductStepTwo = ({
   catId,
-  product,
   selectedCatProps,
   handleGoToReviewPage,
   productPayload,
@@ -44,7 +43,6 @@ const AddProductStepTwo = ({
   const [userBanksData, setuserBanksData] = useState([])
   const [showBanksData, setShowBanksData] = useState(false)
   const [shippingOptions, setShippingOptions] = useState([])
-  const [speficationsPayload, setSpeficationsPayload] = useState([])
 
   const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
     try {
@@ -53,9 +51,7 @@ const AddProductStepTwo = ({
       } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
       setState(data)
     } catch (e) {
-      if (!pathname.includes("edit")) {
-        Alerto(e)
-      }
+      Alerto(e)
     }
   }
   const fetchCountries = async () => {
@@ -106,89 +102,29 @@ const AddProductStepTwo = ({
       } = await axios(
         `${process.env.NEXT_PUBLIC_API_URL}/ListAllSpecificationAndSubSpecificationByCatId?lang=${locale}&id=${catId}&currentPage=1`,
       )
-      const speficationsPayloadList = spefications.map((spefication) => ({
-        HeaderSpeAr: spefication.nameAr,
-        HeaderSpeEn: spefication.nameEn,
-        ValueSpeAr: "",
-        ValueSpeEn: "",
-        Type: spefication.type,
-        SpecificationId: spefication.id,
-      }))
       setSpesfications(spefications)
-      setSpeficationsPayload([...speficationsPayloadList])
-      // setProductPayload({ ...productPayload, productSep: [...speficationsPayloadList] })
     } catch (e) {
-      Alerto("hello")
+      Alerto(e)
     }
   }
   useEffect(() => {
-    ;(async () => {
-      try {
-        fetchBanksData()
-        fetchSpecificationsList()
-        fetchShippingOptions()
-        fetchCountries()
-        fetchPakatList()
-        // pathname.includes("edit") && setProductPayload(product)
-        if (product?.id) {
-          handleFetchNeighbourhoodsOrRegions(
-            "ListNeighborhoodByRegionId",
-            "regionsIds",
-            product.countryId,
-            setNeighborhoods,
-          )
-          handleFetchNeighbourhoodsOrRegions("ListRegionsByCountryId", "countriesIds", product.countryId, setRegions)
-
-          const {
-            name,
-            subTitle,
-            description,
-            regionName,
-            listImageFile,
-            regionId,
-            listMedia,
-            acceptQuestion,
-            productMazadNegotiate,
-          } = product
-          setProductPayload({
-            ...omit(
-              [
-                "isActive",
-                "isDelete",
-                "isPaied",
-                "updatedAt",
-                "createdAt",
-                "neighborhood",
-                "regionName",
-                "subTitle",
-                "description",
-                "name",
-                "acceptQuestion",
-                "category",
-                "country",
-                "productMazadNegotiate",
-                "regionId",
-              ],
-              product,
-            ),
-            listImageFile: listMedia,
-            nameEn: name,
-            nameAr: name,
-            subTitleEn: subTitle,
-            subTitleAr: subTitle,
-            descriptionAr: description,
-            descriptionEn: description,
-            regionId: regionId || 1,
-            AcceptQuestion: acceptQuestion,
-            AuctionNegotiateForWhom: productMazadNegotiate?.forWhom || 0,
-            AuctionNegotiatePrice: productMazadNegotiate?.price || 0,
-          })
-        }
-      } catch (e) {
-        Alerto(e)
-      }
-    })()
-  }, [locale, product])
+    fetchBanksData()
+    fetchSpecificationsList()
+    fetchShippingOptions()
+    fetchCountries()
+    fetchPakatList()
+  }, [locale])
+  useEffect(() => {
+    if (productPayload.neighborhoodId) {
+      handleFetchNeighbourhoodsOrRegions("ListRegionsByCountryId", "countriesIds", productPayload.countryId, setRegions)
+      handleFetchNeighbourhoodsOrRegions(
+        "ListNeighborhoodByRegionId",
+        "regionsIds",
+        productPayload.regionId,
+        setNeighborhoods,
+      )
+    }
+  }, [productPayload.neighborhoodId])
 
   const handleUploadImages = (e) => {
     let file = e.target.files[0]
@@ -305,9 +241,8 @@ const AddProductStepTwo = ({
     }
   }
   const onChangeSpesfication = ({ target: { value } }, index, type) => {
-    const changedSpesfication = { ...speficationsPayload[index], ValueSpeAr: value, ValueSpeEn: value }
-    const updatedSpecififcations = Object.assign([], speficationsPayload, { [index]: changedSpesfication })
-    setSpeficationsPayload(updatedSpecififcations)
+    const changedSpesfication = { ...productPayload.productSep[index], ValueSpeAr: value, ValueSpeEn: value }
+    const updatedSpecififcations = Object.assign([], productPayload.productSep, { [index]: changedSpesfication })
     setProductPayload((prev) => ({ ...prev, productSep: updatedSpecififcations }))
   }
 
@@ -327,7 +262,7 @@ const AddProductStepTwo = ({
   }
   const productDetailsValidation = () => {
     for (let i = 0; i < productPayload.productSep.length; i++) {
-      if (productPayload.productSep[i].ValueSpeAr === "") {
+      if (productPayload.productSep[i].ValueSpeAr === "" || productPayload.productSep[i].valueSpeAr === "") {
         return toast.error(locale === "en" ? "Please enter all necessary data" : "رجاء ادخال جميع البيانات")
       }
     }
@@ -491,16 +426,18 @@ const AddProductStepTwo = ({
                         onClick={() => handleRemoveImageFromListmedia(img.id)}
                       />
                       <img src={img?.url} alt="product" width={200} height={120} />
-                      <label htmlFor={img.id}>
-                        <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
-                        <input
-                          id={img.id}
-                          type="radio"
-                          disabled
-                          checked={img.isMainMadia}
-                          onChange={() => setProductPayload((prev) => ({ ...prev, MainImageIndex: null }))}
-                        />
-                      </label>
+                      {img.isMainMadia && (
+                        <label htmlFor={img.id}>
+                          <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
+                          <input
+                            id={img.id}
+                            name="isMain"
+                            type="radio"
+                            defaultChecked={productPayload.MainImageIndex === null}
+                            onChange={() => setProductPayload((prev) => ({ ...prev, MainImageIndex: null }))}
+                          />
+                        </label>
+                      )}
                     </div>
                   ))}
                 {productPayload?.listImageFile?.map((img, index) => (
@@ -524,7 +461,7 @@ const AddProductStepTwo = ({
                         id={img.id}
                         type="radio"
                         name="isMain"
-                        checked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
+                        defaultChecked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
                         onChange={() => handleMainImage(img.id, index)}
                       />
                     </label>
@@ -616,105 +553,56 @@ const AddProductStepTwo = ({
           <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
             <div className="form-content">
               <form>
-                {Boolean(spesfications?.length) && pathname.includes("add")
-                  ? spesfications.map((spesfication, index) => (
-                      <div className="form-group" key={spesfication?.id}>
-                        <label htmlFor={index} style={{ ...textAlignStyle(locale), display: "block" }}>
-                          {spesfication.name}
-                        </label>
-                        {spesfication.type === 1 && (
-                          <select
-                            required={spesfication.isRequired}
-                            id={index}
-                            value={
-                              (locale === "en"
-                                ? productPayload?.productSep[index]?.ValueSpeEn
-                                : productPayload?.productSep[index]?.ValueSpeAr) || ""
-                            }
-                            className={`${styles["form-control"]} form-control form-select`}
-                            onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
-                          >
-                            <option value="" disabled hidden>
-                              {spesfication?.placeHolder}
-                            </option>
-                            {Boolean(spesfication?.subSpecifications?.length) &&
-                              spesfication.subSpecifications.map((subSpecification) => (
-                                <option key={subSpecification?.id} value={subSpecification?.id}>
-                                  {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
-                                </option>
-                              ))}
-                          </select>
-                        )}
-                        {spesfication.type === 2 && (
-                          <input
-                            type={"text"}
-                            id={index}
-                            value={
-                              (locale === "en"
-                                ? productPayload?.productSep?.find(
-                                    ({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.name,
-                                  )?.ValueSpeEn
-                                : productPayload?.productSep?.find(
-                                    ({ HeaderSpeAr }) => HeaderSpeAr === spesfication?.name,
-                                  )?.ValueSpeAr) || ""
-                            }
-                            required={spesfication.isRequired}
-                            placeholder={spesfication.placeHolder}
-                            onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
-                            className={`${styles["form-control"]} form-control`}
-                          />
-                        )}
-                      </div>
-                    ))
-                  : spesfications.map((spesfication, index) => (
-                      <div className="form-group" key={spesfication?.id}>
-                        <label htmlFor={index} style={{ ...textAlignStyle(locale), display: "block" }}>
-                          {spesfication.name}
-                        </label>
-                        {spesfication.type === 1 && (
-                          <select
-                            required={spesfication.isRequired}
-                            id={index}
-                            value={
-                              (locale === "en"
-                                ? productPayload?.productSep[index]?.valueSpeEn
-                                : productPayload?.productSep[index]?.valueSpeAr) || ""
-                            }
-                            className={`${styles["form-control"]} form-control form-select`}
-                            onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
-                          >
-                            <option value="" disabled hidden>
-                              {spesfication?.placeHolder}
-                            </option>
-                            {Boolean(spesfication?.subSpecifications?.length) &&
-                              spesfication.subSpecifications.map((subSpecification) => (
-                                <option key={subSpecification?.id} value={subSpecification?.id}>
-                                  {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
-                                </option>
-                              ))}
-                          </select>
-                        )}
-                        {spesfication.type === 2 && (
-                          <input
-                            type={"text"}
-                            id={index}
-                            value={
-                              (locale === "en"
-                                ? productPayload?.productSep?.find(
-                                    ({ headerSpeEn }) => headerSpeEn === spesfication?.name,
-                                  )?.valueSpeEn
-                                : productPayload?.productSep?.find(
-                                    ({ headerSpeAr }) => headerSpeAr === spesfication?.name,
-                                  )?.valueSpeAr) || ""
-                            }
-                            required={spesfication.isRequired}
-                            placeholder={spesfication.placeHolder}
-                            onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
-                            className={`${styles["form-control"]} form-control`}
-                          />
-                        )}
-                      </div>
-                    ))}
+                {Boolean(spesfications?.length) &&
+                  spesfications.map((spesfication, index) => (
+                    <div className="form-group" key={spesfication?.id}>
+                      <label htmlFor={index} style={{ ...textAlignStyle(locale), display: "block" }}>
+                        {spesfication.name}
+                      </label>
+                      {spesfication.type === 1 && (
+                        <select
+                          required={spesfication.isRequired}
+                          id={index}
+                          value={
+                            (locale === "en"
+                              ? productPayload?.productSep[index]?.ValueSpeEn
+                              : productPayload?.productSep[index]?.ValueSpeAr) || ""
+                          }
+                          className={`${styles["form-control"]} form-control form-select`}
+                          onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
+                        >
+                          <option value="" disabled hidden>
+                            {spesfication?.placeHolder}
+                          </option>
+                          {Boolean(spesfication?.subSpecifications?.length) &&
+                            spesfication.subSpecifications.map((subSpecification) => (
+                              <option key={subSpecification?.id} value={subSpecification?.id}>
+                                {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
+                              </option>
+                            ))}
+                        </select>
+                      )}
+                      {spesfication.type === 2 && (
+                        <input
+                          type={"text"}
+                          id={index}
+                          value={
+                            (locale === "en"
+                              ? productPayload?.productSep?.find(
+                                  ({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.name,
+                                )?.ValueSpeEn
+                              : productPayload?.productSep?.find(
+                                  ({ HeaderSpeAr }) => HeaderSpeAr === spesfication?.name,
+                                )?.ValueSpeAr) || ""
+                          }
+                          required={spesfication.isRequired}
+                          placeholder={spesfication.placeHolder}
+                          onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
+                          className={`${styles["form-control"]} form-control`}
+                        />
+                      )}
+                    </div>
+                  ))}
               </form>
             </div>
             <button className="btn-main mt-3" type="button" onClick={productDetailsValidation}>
@@ -839,7 +727,6 @@ const AddProductStepTwo = ({
                       />
                     </div>
                   </Col>
-
                   <Col>
                     <div className="form-group">
                       <label style={{ ...textAlignStyle(locale), display: "block" }}>
@@ -865,7 +752,6 @@ const AddProductStepTwo = ({
                       </div>
                     </div>
                   </Col>
-
                   <Col md={6}>
                     <div className="form-group">
                       <label style={{ ...textAlignStyle(locale), display: "block" }}>
@@ -1651,7 +1537,6 @@ const AddProductStepTwo = ({
                         {pathOr("", [locale, "Products", "shippingOptions"], t)}
                       </label>
                       <div className="row">
-                        {console.log(productPayload.ShippingOptions)}
                         {productPayload.ShippingOptions?.includes(2) || productPayload.ShippingOptions?.includes(3)
                           ? shippingOptions.map((item) => (
                               <div className="col-lg-6 col-md-6" key={item.id}>
@@ -1775,6 +1660,7 @@ const AddProductStepTwo = ({
                                   name="Bouquet"
                                   checked={productPayload.pakatId === +pack?.id}
                                   value={+pack?.id}
+                                  readOnly
                                 />
                                 <span className={styles["check"]}>
                                   <FaCheckCircle />
@@ -1793,9 +1679,12 @@ const AddProductStepTwo = ({
                         <Col md={5}>
                           <div className={styles["box-product"]}>
                             <div className={styles["imge"]}>
-                              {Boolean(productPayload?.listImageFile?.length) && (
-                                <img src={URL.createObjectURL(productPayload.listImageFile[0])} />
-                              )}
+                              <img
+                                src={
+                                  productPayload.listMedia.find((item) => item.isMainMadia === true).url ||
+                                  URL.createObjectURL(productPayload.listImageFile[0])
+                                }
+                              />
                               <div className={styles["two_btn_"]}>
                                 <button className={styles["btn_"]}>
                                   {pathOr("", [locale, "Products", "merchant"], t)}
@@ -1804,39 +1693,40 @@ const AddProductStepTwo = ({
                                   {pathOr("", [locale, "Products", "freeDelivery"], t)}
                                 </button>
                               </div>
-                              {productPayload.AuctionClosingTime && (
-                                <div className={styles["time"]}>
-                                  <div>
-                                    <span>
-                                      {Math.floor(
-                                        (new Date(productPayload.AuctionClosingTime) - new Date()) /
-                                          (1000 * 60 * 60 * 24),
-                                      )}
-                                    </span>{" "}
-                                    Day
+                              {productPayload.AuctionClosingTime &&
+                                new Date(productPayload.AuctionClosingTime) - new Date() > 0 && (
+                                  <div className={styles["time"]}>
+                                    <div>
+                                      <span>
+                                        {Math.floor(
+                                          (new Date(productPayload.AuctionClosingTime) - new Date()) /
+                                            (1000 * 60 * 60 * 24),
+                                        )}
+                                      </span>{" "}
+                                      Day
+                                    </div>
+                                    <div>
+                                      <span>
+                                        {Math.floor(
+                                          ((new Date(productPayload.AuctionClosingTime) - new Date()) %
+                                            (1000 * 60 * 60 * 24)) /
+                                            (1000 * 60 * 60),
+                                        )}
+                                      </span>{" "}
+                                      Hour
+                                    </div>
+                                    <div>
+                                      <span>
+                                        {Math.floor(
+                                          ((new Date(productPayload.AuctionClosingTime) - new Date()) %
+                                            (1000 * 60 * 60)) /
+                                            (1000 * 60),
+                                        )}
+                                      </span>{" "}
+                                      min
+                                    </div>
                                   </div>
-                                  <div>
-                                    <span>
-                                      {Math.floor(
-                                        ((new Date(productPayload.AuctionClosingTime) - new Date()) %
-                                          (1000 * 60 * 60 * 24)) /
-                                          (1000 * 60 * 60),
-                                      )}
-                                    </span>{" "}
-                                    Hour
-                                  </div>
-                                  <div>
-                                    <span>
-                                      {Math.floor(
-                                        ((new Date(productPayload.AuctionClosingTime) - new Date()) %
-                                          (1000 * 60 * 60)) /
-                                          (1000 * 60),
-                                      )}
-                                    </span>{" "}
-                                    min
-                                  </div>
-                                </div>
-                              )}
+                                )}
                               <button className={styles["btn-star"]}>
                                 <FaStar />
                               </button>
@@ -1881,9 +1771,12 @@ const AddProductStepTwo = ({
                         <Col md={5} lg={4}>
                           <div className={`${styles["box-product"]} ${styles["box-product2"]}`}>
                             <div className={styles["imge"]}>
-                              {Boolean(productPayload?.listImageFile?.length) && (
-                                <img src={URL.createObjectURL(productPayload?.listImageFile?.[0])} />
-                              )}
+                              <img
+                                src={
+                                  productPayload.listMedia.find((item) => item.isMainMadia === true).url ||
+                                  URL.createObjectURL(productPayload?.listImageFile?.[0])
+                                }
+                              />
                               <div className={styles["two_btn_"]}>
                                 <button className={styles["btn_"]}>
                                   {pathOr("", [locale, "Products", "merchant"], t)}
@@ -1898,39 +1791,40 @@ const AddProductStepTwo = ({
                               const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
                               const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
                               const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60))*/}
-                              {productPayload.AuctionClosingTime && (
-                                <div className={styles["time"]}>
-                                  <div>
-                                    <span>
-                                      {Math.floor(
-                                        (new Date(productPayload.AuctionClosingTime) - new Date()) /
-                                          (1000 * 60 * 60 * 24),
-                                      )}
-                                    </span>{" "}
-                                    Day
+                              {productPayload.AuctionClosingTime &&
+                                new Date(productPayload.AuctionClosingTime) - new Date() > 0 && (
+                                  <div className={styles["time"]}>
+                                    <div>
+                                      <span>
+                                        {Math.floor(
+                                          (new Date(productPayload.AuctionClosingTime) - new Date()) /
+                                            (1000 * 60 * 60 * 24),
+                                        )}
+                                      </span>{" "}
+                                      Day
+                                    </div>
+                                    <div>
+                                      <span>
+                                        {Math.floor(
+                                          ((new Date(productPayload.AuctionClosingTime) - new Date()) %
+                                            (1000 * 60 * 60 * 24)) /
+                                            (1000 * 60 * 60),
+                                        )}
+                                      </span>{" "}
+                                      Hour
+                                    </div>
+                                    <div>
+                                      <span>
+                                        {Math.floor(
+                                          ((new Date(productPayload.AuctionClosingTime) - new Date()) %
+                                            (1000 * 60 * 60)) /
+                                            (1000 * 60),
+                                        )}
+                                      </span>{" "}
+                                      min
+                                    </div>
                                   </div>
-                                  <div>
-                                    <span>
-                                      {Math.floor(
-                                        ((new Date(productPayload.AuctionClosingTime) - new Date()) %
-                                          (1000 * 60 * 60 * 24)) /
-                                          (1000 * 60 * 60),
-                                      )}
-                                    </span>{" "}
-                                    Hour
-                                  </div>
-                                  <div>
-                                    <span>
-                                      {Math.floor(
-                                        ((new Date(productPayload.AuctionClosingTime) - new Date()) %
-                                          (1000 * 60 * 60)) /
-                                          (1000 * 60),
-                                      )}
-                                    </span>{" "}
-                                    min
-                                  </div>
-                                </div>
-                              )}
+                                )}
                               <button className={styles["btn-star"]}>
                                 <FaStar />
                               </button>
@@ -1978,7 +1872,7 @@ const AddProductStepTwo = ({
                 type="button"
                 onClick={(e) => {
                   handleGoToReviewPage()
-                  setEditModeOn(true)
+                  pathname.includes("add") && setEditModeOn(true)
                 }}
               >
                 {pathname.includes("add")
