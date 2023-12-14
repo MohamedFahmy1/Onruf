@@ -102,6 +102,17 @@ const AddProductStepTwo = ({
       } = await axios(
         `${process.env.NEXT_PUBLIC_API_URL}/ListAllSpecificationAndSubSpecificationByCatId?lang=${locale}&id=${catId}&currentPage=1`,
       )
+      if (pathname.includes("add")) {
+        const speficationsPayloadList = spefications.map((spefication) => ({
+          HeaderSpeAr: spefication.nameAr,
+          HeaderSpeEn: spefication.nameEn,
+          ValueSpeAr: "",
+          ValueSpeEn: "",
+          Type: spefication.type,
+          SpecificationId: spefication.id,
+        }))
+        setProductPayload((prev) => ({ ...prev, productSep: speficationsPayloadList }))
+      }
       setSpesfications(spefications)
     } catch (e) {
       Alerto(e)
@@ -1681,7 +1692,7 @@ const AddProductStepTwo = ({
                             <div className={styles["imge"]}>
                               <img
                                 src={
-                                  productPayload.listMedia.find((item) => item.isMainMadia === true).url ||
+                                  productPayload.listMedia?.find((item) => item.isMainMadia === true)?.url ||
                                   URL.createObjectURL(productPayload.listImageFile[0])
                                 }
                               />
@@ -1773,7 +1784,7 @@ const AddProductStepTwo = ({
                             <div className={styles["imge"]}>
                               <img
                                 src={
-                                  productPayload.listMedia.find((item) => item.isMainMadia === true).url ||
+                                  productPayload.listMedia?.find((item) => item.isMainMadia === true)?.url ||
                                   URL.createObjectURL(productPayload?.listImageFile?.[0])
                                 }
                               />
