@@ -423,108 +423,114 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                 pageSize={5}
               />
             </div>
-            <Modal centered show={openQuantityModal} onHide={() => setOpenQuantityModal(false)}>
-              <Modal.Header>
-                <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
-                  {pathOr("", [locale, "Products", "adjustQty"], t)}
-                </h5>
-                <button type="button" className="btn-close" onClick={() => setOpenQuantityModal(false)}></button>
-              </Modal.Header>
-              <Modal.Body>
-                <div className="form-group">
-                  <div className="d-flex align-items-center justify-content-between mb-2">
-                    <span className="f-b"> {pathOr("", [locale, "Products", "unLimited"], t)} </span>
-                    <div className="form-check form-switch p-0 m-0">
-                      <input
-                        className="form-check-input m-0"
-                        type="checkbox"
-                        role="switch"
-                        id="flexSwitchCheckChecked"
-                        // checked={quantityValueInfinity}
-                        defaultChecked={singleSelectedRow?.qty === null ? true : false}
-                        onChange={(e) => setQuantityValueInfinity(e.target.checked)}
-                      />
+            {openQuantityModal && (
+              <Modal centered show={openQuantityModal} onHide={() => setOpenQuantityModal(false)}>
+                <Modal.Header>
+                  <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
+                    {pathOr("", [locale, "Products", "adjustQty"], t)}
+                  </h5>
+                  <button type="button" className="btn-close" onClick={() => setOpenQuantityModal(false)}></button>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="form-group">
+                    <div className="d-flex align-items-center justify-content-between mb-2">
+                      <span className="f-b"> {pathOr("", [locale, "Products", "unLimited"], t)} </span>
+                      <div className="form-check form-switch p-0 m-0">
+                        <input
+                          className="form-check-input m-0"
+                          type="checkbox"
+                          role="switch"
+                          id="flexSwitchCheckChecked"
+                          defaultChecked={singleSelectedRow?.qty === null ? true : false}
+                          onChange={(e) => setQuantityValueInfinity(e.target.checked)}
+                        />
+                      </div>
                     </div>
+                    {
+                      <div className="inpt_numb my-3">
+                        <button
+                          className="btn_ plus"
+                          onClick={() => setQuantityValue((prev) => prev + 1)}
+                          disabled={quantityValueInfinity}
+                        >
+                          +
+                        </button>
+                        <input
+                          type="number"
+                          min="1"
+                          className="form-control"
+                          value={quantityValueInfinity ? "" : +quantityValue}
+                          onChange={(e) => setQuantityValue(+e.target.value)}
+                          disabled={quantityValueInfinity}
+                        />
+                        {console.log(quantityValueInfinity)}
+                        <button
+                          className="btn_ minus"
+                          onClick={() => setQuantityValue((prev) => (quantityValue ? prev - 1 : 0))}
+                          disabled={quantityValueInfinity}
+                        >
+                          -
+                        </button>
+                      </div>
+                    }
                   </div>
-                  {
+                </Modal.Body>
+                <Modal.Footer className="modal-footer">
+                  <button type="button" className="btn-main" onClick={handleEditProductQuantity}>
+                    {pathOr("", [locale, "Products", "save"], t)}
+                  </button>
+                </Modal.Footer>
+              </Modal>
+            )}
+            {openPriceModal && (
+              <Modal show={openPriceModal} onHide={() => setOpenPriceModal(false)} centered>
+                <Modal.Header>
+                  <h5 className="disc-header">{pathOr("", [locale, "Products", "discount"], t)}</h5>
+                  <button type="button" className="btn-close" onClick={() => setOpenPriceModal(false)}></button>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="form-group">
+                    <h5 className="disc-header">
+                      {pathOr("", [locale, "Products", "currentPrice"], t)} : <span>{singleSelectedRow.price}</span>
+                    </h5>
                     <div className="inpt_numb my-3">
-                      <button
-                        className="btn_ plus"
-                        onClick={() => setQuantityValue((prev) => prev + 1)}
-                        disabled={quantityValueInfinity}
-                      >
+                      <button className="btn_ plus" onClick={() => setPriceValue((prev) => prev + 1)}>
                         +
                       </button>
                       <input
                         type="number"
-                        min="1"
+                        min="0"
                         className="form-control"
-                        value={quantityValueInfinity ? "" : +quantityValue}
-                        onChange={(e) => setQuantityValue(+e.target.value)}
-                        disabled={quantityValueInfinity}
+                        onChange={(e) => setPriceValue(e.target.value)}
+                        value={priceValue}
+                        placeholder="0"
                       />
-                      {console.log(quantityValueInfinity)}
                       <button
                         className="btn_ minus"
-                        onClick={() => setQuantityValue((prev) => (quantityValue ? prev - 1 : 0))}
-                        disabled={quantityValueInfinity}
+                        onClick={() => setPriceValue((prev) => (priceValue ? prev - 1 : 0))}
                       >
                         -
                       </button>
                     </div>
-                  }
-                </div>
-              </Modal.Body>
-              <Modal.Footer className="modal-footer">
-                <button type="button" className="btn-main" onClick={handleEditProductQuantity}>
-                  {pathOr("", [locale, "Products", "save"], t)}
-                </button>
-              </Modal.Footer>
-            </Modal>
-            <Modal show={openPriceModal} onHide={() => setOpenPriceModal(false)} centered>
-              <Modal.Header>
-                <h5 className="disc-header">{pathOr("", [locale, "Products", "discount"], t)}</h5>
-                <button type="button" className="btn-close" onClick={() => setOpenPriceModal(false)}></button>
-              </Modal.Header>
-              <Modal.Body>
-                <div className="form-group">
-                  <h5 className="disc-header">
-                    {pathOr("", [locale, "Products", "currentPrice"], t)} : <span>{singleSelectedRow.price}</span>
-                  </h5>
-                  <div className="inpt_numb my-3">
-                    <button className="btn_ plus" onClick={() => setPriceValue((prev) => prev + 1)}>
-                      +
-                    </button>
-                    <input
-                      type="number"
-                      min="0"
-                      className="form-control"
-                      onChange={(e) => setPriceValue(e.target.value)}
-                      value={priceValue}
-                      placeholder="0"
-                    />
-                    <button className="btn_ minus" onClick={() => setPriceValue((prev) => (priceValue ? prev - 1 : 0))}>
-                      -
-                    </button>
                   </div>
-                </div>
-                <div className="form-group">
-                  <label>{pathOr("", [locale, "Products", "discountEndDate"], t)}</label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    min={minDate()}
-                    onChange={(e) => setDiscountDate(e.target.value)}
-                    value={discountDate}
-                  />
-                </div>
-              </Modal.Body>
-              <Modal.Footer className="modal-footer">
-                <button type="button" className="btn-main" onClick={handleAddDiscount}>
-                  {pathOr("", [locale, "Products", "save"], t)}
-                </button>
-              </Modal.Footer>
-            </Modal>
+                  <div className="form-group">
+                    <label>{pathOr("", [locale, "Products", "discountEndDate"], t)}</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      min={minDate()}
+                      onChange={(e) => setDiscountDate(e.target.value)}
+                      value={discountDate}
+                    />
+                  </div>
+                </Modal.Body>
+                <Modal.Footer className="modal-footer">
+                  <button type="button" className="btn-main" onClick={handleAddDiscount}>
+                    {pathOr("", [locale, "Products", "save"], t)}
+                  </button>
+                </Modal.Footer>
+              </Modal>
+            )}
             {selectedFilter == "avaliableProducts" && avaliableProducts.length > 5 && (
               <Pagination listLength={avaliableProducts.length} pageSize={5} />
             )}
