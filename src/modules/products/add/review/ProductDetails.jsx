@@ -1,13 +1,13 @@
-import React, { Fragment, useCallback, useEffect, useState } from "react"
-import styles from "../add/review/productReview.module.css"
+import { Fragment, useCallback, useEffect, useState } from "react"
+import styles from "./productReview.module.css"
 import { useRouter } from "next/router"
 import { Row, Col } from "react-bootstrap"
-import dateImage from "../../../public/icons/Copyright_expiry.svg"
+import dateImage from "../../../../public/icons/Copyright_expiry.svg"
 import { FaCheckCircle } from "react-icons/fa"
 import axios from "axios"
 import { toast } from "react-toastify"
 import { pathOr } from "ramda"
-import t from "../../../translations.json"
+import t from "../../../../translations.json"
 import Image from "next/image"
 import moment from "moment/moment"
 
@@ -185,7 +185,11 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                 <div className="d-flex align-items-center gap-1">
                   {productFullData.productImage && !pathname.includes("add") && (
                     <Image
-                      src={productFullData.productImage}
+                      src={
+                        productFullData.listImageFile.length > 0 && productFullData.MainImageIndex !== null
+                          ? URL.createObjectURL(productFullData.listImageFile[productFullData.MainImageIndex])
+                          : productFullData.productImage
+                      }
                       className="img_table"
                       alt="product"
                       priority

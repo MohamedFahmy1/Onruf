@@ -4,7 +4,7 @@ import AddProductStepOne from "../../../modules/products/add/stepOne"
 import AddProductStepTwo from "../../../modules/products/add/stepTwo"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
-import ProductDetails from "../edit/ProductDetails"
+import ProductDetails from "./review/ProductDetails"
 
 const AddProduct = () => {
   const router = useRouter()

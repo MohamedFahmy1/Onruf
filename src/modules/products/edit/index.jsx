@@ -4,7 +4,7 @@ import AddProductStepTwo from "../../../modules/products/add/stepTwo"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { useFetch } from "../../../hooks/useFetch"
-import ProductDetails from "./ProductDetails"
+import ProductDetails from "../add/review/ProductDetails"
 import axios from "axios"
 
 const EditProduct = () => {
