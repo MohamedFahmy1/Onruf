@@ -15,6 +15,7 @@ import { toast } from "react-toastify"
 import t from "../../../translations.json"
 import { useFetch } from "../../../hooks/useFetch"
 import SendOfferModal from "../SendOfferModal"
+import Image from "next/image"
 
 const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelectedRows }) => {
   const router = useRouter()
@@ -32,32 +33,50 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const [openPriceModal, setOpenPriceModal] = useState(false)
   const [sendOfferModal, setSendOfferModal] = useState(false)
   const [singleSelectedRow, setSingleSelectedRow] = useState({})
-  // const [selectedRows, setSelectedRows] = useState({})
   const [quantityValue, setQuantityValue] = useState(0)
   const [quantityValueInfinity, setQuantityValueInfinity] = useState(undefined)
   const [priceValue, setPriceValue] = useState(0)
   const [discountDate, setDiscountDate] = useState()
 
-  const productsCount = products?.length
-  const avaliableProducts = (productsCount > 0 && products?.filter(({ isActive }) => isActive)) || []
-  const inActiveProducts = (productsCount > 0 && products?.filter(({ isActive }) => !isActive)) || []
-  const productsAlmostOut = (productsCount > 0 && products?.filter(({ qty }) => qty < 2 && qty != null)) || []
-  const didnotSell = didnotSellProducts
-  const filterProducts =
-    selectedFilter === "avaliableProducts"
-      ? avaliableProducts
-      : selectedFilter === "productsAlmostOut"
-      ? productsAlmostOut
-      : selectedFilter === "didnotSell"
-      ? didnotSell
-      : inActiveProducts
-  const rows = Object.keys(selectedRows ? selectedRows : {})
-  const selectedProductsIds = rows.map((row) => {
-    const selectedRow = filterProducts.filter((_, index) => index === +row)
-    return selectedRow?.[0]?.productId || selectedRow?.[0]?.id
-  })
+  const {
+    productsCount,
+    avaliableProducts,
+    inActiveProducts,
+    productsAlmostOut,
+    didnotSell,
+    filterProducts,
+    selectedProductsIds,
+  } = useMemo(() => {
+    const productsCount = products?.length
+    const avaliableProducts = (productsCount > 0 && products?.filter(({ isActive }) => isActive)) || []
+    const inActiveProducts = (productsCount > 0 && products?.filter(({ isActive }) => !isActive)) || []
+    const productsAlmostOut = (productsCount > 0 && products?.filter(({ qty }) => qty < 2 && qty != null)) || []
+    const didnotSell = didnotSellProducts
+    const filterProducts =
+      selectedFilter === "avaliableProducts"
+        ? avaliableProducts
+        : selectedFilter === "productsAlmostOut"
+        ? productsAlmostOut
+        : selectedFilter === "didnotSell"
+        ? didnotSell
+        : inActiveProducts
+    const rows = Object.keys(selectedRows ? selectedRows : {})
+    const selectedProductsIds = rows.map((row) => {
+      const selectedRow = filterProducts.filter((_, index) => index === +row)
+      return selectedRow?.[0]?.productId || selectedRow?.[0]?.id
+    })
+    return {
+      productsCount,
+      avaliableProducts,
+      inActiveProducts,
+      productsAlmostOut,
+      didnotSell,
+      filterProducts,
+      selectedProductsIds,
+    }
+  }, [products, selectedRows, selectedFilter, didnotSellProducts])
 
-  const getProductData = async () => {
+  const getProductData = useCallback(async () => {
     if (id) {
       const {
         data: { data: getSingleFolder },
@@ -69,7 +88,8 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
       setProducts(data)
     }
-  }
+  }, [id, locale])
+
   const handleDeleteProduct = useCallback(
     async (productId) => {
       try {
@@ -86,7 +106,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         toast.error(error.response.data.message)
       }
     },
-    [locale],
+    [locale, getProductData, fetchDidntSell],
   )
 
   useEffect(() => {
@@ -116,8 +136,15 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         accessor: "name",
         Cell: ({ row: { original } }) => (
           <div className="d-flex align-items-center">
-            <img src={original.image || original.productImage} className="img_table" alt="product" />
-            <div>
+            <Image
+              src={original.image || original.productImage}
+              className="img_table"
+              alt="product"
+              priority
+              width={100}
+              height={100}
+            />
+            <div className="mx-4">
               <h6 className="m-0 f-b"> {propOr("-", ["name"], original)} </h6>
               <div className="gray-color">{formatDate(propOr("-", ["createdAt"], original))}</div>
             </div>
@@ -276,17 +303,22 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         },
       },
     ],
-    [locale, openPriceModal, openQuantityModal, selectedFilter, handleDeleteProduct],
+    [locale, openPriceModal, openQuantityModal, selectedFilter, handleDeleteProduct, push, handleChangeStatus],
   )
-  const handleChangeStatus = async (id) => {
-    try {
-      await axios.post(process.env.NEXT_PUBLIC_API_URL + `/ChangeStatusProduct?id=${id}`, {})
-      getProductData()
-    } catch (err) {
-      console.error(err)
-      toast.error(err.response.data.message)
-    }
-  }
+  const handleChangeStatus = useCallback(
+    async (id) => {
+      try {
+        await axios.post(process.env.NEXT_PUBLIC_API_URL + `/ChangeStatusProduct?id=${id}`, {})
+        toast.success(locale === "en" ? "Product Status Changed Successfully!" : "تم تغيير حالة المنتج بنجاح")
+        getProductData()
+      } catch (err) {
+        console.error(err)
+        toast.error(err.response.data.message)
+      }
+    },
+    [getProductData, locale],
+  )
+
   const handleEditProductQuantity = async () => {
     try {
       const idApi = +singleSelectedRow?.id || +singleSelectedRow?.productId
@@ -324,7 +356,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   }
   return (
     <Fragment>
-      <div className="body-content" style={{ padding: 30 }}>
+      <div className="body-content p-4">
         <div>
           <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
             <div className="d-flex align-items-center">
@@ -519,4 +551,4 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   )
 }
 
-export default ViewProducts
+export default React.memo(ViewProducts)

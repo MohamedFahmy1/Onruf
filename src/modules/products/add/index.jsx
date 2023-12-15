@@ -31,7 +31,7 @@ const AddProduct = () => {
     GovernmentCode: "",
     productSep: [],
     listImageFile: [],
-    MainImageIndex: undefined,
+    MainImageIndex: null,
     videoUrl: [""],
     ShippingOptions: [],
     Lat: "30",

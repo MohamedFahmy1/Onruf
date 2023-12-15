@@ -73,7 +73,6 @@ const EditProduct = () => {
         if (query.id) {
           const currentLocale = localeRef.current
           const { data } = await axios(
-            // eslint-disable-next-line react-hooks/exhaustive-deps
             `${process.env.NEXT_PUBLIC_API_URL}/GetProductById?id=${query.id}&lang=${currentLocale}`,
           )
           const productData = data.data

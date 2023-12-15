@@ -39,7 +39,7 @@ const AddProductStepTwo = ({
   const [spesfications, setSpesfications] = useState([])
   const [unlimtedQuantity, setUnlimtedQuantity] = useState(productPayload.qty ? false : true)
   const [mainImgId, setMainImgId] = useState(null)
-  const [mainImageIndex, setMainImageIndex] = useState(undefined)
+  const [mainImageIndex, setMainImageIndex] = useState(null)
   const [userBanksData, setuserBanksData] = useState([])
   const [showBanksData, setShowBanksData] = useState(false)
   const [shippingOptions, setShippingOptions] = useState([])
@@ -148,7 +148,6 @@ const AddProductStepTwo = ({
       setProductPayload((prev) => ({
         ...prev,
         listImageFile: [...prev?.listImageFile, file],
-        MainImageIndex: mainImageIndex,
       }))
     }
     e.target.value = null
@@ -209,7 +208,7 @@ const AddProductStepTwo = ({
     if (index === mainImageIndex) {
       setProductPayload({
         ...productPayload,
-        MainImageIndex: undefined,
+        MainImageIndex: null,
         listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index),
       })
     } else
@@ -472,7 +471,7 @@ const AddProductStepTwo = ({
                         id={img.id}
                         type="radio"
                         name="isMain"
-                        defaultChecked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
+                        defaultChecked={index === productPayload.MainImageIndex}
                         onChange={() => handleMainImage(img.id, index)}
                       />
                     </label>
