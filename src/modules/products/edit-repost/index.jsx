@@ -1,6 +1,6 @@
 import { useRouter } from "next/router"
 import { useEffect, useState, useRef } from "react"
-import AddProductStepTwo from "../../../modules/products/add/stepTwo"
+import AddProductStepTwo from "../add/stepTwo"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { useFetch } from "../../../hooks/useFetch"

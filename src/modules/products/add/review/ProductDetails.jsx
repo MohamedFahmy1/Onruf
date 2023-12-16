@@ -12,8 +12,7 @@ import Image from "next/image"
 import moment from "moment/moment"
 
 const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProductPayload }) => {
-  const router = useRouter()
-  const { locale, pathname } = useRouter()
+  const { locale, pathname, push } = useRouter()
   const [shippingOptions, setShippingOptions] = useState([])
   const [packageDetails, setPackageDetails] = useState()
   const [couponData, setCouponData] = useState()
@@ -29,7 +28,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       ? selectedCatProps?.extraProductVidoeFee *
         (productFullData?.videoUrl?.length - selectedCatProps?.freeProductVidoesCount)
       : 0
-  const autctionFee = productFullData?.IsAuctionEnabled ? selectedCatProps?.enableAuctionFee : 0
+  const auctionFee = productFullData?.IsAuctionEnabled ? selectedCatProps?.enableAuctionFee : 0
   const negotiationFee = productFullData?.IsNegotiationEnabled ? selectedCatProps?.enableNegotiationFee : 0
   const fixedFee = productFullData?.IsFixedPriceEnabled ? selectedCatProps?.enableFixedPriceSaleFee : 0
   const pakaFee = productFullData?.pakatId ? packageDetails?.price : 0
@@ -39,7 +38,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
     +selectedCatProps?.subTitleFee +
     +totalImageFee +
     +totalVideoFee +
-    +autctionFee +
+    +auctionFee +
     +negotiationFee +
     +fixedFee +
     +pakaFee -
@@ -67,14 +66,14 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
   const applyCoupon = async () => {
     try {
       const res = await axios.get(process.env.NEXT_PUBLIC_API_URL + `/GetCouponByCode?couponCode=${couponCode}`)
-      const coponData = res?.data?.data
-      setCouponData(coponData)
+      const couponData = res?.data?.data
+      setCouponData(couponData)
       setProductPayload((prev) => ({
         ...prev,
-        "ProductPaymentDetailsDto.CouponId": coponData.id,
-        "ProductPaymentDetailsDto.CouponDiscountValue": coponData.discountValue,
+        "ProductPaymentDetailsDto.CouponId": couponData.id,
+        "ProductPaymentDetailsDto.CouponDiscountValue": couponData.discountValue,
         "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": totalCost,
-        "ProductPaymentDetailsDto.TotalAmountAfterCoupon": totalCost - coponData.discountValue,
+        "ProductPaymentDetailsDto.TotalAmountAfterCoupon": totalCost - couponData.discountValue,
       }))
       setCouponCode("")
     } catch (err) {
@@ -84,6 +83,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
   useEffect(() => {
     productFullData.ShippingOptions.length > 0 && getShippingOptions()
   }, [productFullData.ShippingOptions, getShippingOptions])
+
   useEffect(() => {
     productFullData.pakatId && getPackage()
   }, [productFullData.pakatId, getPackage])
@@ -103,7 +103,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
           formData.append("listImageFile", image)
         }
       }
-      // if any value is empty don't send it to the api || and don't send productImage & listMedia
+      // if any value is empty don't send it to the api // and don't send productImage & listMedia
       else if (value === "" || value === null || key === "productImage" || key === "listMedia") {
         continue
       } else if (key === "productSep") {
@@ -137,7 +137,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
           },
         })
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-        router.push(`/${locale}/products`)
+        push(`/${locale}/products`)
       } catch (error) {
         toast.error(
           locale === "en"
@@ -156,7 +156,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
           },
         })
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-        router.push(`/${locale}/products`)
+        push(`/${locale}/products`)
       } catch (error) {
         toast.error(
           locale === "en"
@@ -186,7 +186,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                   {productFullData.productImage && !pathname.includes("add") && (
                     <Image
                       src={
-                        productFullData.listImageFile.length > 0 && productFullData.MainImageIndex !== null
+                        productFullData.listImageFile.length > 0 && productFullData.MainImageIndex == null
                           ? URL.createObjectURL(productFullData.listImageFile[productFullData.MainImageIndex])
                           : productFullData.productImage
                       }
@@ -571,7 +571,6 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                     <span className={styles["bord"]} />
                     <span className="mx-2">Banking Transfer</span>
                   </label>
-
                 </div>*/}
               </div>
             )}

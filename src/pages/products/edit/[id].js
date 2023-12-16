@@ -1,5 +1,5 @@
 import React, { Fragment } from "react"
-import EditProduct from "../../../modules/products/edit"
+import EditProduct from "../../../modules/products/edit-repost"
 import Head from "next/head"
 
 const EditPage = () => {

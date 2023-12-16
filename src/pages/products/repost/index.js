@@ -1,6 +1,6 @@
 import Head from "next/head"
 import React, { Fragment } from "react"
-import EditProduct from "../../../modules/products/edit"
+import EditProduct from "../../../modules/products/edit-repost"
 
 const RepostPage = () => {
   return <EditProduct />

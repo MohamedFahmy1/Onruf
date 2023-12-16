@@ -2,7 +2,6 @@ import axios from "axios"
 import { useState, useEffect, useCallback } from "react"
 import Alerto from "../common/Alerto"
 import { useRouter } from "next/router"
-import { toast } from "react-toastify"
 
 export const useFetch = (apiPath, dynamicPage) => {
   const [data, setData] = useState()
