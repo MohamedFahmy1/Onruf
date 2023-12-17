@@ -1612,7 +1612,7 @@ const AddProductStepTwo = ({
           <button className="btn-main mt-3" type="button" onClick={() => shippingOptionsErrorHandling()}>
             {!pathname.includes("edit")
               ? pathOr("", [locale, "Products", "next"], t)
-              : pathOr("", [locale, "Products", "edit"], t)}
+              : pathOr("", [locale, "Products", "save"], t)}
           </button>
         </Accordion.Body>
       </Accordion.Item>

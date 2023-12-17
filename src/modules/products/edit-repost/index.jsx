@@ -160,7 +160,7 @@ const EditProduct = () => {
       <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
         <h6 className="f-b m-0">{pathOr("", [locale, "Products", "review_product_before_adding"], t)}</h6>
         <button>
-          <p onClick={() => push("/products")} className="btn-main btn-main-o">
+          <p onClick={() => (step === 1 ? push("/products") : setStep(1))} className="btn-main btn-main-o">
             {pathOr("", [locale, "Products", "cancel"], t)}
           </p>
         </button>

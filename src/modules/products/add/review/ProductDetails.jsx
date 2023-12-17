@@ -183,12 +183,12 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
             <Row className="align-items-center">
               <Col lg={6}>
                 <div className="d-flex align-items-center gap-1">
-                  {!pathname.includes("add") && (
+                  {productFullData.productImage && !pathname.includes("add") && (
                     <Image
                       src={
                         productFullData.listImageFile.length > 0
                           ? URL.createObjectURL(productFullData.listImageFile[productFullData.MainImageIndex])
-                          : productFullData.listMedia.find((item) => item.isMainMadia === true).url
+                          : productFullData.productImage
                       }
                       className="img_table"
                       alt="product"
