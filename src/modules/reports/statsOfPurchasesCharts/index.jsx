@@ -1,6 +1,6 @@
 import React from "react"
 import { Col } from "react-bootstrap"
-import chart from "../../../public/icons/Component.svg"
+import chart from "../../../../public/icons/Component.svg"
 import { useRouter } from "next/router"
 import t from "../../../translations.json"
 import { pathOr } from "ramda"

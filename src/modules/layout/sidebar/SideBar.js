@@ -1,6 +1,6 @@
-import React, { useState } from "react"
-import { Box, Button, List, Modal, Typography } from "@mui/material"
-import Logo from "../../../public/images/Logo2x.png"
+import React from "react"
+import { Box, Button, List, Typography } from "@mui/material"
+import Logo from "../../../../public/images/Logo2x.png"
 import { StyledLogo, StyledSidebar } from "./styles"
 import ListItem from "./ListItem"
 import Router, { useRouter } from "next/router"
@@ -23,16 +23,11 @@ import {
   ShopLightIcon,
   SettingDarkIcon,
   SettingLightIcon,
-} from "../../../public/icons"
-import { useForm } from "react-hook-form"
-
-import { ToastContainer, toast } from "react-toastify"
+} from "../../../../public/icons"
 import "react-toastify/dist/ReactToastify.css"
-import axios from "axios"
 import Image from "next/image"
 
 const Sidebar = () => {
-  const [modalOpen, setModalOpen] = useState(false)
   const { locale } = useRouter()
 
   const navBarItems = [
@@ -79,26 +74,20 @@ const Sidebar = () => {
       darkIcon: RatsDarkIcon,
     },
     {
-      name: pathOr("", [locale, "sidebar", "coupons"], t),
+      name: pathOr("", [locale, "sidebar", "marketing"], t),
       link: "/coupons",
       lightIcon: ShopLightIcon,
       darkIcon: ShopDarkIcon,
       subItems: [
         {
-          name: "كوبونات الخصم",
+          name: pathOr("", [locale, "sidebar", "discountCoupons"], t),
           link: "/coupons",
         },
         {
-          name: "التسويق مع اونرف",
+          name: pathOr("", [locale, "sidebar", "marketingWithOnruf"], t),
           link: "/marketing",
         },
       ],
-    },
-    {
-      name: pathOr("", [locale, "sidebar", "marketing"], t),
-      link: "/marketing",
-      lightIcon: RatsLightIcon,
-      darkIcon: RatsDarkIcon,
     },
     {
       name: pathOr("", [locale, "sidebar", "settings"], t),

@@ -1,6 +1,6 @@
 import { Box, Input, InputLabel } from "@mui/material"
 import Image from "next/image"
-import HomeImage1 from "../../../public/images/home1.jpg"
+import HomeImage1 from "../../../../public/images/home1.jpg"
 import { AiFillCamera } from "react-icons/ai"
 import AccordionNextBtn from "./AccordionNextBtn"
 

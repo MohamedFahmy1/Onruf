@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import aramex from "../../../public/images/aramex.png"
+import aramex from "../../../../public/images/aramex.png"
 import Router, { useRouter } from "next/router"
 import AddShippingOption from "./add"
 import { Box, Button, Modal } from "@mui/material"
@@ -85,7 +85,10 @@ const Shipping = () => {
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            <AddShippingOption setAddConditionModal={setAddConditionModal} fetchShippingOptions={fetchShippingOptions}  />
+            <AddShippingOption
+              setAddConditionModal={setAddConditionModal}
+              fetchShippingOptions={fetchShippingOptions}
+            />
           </Box>
         </Modal>
       </div>

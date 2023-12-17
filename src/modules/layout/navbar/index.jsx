@@ -84,7 +84,7 @@ const Navbar = () => {
             placeholder={pathOr("", [locale, "navbar", "search"], t)}
           />
           <span className="icon_fa">
-            {/* <img src="../../../public/icons/search.svg" /> */}
+            {/* <img src="../../../../public/icons/search.svg" /> */}
             <GoSearch />
           </span>
         </div>

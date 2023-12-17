@@ -1,11 +1,11 @@
 import React from "react"
 import { Col } from "react-bootstrap"
-import Avatar from "../../../public/images/user.png"
+import Avatar from "../../../../public/images/user.png"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { formatDate } from "../../../common/functions"
-import rating from "../../../public/images/rating.png"
+import rating from "../../../../public/images/rating.png"
 import Image from "next/image"
 const ProfileCard = ({
   id,

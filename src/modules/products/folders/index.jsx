@@ -1,9 +1,9 @@
 import React, { useState, useEffect, Fragment } from "react"
 import Modal from "react-bootstrap/Modal"
 import { Row, Col } from "react-bootstrap"
-import folderImg from "../../../public/icons/folder.svg"
-// import homeImg from '../../../public/images/home1.jpg'
-import rightArrow from "../../../public/icons/right-arrow (21).svg"
+import folderImg from "../../../../public/icons/folder.svg"
+// import homeImg from '../../../../public/images/home1.jpg'
+import rightArrow from "../../../../public/icons/right-arrow (21).svg"
 import Link from "next/link"
 import axios from "axios"
 import Router, { useRouter } from "next/router"

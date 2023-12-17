@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { Col, Row } from "react-bootstrap"
-import { Wallet, Point, Budget, Settings, Branch, CompanyWorkers } from "../../../public/icons"
+import { Wallet, Point, Budget, Settings, Branch, CompanyWorkers } from "../../../../public/icons"
 import Link from "next/link"
 import Image from "next/image"
 import { pathOr } from "ramda"

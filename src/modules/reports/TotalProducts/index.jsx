@@ -1,6 +1,6 @@
 import React from "react"
 import { Col } from "react-bootstrap"
-import mask from "../../../public/icons/Mask Group 36.svg"
+import mask from "../../../../public/icons/Mask Group 36.svg"
 
 import { useRouter } from "next/router"
 import t from "../../../translations.json"

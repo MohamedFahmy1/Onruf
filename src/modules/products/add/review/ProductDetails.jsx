@@ -2,7 +2,7 @@ import { Fragment, useCallback, useEffect, useState } from "react"
 import styles from "./productReview.module.css"
 import { useRouter } from "next/router"
 import { Row, Col } from "react-bootstrap"
-import dateImage from "../../../../public/icons/Copyright_expiry.svg"
+import dateImage from "../../../../../public/icons/Copyright_expiry.svg"
 import { FaCheckCircle } from "react-icons/fa"
 import axios from "axios"
 import { toast } from "react-toastify"
@@ -183,12 +183,12 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
             <Row className="align-items-center">
               <Col lg={6}>
                 <div className="d-flex align-items-center gap-1">
-                  {productFullData.productImage && !pathname.includes("add") && (
+                  {!pathname.includes("add") && (
                     <Image
                       src={
-                        productFullData.listImageFile.length > 0 && productFullData.MainImageIndex == null
+                        productFullData.listImageFile.length > 0
                           ? URL.createObjectURL(productFullData.listImageFile[productFullData.MainImageIndex])
-                          : productFullData.productImage
+                          : productFullData.listMedia.find((item) => item.isMainMadia === true).url
                       }
                       className="img_table"
                       alt="product"

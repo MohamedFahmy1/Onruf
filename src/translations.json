@@ -37,7 +37,9 @@
       "marketing": "التسويق",
       "settings": "الاعدادات",
       "contactus": "راسلنا",
-      "needHelp": "هل تحتاج لمساعده؟"
+      "needHelp": "هل تحتاج لمساعده؟",
+      "marketingWithOnruf": "التسويق مع اونرف",
+      "discountCoupons": "كوبونات الخصم"
     },
     "marketing": {
       "marketing_with_ownerf": "التسويق مع اونرف",
@@ -685,9 +687,11 @@
       "comments": "Ratings&Comments",
       "marketing": "Marketing",
       "coupons": "Coupons",
+      "discountCoupons": "Discount Coupons",
       "settings": "Settings",
       "contactus": "Contact Us",
-      "needHelp": "Do you need help ?"
+      "needHelp": "Do you need help ?",
+      "marketingWithOnruf": "Marketing With Onruf"
     },
     "marketing": {
       "marketing_with_onruf": "Marketing with Onruf",

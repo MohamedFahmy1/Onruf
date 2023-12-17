@@ -1,6 +1,6 @@
 import React from "react"
 import { Col } from "react-bootstrap"
-import img from "../../../public/images/pro1.png"
+import img from "../../../../public/images/pro1.png"
 
 import { useRouter } from "next/router"
 import t from "../../../translations.json"

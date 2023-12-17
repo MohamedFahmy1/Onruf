@@ -6,6 +6,7 @@ import t from "../../../translations.json"
 import { useFetch } from "../../../hooks/useFetch"
 import ProductDetails from "../add/review/ProductDetails"
 import axios from "axios"
+import Alerto from "../../../common/Alerto"
 
 const EditProduct = () => {
   const { locale, query, push } = useRouter()
@@ -106,6 +107,7 @@ const EditProduct = () => {
               }
             }),
             listMedia: productData.listMedia,
+            MainImageIndex: productData.listMedia.findIndex((item) => item.isMainMadia === true),
             Lat: productData.lat,
             Lon: productData.lon,
             AcceptQuestion: productData.acceptQuestion,
@@ -164,7 +166,7 @@ const EditProduct = () => {
         </button>
       </div>
       <div>
-        {step === 1 && productPayload && paymentOptions && shippingOptions && bankAccounts && (
+        {step === 1 && productPayload.listMedia && paymentOptions && shippingOptions && bankAccounts && (
           <ProductDetails
             selectedCatProps={selectedCatProps}
             handleBack={handleBack}
