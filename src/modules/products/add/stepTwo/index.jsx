@@ -413,7 +413,7 @@ const AddProductStepTwo = ({
                       id={img.id}
                       type="radio"
                       name="isMain"
-                      checked={mainImgId ? img?.id === mainImgId : index === +productPayload.MainImageIndex}
+                      checked={mainImgId ? img?.id === mainImgId : index === productPayload.MainImageIndex}
                       onChange={() => handleMainImage(img.id, index)}
                     />
                   </label>
