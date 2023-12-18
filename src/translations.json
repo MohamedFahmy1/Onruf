@@ -630,7 +630,8 @@
       "socialMedia": "التواصل الاجتماعي",
       "facebook": "فيسبوك",
       "instagram": "انستجرام",
-      "save": "حفظ"
+      "save": "حفظ",
+      "loading": "انتظر..."
     },
     "BankAccounts": {
       "creditCard": "فيزا / ماستركارد",
@@ -1279,7 +1280,8 @@
       "socialMedia": "Social Media",
       "facebook": "Facebook",
       "instagram": "Instagram",
-      "save": "Save"
+      "save": "Save",
+      "loading": "Loading..."
     },
     "BankAccounts": {
       "creditCard": "Credit Card",

@@ -124,6 +124,7 @@ const AddProductStepTwo = ({
     fetchCountries()
     fetchPakatList()
   }, [locale])
+
   useEffect(() => {
     if (productPayload.neighborhoodId) {
       handleFetchNeighbourhoodsOrRegions("ListRegionsByCountryId", "countriesIds", productPayload.countryId, setRegions)
@@ -1816,7 +1817,6 @@ const AddProductStepTwo = ({
                                 {pathOr("", [locale, "Products", "freeDelivery"], t)}
                               </button>
                             </div>
-
                             {productPayload.AuctionClosingTime &&
                               new Date(productPayload.AuctionClosingTime) - new Date() > 0 && (
                                 <div className={styles["time"]}>

@@ -21,26 +21,34 @@ import web from "../../../../public/icons/008-maps.svg"
 import Image from "next/image"
 import { PiLinkedinLogoBold, PiTwitterLogoLight, PiYoutubeLogo } from "react-icons/pi"
 import Alerto from "../../../common/Alerto"
+import { DevTool } from "@hookform/devtools"
 
+import { minDate } from "../../../common/functions"
 const EditBussinessAccount = () => {
   const { locale } = useRouter()
   const [eventKey, setEventKey] = useState("0")
   const [businessAccountImage, setBusinessAccountImage] = useState(null)
   const [accountData, setAccountData] = useState()
-  const { register, handleSubmit, setValue, reset } = useForm({ defaultValues: accountData })
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    control,
+    formState: { isSubmitting },
+  } = useForm({ defaultValues: accountData })
   const [registeryFile, setRegisteryFile] = useState()
-  const [minDate, setMinDate] = useState("")
   const [countries, setCountries] = useState([])
   const [regions, setRegions] = useState([])
   const [neighbourhoods, setNeighbourhoods] = useState([])
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+
   const getAccountData = async () => {
     const {
       data: { data: accountData },
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetBusinessAccountById", {
       params: { businessAccountId: buisnessAccountId },
     })
-    setRegisteryFile(accountData.BusinessAccountCertificates)
     setAccountData(accountData)
     reset(accountData)
   }
@@ -77,34 +85,36 @@ const EditBussinessAccount = () => {
       Alerto(e)
     }
   }
-  console.log("before :", accountData?.businessAccountCertificates)
+  useEffect(() => {
+    if (accountData) {
+      accountData.countryId && fetchRegions(accountData.countryId)
+      accountData.regionId && fetchNeighbourhoods(accountData.regionId)
+    }
+  }, [accountData?.regionId, accountData?.countryId])
+
   useEffect(() => {
     buisnessAccountId && getAccountData()
     buisnessAccountId && fetchCountries()
   }, [buisnessAccountId])
-
-  // Getting Today's Date To Set Minimum Date for Expiary Date Input Element
   useEffect(() => {
-    const today = new Date()
-    const yyyy = today.getFullYear()
-    const mm = String(today.getMonth() + 1).padStart(2, "0")
-    const dd = String(today.getDate()).padStart(2, "0")
-    setMinDate(`${yyyy}-${mm}-${dd}`)
-  }, [])
+    if (accountData) {
+      reset(accountData)
+    }
+  }, [accountData, reset])
+
   const toggleAccordionPanel = (eKey) => {
     eventKey === eKey ? setEventKey("") : setEventKey(eKey)
   }
   const handleEditBusinessAccount = async ({ ...values }) => {
     const formData = new FormData()
-    console.log("after :", values.BusinessAccountCertificates)
     for (const key of Object.keys(values)) {
       if (key === "businessAccountImage" && businessAccountImage == null) {
-        formData.append(key, null)
+        continue
       } else if (key === "businessAccountImage") {
         if (values[key] && values[key].length > 0) {
           formData.append(key, values[key][0])
         }
-      } else if (key === "BusinessAccountCertificates" || key === "businessAccountCertificates") {
+      } else if (key === "businessAccountCertificates") {
         if (values[key] && values[key].length > 0) {
           formData.append(key, values[key][0])
         }
@@ -162,7 +172,7 @@ const EditBussinessAccount = () => {
                             required
                             className="form-control form-select"
                           >
-                            <option hidden disabled selected value={0}>
+                            <option hidden disabled value={0}>
                               {pathOr("", [locale, "Settings", "chooseType"], t)}
                             </option>
                             <option value={"CommercialRegister"}>
@@ -181,7 +191,7 @@ const EditBussinessAccount = () => {
                         </label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <Image src={Plate} className="img-fluid" alt="" />
+                            <Image src={Plate} className="img-fluid" alt="Plate" />
                           </span>
                           <input
                             {...register("detailRegistrationNumber", { value: accountData.detailRegistrationNumber })}
@@ -199,7 +209,7 @@ const EditBussinessAccount = () => {
                         </label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <Image src={Copyright} className="img-fluid" alt="" />
+                            <Image src={Copyright} className="img-fluid" alt="copyright" />
                           </span>
                           <input
                             {...register("registrationNumberExpiryDate", {
@@ -210,7 +220,7 @@ const EditBussinessAccount = () => {
                             }}
                             type="date"
                             id="expiry"
-                            min={minDate}
+                            min={minDate()}
                             className="form-control"
                             required
                           />
@@ -220,7 +230,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "tax_number"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <Image src={registery} alt="" />
+                            <Image src={registery} alt="registery" />
                           </span>
                           <input
                             {...register("vatNumber", {
@@ -244,7 +254,7 @@ const EditBussinessAccount = () => {
                             }}
                             type="file"
                             required
-                            {...register("BusinessAccountCertificates", {
+                            {...register("businessAccountCertificates", {
                               value: accountData.businessAccountCertificates,
                             })}
                           />
@@ -395,19 +405,23 @@ const EditBussinessAccount = () => {
                             <Image src={office} className="img-fluid" alt="country flag" />
                           </span>
                           <select
-                            // {...register("countryId", { value: accountData.countryId })}
+                            {...register("countryId", { value: accountData.countryId })}
                             onChange={(e) => {
                               const selectedOption = countries.find((item) => item.id === +e.target.value)
                               if (selectedOption) {
                                 setValue("countryId", +selectedOption.id)
+                                setValue("regionId", 0)
+                                setValue("neighborhoodId", 0)
+                                setNeighbourhoods([])
+                                setRegions([])
                                 fetchRegions(selectedOption.id)
                               }
                             }}
                             className="form-control form-select"
                           >
-                            <option hidden disabled selected value={0}>
+                            {/* <option disabled value={0}>
                               {pathOr("", [locale, "Settings", "selectCountry"], t)}
-                            </option>
+                            </option> */}
                             {countries.map((item) => (
                               <option value={item.id} key={item.id}>
                                 {item.name}
@@ -419,20 +433,22 @@ const EditBussinessAccount = () => {
                       <div className="form-group">
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <Image src={office} className="img-fluid" alt="" />
+                            <Image src={office} className="img-fluid" alt="office" />
                           </span>
                           <select
-                            // {...register("regionId", { value: accountData.regionId })}
+                            {...register("regionId")}
                             onChange={(e) => {
                               const selectedOption = regions.find((item) => item.id === +e.target.value)
                               if (selectedOption) {
                                 setValue("regionId", +selectedOption.id)
+                                setValue("neighborhoodId", 0)
+                                setNeighbourhoods([])
                                 fetchNeighbourhoods(+selectedOption.id)
                               }
                             }}
                             className="form-control form-select"
                           >
-                            <option hidden disabled selected value={0}>
+                            <option disabled value={0}>
                               {pathOr("", [locale, "Settings", "selectRegion"], t)}
                             </option>
                             {regions.map((item) => (
@@ -446,16 +462,16 @@ const EditBussinessAccount = () => {
                       <div className="form-group">
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <Image src={office} className="img-fluid" alt="" />
+                            <Image src={office} className="img-fluid" alt="office" />
                           </span>
                           <select
-                            // {...register("neighborhoodId", { value: accountData.neighborhoodId })}
+                            {...register("neighborhoodId")}
                             onChange={(e) => {
                               setValue("neighborhoodId", +e.target.value)
                             }}
                             className="form-control form-select"
                           >
-                            <option hidden disabled selected value={0}>
+                            <option disabled value={0}>
                               {pathOr("", [locale, "Settings", "selectNeighbourhood"], t)}
                             </option>
                             {neighbourhoods.map((item) => (
@@ -470,7 +486,7 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "district"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={web.src} className="img-fluid" alt="" />
+                            <img src={web.src} className="img-fluid" alt="web" />
                           </span>
                           <input
                             {...register("district", { value: accountData.district })}
@@ -661,11 +677,14 @@ const EditBussinessAccount = () => {
                       </div>
                       <div className="form-group text-center">
                         <button
-                          className="btn-main mt-3 btn-disabled"
+                          className="btn-main mt-3"
                           type="submit"
+                          disabled={isSubmitting}
                           onClick={handleSubmit(handleEditBusinessAccount)}
                         >
-                          {pathOr("", [locale, "EditAccount", "save"], t)}
+                          {!isSubmitting
+                            ? pathOr("", [locale, "EditAccount", "save"], t)
+                            : pathOr("", [locale, "EditAccount", "loading"], t)}
                         </button>
                       </div>
                     </div>
@@ -673,6 +692,7 @@ const EditBussinessAccount = () => {
                 </Accordion.Body>
               </Accordion.Item>
             </form>
+            <DevTool control={control} />
           </Accordion>
         </div>
       )}

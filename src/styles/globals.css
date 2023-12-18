@@ -346,6 +346,12 @@ input[type="radio"]:checked + span {
   padding: 0 20px;
   border-radius: 50px;
 }
+.btn-main:disabled {
+  background: var(--gray);
+}
+.btn-main:disabled:hover {
+  background: var(--gray);
+}
 
 .btn-main:hover {
   background: #eb522e;
