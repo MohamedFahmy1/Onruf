@@ -581,7 +581,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
               onClick={(e) => handleSubmit(e)}
             >
               {pathname.includes("add") && pathOr("", [locale, "Products", "addNewProduct"], t)}
-              {pathname.includes("edit") && pathOr("", [locale, "Products", "edit_product"], t)}
+              {pathname.includes("edit") && pathOr("", [locale, "Products", "save"], t)}
               {pathname.includes("repost") && pathOr("", [locale, "Products", "repost_product"], t)}
             </button>
           </div>

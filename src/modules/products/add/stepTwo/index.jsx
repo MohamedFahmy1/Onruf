@@ -1610,9 +1610,7 @@ const AddProductStepTwo = ({
             </form>
           </div>
           <button className="btn-main mt-3" type="button" onClick={() => shippingOptionsErrorHandling()}>
-            {!pathname.includes("edit")
-              ? pathOr("", [locale, "Products", "next"], t)
-              : pathOr("", [locale, "Products", "save"], t)}
+            {pathOr("", [locale, "Products", "next"], t)}
           </button>
         </Accordion.Body>
       </Accordion.Item>
@@ -1894,9 +1892,7 @@ const AddProductStepTwo = ({
                 pathname.includes("add") && setEditModeOn(true)
               }}
             >
-              {pathname.includes("add")
-                ? pathOr("", [locale, "Products", "next"], t)
-                : pathOr("", [locale, "Products", "edit"], t)}
+              {pathOr("", [locale, "Products", "next"], t)}
             </button>
           </Accordion.Body>
         </Accordion.Item>
