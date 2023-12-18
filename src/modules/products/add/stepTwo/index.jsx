@@ -1609,7 +1609,21 @@ const AddProductStepTwo = ({
               </Row>
             </form>
           </div>
-          <button className="btn-main mt-3" type="button" onClick={() => shippingOptionsErrorHandling()}>
+          <button
+            className="btn-main mt-3"
+            type="button"
+            onClick={() => {
+              if (productPayload.MainImageIndex === null) {
+                pathname.includes("edit")
+                  ? toast.error(
+                      locale === "en"
+                        ? "Error Please recheck the data you entered!"
+                        : "حدث خطأ برجاء مراجعة البيانات و اعادة المحاولة",
+                    )
+                  : shippingOptionsErrorHandling()
+              }
+            }}
+          >
             {pathOr("", [locale, "Products", "next"], t)}
           </button>
         </Accordion.Body>
@@ -1802,12 +1816,7 @@ const AddProductStepTwo = ({
                                 {pathOr("", [locale, "Products", "freeDelivery"], t)}
                               </button>
                             </div>
-                            {/*          const auctionClosingTime = new Date(auctionClosingTimeStr)
-                              const currentTime = new Date()
-                              const timeDifference = auctionClosingTime - currentTime
-                              const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24))
-                              const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-                              const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60))*/}
+
                             {productPayload.AuctionClosingTime &&
                               new Date(productPayload.AuctionClosingTime) - new Date() > 0 && (
                                 <div className={styles["time"]}>
@@ -1887,7 +1896,7 @@ const AddProductStepTwo = ({
               className="btn-main mt-3"
               style={{ display: "block", margin: "0 auto" }}
               type="button"
-              onClick={(e) => {
+              onClick={() => {
                 handleGoToReviewPage()
                 pathname.includes("add") && setEditModeOn(true)
               }}
