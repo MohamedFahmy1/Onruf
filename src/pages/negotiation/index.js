@@ -1,8 +1,19 @@
-import React from "react"
 import NegotiationOffers from "../../modules/negotiation"
+import Head from "next/head"
+import { pathOr } from "ramda"
+import t from "../../translations.json"
+import { useRouter } from "next/router"
 
-const negotiationPage = () => {
-  return <NegotiationOffers />
+const NegotiationPage = () => {
+  const { locale } = useRouter()
+  return (
+    <>
+      <Head>
+        <title>{pathOr("", [locale, "websiteTitles", "Negotiation"], t)}</title>
+      </Head>
+      <NegotiationOffers />
+    </>
+  )
 }
 
-export default negotiationPage
+export default NegotiationPage

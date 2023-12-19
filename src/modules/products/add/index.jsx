@@ -51,6 +51,7 @@ const AddProduct = () => {
     AuctionNegotiateForWhom: "",
     AuctionNegotiatePrice: 0,
     AuctionClosingTime: "",
+    IsAuctionClosingTimeFixed: null,
     "ProductPaymentDetailsDto.PakatId": 0,
     "ProductPaymentDetailsDto.AdditionalPakatId": 0,
     "ProductPaymentDetailsDto.ProductPublishPrice": 0,

@@ -1,10 +1,20 @@
 import React from "react"
 import Orders from "../../modules/orders"
-import axios from "axios"
-import Alerto from "../../common/Alerto"
+import Head from "next/head"
+import { pathOr } from "ramda"
+import t from "../../translations.json"
+import { useRouter } from "next/router"
 
 const OrdersPage = () => {
-  return <Orders/>
+  const { locale } = useRouter()
+  return (
+    <>
+      <Head>
+        <title>{pathOr("", [locale, "websiteTitles", "Orders"], t)}</title>
+      </Head>
+      <Orders />
+    </>
+  )
 }
 
 export default OrdersPage

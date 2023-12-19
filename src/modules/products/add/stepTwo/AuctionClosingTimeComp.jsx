@@ -144,7 +144,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
       </div>
       <div
         className={`form-group contint_paner w-100 ${styles.p_select} ${
-          !productPayload.IsAuctionClosingTimeFixed ? styles.p_select_active : ""
+          productPayload.IsAuctionClosingTimeFixed === false ? styles.p_select_active : ""
         }`}
       >
         <div className="d-flex justify-content-between p-2">
@@ -159,7 +159,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
               setProductPayload({ ...productPayload, AuctionClosingTime: "", IsAuctionClosingTimeFixed: false })
               setActiveElementIndex(null)
             }}
-            checked={!productPayload.IsAuctionClosingTimeFixed}
+            checked={productPayload.IsAuctionClosingTimeFixed === false}
           />
         </div>
         <p style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>{`+ ${

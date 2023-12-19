@@ -9,7 +9,7 @@ import Navbar from "../modules/layout/navbar"
 import Sidebar from "../modules/layout/sidebar/SideBar"
 import { ToastContainer } from "react-toastify"
 import theme from "../styles/Theme"
-
+import t from "../translations.json"
 import "react-toastify/dist/ReactToastify.css"
 import "bootstrap/dist/css/bootstrap.min.css"
 import "../styles/globals.css"
@@ -23,10 +23,10 @@ import "../modules/reviews/reviews.css"
 import "../modules/coupons/addCoupon/addCoupon.module.css"
 import { Provider } from "react-redux"
 import { store } from "../appState/Store"
-import BlankPage from "./404"
 import { AppWrapper } from "../appWrapper/index"
 import { useRouter } from "next/router"
 import { getTokensFromCookie } from "../appState/personalData/authActions"
+import { pathOr } from "ramda"
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -46,7 +46,7 @@ const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache }) 
         <CacheProvider value={emotionCache}>
           <AppWrapper>
             <Head>
-              <title>OnRuf Business</title>
+              <title>{pathOr("", [locale, "websiteTitles", "default"], t)}</title>
               <link rel="shortcut icon" href="/favicon.ico" />
               <link rel="icon" href="/favicon.ico" />
               <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

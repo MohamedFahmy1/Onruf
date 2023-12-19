@@ -1,12 +1,20 @@
 import React from "react"
 import Coupons from "../../modules/coupons"
-import axios from "axios"
-import Alerto from "../../common/Alerto"
+import Head from "next/head"
+import { pathOr } from "ramda"
+import { useRouter } from "next/router"
+import t from "../../translations.json"
 
 const CouponsPage = () => {
-  // error && Alerto(JSON.parse(error))
-  return <Coupons />
+  const { locale } = useRouter()
+  return (
+    <>
+      <Head>
+        <title>{pathOr("", [locale, "websiteTitles", "Coupons"], t)}</title>
+      </Head>
+      <Coupons />
+    </>
+  )
 }
 
 export default CouponsPage
-

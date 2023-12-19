@@ -111,7 +111,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
 
   useEffect(() => {
     setProductsIds(selectedProductsIds)
-  }, [selectedRows])
+  }, [selectedRows, selectedProductsIds, setProductsIds])
 
   // useEffect(() => {
   //   // setSelectedRows({})

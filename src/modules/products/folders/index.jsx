@@ -134,7 +134,7 @@ const Folders = () => {
                             {
                               <img
                                 src={
-                                  !folder.image || folder.image === "http://onrufwebsite2-001-site1.btempurl.com/"
+                                  !folder.image || folder.image === "http://onrufwebsite6-001-site1.htempurl.com/"
                                     ? folderImg.src
                                     : folder.image
                                 }

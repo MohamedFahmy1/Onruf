@@ -43,6 +43,8 @@ const AddProductStepTwo = ({
   const [showBanksData, setShowBanksData] = useState(false)
   const [shippingOptions, setShippingOptions] = useState([])
 
+  const countryFlag = countries?.find((item) => item.id === productPayload.countryId)?.countryFlag
+
   const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
     try {
       const {
@@ -215,11 +217,18 @@ const AddProductStepTwo = ({
         MainImageIndex: null,
         listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index),
       })
-    } else
+    } else if (updatedIndex > productPayload.MainImageIndex) {
       setProductPayload({
         ...productPayload,
         listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index),
       })
+    } else {
+      setProductPayload({
+        ...productPayload,
+        MainImageIndex: productPayload.MainImageIndex - 1,
+        listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index),
+      })
+    }
   }
   const handleRemoveImageFromListmedia = (id, index) => {
     let updatedImages = productPayload.listMedia?.filter((item) => item.type === 1)
@@ -381,7 +390,6 @@ const AddProductStepTwo = ({
       }
     }
   }
-  const countryFlag = countries?.find((item) => item.id === productPayload.countryId)?.countryFlag
   console.log("productPayload", productPayload)
   return (
     <Accordion activeKey={eventKey} flush>
@@ -1614,14 +1622,16 @@ const AddProductStepTwo = ({
             className="btn-main mt-3"
             type="button"
             onClick={() => {
-              if (productPayload.MainImageIndex === null) {
-                pathname.includes("edit")
+              if (pathname.includes("edit")) {
+                productPayload.MainImageIndex === null
                   ? toast.error(
                       locale === "en"
                         ? "Error Please recheck the data you entered!"
                         : "حدث خطأ برجاء مراجعة البيانات و اعادة المحاولة",
                     )
                   : shippingOptionsErrorHandling()
+              } else {
+                shippingOptionsErrorHandling()
               }
             }}
           >

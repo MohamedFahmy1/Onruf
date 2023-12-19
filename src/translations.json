@@ -650,6 +650,21 @@
       "yearExpiryDate": "تاريخ الانتهاء",
       "saveLater": "احفظ للاستخدام لاحقا",
       "accountType": "نوع الحساب"
+    },
+    "websiteTitles": {
+      "default": "أونرف بزنس",
+      "Home": "أونرف بزنس | الرئيسية",
+      "Products": "أونرف بزنس | المنتجات",
+      "Negotiation": "أونرف بزنس | عروض التفاوض",
+      "Orders": "أونرف بزنس | الطلبات",
+      "Clients": "أونرف بزنس | العملاء",
+      "Reports": "أونرف بزنس | التقارير",
+      "Ratings": "أونرف بزنس | التقييمات و الأسئلة",
+      "Coupons": "أونرف بزنس | الكوبونات",
+      "Marketing": "أونرف بزنس | التسويق",
+      "Settings": "أونرف بزنس | الإعدادات",
+      "editAccount": "أونرف بزنس | تعديل بيانات الحساب",
+      "Contact": "أونرف بزنس | تواصل معنا"
     }
   },
   "en": {
@@ -1300,6 +1315,21 @@
       "yearExpiryDate": "Expiry Date",
       "saveLater": "Save For Later Use",
       "accountType": "Account Type"
+    },
+    "websiteTitles": {
+      "default": "OnRuf Business",
+      "Home": "OnRuf Business | Home",
+      "Products": "OnRuf Business | Products",
+      "Negotiation": "OnRuf | Negotiation Offers",
+      "Orders": "OnRuf Business | Orders",
+      "Clients": "OnRuf Business | Clients",
+      "Reports": "OnRuf Business | Reports",
+      "Ratings": "OnRuf | Ratings & Questions",
+      "Coupons": "OnRuf Business | Coupons",
+      "Marketing": "OnRuf Business | Marketing",
+      "Settings": "OnRuf Business | Settings",
+      "editAccount": "OnRuf Business | Edit Profile",
+      "Contact": "OnRuf Business | Contact Us"
     }
   }
 }
