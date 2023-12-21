@@ -337,7 +337,6 @@ input[type="radio"]:checked + span {
   background: var(--main);
   color: var(--white);
   min-width: 150px;
-  /*max-width: 280px;*/
   text-align: center;
   text-shadow: 0 0;
   font-weight: 500;
@@ -346,11 +345,14 @@ input[type="radio"]:checked + span {
   padding: 0 20px;
   border-radius: 50px;
 }
+
 .btn-main:disabled {
-  background: var(--gray);
+  opacity: 0.5;
+  cursor: auto;
 }
 .btn-main:disabled:hover {
-  background: var(--gray);
+  opacity: 0.5;
+  cursor: auto;
 }
 
 .btn-main:hover {
@@ -497,7 +499,6 @@ textarea.form-control {
 }
 
 .table_dash {
-  white-space: nowrap;
   min-width: 800px;
 }
 
@@ -542,6 +543,7 @@ tbody {
 
 .table_dash td {
   border-bottom: 1px solid #eef1f5 !important;
+  max-width: 250px;
 }
 
 .table_dash .info_ {

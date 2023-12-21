@@ -1,8 +1,21 @@
 import React from "react"
 import Branches from "../../../modules/settings/branches"
-// import axios from "axios"
+import Head from "next/head"
+import { pathOr } from "ramda"
+import { useRouter } from "next/router"
+import t from "../../../translations.json"
 
-const BranchesPage = ({ branches }) => <Branches />
+const BranchesPage = ({ branches }) => {
+  const { locale } = useRouter()
+  return (
+    <>
+      <Head>
+        <title>{pathOr("", [locale, "websiteTitles", "Branches"], t)}</title>
+      </Head>
+      <Branches />
+    </>
+  )
+}
 
 export default BranchesPage
 

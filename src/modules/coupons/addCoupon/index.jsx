@@ -253,7 +253,7 @@ const AddCoupon = () => {
                     </div>
                     {locale === "ar" ? (
                       <div>
-                        <label className="f-b fs-5">عنوان الكوبون</label>
+                        <label className="f-b fs-5 p-2">عنوان الكوبون</label>
                         <input
                           type="text"
                           className="form-control"

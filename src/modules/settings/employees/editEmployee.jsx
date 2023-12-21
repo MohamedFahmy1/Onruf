@@ -106,7 +106,7 @@ const EditEmployee = () => {
     <div className="body-content">
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-          <h6 className="f-b m-0"> {pathOr("", [locale, "Employee", "addEmployee"], t)}</h6>
+          <h6 className="f-b m-0"> {pathOr("", [locale, "Employee", "editEmployee"], t)}</h6>
           <Link href="/settings/employees">
             <a className="btn-main btn-main-o">{pathOr("", [locale, "Employee", "cancel"], t)}</a>
           </Link>
@@ -214,7 +214,7 @@ const EditEmployee = () => {
               </div>
 
               <button className="btn-main mt-3" type="submit">
-                {pathOr("", [locale, "Employee", "addEmployee"], t)}{" "}
+                {pathOr("", [locale, "Employee", "editEmployee"], t)}{" "}
               </button>
             </form>
           </div>

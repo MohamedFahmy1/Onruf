@@ -1,8 +1,19 @@
-import axios from "axios"
-import React from "react"
-import { headersJson } from "../../../../token"
 import Wallet from "../../../modules/settings/wallet"
+import Head from "next/head"
+import { pathOr } from "ramda"
+import { useRouter } from "next/router"
+import t from "../../../translations.json"
 
-const WalletPage = (props) => <Wallet {...props} />
+const WalletPage = (props) => {
+  const { locale } = useRouter()
+  return (
+    <>
+      <Head>
+        <title>{pathOr("", [locale, "websiteTitles", "Credit"], t)}</title>
+      </Head>
+      <Wallet {...props} />
+    </>
+  )
+}
 
 export default WalletPage

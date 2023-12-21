@@ -11,7 +11,6 @@ import Alerto from "../../../common/Alerto"
 const EditProduct = () => {
   const { locale, query, push } = useRouter()
   const [step, setStep] = useState(1)
-  // const { data: productData } = useFetch(`/GetProductById?id=${query.id}&lang=${locale}`, true)
   const localeRef = useRef(locale)
   const [selectedCatProps, setSelectedCatProps] = useState()
   const { data: shippingOptions } = useFetch(`/GetProductShippingOptions?productId=${query.id}`, true)
@@ -142,7 +141,6 @@ const EditProduct = () => {
       }
     }
     query.id && getProductData()
-    // Don't add locale to the depndencies as it will overide the data
   }, [query.id])
 
   useEffect(() => {
