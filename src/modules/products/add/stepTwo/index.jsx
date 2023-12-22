@@ -1622,14 +1622,14 @@ const AddProductStepTwo = ({
             className="btn-main mt-3"
             type="button"
             onClick={() => {
-              if (pathname.includes("edit")) {
-                productPayload.MainImageIndex === null
-                  ? toast.error(
-                      locale === "en"
-                        ? "Error Please recheck the data you entered!"
-                        : "حدث خطأ برجاء مراجعة البيانات و اعادة المحاولة",
-                    )
-                  : shippingOptionsErrorHandling()
+              if (productPayload.MainImageIndex === null) {
+                return toast.error(locale === "en" ? "Error Please Add Main Image!" : "حدث خطأ برجاء تعيين صورة رئيسية")
+              } else if (productPayload.AuctionClosingTime === null && productPayload.IsAuctionEnabled) {
+                return toast.error(
+                  locale === "en"
+                    ? "Error Please Choose Auction Closing Time!"
+                    : "حدث خطأ برجاء تحديد موعد انتهاء المزاد",
+                )
               } else {
                 shippingOptionsErrorHandling()
               }
@@ -1907,8 +1907,20 @@ const AddProductStepTwo = ({
               style={{ display: "block", margin: "0 auto" }}
               type="button"
               onClick={() => {
-                handleGoToReviewPage()
-                pathname.includes("add") && setEditModeOn(true)
+                if (productPayload.MainImageIndex === null) {
+                  return toast.error(
+                    locale === "en" ? "Error Please Add Main Image!" : "حدث خطأ برجاء تعيين صورة رئيسية",
+                  )
+                } else if (productPayload.AuctionClosingTime === null && productPayload.IsAuctionEnabled) {
+                  return toast.error(
+                    locale === "en"
+                      ? "Error Please Choose Auction Closing Time!"
+                      : "حدث خطأ برجاء تحديد موعد انتهاء المزاد",
+                  )
+                } else {
+                  handleGoToReviewPage()
+                  pathname.includes("add") && setEditModeOn(true)
+                }
               }}
             >
               {pathOr("", [locale, "Products", "next"], t)}
