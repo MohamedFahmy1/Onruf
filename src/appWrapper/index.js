@@ -7,7 +7,7 @@ import { Fragment } from "react"
 import { useRouter } from "next/router"
 
 export const AppWrapper = ({ children }) => {
-  const { locale } = useRouter()
+  const { locale, pathname } = useRouter()
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(getTokensFromCookie())
@@ -23,6 +23,13 @@ export const AppWrapper = ({ children }) => {
     axios.defaults.headers.common["User-Language"] = locale
     axios.defaults.headers.common["Application-Source"] = "BusinessAccount"
   }, [Token, providerId, buisnessAccountId, locale])
-
-  return <Fragment>{Token && buisnessAccountId ? children : <UnAuthorisedPage />}</Fragment>
+  let content
+  if (pathname === `/en` || pathname === "/") {
+    content = children
+  } else if (Token && buisnessAccountId) {
+    content = children
+  } else {
+    content = <UnAuthorisedPage />
+  }
+  return <Fragment>{content}</Fragment>
 }

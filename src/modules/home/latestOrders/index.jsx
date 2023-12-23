@@ -7,10 +7,12 @@ import Link from "next/link"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
+import { useSelector } from "react-redux"
 
 const LatestOrders = ({ orders }) => {
   const { locale } = useRouter()
-  console.log(orders)
+  const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+
   const columns = useMemo(
     () => [
       {
@@ -100,7 +102,7 @@ const LatestOrders = ({ orders }) => {
       <div className="contint_paner">
         <div className="d-flex align-items-center justify-content-between mb-3">
           <h5 className="f-b m-0">{pathOr("", [locale, "LastOrders", "lastorders"], t)}</h5>
-          <Link href={`/${locale}/orders`}>
+          <Link href={`/${locale || "en"}/orders`}>
             <a href="#" className="main-color font-18 text-dcoration-none">
               {pathOr("", [locale, "Notifications", "viewall"], t)}
             </a>
@@ -108,7 +110,7 @@ const LatestOrders = ({ orders }) => {
         </div>
         <div className="outer_table">
           {orders && <Table columns={columns} data={orders} pageSize={8} isCheckbox={false} />}
-          <Pagination listLength={orders?.length} pageSize={8} />
+          {buisnessAccountId && <Pagination listLength={orders?.length} pageSize={8} />}
         </div>
       </div>
     </Col>

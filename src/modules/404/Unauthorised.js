@@ -6,15 +6,14 @@ import { useRouter } from "next/router"
 
 export const UnAuthorisedPage = () => {
   const [message, setMessage] = useState("Loading ........")
-  const router = useRouter()
+  const { push } = useRouter()
   useEffect(() => {
     const timer = setTimeout(() => {
       setMessage("Unauthorized")
-      router.push("http://onrufwebsite4-001-site1.htempurl.com")
+      push("http://onrufwebsite4-001-site1.htempurl.com")
     }, 5000)
-
     return () => clearTimeout(timer)
-  }, [])
+  }, [push])
 
   return (
     <div className={style.container}>

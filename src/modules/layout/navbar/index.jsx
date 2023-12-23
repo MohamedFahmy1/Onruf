@@ -25,7 +25,6 @@ const Navbar = () => {
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
   const providerId = useSelector((state) => state.authSlice.providerId)
   const dropdownRef = useRef(null)
-
   useEffect(() => {
     axios.defaults.headers.common["Authorization"] = token
     axios.defaults.headers.common["Provider-Id"] = providerId
@@ -39,11 +38,9 @@ const Navbar = () => {
   }
 
   const accountData = () => {
-    if (buisnessAccountId) {
-      const account = businessAccountList.filter((buisness) => buisness.id == buisnessAccountId)
-      setUserName(account[0]?.businessAccountName)
-      setUserImage(`${account[0]?.businessAccountImage}`)
-    }
+    const account = businessAccountList.filter((buisness) => buisness.id == buisnessAccountId)
+    setUserName(account[0]?.businessAccountName)
+    setUserImage(`${account[0]?.businessAccountImage}`)
   }
 
   useEffect(() => {
@@ -51,8 +48,8 @@ const Navbar = () => {
   }, [router])
 
   useEffect(() => {
-    getAllBuisnessAccounts()
-  }, [locale])
+    buisnessAccountId && getAllBuisnessAccounts()
+  }, [locale, buisnessAccountId])
 
   useEffect(() => {
     businessAccountList && accountData()

@@ -8,16 +8,13 @@ import LatestOrdersWithClients from "./latestOrdersWithClient"
 import axios from "axios"
 import { useRouter } from "next/router"
 import { useSelector } from "react-redux"
-
-const Home = () => {
+const Home = ({ sales: s, ListProduct, ListNewOrder, GetListUser }) => {
   const { locale } = useRouter()
-  const router = useRouter()
-
   const [almostFinishedProducts, setAlmostFinishedProducts] = useState()
-  const [sales, setSales] = useState()
-  const [products, setProducts] = useState()
-  const [orders, setOrders] = useState()
-  const [clients, setClients] = useState()
+  const [sales, setSales] = useState(s)
+  const [products, setProducts] = useState(ListProduct)
+  const [orders, setOrders] = useState(ListNewOrder)
+  const [clients, setClients] = useState(GetListUser)
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
 
   const getSales = async () => {
@@ -48,15 +45,16 @@ const Home = () => {
   }
 
   useEffect(() => {
-    getSales()
-    getProduct()
-    getOrders()
-    getClients()
+    if (buisnessAccountId) {
+      getSales()
+      getProduct()
+      getOrders()
+      getClients()
+    }
   }, [buisnessAccountId])
 
   useEffect(() => {
     let almostFinishedProducts = []
-    console.log(products)
     products?.map((product) => {
       if (product.qty < 4) {
         almostFinishedProducts.push(product)
