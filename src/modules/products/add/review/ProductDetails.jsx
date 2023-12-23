@@ -166,6 +166,19 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       }
     }
   }
+  // Determine the main image in the edit & repost section
+  let imageSrc
+  if (!pathname.includes("add")) {
+    const numberOfOldImages = productFullData.listMedia?.filter((item) => item.type === 1)
+    const indexOfNewAddedImage = productFullData.MainImageIndex - numberOfOldImages?.length
+    if (productFullData.listImageFile?.length > 0) {
+      productFullData.MainImageIndex > numberOfOldImages?.length - 1
+        ? (imageSrc = URL.createObjectURL(productFullData.listImageFile[indexOfNewAddedImage]))
+        : (imageSrc = numberOfOldImages[productFullData.MainImageIndex]?.url)
+    } else {
+      imageSrc = numberOfOldImages[productFullData.MainImageIndex]?.url
+    }
+  }
 
   return (
     <div className="body-content">
@@ -184,18 +197,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
               <Col lg={6}>
                 <div className="d-flex align-items-center gap-1">
                   {productFullData.productImage && !pathname.includes("add") && (
-                    <Image
-                      src={
-                        productFullData.listImageFile.length > 0
-                          ? URL.createObjectURL(productFullData.listImageFile[productFullData.MainImageIndex])
-                          : productFullData.productImage
-                      }
-                      className="img_table"
-                      alt="product"
-                      priority
-                      width={130}
-                      height={100}
-                    />
+                    <Image src={imageSrc} className="img_table" alt="product" priority width={130} height={100} />
                   )}
                   {pathname.includes("add") && (
                     <Image

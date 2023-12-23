@@ -48,7 +48,7 @@ const AddProduct = () => {
     IsAuctionPaied: false,
     SendOfferForAuction: false,
     AuctionMinimumPrice: 0,
-    AuctionNegotiateForWhom: "",
+    AuctionNegotiateForWhom: null,
     AuctionNegotiatePrice: 0,
     AuctionClosingTime: "",
     IsAuctionClosingTimeFixed: null,

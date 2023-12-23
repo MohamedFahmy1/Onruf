@@ -278,28 +278,6 @@ const AddProductStepTwo = ({
     setProductPayload((prev) => ({ ...prev, productSep: updatedSpecififcations }))
   }
 
-  const productDetailsInputs = [
-    productPayload.nameAr,
-    productPayload.nameEn,
-    productPayload.countryId,
-    productPayload.regionId,
-    productPayload.neighborhoodId,
-    productPayload.qty,
-  ]
-
-  const inputsChecker = (inputs) => {
-    const checkInputIsEmpty = (value) => value?.length > 0 || value != 0
-    const isInputEmpty = inputs.every(checkInputIsEmpty)
-    return isInputEmpty
-  }
-  const productDetailsValidation = () => {
-    for (let i = 0; i < productPayload.productSep.length; i++) {
-      if (productPayload.productSep[i].ValueSpeAr === "" || productPayload.productSep[i].valueSpeAr === "") {
-        return toast.error(locale === "en" ? "Please enter all necessary data" : "رجاء ادخال جميع البيانات")
-      }
-    }
-    return setEventKey("2")
-  }
   const paymentOptionsHandler = (optionIndex) => {
     if (optionIndex === 2) {
       setProductPayload((prev) => ({
@@ -346,22 +324,9 @@ const AddProductStepTwo = ({
     if (PaymentOptions?.includes(1)) {
       setProductPayload((prev) => ({ ...prev, IsCashEnabled: true }))
     } else setProductPayload((prev) => ({ ...prev, IsCashEnabled: false }))
-  }, [PaymentOptions])
+  }, [PaymentOptions, setProductPayload])
 
-  const shippingOptionsErrorHandling = () => {
-    const hasTwoOrThree = productPayload.ShippingOptions.includes(2) || productPayload.ShippingOptions.includes(3)
-    const hasFourFiveOrSix = productPayload.ShippingOptions.some((id) => [4, 5, 6].includes(id))
-    if (hasTwoOrThree && !hasFourFiveOrSix) {
-      toast.error(
-        locale == "en" ? "Please select the highlighted options!" : "من فضلك اختر وسيلة شحن من الوسايل المحدده اعلاه",
-      )
-    } else if (productPayload.ShippingOptions.length === 0) {
-      toast.error(locale == "en" ? "Please select any shipping options!" : "من فضلك اختر اي وسيلة شحن")
-    } else if (productPayload.AuctionClosingTime == "" && productPayload.IsAuctionEnabled) {
-      toast.error(locale == "en" ? "Please select Autction Duration!" : "رجاء اختر مدة المزاد")
-    } else !pathname.includes("edit") ? setEventKey("5") : handleGoToReviewPage()
-  }
-
+  // All Validation Functions
   const validateProductImages = () => {
     if (
       productPayload?.listImageFile.length > 0 &&
@@ -369,7 +334,7 @@ const AddProductStepTwo = ({
       // check that videoUrl array doesn't have empty fileds or user didn't enter any then it's accepted
       (productPayload.videoUrl.every((url) => url.trim() !== "") || productPayload.videoUrl.length === 1)
     ) {
-      setEventKey("1")
+      return true
     } else {
       if (productPayload?.listImageFile.length === 0) {
         if (
@@ -377,7 +342,7 @@ const AddProductStepTwo = ({
           productPayload?.listMedia?.filter((item) => item.type === 1)?.length > 0 &&
           productPayload?.MainImageIndex !== null
         ) {
-          return setEventKey("1")
+          return true
         } else return toast.error(locale === "en" ? "No photo uploaded for the product" : "لايوجد صور للمنتج")
       } else if (productPayload?.MainImageIndex === null) {
         return toast.error(locale === "en" ? "No main photo selected" : "لم يتم اختيار صورة رئيسية")
@@ -388,6 +353,90 @@ const AddProductStepTwo = ({
             : "رجاء أدخل لينك الفيديو او امسح الحقل الفارغ",
         )
       }
+    }
+  }
+  const validateProductDetails = () => {
+    for (let i = 0; i < productPayload.productSep.length; i++) {
+      if (productPayload.productSep[i].ValueSpeAr === "" || productPayload.productSep[i].valueSpeEn === "") {
+        return toast.error(locale === "en" ? "Please enter all Product data!" : "رجاء ادخال جميع بيانات المنتج")
+      }
+    }
+    return true
+  }
+  const validateAdDetails = () => {
+    if (productPayload.qty <= 0 && productPayload.qty !== null) {
+      return toast.error(
+        locale === "en" ? "You can't add product with quantity less than 1" : "لا يمكنك اضافة منتج بكمية اقل من 1",
+      )
+    }
+    const productDetailsInputs = [
+      productPayload.nameAr,
+      productPayload.nameEn,
+      productPayload.countryId,
+      productPayload.regionId,
+      productPayload.neighborhoodId,
+    ]
+    const checkInputIsEmpty = (value) => {
+      return value !== null && value !== undefined && value !== "" && value !== 0
+    }
+    const isInputEmpty = productDetailsInputs.every(checkInputIsEmpty)
+    return isInputEmpty === true
+      ? true
+      : toast.error(
+          locale === "en"
+            ? "Please add name of the product en & ar and your address"
+            : "من فضلك ادخل اسم المنتج بالعربي و الانجليزي و العنوان",
+        )
+  }
+  const validateSaleDetails = () => {
+    if (
+      !productPayload.IsFixedPriceEnabled &&
+      !productPayload.IsAuctionEnabled &&
+      !productPayload.IsNegotiationEnabled
+    ) {
+      return toast.error(locale === "en" ? "Please choose sale type!" : "من فضلك حدد نوع البيع")
+    } else if (productPayload.IsFixedPriceEnabled && !productPayload.Price) {
+      return toast.error(locale === "en" ? "Please enter purchasing price!" : "من فضلك ادخل سعر شراء المنتج")
+    } else if (
+      productPayload.IsAuctionEnabled &&
+      (!productPayload.AuctionStartPrice ||
+        !productPayload.AuctionMinimumPrice ||
+        !productPayload.AuctionNegotiatePrice ||
+        !productPayload.AuctionNegotiateForWhom)
+    ) {
+      return toast.error(locale === "en" ? "Please enter all auction details!" : "من فضلك ادخل جميع بيانات المزاد")
+    } else if (productPayload.IsNegotiationEnabled && !productPayload.Price) {
+      return toast.error(locale === "en" ? "Please enter purchasing price!" : "من فضلك ادخل سعر المنتج")
+    } else return true
+  }
+  const validateDurationAndShipping = () => {
+    // if you choosed shipping options 2 or 3 you must choose 4,5 or 6
+    const hasTwoOrThree = productPayload.ShippingOptions.includes(2) || productPayload.ShippingOptions.includes(3)
+    const hasFourFiveOrSix = productPayload.ShippingOptions.some((id) => [4, 5, 6].includes(id))
+    if (hasTwoOrThree && !hasFourFiveOrSix) {
+      return toast.error(
+        locale == "en" ? "Please select the highlighted options!" : "من فضلك اختر وسيلة شحن من الوسايل المحدده اعلاه",
+      )
+    } else if (productPayload.ShippingOptions.length === 0) {
+      return toast.error(locale == "en" ? "Please select any shipping options!" : "من فضلك اختر اي وسيلة شحن")
+    } else if (
+      (productPayload.AuctionClosingTime === "" || !productPayload.AuctionClosingTime) &&
+      productPayload.IsAuctionEnabled
+    ) {
+      return toast.error(
+        locale === "en" ? "Error Please Choose Auction Closing Time!" : "حدث خطأ برجاء تحديد موعد انتهاء المزاد",
+      )
+    } else return true
+  }
+  const validateAll = () => {
+    if (
+      validateProductImages() &&
+      validateProductDetails() &&
+      validateAdDetails() &&
+      validateSaleDetails() &&
+      validateDurationAndShipping() === true
+    ) {
+      return true
     }
   }
   console.log("productPayload", productPayload)
@@ -572,7 +621,13 @@ const AddProductStepTwo = ({
               </Fragment>
             )}
           </div>
-          <button className="btn-main mt-3 btn-disabled" type="button" onClick={validateProductImages}>
+          <button
+            className="btn-main mt-3 btn-disabled"
+            type="button"
+            onClick={() => {
+              validateProductImages() === true && setEventKey("1")
+            }}
+          >
             {pathOr("", [locale, "Products", "next"], t)}
           </button>
         </Accordion.Body>
@@ -635,7 +690,13 @@ const AddProductStepTwo = ({
                 ))}
             </form>
           </div>
-          <button className="btn-main mt-3" type="button" onClick={productDetailsValidation}>
+          <button
+            className="btn-main mt-3"
+            type="button"
+            onClick={() => {
+              validateProductDetails() === true && setEventKey("2")
+            }}
+          >
             {pathOr("", [locale, "Products", "next"], t)}
           </button>
         </Accordion.Body>
@@ -860,11 +921,14 @@ const AddProductStepTwo = ({
                         <input
                           type="unlimtedQuantity ? 'text' : 'number'"
                           className={`form-control ${styles["form-control"]}`}
-                          value={productPayload.AlmostSoldOutQuantity == 0 ? 1 : productPayload.AlmostSoldOutQuantity}
+                          value={productPayload.AlmostSoldOutQuantity <= 0 ? 1 : productPayload.AlmostSoldOutQuantity}
                           onKeyDown={(e) => onlyNumbersInInputs(e)}
-                          onChange={(e) =>
-                            setProductPayload({ ...productPayload, AlmostSoldOutQuantity: +e.target.value })
-                          }
+                          onChange={(e) => {
+                            const value = +e.target.value
+                            if (value <= 0) {
+                              setProductPayload({ ...productPayload, AlmostSoldOutQuantity: 1 })
+                            } else setProductPayload({ ...productPayload, AlmostSoldOutQuantity: value })
+                          }}
                         />
                         <button
                           className="btn_ minus"
@@ -1081,16 +1145,7 @@ const AddProductStepTwo = ({
             className="btn-main mt-3"
             type="button"
             onClick={() => {
-              if (productPayload.qty <= 0 && productPayload.qty !== null) {
-                return toast.error(
-                  locale === "en"
-                    ? "You can't add product with quantity less than 1"
-                    : "لا يمكنك اضافة منتج بكمية اقل من 1",
-                )
-              }
-              inputsChecker(productDetailsInputs)
-                ? setEventKey("3")
-                : toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات  ")
+              validateAdDetails() === true && setEventKey("3")
             }}
           >
             {pathOr("", [locale, "Products", "next"], t)}
@@ -1522,16 +1577,7 @@ const AddProductStepTwo = ({
           <button
             className="btn-main mt-3"
             type="button"
-            onClick={() =>
-              (productPayload.IsFixedPriceEnabled && !productPayload.Price) ||
-              (productPayload.IsAuctionEnabled &&
-                (!productPayload.AuctionStartPrice ||
-                  !productPayload.AuctionMinimumPrice ||
-                  !productPayload.AuctionNegotiatePrice)) ||
-              (productPayload.IsNegotiationEnabled && !productPayload.Price)
-                ? toast.error(locale === "en" ? " Missing data" : "املأ بعض البيانات")
-                : setEventKey("4")
-            }
+            onClick={() => validateSaleDetails() === true && setEventKey("4")}
           >
             {pathOr("", [locale, "Products", "next"], t)}
           </button>
@@ -1563,6 +1609,7 @@ const AddProductStepTwo = ({
                   <div className="form-group">
                     <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
                       {pathOr("", [locale, "Products", "shippingOptions"], t)}
+                      {<RequiredSympol />}
                     </label>
                     <div className="row">
                       {productPayload.ShippingOptions?.includes(2) || productPayload.ShippingOptions?.includes(3)
@@ -1622,16 +1669,10 @@ const AddProductStepTwo = ({
             className="btn-main mt-3"
             type="button"
             onClick={() => {
-              if (productPayload.MainImageIndex === null) {
-                return toast.error(locale === "en" ? "Error Please Add Main Image!" : "حدث خطأ برجاء تعيين صورة رئيسية")
-              } else if (productPayload.AuctionClosingTime === null && productPayload.IsAuctionEnabled) {
-                return toast.error(
-                  locale === "en"
-                    ? "Error Please Choose Auction Closing Time!"
-                    : "حدث خطأ برجاء تحديد موعد انتهاء المزاد",
-                )
+              if (pathname.includes("edit")) {
+                validateAll() === true && handleGoToReviewPage()
               } else {
-                shippingOptionsErrorHandling()
+                validateDurationAndShipping() === true && setEventKey("5")
               }
             }}
           >
@@ -1907,20 +1948,7 @@ const AddProductStepTwo = ({
               style={{ display: "block", margin: "0 auto" }}
               type="button"
               onClick={() => {
-                if (productPayload.MainImageIndex === null) {
-                  return toast.error(
-                    locale === "en" ? "Error Please Add Main Image!" : "حدث خطأ برجاء تعيين صورة رئيسية",
-                  )
-                } else if (productPayload.AuctionClosingTime === null && productPayload.IsAuctionEnabled) {
-                  return toast.error(
-                    locale === "en"
-                      ? "Error Please Choose Auction Closing Time!"
-                      : "حدث خطأ برجاء تحديد موعد انتهاء المزاد",
-                  )
-                } else {
-                  handleGoToReviewPage()
-                  pathname.includes("add") && setEditModeOn(true)
-                }
+                validateAll() === true && handleGoToReviewPage()
               }}
             >
               {pathOr("", [locale, "Products", "next"], t)}

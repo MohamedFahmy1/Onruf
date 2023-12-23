@@ -55,6 +55,15 @@ const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache, da
               <link rel="manifest" href="/site.webmanifest" />
               <meta name="description" content="Welcome to OnRuf Where you can sell and buy the way you want it..." />
               <meta name="viewport" content="initial-scale=1, width=device-width" />
+              <meta property="og:title" content="OnRuf Business" />
+              <meta
+                property="og:description"
+                content="Welcome to OnRuf Where you can sell and buy the way you want it..."
+              />
+              {/* <meta property="og:image" content="URL of the image to display" /> */}
+              {/* <meta property="og:url" content="URL of the page" /> */}
+              {/* <link rel="canonical" href="https://your-preferred-url.com" /> */}
+              {/* <meta name="robots" content="noindex, nofollow" />  */}
             </Head>
             <ThemeProvider theme={theme}>
               <EmotionCacheProvider theme={theme}>
