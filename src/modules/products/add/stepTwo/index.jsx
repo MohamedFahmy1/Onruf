@@ -732,8 +732,12 @@ const AddProductStepTwo = ({
                       type="text"
                       id="subTitleAr"
                       className={`form-control ${styles["form-control"]}`}
-                      placeholder={pathOr("", [locale, "Products", "enterProductSecondaryAddressAr"], t)}
+                      placeholder={
+                        productPayload.subTitleAr !== null &&
+                        pathOr("", [locale, "Products", "enterProductSecondaryAddressAr"], t)
+                      }
                       value={productPayload.subTitleAr}
+                      disabled={productPayload.subTitleAr === null}
                       onChange={(e) =>
                         setProductPayload({
                           ...productPayload,
@@ -787,8 +791,12 @@ const AddProductStepTwo = ({
                       type="text"
                       id="subTitleEn"
                       className={`form-control ${styles["form-control"]}`}
-                      placeholder={pathOr("", [locale, "Products", "enterProductSecondaryAddressEn"], t)}
+                      placeholder={
+                        productPayload.subTitleEn !== null &&
+                        pathOr("", [locale, "Products", "enterProductSecondaryAddressEn"], t)
+                      }
                       value={productPayload.subTitleEn}
+                      disabled={productPayload.subTitleEn === null}
                       onChange={(e) =>
                         setProductPayload({
                           ...productPayload,
