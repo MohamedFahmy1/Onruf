@@ -270,7 +270,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                   >
                     {pathOr("", [locale, "Products", "repost"], t)}
                   </button>
-                  {original.isAuctionEnabled && (
+                  {original.isAuctionEnabled && new Date(original.auctionClosingTime) - new Date() < 0 && (
                     <button
                       type="button"
                       className="info_"
@@ -403,15 +403,17 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
             >
               {pathOr("", [locale, "Products", "inActiveProducts"], t)} ({inActiveProducts?.length})
             </button>
-            <button
-              className={`btn-main ${selectedFilter === "didnotSell" ? "active" : ""}`}
-              onClick={() => {
-                setSelectedFilter("didnotSell")
-                push({ query: { page: 1 } })
-              }}
-            >
-              {pathOr("", [locale, "Products", "didnt_sell"], t)} ({didnotSell?.length})
-            </button>
+            {!id && (
+              <button
+                className={`btn-main ${selectedFilter === "didnotSell" ? "active" : ""}`}
+                onClick={() => {
+                  setSelectedFilter("didnotSell")
+                  push({ query: { page: 1 } })
+                }}
+              >
+                {pathOr("", [locale, "Products", "didnt_sell"], t)} ({didnotSell?.length})
+              </button>
+            )}
           </div>
           <div className="contint_paner">
             <div className="outer_table">

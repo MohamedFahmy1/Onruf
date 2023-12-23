@@ -103,12 +103,11 @@ const AddProductStepTwo = ({
       } = await axios(
         `${process.env.NEXT_PUBLIC_API_URL}/ListAllSpecificationAndSubSpecificationByCatId?lang=${locale}&id=${catId}&currentPage=1`,
       )
-      if (pathname.includes("add")) {
+      // this will make new productSep array when adding new product and user still didn't edit it
+      if (pathname.includes("add") && !editModeOn) {
         const speficationsPayloadList = spefications.map((spefication) => ({
           HeaderSpeAr: spefication.nameAr,
           HeaderSpeEn: spefication.nameEn,
-          ValueSpeAr: "",
-          ValueSpeEn: "",
           Type: spefication.type,
           SpecificationId: spefication.id,
         }))
@@ -1948,7 +1947,10 @@ const AddProductStepTwo = ({
               style={{ display: "block", margin: "0 auto" }}
               type="button"
               onClick={() => {
-                validateAll() === true && handleGoToReviewPage()
+                if (validateAll() === true) {
+                  handleGoToReviewPage()
+                  pathname.includes("add") && setEditModeOn(true)
+                }
               }}
             >
               {pathOr("", [locale, "Products", "next"], t)}
