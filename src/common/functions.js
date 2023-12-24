@@ -120,5 +120,7 @@ export const negotiationTypeTranslation = (dataFromApi, locale) => {
     return pathOr("", [locale, "negotiation", "Accepted"], t)
   } else if (dataFromApi?.match(/Purchcased/gi)) {
     return pathOr("", [locale, "negotiation", "Purchcased"], t)
+  } else if (dataFromApi?.match(/Refused/gi)) {
+    return pathOr("", [locale, "negotiation", "refused"], t)
   } else return "Unknown negotiation type"
 }

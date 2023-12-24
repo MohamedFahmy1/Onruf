@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react"
+import React, { useState, useEffect, useMemo, useCallback } from "react"
 import Router, { useRouter } from "next/router"
 import { useForm } from "react-hook-form"
 import axios from "axios"
@@ -12,79 +12,95 @@ import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { FaFlag } from "react-icons/fa"
 import Image from "next/image"
+import Alerto from "../../../common/Alerto"
+import { DevTool } from "@hookform/devtools"
 const AddBranch = () => {
   const [neighbourhoods, setNeighbourhoods] = useState([])
   const [regions, setRegions] = useState([])
-  const [selectedBranch, setSelectedBranch] = useState({})
+  const [selectedBranch, setSelectedBranch] = useState()
   const [countries, setCountries] = useState()
-
-  const id = +Router?.router?.state?.query?.id
-
-  const getCountries = async () => {
-    const {
-      data: { data: countries },
-    } = await axios(process.env.REACT_APP_API_URL + `/ListCountries?lang=${locale}`)
-    setCountries(countries)
-  }
-
-  useEffect(() => {
-    getCountries()
-  }, [])
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
     reset,
+    setValue,
+    getValues,
+    control,
   } = useForm()
   const { locale } = useRouter()
+  const id = +Router?.router?.state?.query?.id
 
-  const getBranchById = async () => {
+  const getCountries = useCallback(async () => {
+    const {
+      data: { data: countries },
+    } = await axios(process.env.REACT_APP_API_URL + `/ListCountries?lang=${locale}`)
+    setCountries(countries)
+  }, [locale])
+
+  const handleFetchNeighbourhoodsOrRegions = useCallback(
+    async (url, params = "", id, setState) => {
+      try {
+        const {
+          data: { data },
+        } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
+        setState(data)
+      } catch (e) {
+        Alerto(e)
+      }
+    },
+    [locale],
+  )
+
+  useEffect(() => {
+    getCountries()
+  }, [getCountries])
+
+  const getBranchById = useCallback(async () => {
     try {
       const {
         data: { data },
       } = await axios(`${process.env.REACT_APP_API_URL}/GetBrancheById?id=${id}&lang=${locale}`)
-      const {
-        data: { data: neighborhoods },
-      } = await axios(
-        `${process.env.REACT_APP_API_URL}/ListNeighborhoodByRegionId?id=${data?.region?.id}&currentPage=1&lang=${locale}`,
+      handleFetchNeighbourhoodsOrRegions(
+        "ListNeighborhoodByRegionId",
+        "regionsIds",
+        data?.region?.id,
+        setNeighbourhoods,
       )
-      const {
-        data: { data: regions },
-      } = await axios(
-        `${process.env.REACT_APP_API_URL}/ListRegionsByCountryId?id=${data?.country?.id}&currentPage=1&lang=${locale}`,
-      )
-
-      setNeighbourhoods(neighborhoods)
-      setRegions(regions)
+      console.log(data.country.id, data.region.id)
+      handleFetchNeighbourhoodsOrRegions("ListRegionsByCountryId", "countriesIds", data?.country?.id, setRegions)
       setSelectedBranch(data)
-
       reset({
         ...data,
         countryId: data?.country?.id,
-        neighborhoodId: data?.neighborhood?.id,
         regionId: data?.region?.id,
+        neighborhoodId: data?.neighborhood?.id,
       })
     } catch (error) {
       console.error(error)
     }
-  }
+  }, [id, locale, reset, handleFetchNeighbourhoodsOrRegions])
 
   useEffect(() => {
     if (id) {
       getBranchById()
     }
-  }, [id])
+  }, [id, getBranchById])
 
-  useMemo(() => {
-    reset({
-      ...selectedBranch,
-      countryId: selectedBranch?.country?.id,
-      neighborhoodId: selectedBranch?.neighborhood?.id,
-      regionId: selectedBranch?.region?.id,
-    })
-  }, [selectedBranch])
+  useEffect(() => {
+    const countryId = watch().countryId
+    const regionId = watch().regionId
+    const neighborhoodId = watch().neighborhoodId
+    if (regions && neighbourhoods) {
+      reset({
+        ...selectedBranch,
+        countryId: countryId,
+        regionId: regionId,
+        neighborhoodId: neighborhoodId,
+      })
+    }
+  }, [regions, neighbourhoods, watch, selectedBranch, reset])
 
   const createBranch = async ({
     neighborhoodId,
@@ -130,27 +146,6 @@ const AddBranch = () => {
     }
   }
 
-  const handleFetchNeighbourhoodsOrRegions = async (url, id, setState) => {
-    try {
-      const {
-        data: { data },
-      } = await axios(`${process.env.REACT_APP_API_URL}/${url}?id=${id}&currentPage=1&lang=${locale}`)
-      setState(data)
-    } catch (error) {
-      console.log({ error })
-      setState([])
-    }
-  }
-
-  useEffect(() => {
-    const countryId = watch().countryId
-    const regionId = watch().regionId
-    if (countryId) {
-      handleFetchNeighbourhoodsOrRegions("ListNeighborhoodByRegionId", regionId, setNeighbourhoods)
-      handleFetchNeighbourhoodsOrRegions("ListRegionsByCountryId", countryId, setRegions)
-    }
-  }, [watch("countryId")])
-
   return (
     <div className="body-content">
       <div>
@@ -193,6 +188,22 @@ const AddBranch = () => {
                         <select
                           className="form-control form-select"
                           {...register("countryId", { required: "This field is required" })}
+                          onChange={(e) => {
+                            const selectedOption = countries.find((item) => item.id === +e.target.value)
+                            if (selectedOption) {
+                              setValue("countryId", +selectedOption.id)
+                              setValue("regionId", 0)
+                              setValue("neighborhoodId", 0)
+                              setNeighbourhoods([])
+                              setRegions([])
+                              handleFetchNeighbourhoodsOrRegions(
+                                "ListRegionsByCountryId",
+                                "countriesIds",
+                                +selectedOption.id,
+                                setRegions,
+                              )
+                            }
+                          }}
                         >
                           <option disabled hidden value="">
                             {pathOr("", [locale, "Branch", "select"], t)}
@@ -221,15 +232,30 @@ const AddBranch = () => {
                         <select
                           className="form-control form-select"
                           {...register("regionId", { required: "This field is required" })}
+                          value={selectedBranch?.regionId}
+                          onChange={(e) => {
+                            const selectedOption = regions.find((item) => item.id === +e.target.value)
+                            if (selectedOption) {
+                              setValue("regionId", +selectedOption.id)
+                              setValue("neighborhoodId", 0)
+                              setNeighbourhoods([])
+                              handleFetchNeighbourhoodsOrRegions(
+                                "ListNeighborhoodByRegionId",
+                                "regionsIds",
+                                +selectedOption.id,
+                                setNeighbourhoods,
+                              )
+                            }
+                          }}
                         >
-                          <option value="">{pathOr("", [locale, "Branch", "select"], t)}</option>
-                          {regions
-                            .filter(({ isActive }) => isActive)
-                            .map(({ name, id }) => (
-                              <option key={id} value={id}>
-                                {name}
-                              </option>
-                            ))}
+                          <option disabled value={0}>
+                            {pathOr("", [locale, "Branch", "select"], t)}
+                          </option>
+                          {regions.map(({ name, id }) => (
+                            <option key={id} value={id}>
+                              {name}
+                            </option>
+                          ))}
                         </select>
                         {errors?.regionId && errors?.regionId?.message}
                       </div>
@@ -246,15 +272,19 @@ const AddBranch = () => {
                         <select
                           className="form-control form-select"
                           {...register("neighborhoodId", { required: "This field is required" })}
+                          value={selectedBranch?.neighborhoodId}
+                          onChange={(e) => {
+                            setValue("neighborhoodId", +e.target.value)
+                          }}
                         >
-                          <option value="">{pathOr("", [locale, "Branch", "select"], t)}</option>
-                          {neighbourhoods
-                            .filter(({ isActive }) => isActive)
-                            .map(({ name, id }) => (
-                              <option key={id} value={id}>
-                                {name}
-                              </option>
-                            ))}
+                          <option disabled value={0}>
+                            {pathOr("", [locale, "Branch", "select"], t)}
+                          </option>
+                          {neighbourhoods.map(({ name, id }) => (
+                            <option key={id} value={id}>
+                              {name}
+                            </option>
+                          ))}
                         </select>
                         {errors?.neighborhoodId && errors?.neighborhoodId?.message}
                       </div>
@@ -307,6 +337,7 @@ const AddBranch = () => {
                 {pathOr("", [locale, "Branch", "branch"], t)}
               </button>
             </form>
+            <DevTool control={control} />
           </div>
         </div>
       </div>
