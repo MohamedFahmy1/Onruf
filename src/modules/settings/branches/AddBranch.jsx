@@ -26,12 +26,14 @@ const AddBranch = () => {
     watch,
     reset,
     setValue,
-    getValues,
     control,
   } = useForm()
   const { locale } = useRouter()
   const id = +Router?.router?.state?.query?.id
-
+  const countryId = watch("countryId")
+  const countryFlag = useMemo(() => {
+    return countryId && countries?.find((item) => item.id === countryId)?.countryFlag
+  }, [countries, countryId])
   const getCountries = useCallback(async () => {
     const {
       data: { data: countries },
@@ -68,14 +70,13 @@ const AddBranch = () => {
         data?.region?.id,
         setNeighbourhoods,
       )
-      console.log(data.country.id, data.region.id)
       handleFetchNeighbourhoodsOrRegions("ListRegionsByCountryId", "countriesIds", data?.country?.id, setRegions)
       setSelectedBranch(data)
       reset({
         ...data,
-        countryId: data?.country?.id,
-        regionId: data?.region?.id,
-        neighborhoodId: data?.neighborhood?.id,
+        countryId: +data?.country?.id,
+        regionId: +data?.region?.id,
+        neighborhoodId: +data?.neighborhood?.id,
       })
     } catch (error) {
       console.error(error)
@@ -95,9 +96,9 @@ const AddBranch = () => {
     if (regions && neighbourhoods) {
       reset({
         ...selectedBranch,
-        countryId: countryId,
-        regionId: regionId,
-        neighborhoodId: neighborhoodId,
+        countryId: +countryId,
+        regionId: +regionId,
+        neighborhoodId: +neighborhoodId,
       })
     }
   }, [regions, neighbourhoods, watch, selectedBranch, reset])
@@ -181,7 +182,11 @@ const AddBranch = () => {
                   <div className="form-group">
                     <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                       <span className="input-group-text" id="basic-addon1">
-                        <FaFlag size={25} />
+                        {Boolean(countryFlag) ? (
+                          <Image src={countryFlag} alt="country flag" width={30} height={20} />
+                        ) : (
+                          <FaFlag size={25} />
+                        )}
                       </span>
                       <div className="po_R flex-grow-1">
                         <label>{pathOr("", [locale, "Branch", "country"], t)}</label>

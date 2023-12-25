@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import axios from "axios"
 import { useForm } from "react-hook-form"
 import styles from "../../../modules/products/add/stepTwo/stepTwo.module.css"
@@ -22,8 +22,9 @@ import Image from "next/image"
 import { PiLinkedinLogoBold, PiTwitterLogoLight, PiYoutubeLogo } from "react-icons/pi"
 import Alerto from "../../../common/Alerto"
 import { DevTool } from "@hookform/devtools"
-
 import { minDate } from "../../../common/functions"
+import { FaFlag } from "react-icons/fa"
+
 const EditBussinessAccount = () => {
   const { locale } = useRouter()
   const [eventKey, setEventKey] = useState("0")
@@ -33,7 +34,9 @@ const EditBussinessAccount = () => {
     register,
     handleSubmit,
     setValue,
+    getValues,
     reset,
+    watch,
     control,
     formState: { isSubmitting },
   } = useForm({ defaultValues: accountData })
@@ -43,7 +46,12 @@ const EditBussinessAccount = () => {
   const [neighbourhoods, setNeighbourhoods] = useState([])
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
 
-  const getAccountData = async () => {
+  const countryId = watch("countryId")
+  const countryFlag = useMemo(() => {
+    return countryId && countries?.find((item) => item.id === +countryId)?.countryFlag
+  }, [countries, countryId])
+
+  const getAccountData = useCallback(async () => {
     const {
       data: { data: accountData },
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetBusinessAccountById", {
@@ -51,8 +59,9 @@ const EditBussinessAccount = () => {
     })
     setAccountData(accountData)
     reset(accountData)
-  }
-  const fetchCountries = async () => {
+  }, [buisnessAccountId, reset])
+
+  const fetchCountries = useCallback(async () => {
     try {
       const { data: countriesData } = await axios(
         process.env.NEXT_PUBLIC_API_URL + `/ListCountries?lang=${locale}&currentPage=1`,
@@ -62,46 +71,63 @@ const EditBussinessAccount = () => {
     } catch (e) {
       Alerto(e)
     }
-  }
-  const fetchRegions = async (id) => {
-    try {
-      const { data: data } = await axios(
-        process.env.NEXT_PUBLIC_API_URL + `/ListRegionsByCountryId?countriesIds=${id}&lang=${locale}&currentPage=1`,
-      )
-      const { data: regions } = data
-      setRegions(regions)
-    } catch (e) {
-      Alerto(e)
-    }
-  }
-  const fetchNeighbourhoods = async (id) => {
-    try {
-      const { data: data } = await axios(
-        process.env.NEXT_PUBLIC_API_URL + `/ListNeighborhoodByRegionId?regionsIds=${id}&lang=${locale}&currentPage=1`,
-      )
-      const { data: neighbourhood } = data
-      setNeighbourhoods(neighbourhood)
-    } catch (e) {
-      Alerto(e)
-    }
-  }
+  }, [locale])
+
+  const fetchRegions = useCallback(
+    async (id) => {
+      try {
+        const { data: data } = await axios(
+          process.env.NEXT_PUBLIC_API_URL + `/ListRegionsByCountryId?countriesIds=${id}&lang=${locale}&currentPage=1`,
+        )
+        const { data: regions } = data
+        setRegions(regions)
+      } catch (e) {
+        Alerto(e)
+      }
+    },
+    [locale],
+  )
+
+  const fetchNeighbourhoods = useCallback(
+    async (id) => {
+      try {
+        const { data: data } = await axios(
+          process.env.NEXT_PUBLIC_API_URL + `/ListNeighborhoodByRegionId?regionsIds=${id}&lang=${locale}&currentPage=1`,
+        )
+        const { data: neighbourhood } = data
+        setNeighbourhoods(neighbourhood)
+      } catch (e) {
+        Alerto(e)
+      }
+    },
+    [locale],
+  )
+
   useEffect(() => {
     if (accountData) {
       accountData.countryId && fetchRegions(accountData.countryId)
       accountData.regionId && fetchNeighbourhoods(accountData.regionId)
     }
-  }, [accountData?.regionId, accountData?.countryId])
+  }, [accountData, accountData?.regionId, accountData?.countryId, fetchRegions, fetchNeighbourhoods])
 
   useEffect(() => {
     buisnessAccountId && getAccountData()
     buisnessAccountId && fetchCountries()
-  }, [buisnessAccountId])
+  }, [buisnessAccountId, getAccountData, fetchCountries])
 
   useEffect(() => {
-    if (accountData) {
-      reset(accountData)
+    const countryId = watch("countryId")
+    const regionId = watch("regionId")
+    const neighborhoodId = watch("neighborhoodId")
+    if (regions && neighbourhoods) {
+      reset({
+        ...accountData,
+        countryId: +countryId,
+        regionId: +regionId,
+        neighborhoodId: +neighborhoodId,
+      })
     }
-  }, [accountData, reset])
+  }, [regions, neighbourhoods, watch, accountData, reset])
 
   const toggleAccordionPanel = (eKey) => {
     eventKey === eKey ? setEventKey("") : setEventKey(eKey)
@@ -311,7 +337,7 @@ const EditBussinessAccount = () => {
                         <label> {pathOr("", [locale, "Settings", "UserName"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <img src={web.src} className="img-fluid" alt="" />
+                            <Image src={web.src} className="img-fluid" alt="web" width={30} height={30} />
                           </span>
                           <input
                             {...register("businessAccountUserName", { value: accountData.businessAccountUserName })}
@@ -403,10 +429,14 @@ const EditBussinessAccount = () => {
                         <label>{pathOr("", [locale, "Settings", "address"], t)}</label>
                         <div className="input-group" style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}>
                           <span className="input-group-text">
-                            <Image src={office} className="img-fluid" alt="country flag" />
+                            {Boolean(countryFlag) ? (
+                              <Image src={countryFlag} alt="country flag" width={30} height={20} />
+                            ) : (
+                              <FaFlag size={25} />
+                            )}
                           </span>
                           <select
-                            {...register("countryId", { value: accountData.countryId })}
+                            {...register("countryId", { value: +accountData.countryId })}
                             onChange={(e) => {
                               const selectedOption = countries.find((item) => item.id === +e.target.value)
                               if (selectedOption) {
@@ -437,7 +467,7 @@ const EditBussinessAccount = () => {
                             <Image src={office} className="img-fluid" alt="office" />
                           </span>
                           <select
-                            {...register("regionId")}
+                            {...register("regionId", { value: +accountData.regionId })}
                             onChange={(e) => {
                               const selectedOption = regions.find((item) => item.id === +e.target.value)
                               if (selectedOption) {
@@ -466,7 +496,7 @@ const EditBussinessAccount = () => {
                             <Image src={office} className="img-fluid" alt="office" />
                           </span>
                           <select
-                            {...register("neighborhoodId")}
+                            {...register("neighborhoodId", { value: +accountData.neighborhoodId })}
                             onChange={(e) => {
                               setValue("neighborhoodId", +e.target.value)
                             }}
