@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# middelware
+/src/middleware.js
+
 # testing
 /coverage
 
