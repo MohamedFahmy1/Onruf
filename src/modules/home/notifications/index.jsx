@@ -9,37 +9,37 @@ const Notifications = () => {
 
   return (
     <Col lg={3}>
-      <div className="contint_paner py-2 px-0">
-        <div className="d-flex align-items-center justify-content-between mb-2 px-3">
+      <article className="contint_paner py-2 px-0">
+        <section className="d-flex align-items-center justify-content-between mb-2 px-3">
           <h6 className="f-b m-0">{pathOr("", [locale, "Notifications", "notifications"], t)}</h6>
           <a href="#" className="main-color text-decoration-none">
             {pathOr("", [locale, "Notifications", "viewall"], t)}
           </a>
-        </div>
+        </section>
         <ul className="list_notifcation px-3">
           <li className="item agree">
-            <div className="gray-color mb-1">
+            <section className="gray-color mb-1">
               <span>{pathOr("", [locale, "Notifications", "neworder"], t)} </span>
               <span>اليوم 10:30 مساءا</span>
-            </div>
-            <div className="po_R">{pathOr("", [locale, "Notifications", "pendingconfirm"], t)}</div>
+            </section>
+            <section className="po_R">{pathOr("", [locale, "Notifications", "pendingconfirm"], t)}</section>
           </li>
           <li className="item">
-            <div className="gray-color mb-1">
+            <section className="gray-color mb-1">
               <span>{pathOr("", [locale, "Notifications", "neworder"], t)} </span>
               <span>اليوم 10:30 مساءا</span>
-            </div>
-            <div className="po_R">{pathOr("", [locale, "Notifications", "pendingreply"], t)}</div>
+            </section>
+            <section className="po_R">{pathOr("", [locale, "Notifications", "pendingreply"], t)}</section>
           </li>
           <li className="item">
-            <div className="gray-color mb-1">
+            <section className="gray-color mb-1">
               <span>{pathOr("", [locale, "Notifications", "neworder"], t)} </span>
               <span>اليوم 10:30 مساءا</span>
-            </div>
-            <div className="po_R">{pathOr("", [locale, "Notifications", "pendingreply"], t)}</div>
+            </section>
+            <section className="po_R">{pathOr("", [locale, "Notifications", "pendingreply"], t)}</section>
           </li>
         </ul>
-      </div>
+      </article>
     </Col>
   )
 }

@@ -99,7 +99,7 @@ const LatestOrders = ({ orders }) => {
   )
   return (
     <Col>
-      <div className="contint_paner">
+      <section className="contint_paner">
         <div className="d-flex align-items-center justify-content-between mb-3">
           <h5 className="f-b m-0">{pathOr("", [locale, "LastOrders", "lastorders"], t)}</h5>
           <Link href={`/${locale || "en"}/orders`}>
@@ -112,7 +112,7 @@ const LatestOrders = ({ orders }) => {
           {orders && <Table columns={columns} data={orders} pageSize={8} isCheckbox={false} />}
           {buisnessAccountId && <Pagination listLength={orders?.length} pageSize={8} />}
         </div>
-      </div>
+      </section>
     </Col>
   )
 }

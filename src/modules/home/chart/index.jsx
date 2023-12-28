@@ -54,7 +54,9 @@ const Chart = ({ sales }) => {
                 <option>{pathOr("", [locale, "Chart", "sales"], t)}</option>
               </select>
             </div>
-            <h3 className="f-b main-color m-0">{sales} S.R</h3>
+            <h3 className="f-b main-color m-0 text-center">
+              {sales} {pathOr("", [locale, "Products", "currency"], t)}
+            </h3>
             <div className="font-18">{pathOr("", [locale, "Chart", "profit"], t)}</div>
             <div className="The-ratio">
               2.5% <GrLineChart id="line-chart" />
