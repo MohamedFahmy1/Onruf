@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { useRouter } from "next/router"
 import Link from "next/link"
 import { AiOutlinePoweroff } from "react-icons/ai"
@@ -11,49 +11,45 @@ import { BusinessAccountList } from "./BusinessAccountList"
 import axios from "axios"
 import { useSelector, useDispatch } from "react-redux"
 import { getTokensFromCookie } from "../../../appState/personalData/authActions"
+import Image from "next/image"
+import Alerto from "../../../common/Alerto"
 
 const Navbar = () => {
   const [toggleLangMenu, setToggleLangMenu] = useState(false)
-  const { pathname, push, locale, reload, asPath } = useRouter()
-  const router = useRouter()
+  const { locale, asPath } = useRouter()
   const dispatch = useDispatch()
   const [toggleBusinessAccountList, setToggleBusinessAccountList] = useState()
   const [businessAccountList, setBusinessAccountList] = useState([])
-  const [userImage, setUserImage] = useState(userImg)
+  const [userImage, setUserImage] = useState()
   const [userName, setUserName] = useState()
-  const token = useSelector((state) => state.authSlice.token)
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
-  const providerId = useSelector((state) => state.authSlice.providerId)
   const dropdownRef = useRef(null)
-  useEffect(() => {
-    axios.defaults.headers.common["Authorization"] = token
-    axios.defaults.headers.common["Provider-Id"] = providerId
-    axios.defaults.headers.common["Business-Account-Id"] = buisnessAccountId
-    axios.defaults.headers.common["User-Language"] = locale
-  }, [token, providerId, buisnessAccountId, locale])
 
   const getAllBuisnessAccounts = async (id) => {
-    const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/GatAllBusinessAccounts`)
-    setBusinessAccountList(data.data)
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/GatAllBusinessAccounts`)
+      setBusinessAccountList(data.data)
+    } catch (error) {
+      Alerto(error)
+    }
   }
-
-  const accountData = () => {
+  const accountData = useCallback(() => {
     const account = businessAccountList.filter((buisness) => buisness.id == buisnessAccountId)
     setUserName(account[0]?.businessAccountName)
     setUserImage(`${account[0]?.businessAccountImage}`)
-  }
+  }, [buisnessAccountId, businessAccountList])
 
   useEffect(() => {
     dispatch(getTokensFromCookie())
-  }, [router])
+  }, [dispatch])
 
   useEffect(() => {
     buisnessAccountId && getAllBuisnessAccounts()
   }, [locale, buisnessAccountId])
 
   useEffect(() => {
-    businessAccountList && accountData()
-  }, [businessAccountList, locale])
+    businessAccountList.length > 0 && accountData()
+  }, [businessAccountList, locale, accountData])
 
   const onClick = () => {
     setToggleBusinessAccountList(!toggleBusinessAccountList)
@@ -81,7 +77,6 @@ const Navbar = () => {
             placeholder={pathOr("", [locale, "navbar", "search"], t)}
           />
           <span className="icon_fa">
-            {/* <img src="../../../../public/icons/search.svg" /> */}
             <GoSearch />
           </span>
         </div>
@@ -89,8 +84,8 @@ const Navbar = () => {
       <div className="top_linko">
         <div className="change_acc">
           <div className="d-flex align-items-center">
-            <img src={userImage} />
-            <div>
+            {<Image src={userImage || userImg} alt="user" width={50} height={50} />}
+            <div className="mx-1">
               <h6 className="f-b m-0">{userName}</h6>
               <button className="main-color" onClick={() => onClick()}>
                 {pathOr("", [locale, "navbar", "switch"], t)}
@@ -98,9 +93,11 @@ const Navbar = () => {
               </button>
             </div>
           </div>
-          <a href="#" className="close_">
-            <AiOutlinePoweroff />
-          </a>
+          <Link href={process.env.NEXT_PUBLIC_WEBSITE}>
+            <button className="close_" aria-label="close Business Account">
+              <AiOutlinePoweroff />
+            </button>
+          </Link>
           {toggleBusinessAccountList && (
             <BusinessAccountList
               businessAccountList={businessAccountList}
@@ -111,7 +108,6 @@ const Navbar = () => {
             />
           )}
         </div>
-
         <div className="dropdown lang_" ref={dropdownRef}>
           <button
             onClick={() => setToggleLangMenu(!toggleLangMenu)}
@@ -130,7 +126,6 @@ const Navbar = () => {
           >
             <li
               onClick={() => {
-                // push({ locale: "ar" })
                 setToggleLangMenu(!toggleLangMenu)
               }}
             >
@@ -142,7 +137,6 @@ const Navbar = () => {
             </li>
             <li
               onClick={() => {
-                // push({ locale: "en" })
                 setToggleLangMenu(!toggleLangMenu)
               }}
             >

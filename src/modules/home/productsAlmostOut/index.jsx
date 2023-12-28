@@ -15,7 +15,9 @@ const ProductsAlmostOut = ({ products }) => {
         <section className="d-flex align-items-center justify-content-between mb-2">
           <h5 className="f-b m-0">{pathOr("", [locale, "Home", "productsAlmostOut"], t)}</h5>
           <Link href={`/${locale}/products`}>
-            <a className="main-color font-18 text-decoration-none">{pathOr("", [locale, "Home", "viewAll"], t)}</a>
+            <button className="main-color font-18 text-decoration-none">
+              {pathOr("", [locale, "Home", "viewAll"], t)}
+            </button>
           </Link>
         </section>
         <ul className="all_pro_cus">

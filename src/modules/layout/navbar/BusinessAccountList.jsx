@@ -7,6 +7,9 @@ import { useRouter } from "next/router"
 import { AiOutlineCloseCircle } from "react-icons/ai"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
+import { useDispatch } from "react-redux"
+import { getTokensFromCookie } from "../../../appState/personalData/authActions"
+
 const style = {
   margin: "auto",
   maxWidth: "1080px",
@@ -22,8 +25,8 @@ export const BusinessAccountList = ({
   setUserName,
   setUserImage,
 }) => {
-  const router = useRouter()
-  const { locale } = useRouter()
+  const dispatch = useDispatch()
+  const { locale, push } = useRouter()
   const setAccount = (businessAccountImage, businessAccountName, businessId, ProviderId) => {
     setUserName(businessAccountName)
     setUserImage(businessAccountImage)
@@ -32,7 +35,8 @@ export const BusinessAccountList = ({
     Cookies.set("ProviderId", ProviderId)
     Cookies.set("businessAccountId", businessId)
     setToggleBusinessAccountList(false)
-    router.push("/")
+    dispatch(getTokensFromCookie())
+    push("/")
   }
 
   return (
@@ -89,7 +93,7 @@ export const BusinessAccountList = ({
                         src={
                           account.businessAccountImage === null ||
                           account.businessAccountImage === "" ||
-                          account.businessAccountImage === "http://onrufwebsite2-001-site1.btempurl.com/"
+                          account.businessAccountImage === "http://onrufwebsite6-001-site1.htempurl.com/"
                             ? userImg
                             : `${account.businessAccountImage}`
                         }

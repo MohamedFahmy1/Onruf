@@ -73,13 +73,17 @@ const Home = ({ sales: s, ListProduct, ListNewOrder, GetListUser }) => {
   }, [buisnessAccountId, locale, getSales, getProduct, getOrders, getClients])
 
   useEffect(() => {
-    let almostFinishedProducts = []
-    products?.map((product) => {
-      if (product.qty < 4) {
-        almostFinishedProducts.push(product)
-      }
-      setAlmostFinishedProducts(almostFinishedProducts)
-    })
+    if (products.length === 0) {
+      return setAlmostFinishedProducts()
+    } else {
+      let almostFinishedProducts = []
+      products?.map((product) => {
+        if (product.qty < 4) {
+          almostFinishedProducts.push(product)
+        }
+        setAlmostFinishedProducts(almostFinishedProducts)
+      })
+    }
   }, [products])
 
   return (

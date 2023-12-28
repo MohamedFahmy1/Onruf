@@ -10,17 +10,17 @@ export const UnAuthorisedPage = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setMessage("Unauthorized")
-      push("http://onrufwebsite4-001-site1.htempurl.com")
-    }, 5000)
+      push(process.env.NEXT_PUBLIC_WEBSITE)
+    }, 3000)
     return () => clearTimeout(timer)
   }, [push])
 
   return (
-    <div className={style.container}>
-      <div className={style.content}>
+    <main className={style.container}>
+      <article className={style.content}>
         <Image src={Logo} alt="logo" height={150} width={300} />
         <span className={style.text}>{message}</span>
-      </div>
-    </div>
+      </article>
+    </main>
   )
 }

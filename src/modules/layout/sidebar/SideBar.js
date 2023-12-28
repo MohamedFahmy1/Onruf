@@ -97,11 +97,11 @@ const Sidebar = () => {
     },
   ]
   return (
-    <StyledSidebar variant={"permanent"} anchor={locale === "en" ? "left" : "right"}>
+    <StyledSidebar variant={"permanent"} component={"aside"} anchor={locale === "en" ? "left" : "right"}>
       <StyledLogo>
-        <Image src={Logo.src} width={145} height={45} alt={"Logo"} onClick={() => Router.push(`/${locale}`)} />
+        <Image src={Logo.src} width={234} height={76} alt={"Logo"} onClick={() => Router.push(`/${locale}`)} />
       </StyledLogo>
-      <List>
+      <List component={"nav"}>
         {navBarItems.map((listItem) => (
           <ListItem key={listItem.name} {...listItem} />
         ))}

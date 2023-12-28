@@ -34,7 +34,7 @@ const ListItem = ({ lightIcon: LightIcon, darkIcon: DarkIcon, name, link, subIte
       {link && subItems ? (
         <Link href={link}>
           {/* This way I overrode the `a` style without losing its characteristics as a link */}
-          <a
+          <button
             style={{
               textDecoration: "none",
               color: "red",
@@ -47,7 +47,6 @@ const ListItem = ({ lightIcon: LightIcon, darkIcon: DarkIcon, name, link, subIte
                 fontSize: link.includes("reviews") ? "17px" : "18px",
                 letterSpacing: link.includes("reviews") ? "-0.5px" : "0",
                 display: "flex",
-                alignItems: "center",
                 justifyContent: "space-between",
               }}
               onMouseOver={() => {
@@ -73,7 +72,6 @@ const ListItem = ({ lightIcon: LightIcon, darkIcon: DarkIcon, name, link, subIte
                   variant="body1"
                   mx={1}
                   fontSize={"17px"}
-                  fontWeight={"bold"}
                   fontFamily={"serif"}
                   sx={{
                     color: isActive || isHoveredOn ? "white" : "black",
@@ -109,12 +107,12 @@ const ListItem = ({ lightIcon: LightIcon, darkIcon: DarkIcon, name, link, subIte
                   </Typography>
                 </Link>
               ))}
-          </a>
+          </button>
         </Link>
       ) : (
         <Link href={link}>
           {/* This way I overrode the `a` style without losing its characteristics as a link */}
-          <a
+          <button
             style={{
               textDecoration: "none",
               color: "red",
@@ -147,11 +145,11 @@ const ListItem = ({ lightIcon: LightIcon, darkIcon: DarkIcon, name, link, subIte
               )}
               {name}
             </StyledListButton>
-          </a>
+          </button>
         </Link>
       )}
       {!link && (
-        <a
+        <button
           style={{
             textDecoration: "none",
             color: "red",
@@ -183,7 +181,7 @@ const ListItem = ({ lightIcon: LightIcon, darkIcon: DarkIcon, name, link, subIte
             )}
             {name}
           </StyledListButton>
-        </a>
+        </button>
       )}
     </MuiListItem>
   )

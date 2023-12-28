@@ -17,9 +17,9 @@ const LatestOrdersWithClients = ({ clients }) => {
         <section className="d-flex align-items-center justify-content-between mb-2">
           <h5 className="f-b m-0">{pathOr("", [locale, "LastOrdersWithClients", "lastOrdersWithClients"], t)}</h5>
           <Link href={`/${locale}/users`}>
-            <a className="main-color font-18 text-decoration-none">
+            <button className="main-color font-18 text-decoration-none">
               {pathOr("", [locale, "LastOrdersWithClients", "allClients"], t)}
-            </a>
+            </button>
           </Link>
         </section>
         <ul className="all_pro_cus">
@@ -39,10 +39,10 @@ const LatestOrdersWithClients = ({ clients }) => {
                   </figcaption>
                 </section>
                 <Link href={`/${locale}/users/${client.id}`}>
-                  <a className="main-color text-decoration-none">
+                  <button className="main-color text-decoration-none">
                     <p>{pathOr("", [locale, "LastOrdersWithClients", "clientProfile"], t)}</p>
                     {locale === "en" ? <BsArrowRight size={25} /> : <BsArrowLeft size={25} />}
-                  </a>
+                  </button>
                 </Link>
               </li>
             ))}

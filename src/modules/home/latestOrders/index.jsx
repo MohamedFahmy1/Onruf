@@ -21,7 +21,7 @@ const LatestOrders = ({ orders }) => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <div className="f-b" key={original.orderId} style={{ cursor: "pointer" }}>
-              <a>#{original?.orderId}</a>
+              <span>#{original?.orderId}</span>
             </div>
           </Link>
         ),
@@ -99,20 +99,20 @@ const LatestOrders = ({ orders }) => {
   )
   return (
     <Col>
-      <section className="contint_paner">
-        <div className="d-flex align-items-center justify-content-between mb-3">
+      <article className="contint_paner">
+        <section className="d-flex align-items-center justify-content-between mb-3">
           <h5 className="f-b m-0">{pathOr("", [locale, "LastOrders", "lastorders"], t)}</h5>
           <Link href={`/${locale || "en"}/orders`}>
-            <a href="#" className="main-color font-18 text-dcoration-none">
+            <button className="main-color font-18 text-dcoration-none">
               {pathOr("", [locale, "Notifications", "viewall"], t)}
-            </a>
+            </button>
           </Link>
-        </div>
-        <div className="outer_table">
+        </section>
+        <section className="outer_table">
           {orders && <Table columns={columns} data={orders} pageSize={8} isCheckbox={false} />}
           {buisnessAccountId && <Pagination listLength={orders?.length} pageSize={8} />}
-        </div>
-      </section>
+        </section>
+      </article>
     </Col>
   )
 }
