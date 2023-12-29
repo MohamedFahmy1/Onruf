@@ -356,7 +356,12 @@ const AddProductStepTwo = ({
   }
   const validateProductDetails = () => {
     for (let i = 0; i < productPayload.productSep.length; i++) {
-      if (productPayload.productSep[i].ValueSpeAr === "" || productPayload.productSep[i].valueSpeEn === "") {
+      if (
+        productPayload.productSep[i].ValueSpeAr === "" ||
+        productPayload.productSep[i].ValueSpeEn === "" ||
+        !productPayload.productSep[i].ValueSpeAr ||
+        !productPayload.productSep[i].ValueSpeEn
+      ) {
         return toast.error(locale === "en" ? "Please enter all Product data!" : "رجاء ادخال جميع بيانات المنتج")
       }
     }

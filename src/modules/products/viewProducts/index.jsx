@@ -16,6 +16,7 @@ import t from "../../../translations.json"
 import { useFetch } from "../../../hooks/useFetch"
 import SendOfferModal from "../SendOfferModal"
 import Image from "next/image"
+import Alerto from "../../../common/Alerto"
 
 const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelectedRows }) => {
   const router = useRouter()
@@ -102,8 +103,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         getProductData()
         fetchDidntSell()
       } catch (error) {
-        console.error(error)
-        toast.error(error.response.data.message)
+        Alerto(error)
       }
     },
     [locale, getProductData, fetchDidntSell],
@@ -128,6 +128,53 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   useEffect(() => {
     p && setProducts(p)
   }, [p])
+
+  const handleChangeStatus = useCallback(
+    async (id) => {
+      try {
+        await axios.post(process.env.NEXT_PUBLIC_API_URL + `/ChangeStatusProduct?id=${id}`, {})
+        toast.success(locale === "en" ? "Product Status Changed Successfully!" : "تم تغيير حالة المنتج بنجاح")
+        getProductData()
+      } catch (err) {
+        Alerto(err)
+      }
+    },
+    [getProductData, locale],
+  )
+
+  const handleEditProductQuantity = async () => {
+    try {
+      const idApi = +singleSelectedRow?.id || +singleSelectedRow?.productId
+      if (quantityValue < 1) {
+        return toast.error(locale === "en" ? "Please put quantity more than 0" : "من فضلك ادخل كمية اكبر من 0")
+      }
+      const qtyApi = quantityValueInfinity ? "" : `&quantity=${quantityValue}`
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${idApi}${qtyApi}`)
+      setOpenQuantityModal(false)
+      toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
+      getProductData()
+    } catch (err) {
+      Alerto(err)
+    }
+  }
+  const handleAddDiscount = async () => {
+    try {
+      if (priceValue > singleSelectedRow.price) return toast.error(`Discount should be <= ${singleSelectedRow.price}`)
+      if (!priceValue && !discountDate)
+        return toast.error(locale === "en" ? "Please Enter Missing Data!" : "من فضلك ادخل جميع البيانات")
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/ProductDiscount?productId=${
+          singleSelectedRow?.id || singleSelectedRow?.productId
+        }&PriceDiscount=${priceValue}&discountEndDate=${discountDate}`,
+        {},
+      )
+      setOpenPriceModal(false)
+      toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
+      getProductData()
+    } catch (err) {
+      Alerto(err)
+    }
+  }
 
   const columns = useMemo(
     () => [
@@ -305,55 +352,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     ],
     [locale, openPriceModal, openQuantityModal, selectedFilter, handleDeleteProduct, push, handleChangeStatus],
   )
-  const handleChangeStatus = useCallback(
-    async (id) => {
-      try {
-        await axios.post(process.env.NEXT_PUBLIC_API_URL + `/ChangeStatusProduct?id=${id}`, {})
-        toast.success(locale === "en" ? "Product Status Changed Successfully!" : "تم تغيير حالة المنتج بنجاح")
-        getProductData()
-      } catch (err) {
-        console.error(err)
-        toast.error(err.response.data.message)
-      }
-    },
-    [getProductData, locale],
-  )
-
-  const handleEditProductQuantity = async () => {
-    try {
-      const idApi = +singleSelectedRow?.id || +singleSelectedRow?.productId
-      if (quantityValue < 1) {
-        return toast.error(locale === "en" ? "Please put quantity more than 0" : "من فضلك ادخل كمية اكبر من 0")
-      }
-      const qtyApi = quantityValueInfinity ? "" : `&quantity=${quantityValue}`
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${idApi}${qtyApi}`)
-      setOpenQuantityModal(false)
-      toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
-      getProductData()
-    } catch (err) {
-      console.error(err)
-      toast.error(err.response.data.message)
-    }
-  }
-  const handleAddDiscount = async () => {
-    try {
-      if (priceValue > singleSelectedRow.price) return toast.error(`Discount should be <= ${singleSelectedRow.price}`)
-      if (!priceValue && !discountDate)
-        return toast.error(locale === "en" ? "Please Enter Missing Data!" : "من فضلك ادخل جميع البيانات")
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/ProductDiscount?productId=${
-          singleSelectedRow?.id || singleSelectedRow?.productId
-        }&PriceDiscount=${priceValue}&discountEndDate=${discountDate}`,
-        {},
-      )
-      setOpenPriceModal(false)
-      toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
-      getProductData()
-    } catch (err) {
-      console.error(err)
-      toast.error(err.response.data.message)
-    }
-  }
   return (
     <Fragment>
       <div className="body-content p-4">
@@ -428,9 +426,9 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
             {openQuantityModal && (
               <Modal centered show={openQuantityModal} onHide={() => setOpenQuantityModal(false)}>
                 <Modal.Header>
-                  <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
+                  <h1 className="modal-title m-0 f-b fs-5" id="staticBackdropLabel">
                     {pathOr("", [locale, "Products", "adjustQty"], t)}
-                  </h5>
+                  </h1>
                   <button type="button" className="btn-close" onClick={() => setOpenQuantityModal(false)}></button>
                 </Modal.Header>
                 <Modal.Body>
@@ -448,33 +446,32 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                         />
                       </div>
                     </div>
-                    {
-                      <div className="inpt_numb my-3">
-                        <button
-                          className="btn_ plus"
-                          onClick={() => setQuantityValue((prev) => prev + 1)}
-                          disabled={quantityValueInfinity}
-                        >
-                          +
-                        </button>
-                        <input
-                          type="number"
-                          min="1"
-                          className="form-control"
-                          value={quantityValueInfinity ? "" : +quantityValue}
-                          onChange={(e) => setQuantityValue(+e.target.value)}
-                          disabled={quantityValueInfinity}
-                        />
-                        {console.log(quantityValueInfinity)}
-                        <button
-                          className="btn_ minus"
-                          onClick={() => setQuantityValue((prev) => (quantityValue ? prev - 1 : 0))}
-                          disabled={quantityValueInfinity}
-                        >
-                          -
-                        </button>
-                      </div>
-                    }
+                    <div className="inpt_numb my-3">
+                      <button
+                        className="btn_ plus"
+                        onClick={() => setQuantityValue((prev) => prev + 1)}
+                        disabled={quantityValueInfinity}
+                        aria-label="increase value by 1"
+                      >
+                        +
+                      </button>
+                      <input
+                        type="number"
+                        min="1"
+                        className="form-control"
+                        value={quantityValueInfinity ? "" : +quantityValue}
+                        onChange={(e) => setQuantityValue(+e.target.value)}
+                        disabled={quantityValueInfinity}
+                      />
+                      <button
+                        className="btn_ minus"
+                        onClick={() => setQuantityValue((prev) => (quantityValue ? prev - 1 : 0))}
+                        disabled={quantityValueInfinity}
+                        aria-label="decrease value by 1"
+                      >
+                        -
+                      </button>
+                    </div>
                   </div>
                 </Modal.Body>
                 <Modal.Footer className="modal-footer">

@@ -23,6 +23,7 @@ const SendOfferModal = ({ sendOfferModal, setSendOfferModal, id }) => {
     register,
     formState: { errors },
   } = useForm()
+
   const selectedUsersHandler = (userId) => {
     if (selectedUsers.includes(userId)) {
       setSelectedUsers((prev) => prev.filter((user) => user !== userId))
@@ -64,24 +65,29 @@ const SendOfferModal = ({ sendOfferModal, setSendOfferModal, id }) => {
       {step === 1 && (
         <Fragment>
           <Modal.Header className="justify-content-end">
-            <button type="button" className="btn-close" onClick={() => setSendOfferModal(false)}></button>
+            <button
+              type="button"
+              className="btn-close"
+              aria-label="close modal"
+              onClick={() => setSendOfferModal(false)}
+            ></button>
           </Modal.Header>
           <Modal.Body className="py-0">
-            <h5 className="disc-header fs-4 text-center m-0 p-0">
+            <h1 className="disc-header fs-4 text-center m-0 p-0">
               {pathOr("", [locale, "Products", "send_offer"], t)}
-            </h5>
+            </h1>
             <div className="d-flex justify-content-between my-1">
               <p className="fs-5">
                 {offersData?.length} {pathOr("", [locale, "Products", "user"], t)}
               </p>
-              <button className="fs-5" type="button" onClick={selectAllUsersHandler}>
+              <button className="fs-5" aria-label="select all" type="button" onClick={selectAllUsersHandler}>
                 {pathOr("", [locale, "Products", "selectAll"], t)}
               </button>
             </div>
             {offersData?.map((item) => (
               <div className="justify-content-between d-flex align-items-center my-2" key={item.bidId}>
                 <label className="d-flex align-items-center gap-2">
-                  <Image src={item.userImage} className="img-fluid" alt="user" width={60} height={60} />
+                  <Image src={item.userImage} priority className="img-fluid" alt="user" width={60} height={60} />
                   <div>
                     <p className="fs-6">{formatDate(item.createdAt)}</p>
                     <p className="f-b fs-5">{item.userName}</p>
@@ -100,7 +106,7 @@ const SendOfferModal = ({ sendOfferModal, setSendOfferModal, id }) => {
             ))}
           </Modal.Body>
           <Modal.Footer className="modal-footer">
-            <button type="button" className="btn-main" onClick={goToNextStep}>
+            <button type="button" className="btn-main" aria-label="next step" onClick={goToNextStep}>
               {pathOr("", [locale, "Products", "next"], t)}
             </button>
           </Modal.Footer>
@@ -109,12 +115,17 @@ const SendOfferModal = ({ sendOfferModal, setSendOfferModal, id }) => {
       {step === 2 && (
         <Fragment>
           <Modal.Header className="justify-content-end">
-            <button type="button" className="btn-close" onClick={() => setSendOfferModal(false)}></button>
+            <button
+              type="button"
+              className="btn-close"
+              aria-label="close modal"
+              onClick={() => setSendOfferModal(false)}
+            ></button>
           </Modal.Header>
           <Modal.Body className="py-0">
-            <h5 className="disc-header fs-4 text-center m-0 p-0">
+            <h1 className="disc-header fs-4 text-center m-0 p-0">
               {pathOr("", [locale, "Products", "send_offer"], t)}
-            </h5>
+            </h1>
             <p className="text-center fs-5 text-secondary">
               {pathOr("", [locale, "Products", "please_write_price_quantity"], t)}
             </p>
@@ -171,7 +182,12 @@ const SendOfferModal = ({ sendOfferModal, setSendOfferModal, id }) => {
             </form>
           </Modal.Body>
           <Modal.Footer className="modal-footer">
-            <button type="submit" className="btn-main" onClick={handleSubmit(sendOffersHandler)}>
+            <button
+              type="submit"
+              aria-label="send offer"
+              className="btn-main"
+              onClick={handleSubmit(sendOffersHandler)}
+            >
               {pathOr("", [locale, "Products", "send_offer"], t)}
             </button>
           </Modal.Footer>

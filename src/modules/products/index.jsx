@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react"
 import ViewProducts from "./viewProducts"
 import Modal from "react-bootstrap/Modal"
@@ -9,6 +8,9 @@ import t from "../../translations.json"
 import Spinner from "react-bootstrap/Spinner"
 import { toast } from "react-toastify"
 import { pathOr } from "ramda"
+import Image from "next/image"
+import { flexDirectionStyle } from "../../styles/stylesObjects"
+import Alerto from "../../common/Alerto"
 
 const Products = () => {
   const [products, setProducts] = useState()
@@ -62,17 +64,14 @@ const Products = () => {
           folderId: res?.data.data,
           productId: productsIds,
         })
-
         setOpenFolderModal(false)
         toast.success("A folder has been created successfully!")
         setCreateNewFolder(true)
-        // setFolders([...folders, data])
       } else {
         setCreateNewFolder(false)
       }
     } catch (error) {
-      console.error(error)
-      toast.error(error.response.data.message)
+      Alerto(error)
     }
   }
 
@@ -85,15 +84,13 @@ const Products = () => {
         folderId: id,
         productId: productsIds,
       })
-
       setAddProductToFolderLoading({ loader: false })
       setOpenFolderModal(false)
       toast.success("Products has been added successfully!")
       setSelectedRows({})
     } catch (error) {
       setAddProductToFolderLoading({ loader: false })
-      console.error(error)
-      toast.error(error.response.data.message)
+      Alerto(error)
     }
   }
 
@@ -127,15 +124,19 @@ const Products = () => {
         setSelectedRows={setSelectedRows}
       />
       {/* Folder Modal */}
-
       <Modal show={openFolderModal} onHide={() => setOpenFolderModal(false)}>
         <Modal.Header>
-          <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
+          <h1 className="modal-title fs-5 m-0 f-b" id="staticBackdropLabel">
             {!createNewFolder
               ? pathOr("", [locale, "Products", "addNewFolder"], t)
               : pathOr("", [locale, "Products", "selectFolder"], t)}
-          </h5>
-          <button type="button" className="btn-close" onClick={() => setOpenFolderModal(false)}></button>
+          </h1>
+          <button
+            type="button"
+            aria-label="close modal"
+            className="btn-close"
+            onClick={() => setOpenFolderModal(false)}
+          ></button>
         </Modal.Header>
         <Modal.Body>
           {!createNewFolder ? (
@@ -147,7 +148,6 @@ const Products = () => {
                 placeholder={locale === "en" ? "Enter folder's name" : "اكتب اسم المجلد"}
                 onChange={(e) => setFolderName(e.target.value)}
               />
-
               <input type="file" onChange={(e) => setFolderImage(e?.target?.files[0])} />
             </div>
           ) : (
@@ -157,20 +157,18 @@ const Products = () => {
                 .map(({ id, image, name, fileProducts }, index) => (
                   <li className="item" key={index}>
                     <div>
-                      <img src={image} alt="folder" />
+                      <Image src={image} alt="folder" width={95} height={95} priority />
                       <div>
-                        <h6 className="f-b">{name}</h6>
-                        <div className="gray-color">
-                          <span className="main-color f-b">{fileProducts?.length}</span>
-                          {locale === "en" ? "added products" : "منتج مضاف"}
+                        <p className="fs-6 f-b">{name}</p>
+                        <div className="gray-color d-flex" style={{ ...flexDirectionStyle(locale) }}>
+                          <p className="main-color f-b mx-1">{fileProducts?.length} </p>
+                          <p>{locale === "en" ? "added products" : "منتج مضاف"}</p>
                         </div>
                       </div>
                     </div>
-                    <button className="btn-main" onClick={() => addProductToFolder(id)}>
+                    <button aria-label="save" className="btn-main" onClick={() => addProductToFolder(id)}>
                       {addProductToFolderLoading?.id === id && addProductToFolderLoading.loader ? (
                         <Spinner style={{ marginTop: 8 }} animation="border" />
-                      ) : locale === "en" ? (
-                        "Save"
                       ) : (
                         pathOr("", [locale, "Products", "save"], t)
                       )}
@@ -180,18 +178,29 @@ const Products = () => {
             </ul>
           )}
         </Modal.Body>
-
         <Modal.Footer className="modal-footer">
-          <button type="button" className="btn-main" onClick={addNewFolder}>
+          <button
+            type="button"
+            aria-label={
+              !createNewFolder
+                ? pathOr("", [locale, "Products", "save"], t)
+                : pathOr("", [locale, "Products", "addNewFolder"], t)
+            }
+            className="btn-main"
+            onClick={addNewFolder}
+          >
             {!createNewFolder
               ? pathOr("", [locale, "Products", "save"], t)
               : pathOr("", [locale, "Products", "addNewFolder"], t)}
           </button>
         </Modal.Footer>
       </Modal>
-
       <div className="btns_fixeds">
-        <button className="btn-main rounded-0" onClick={handleRemoveProduct}>
+        <button
+          className="btn-main rounded-0"
+          aria-label={locale === "en" ? "Delete selected" : "حذف المحدد"}
+          onClick={handleRemoveProduct}
+        >
           {locale === "en" ? "Delete selected" : "حذف المحدد"}
           <RiDeleteBin5Line />
         </button>
@@ -201,6 +210,7 @@ const Products = () => {
               return toast.warning(locale === "en" ? "No products were selected!" : "لم يتم اختيار اي منتج")
             setOpenFolderModal(!openFolderModal)
           }}
+          aria-label={locale === "en" ? "Add selected to folder" : "اضافة المحدد الي مجلد"}
           className="btn-main btn-main-w rounded-0"
         >
           {locale === "en" ? "Add selected to folder" : "اضافة المحدد الي مجلد"}

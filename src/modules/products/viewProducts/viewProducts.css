@@ -7,7 +7,7 @@
 }
 
 .list_folder .item {
-  padding: 8px 35px;
+  padding: 8px 18px;
   flex-wrap: wrap;
 }
 
@@ -23,6 +23,6 @@
 .disc-header {
   font-weight: 600;
 }
-.disc-header span{
- color: #EE6C4D;
+.disc-header span {
+  color: #ee6c4d;
 }
