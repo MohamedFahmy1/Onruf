@@ -102,9 +102,11 @@ const Sidebar = () => {
         <Image src={Logo.src} width={234} height={76} alt={"Logo"} onClick={() => Router.push(`/${locale}`)} />
       </StyledLogo>
       <List component={"nav"}>
-        {navBarItems.map((listItem) => (
-          <ListItem key={listItem.name} {...listItem} />
-        ))}
+        <Box component={"ul"}>
+          {navBarItems.map((listItem) => (
+            <ListItem key={listItem.name} {...listItem} />
+          ))}
+        </Box>
         <Box
           bgcolor={"primary.main"}
           sx={{

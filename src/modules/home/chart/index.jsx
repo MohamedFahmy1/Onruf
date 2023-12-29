@@ -48,10 +48,11 @@ const Chart = ({ sales }) => {
         <div className="d-flex gap-4">
           <div className="option_chart">
             <div className="form-group">
-              <select className="form-control form-select">
-                <option>{pathOr("", [locale, "Chart", "profit"], t)}</option>
-                <option>{pathOr("", [locale, "Chart", "orders"], t)}</option>
-                <option>{pathOr("", [locale, "Chart", "sales"], t)}</option>
+              <label htmlFor="chart-type">Chart Type</label>
+              <select id="chart-type" defaultValue={1} className="form-control form-select">
+                <option value={1}>{pathOr("", [locale, "Chart", "profit"], t)}</option>
+                <option value={2}>{pathOr("", [locale, "Chart", "orders"], t)}</option>
+                <option value={3}>{pathOr("", [locale, "Chart", "sales"], t)}</option>
               </select>
             </div>
             <h3 className="f-b main-color m-0 text-center">

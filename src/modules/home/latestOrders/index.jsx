@@ -31,9 +31,9 @@ const LatestOrders = ({ orders }) => {
         accessor: "userName",
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
-            <h6 className="m-0 f-b" style={{ cursor: "pointer" }}>
+            <p className="m-0 fs-6 f-b" style={{ cursor: "pointer" }}>
               {original?.clientName}
-            </h6>
+            </p>
           </Link>
         ),
       },
@@ -42,9 +42,9 @@ const LatestOrders = ({ orders }) => {
         accessor: "createdAt",
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
-            <h6 className="m-0 f-b" style={{ cursor: "pointer" }}>
+            <p className="m-0 fs-6" style={{ cursor: "pointer" }}>
               {formatDate(original?.createdAt)}
-            </h6>
+            </p>
           </Link>
         ),
       },
@@ -101,7 +101,7 @@ const LatestOrders = ({ orders }) => {
     <Col>
       <article className="contint_paner">
         <section className="d-flex align-items-center justify-content-between mb-3">
-          <h5 className="f-b m-0">{pathOr("", [locale, "LastOrders", "lastorders"], t)}</h5>
+          <p className="f-b fs-5 m-0">{pathOr("", [locale, "LastOrders", "lastorders"], t)}</p>
           <Link href={`/${locale || "en"}/orders`}>
             <button className="main-color font-18 text-dcoration-none">
               {pathOr("", [locale, "Notifications", "viewall"], t)}

@@ -11,7 +11,7 @@ const Notifications = () => {
     <Col lg={3}>
       <article className="contint_paner py-2 px-0">
         <section className="d-flex align-items-center justify-content-between mb-2 px-3">
-          <h6 className="f-b m-0">{pathOr("", [locale, "Notifications", "notifications"], t)}</h6>
+          <p className="f-b fs-6 m-0">{pathOr("", [locale, "Notifications", "notifications"], t)}</p>
           <a href="#" className="main-color text-decoration-none">
             {pathOr("", [locale, "Notifications", "viewall"], t)}
           </a>

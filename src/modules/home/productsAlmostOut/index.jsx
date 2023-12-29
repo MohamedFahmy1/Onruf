@@ -13,7 +13,7 @@ const ProductsAlmostOut = ({ products }) => {
     <Col md={6}>
       <article className="contint_paner">
         <section className="d-flex align-items-center justify-content-between mb-2">
-          <h5 className="f-b m-0">{pathOr("", [locale, "Home", "productsAlmostOut"], t)}</h5>
+          <p className="f-b fs-5 m-0">{pathOr("", [locale, "Home", "productsAlmostOut"], t)}</p>
           <Link href={`/${locale}/products`}>
             <button className="main-color font-18 text-decoration-none">
               {pathOr("", [locale, "Home", "viewAll"], t)}
@@ -28,14 +28,14 @@ const ProductsAlmostOut = ({ products }) => {
                   <Image src={image} alt="product" width={100} height={100} />
                 </figure>
                 <figcaption>
-                  <h6 className="m-0 f-b">{name}</h6>
+                  <p className="m-0 fs-6 f-b">{name}</p>
                   <div className="gray-color">
                     {updatedAt ? moment(updatedAt).format("L") : moment(createdAt).format("L")}
                   </div>
                 </figcaption>
               </section>
               <section>
-                <h6>{pathOr("", [locale, "Home", "remaining"], t)}</h6>
+                <p>{pathOr("", [locale, "Home", "remaining"], t)}</p>
                 <p className="text-center main-color">{qty}</p>
               </section>
             </li>

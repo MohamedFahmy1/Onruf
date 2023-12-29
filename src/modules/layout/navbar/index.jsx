@@ -130,9 +130,9 @@ const Navbar = () => {
               }}
             >
               <Link locale="ar" href={asPath}>
-                <a className="dropdown-item">
+                <button className="dropdown-item">
                   <span> {t[locale]?.Settings.arLang}</span> <span className="icon">AR</span>
-                </a>
+                </button>
               </Link>
             </li>
             <li
@@ -141,9 +141,9 @@ const Navbar = () => {
               }}
             >
               <Link locale="en" href={asPath}>
-                <a className="dropdown-item">
+                <button className="dropdown-item">
                   <span> {t[locale]?.Settings.enLang}</span> <span className="icon">EN</span>
-                </a>
+                </button>
               </Link>
             </li>
           </ul>
