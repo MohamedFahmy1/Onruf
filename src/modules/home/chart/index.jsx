@@ -48,8 +48,8 @@ const Chart = ({ sales }) => {
         <div className="d-flex gap-4">
           <div className="option_chart">
             <div className="form-group">
-              <label htmlFor="chart-type">Chart Type</label>
-              <select id="chart-type" defaultValue={1} className="form-control form-select">
+              <label htmlFor="chart-type">{locale === "en" ? "Chart Type" : "نوع المخطط"}</label>
+              <select name="chart-type" defaultValue={1} className="form-control form-select">
                 <option value={1}>{pathOr("", [locale, "Chart", "profit"], t)}</option>
                 <option value={2}>{pathOr("", [locale, "Chart", "orders"], t)}</option>
                 <option value={3}>{pathOr("", [locale, "Chart", "sales"], t)}</option>

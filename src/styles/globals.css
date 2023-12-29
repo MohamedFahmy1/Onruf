@@ -1558,15 +1558,6 @@ body::-webkit-scrollbar-thumb:hover,
   padding-inline-start: 20px;
 }
 
-.box-Bouquet .info li:before {
-  /* content: "\f005";
-  font-family: "Font Awesome 5 Free";
-  color: var(--main);
-  position: absolute;
-  right: 0;
-  top: 0; */
-}
-
 .box-Bouquet-gold .head {
   background: var(--main);
 }

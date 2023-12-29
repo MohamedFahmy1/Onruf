@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
-}
-
-module.exports = {
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -11,7 +8,6 @@ module.exports = {
     domains: ["onrufwebsite6-001-site1.htempurl.com", "onruf.vercel.app"],
   },
   // distDir: "build",
-  nextConfig,
   i18n: {
     locales: ["ar", "en"],
     defaultLocale: "ar",
@@ -20,27 +16,6 @@ module.exports = {
     REACT_APP_API_URL: "https://onrufwebsite6-001-site1.htempurl.com/api/v1",
     MAP_API_KEY: "AIzaSyBB0w_4kUGHr54kvjKNBK_eaUo1tFuLoPU",
   },
-  plugins: [
-    "postcss-flexbugs-fixes",
-    [
-      "postcss-preset-env",
-      {
-        autoprefixer: {
-          flexbox: "no-2009",
-        },
-        stage: 3,
-        features: {
-          "custom-properties": false,
-        },
-      },
-    ],
-    [
-      "@fullhuman/postcss-purgecss",
-      {
-        content: ["./pages/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
-        defaultExtractor: (content) => content.match(/[\w-/:]+(?<!:)/g) || [],
-        safelist: ["html", "body"],
-      },
-    ],
-  ],
 }
+
+module.exports = nextConfig
