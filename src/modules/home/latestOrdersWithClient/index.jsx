@@ -25,7 +25,6 @@ const LatestOrdersWithClients = ({ clients }) => {
             clients.map((client, idx) => (
               <li className="item d-flex justify-content-between my-5 border-bottom" key={idx}>
                 <section className="d-flex align-items-center">
-                  {/* <img src={client.imgProfile} className="img_table img_table2" /> */}
                   <figure className="img_table img_table2">
                     <Image src={client.imgProfile} alt="client" width={100} height={100} />
                   </figure>
