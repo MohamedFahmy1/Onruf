@@ -341,8 +341,11 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
                     defaultChecked={isActive}
                     type="checkbox"
                     role="switch"
-                    id="flexSwitchCheckChecked"
+                    id={`flexSwitchCheckChecked ${id || productId}`}
                   />
+                  <label htmlFor={`flexSwitchCheckChecked ${id || productId}`} className="opacity-0">
+                    -
+                  </label>
                 </div>
               )}
             </div>
