@@ -12,8 +12,8 @@ import Image from "next/image"
 import { flexDirectionStyle } from "../../styles/stylesObjects"
 import Alerto from "../../common/Alerto"
 
-const Products = () => {
-  const [products, setProducts] = useState()
+const Products = ({ products: p }) => {
+  const [products, setProducts] = useState(p)
   const [folders, setFolders] = useState()
   const [openFolderModal, setOpenFolderModal] = useState(false)
   const [addProductToFolderLoading, setAddProductToFolderLoading] = useState({})
@@ -23,7 +23,6 @@ const Products = () => {
   const [productsIds, setProductsIds] = useState([])
   const [selectedRows, setSelectedRows] = useState({})
   const { locale } = useRouter()
-
   useEffect(() => {
     setCreateNewFolder(folders?.fileList?.length)
   }, [folders])

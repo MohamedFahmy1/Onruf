@@ -91,10 +91,14 @@ const AddProduct = () => {
       <div>
         {(step === 1 || step === 2) && (
           <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-            <h6 className="f-b m-0">{pathOr("", [locale, "Products", "addNewProduct"], t)}</h6>
-            <a onClick={handleBack} className="btn-main btn-main-o">
+            <h1 className="f-b fs-6 m-0">{pathOr("", [locale, "Products", "addNewProduct"], t)}</h1>
+            <button
+              onClick={handleBack}
+              className="btn-main btn-main-o"
+              aria-label={pathOr("", [locale, "Products", "cancel"], t)}
+            >
               {pathOr("", [locale, "Products", "cancel"], t)}
-            </a>
+            </button>
           </div>
         )}
         {step === 1 && (

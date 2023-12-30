@@ -16,7 +16,7 @@ export default function HomePage({ sales, ListProduct, ListNewOrder, GetListUser
     </>
   )
 }
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps({ req, locale }) {
   const parseCookies = (req) => {
     const list = {}
     const rc = req.headers.cookie
@@ -35,42 +35,25 @@ export async function getServerSideProps({ req }) {
     return { redirect: { destination: "/404", permanent: false } }
   }
   try {
+    const mainHeader = {
+      "Business-Account-Id": businessId,
+      "Provider-Id": providerId,
+      Authorization: authToken,
+      "User-Language": locale,
+      "Application-Source": "BusinessAccount",
+    }
     const [salesResponse, listProductResponse, listNewOrderResponse, getListUserResponse] = await Promise.all([
       axios.get(`${process.env.NEXT_PUBLIC_API_URL}/SalesPrice`, {
-        headers: {
-          "Business-Account-Id": businessId,
-          "Provider-Id": providerId,
-          Authorization: authToken,
-          "User-Language": "en",
-          "Application-Source": "BusinessAccount",
-        },
+        headers: mainHeader,
       }),
       axios.get(`${process.env.NEXT_PUBLIC_API_URL}/ListProductForProvider`, {
-        headers: {
-          "Business-Account-Id": businessId,
-          "Provider-Id": providerId,
-          Authorization: authToken,
-          "User-Language": "en",
-          "Application-Source": "BusinessAccount",
-        },
+        headers: mainHeader,
       }),
       axios.get(`${process.env.NEXT_PUBLIC_API_URL}/ListNewOrderForProvider?lang=ar`, {
-        headers: {
-          "Business-Account-Id": businessId,
-          "Provider-Id": providerId,
-          Authorization: authToken,
-          "User-Language": "en",
-          "Application-Source": "BusinessAccount",
-        },
+        headers: mainHeader,
       }),
       axios.get(`${process.env.NEXT_PUBLIC_API_URL}/GetListUserForProvider`, {
-        headers: {
-          "Business-Account-Id": businessId,
-          "Provider-Id": providerId,
-          Authorization: authToken,
-          "User-Language": "en",
-          "Application-Source": "BusinessAccount",
-        },
+        headers: mainHeader,
       }),
     ])
     return {

@@ -29,7 +29,8 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
 
   const [products, setProducts] = useState(p)
   const [selectedFilter, setSelectedFilter] = useState("avaliableProducts")
-  const { data: didnotSellProducts, fetchData: fetchDidntSell } = useFetch("/ListDidntSellProducts", false)
+  // const { data: didnotSellProducts, fetchData: fetchDidntSell } = useFetch("/ListDidntSellProducts", false)
+  const [didnotSellProducts, setDidnotSellProducts] = useState()
   const [openQuantityModal, setOpenQuantityModal] = useState(false)
   const [openPriceModal, setOpenPriceModal] = useState(false)
   const [sendOfferModal, setSendOfferModal] = useState(false)
@@ -77,6 +78,15 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     }
   }, [products, selectedRows, selectedFilter, didnotSellProducts])
 
+  const fetchDidntSell = useCallback(async () => {
+    if (!id) {
+      const {
+        data: { data: prod },
+      } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/ListDidntSellProducts`)
+      setDidnotSellProducts(prod)
+    }
+  }, [id])
+
   const getProductData = useCallback(async () => {
     if (id) {
       const {
@@ -113,10 +123,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     setProductsIds(selectedProductsIds)
   }, [selectedRows, selectedProductsIds, setProductsIds])
 
-  // useEffect(() => {
-  //   // setSelectedRows({})
-  // }, [products.length])
-
   useEffect(() => {
     if (singleSelectedRow?.id || singleSelectedRow?.productId) {
       setDiscountDate(singleSelectedRow.disccountEndDate)
@@ -128,6 +134,11 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   useEffect(() => {
     p && setProducts(p)
   }, [p])
+  useEffect(() => {
+    if (!id) {
+      fetchDidntSell()
+    }
+  }, [id, fetchDidntSell])
 
   const handleChangeStatus = useCallback(
     async (id) => {
@@ -183,14 +194,16 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         accessor: "name",
         Cell: ({ row: { original } }) => (
           <div className="d-flex align-items-center">
-            <Image
-              src={original.image || original.productImage}
-              className="img_table"
-              alt="product"
-              priority
-              width={100}
-              height={100}
-            />
+            <div style={{ position: "relative", width: "106px", height: "100px" }}>
+              <Image
+                src={original.image || original.productImage}
+                className="img_table"
+                alt="product"
+                priority
+                layout="fill"
+                objectFit="contain"
+              />
+            </div>
             <div className="mx-4">
               <h6 className="m-0 f-b"> {propOr("-", ["name"], original)} </h6>
               <div className="gray-color">{formatDate(propOr("-", ["createdAt"], original))}</div>

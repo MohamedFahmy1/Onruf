@@ -190,8 +190,8 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
           <div className="mt-4">
             {!Boolean(selectedCat) && (
               <div className="text-center mb-3">
-                <h3 className="f-b">{pathOr("", [locale, "Products", "sellWhat"], t)}</h3>
-                <h5>{pathOr("", [locale, "Products", "enterAddress"], t)}</h5>
+                <h2 className="f-b fs-3">{pathOr("", [locale, "Products", "sellWhat"], t)}</h2>
+                <p className="fs-4">{pathOr("", [locale, "Products", "enterAddress"], t)}</p>
               </div>
             )}
             <div className="form-content">
@@ -236,13 +236,8 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
                           <li className="mb-3 d-flex justify-content-between " key={index}>
                             <div className="flex gap-1">
                               {propOr([], ["categories"], catWithSub).map((cat, indx) => (
-                                <label
-                                  key={indx}
-                                  //  className="mx-3"
-                                  htmlFor={index}
-                                >
+                                <label key={indx} htmlFor={index}>
                                   {cat || ""}
-
                                   <span className="mx-1 text-lg	">
                                     {indx < catWithSub.categories.length - 1 ? "-" : ""}
                                   </span>
@@ -257,7 +252,6 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
                               onChange={() => setSelectedCatId(catWithSub?.productCategoryId)}
                               id={index}
                               className="mx-2 mt-1 "
-                              // style={{ position: "absolute", left: 0 }}
                             />
                           </li>
                         ))}
@@ -267,7 +261,7 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
                 )}
                 {!!allCats?.length && !Boolean(categoriesAndSubListByName?.length) && (
                   <div className={`form-group ${styles["select_P"]}`}>
-                    <label className="d-block text-center">
+                    <label className="d-block text-center" htmlFor="selectCategory">
                       {pathOr("", [locale, "Products", "selectCategory"], t)}
                     </label>
                     <select
@@ -275,6 +269,8 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
                       onChange={handleSelectChangeCat}
                       value={categoriesAndSubList[0]?.id}
                       className="form-control form-select"
+                      name="selectCategory"
+                      id="selectCategory"
                     >
                       <option disabled hidden value={""}>
                         {pathOr("", [locale, "Products", "selectOption"], t)}
@@ -296,10 +292,11 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
                   Boolean(categoriesAndSubList[0].list.length) &&
                   categoriesAndSubList.map((category, index) => (
                     <div className="form-group" key={category?.id}>
-                      <label className="d-block text-center">
+                      <label className="d-block text-center" htmlFor={category?.id}>
                         {pathOr("", [locale, "Products", "subcategory"], t)}
                       </label>
                       <select
+                        id={category?.id}
                         className="form-control form-select"
                         onChange={handleSelectChange}
                         defaultValue={

@@ -1,9 +1,7 @@
-import { useState, useEffect, useId, Fragment } from "react"
+import { useState, useEffect, Fragment, useCallback, useMemo } from "react"
 import axios from "axios"
 import styles from "./stepTwo.module.css"
-import { FaCamera, FaCheckCircle, FaFlag, FaMinus, FaPlus, FaStar } from "react-icons/fa"
-import { IoIosClose } from "react-icons/io"
-import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"
+import { FaCheckCircle, FaFlag, FaMinus, FaPlus, FaStar } from "react-icons/fa"
 import { Accordion, Row, Col } from "react-bootstrap"
 import bigger from "../../../../../public/images/screencaptur.png"
 import { useRouter } from "next/router"
@@ -18,6 +16,8 @@ import Image from "next/image"
 import AuctionClosingTimeComp from "./AuctionClosingTimeComp"
 import { onlyNumbersInInputs } from "../../../../common/functions"
 import { textAlignStyle } from "../../../../styles/stylesObjects"
+import ProductImages from "./ProductImages"
+import { useFetch } from "../../../../hooks/useFetch"
 
 const AddProductStepTwo = ({
   catId,
@@ -29,7 +29,6 @@ const AddProductStepTwo = ({
   setEditModeOn,
 }) => {
   const { locale, pathname } = useRouter()
-  const id = useId()
   const [eventKey, setEventKey] = useState("0")
   const [countries, setCountries] = useState([])
   const [regions, setRegions] = useState([])
@@ -38,24 +37,30 @@ const AddProductStepTwo = ({
   const [selectedPack, setselectedPack] = useState(packat?.length ? packat[0]?.id : 0)
   const [spesfications, setSpesfications] = useState([])
   const [unlimtedQuantity, setUnlimtedQuantity] = useState(productPayload.qty ? false : true)
-  const [mainImgId, setMainImgId] = useState(null)
   const [userBanksData, setuserBanksData] = useState([])
   const [showBanksData, setShowBanksData] = useState(false)
-  const [shippingOptions, setShippingOptions] = useState([])
+  // const [shippingOptions, setShippingOptions] = useState([])
+  const { data: shippingOptions } = useFetch("/GetAllShippingOptions")
+  const countryFlag = useMemo(
+    () => countries?.find((item) => item.id === productPayload.countryId)?.countryFlag,
+    [countries, productPayload?.countryId],
+  )
 
-  const countryFlag = countries?.find((item) => item.id === productPayload.countryId)?.countryFlag
+  const handleFetchNeighbourhoodsOrRegions = useCallback(
+    async (url, params = "", id, setState) => {
+      try {
+        const {
+          data: { data },
+        } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
+        setState(data)
+      } catch (e) {
+        Alerto(e)
+      }
+    },
+    [locale],
+  )
 
-  const handleFetchNeighbourhoodsOrRegions = async (url, params = "", id, setState) => {
-    try {
-      const {
-        data: { data },
-      } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
-      setState(data)
-    } catch (e) {
-      Alerto(e)
-    }
-  }
-  const fetchCountries = async () => {
+  const fetchCountries = useCallback(async () => {
     try {
       const { data: countriesData } = await axios(
         process.env.NEXT_PUBLIC_API_URL + `/ListCountries?lang=${locale}&currentPage=1`,
@@ -65,8 +70,9 @@ const AddProductStepTwo = ({
     } catch (e) {
       Alerto(e)
     }
-  }
-  const fetchPakatList = async () => {
+  }, [locale])
+
+  const fetchPakatList = useCallback(async () => {
     try {
       const { data: packatData } = await axios(
         process.env.NEXT_PUBLIC_API_URL +
@@ -77,8 +83,9 @@ const AddProductStepTwo = ({
     } catch (e) {
       Alerto(e)
     }
-  }
-  const fetchBanksData = async () => {
+  }, [locale, catId])
+
+  const fetchBanksData = useCallback(async () => {
     try {
       const { data: data } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/BankTransfersList`)
       const { data: banksData } = data
@@ -86,17 +93,9 @@ const AddProductStepTwo = ({
     } catch (e) {
       Alerto(e)
     }
-  }
-  const fetchShippingOptions = async () => {
-    try {
-      const { data: data } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/GetAllShippingOptions`)
-      const { data: shippingData } = data
-      setShippingOptions(shippingData)
-    } catch (e) {
-      Alerto(e)
-    }
-  }
-  const fetchSpecificationsList = async () => {
+  }, [])
+
+  const fetchSpecificationsList = useCallback(async () => {
     try {
       const {
         data: { data: spefications },
@@ -117,14 +116,14 @@ const AddProductStepTwo = ({
     } catch (e) {
       Alerto(e)
     }
-  }
+  }, [locale, catId, pathname, setProductPayload, editModeOn])
+
   useEffect(() => {
     fetchBanksData()
     fetchSpecificationsList()
-    fetchShippingOptions()
     fetchCountries()
     fetchPakatList()
-  }, [locale])
+  }, [locale, fetchBanksData, fetchSpecificationsList, fetchCountries, fetchPakatList])
 
   useEffect(() => {
     if (productPayload.neighborhoodId) {
@@ -136,49 +135,13 @@ const AddProductStepTwo = ({
         setNeighborhoods,
       )
     }
-  }, [productPayload.neighborhoodId])
+  }, [
+    productPayload.neighborhoodId,
+    productPayload.countryId,
+    productPayload.regionId,
+    handleFetchNeighbourhoodsOrRegions,
+  ])
 
-  const handleUploadImages = (e) => {
-    let file = e.target.files[0]
-    const allowedTypes = ["image/jpeg", "image/png", "image/gif"]
-    if (!allowedTypes.includes(file.type)) {
-      return toast.error(locale === "en" ? "Only image files are allowed!" : "مسموح برفع الصور")
-    }
-    if (file) {
-      file.id = Date.now()
-      setProductPayload((prev) => ({
-        ...prev,
-        listImageFile: [...prev?.listImageFile, file],
-      }))
-    }
-    e.target.value = null
-  }
-  const handleUrlChange = (index, event) => {
-    const newVideoUrls = [...productPayload.videoUrl]
-    newVideoUrls[index] = event.target.value
-    setProductPayload({ ...productPayload, videoUrl: newVideoUrls })
-  }
-
-  const addUrlField = () => {
-    const newVideoUrls = [...productPayload.videoUrl, ""]
-    if (productPayload.videoUrl.every((url) => url.trim() !== "")) {
-      setProductPayload((prev) => ({ ...prev, videoUrl: newVideoUrls }))
-    }
-  }
-  const removeUrlField = (index) => {
-    const newVideoUrls = [...productPayload.videoUrl]
-    if (newVideoUrls.length > 1) {
-      newVideoUrls.splice(index, 1)
-      setProductPayload((prev) => ({ ...prev, videoUrl: newVideoUrls }))
-    }
-  }
-  const removeUrlFieldFromListmedia = (id) => {
-    setProductPayload((prev) => ({
-      ...prev,
-      listMedia: productPayload.listMedia?.filter((item) => item.id !== id),
-      DeletedMedias: [...productPayload.DeletedMedias, id],
-    }))
-  }
   const handleChoosePackat = (pack) => {
     if (productPayload.pakatId) {
       setProductPayload({ ...productPayload, pakatId: null, "ProductPaymentDetailsDto.AdditionalPakatId": 0 })
@@ -203,61 +166,6 @@ const AddProductStepTwo = ({
 
   Array.prototype.move = function (from, to) {
     this.splice(to, 0, this.splice(from, 1)[0])
-  }
-
-  const handleRemoveImage = (index) => {
-    let updatedIndex
-    pathname.includes("add")
-      ? (updatedIndex = index)
-      : (updatedIndex = index + productPayload?.listMedia?.filter((item) => item.type === 1).length)
-    if (updatedIndex === productPayload.MainImageIndex) {
-      setProductPayload({
-        ...productPayload,
-        MainImageIndex: null,
-        listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index),
-      })
-    } else if (updatedIndex > productPayload.MainImageIndex) {
-      setProductPayload({
-        ...productPayload,
-        listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index),
-      })
-    } else {
-      setProductPayload({
-        ...productPayload,
-        MainImageIndex: productPayload.MainImageIndex - 1,
-        listImageFile: productPayload.listImageFile?.filter((_, i) => i !== index),
-      })
-    }
-  }
-  const handleRemoveImageFromListmedia = (id, index) => {
-    let updatedImages = productPayload.listMedia?.filter((item) => item.type === 1)
-    if (index === productPayload.MainImageIndex) {
-      setProductPayload({
-        ...productPayload,
-        MainImageIndex: null,
-        listMedia: updatedImages.filter((_, i) => i !== index),
-        DeletedMedias: [...productPayload.DeletedMedias, id],
-      })
-    } else {
-      setProductPayload({
-        ...productPayload,
-        listMedia: updatedImages.filter((_, i) => i !== index),
-        DeletedMedias: [...productPayload.DeletedMedias, id],
-      })
-    }
-  }
-
-  const handleMainImage = (id, index) => {
-    if (id !== mainImgId) {
-      const targetId = productPayload.listImageFile.find((ele) => ele.id === id)?.id
-      setMainImgId(targetId)
-    } else {
-      setMainImgId(null)
-    }
-    setProductPayload((prev) => ({
-      ...prev,
-      MainImageIndex: index,
-    }))
   }
 
   const handleUnlimtedQuantity = ({ target: { checked } }) => {
@@ -451,190 +359,13 @@ const AddProductStepTwo = ({
           <span>1</span>
           {pathOr("", [locale, "Products", "productImages"], t)}
         </Accordion.Button>
-        <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
-          {pathname.includes("add") ? (
-            <div className={styles["all_upload_Image"]}>
-              {productPayload?.listImageFile?.map((img, index) => (
-                <div key={id + index} className={styles["the_img_upo"]}>
-                  <IoIosClose
-                    style={{
-                      cursor: "pointer",
-                      position: "absolute",
-                      top: 5,
-                      right: 5,
-                      background: "white",
-                      borderRadius: "50%",
-                    }}
-                    size={20}
-                    onClick={() => handleRemoveImage(index)}
-                  />
-                  <img src={pathname.includes("add") ? URL.createObjectURL(img) : img?.url} alt="product" />
-                  <label htmlFor={img.id}>
-                    <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
-                    <input
-                      id={img.id}
-                      type="radio"
-                      name="isMain"
-                      checked={mainImgId ? img?.id === mainImgId : index === productPayload.MainImageIndex}
-                      onChange={() => handleMainImage(img.id, index)}
-                    />
-                  </label>
-                </div>
-              ))}
-              <div className={styles["btn_apload_img"]}>
-                <FaCamera />
-                <input
-                  type="file"
-                  accept="image/jpeg, image/png, image/gif"
-                  onChange={(e) => handleUploadImages(e)}
-                  multiple={selectedPack?.countImage >= 1}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className={styles["all_upload_Image"]}>
-              {productPayload?.listMedia
-                ?.filter((item) => item.type === 1)
-                .map((img, index) => (
-                  <div key={id + index} className={styles["the_img_upo"]}>
-                    <IoIosClose
-                      style={{
-                        cursor: "pointer",
-                        position: "absolute",
-                        top: 5,
-                        right: 5,
-                        background: "white",
-                        borderRadius: "50%",
-                      }}
-                      size={20}
-                      onClick={() => handleRemoveImageFromListmedia(img.id, index)}
-                    />
-                    <img src={img?.url} alt="product" width={200} height={120} />
-                    <label htmlFor={img.id}>
-                      <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
-                      <input
-                        id={img.id}
-                        name="isMain"
-                        type="radio"
-                        checked={index === productPayload.MainImageIndex}
-                        onChange={() => setProductPayload((prev) => ({ ...prev, MainImageIndex: index }))}
-                      />
-                    </label>
-                  </div>
-                ))}
-              {productPayload?.listImageFile?.map((img, index) => {
-                let updatedIndex = productPayload?.listMedia?.filter((item) => item.type === 1).length + index
-                return (
-                  <div key={id + updatedIndex} className={styles["the_img_upo"]}>
-                    <IoIosClose
-                      style={{
-                        cursor: "pointer",
-                        position: "absolute",
-                        top: 5,
-                        right: 5,
-                        background: "white",
-                        borderRadius: "50%",
-                      }}
-                      size={20}
-                      onClick={() => handleRemoveImage(index)}
-                    />
-                    <img src={URL.createObjectURL(img)} alt="product" width={200} height={180} />
-                    <label htmlFor={img.id}>
-                      <span className="mx-1"> {pathOr("", [locale, "Products", "mainImage"], t)}</span>
-                      <input
-                        id={img.id}
-                        type="radio"
-                        name="isMain"
-                        checked={updatedIndex === productPayload.MainImageIndex}
-                        onChange={() => handleMainImage(img.id, updatedIndex)}
-                      />
-                    </label>
-                  </div>
-                )
-              })}
-              <div className={styles["btn_apload_img"]}>
-                <FaCamera />
-                <input
-                  type="file"
-                  accept="image/jpeg, image/png, image/gif"
-                  onChange={(e) => handleUploadImages(e)}
-                  multiple={selectedPack?.countImage >= 1}
-                />
-              </div>
-            </div>
-          )}
-          <div className={styles.container}>
-            {pathname.includes("add") ? (
-              productPayload?.videoUrl?.map((url, index) => (
-                <div key={index} className={styles.urlInputContainer}>
-                  <input
-                    type="text"
-                    value={url}
-                    onChange={(e) => handleUrlChange(index, e)}
-                    placeholder={locale === "en" ? "Please enter a video link" : "ادخل رابط الفيديو"}
-                    className={styles.urlInput}
-                  />
-                  {productPayload.videoUrl.length > 1 && (
-                    <button onClick={() => removeUrlField(index)} className={styles.button}>
-                      <AiOutlineMinus />
-                    </button>
-                  )}
-                  <button onClick={addUrlField} className={styles.button}>
-                    <AiOutlinePlus />
-                  </button>
-                </div>
-              ))
-            ) : (
-              <Fragment>
-                {productPayload?.listMedia
-                  ?.filter((item) => item.type === 2)
-                  .map((item, index) => (
-                    <div key={index + id} className={styles.urlInputContainer}>
-                      <input
-                        type="text"
-                        value={item.url}
-                        onChange={(e) => handleUrlChange(index, e)}
-                        placeholder={locale === "en" ? "Please enter a video link" : "ادخل رابط الفيديو"}
-                        className={styles.urlInput}
-                        disabled
-                      />
-                      <button onClick={() => removeUrlFieldFromListmedia(item.id)} className={styles.button}>
-                        <AiOutlineMinus />
-                      </button>
-                    </div>
-                  ))}
-                {productPayload?.videoUrl?.map((url, index) => (
-                  <div key={index + id} className={styles.urlInputContainer}>
-                    <input
-                      type="text"
-                      value={url}
-                      onChange={(e) => handleUrlChange(index, e)}
-                      placeholder={locale === "en" ? "Please enter a video link" : "ادخل رابط الفيديو"}
-                      className={styles.urlInput}
-                    />
-                    {productPayload.videoUrl.length > 1 && (
-                      <button onClick={() => removeUrlField(index)} className={styles.button}>
-                        <AiOutlineMinus />
-                      </button>
-                    )}
-                    <button onClick={addUrlField} className={styles.button}>
-                      <AiOutlinePlus />
-                    </button>
-                  </div>
-                ))}
-              </Fragment>
-            )}
-          </div>
-          <button
-            className="btn-main mt-3 btn-disabled"
-            type="button"
-            onClick={() => {
-              validateProductImages() === true && setEventKey("1")
-            }}
-          >
-            {pathOr("", [locale, "Products", "next"], t)}
-          </button>
-        </Accordion.Body>
+        <ProductImages
+          productPayload={productPayload}
+          setProductPayload={setProductPayload}
+          validateProductImages={validateProductImages}
+          setEventKey={setEventKey}
+          selectedPack={selectedPack}
+        />
       </Accordion.Item>
       <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="1">
         <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("1")}>
@@ -738,10 +469,11 @@ const AddProductStepTwo = ({
                       id="subTitleAr"
                       className={`form-control ${styles["form-control"]}`}
                       placeholder={
-                        productPayload.subTitleAr !== null &&
-                        pathOr("", [locale, "Products", "enterProductSecondaryAddressAr"], t)
+                        productPayload.subTitleAr !== null
+                          ? pathOr("", [locale, "Products", "enterProductSecondaryAddressEn"], t)
+                          : "-"
                       }
-                      value={productPayload.subTitleAr}
+                      value={!!productPayload.subTitleAr ? productPayload.subTitleAr : ""}
                       disabled={productPayload.subTitleAr === null}
                       onChange={(e) =>
                         setProductPayload({
@@ -761,7 +493,7 @@ const AddProductStepTwo = ({
                       id="descriptionAr"
                       className={`form-control ${styles["form-control"]}`}
                       placeholder={pathOr("", [locale, "Products", "enterDetailsAr"], t)}
-                      value={productPayload.descriptionAr}
+                      value={!!productPayload.descriptionAr ? productPayload.descriptionAr : ""}
                       onChange={(e) =>
                         setProductPayload({
                           ...productPayload,
@@ -797,10 +529,11 @@ const AddProductStepTwo = ({
                       id="subTitleEn"
                       className={`form-control ${styles["form-control"]}`}
                       placeholder={
-                        productPayload.subTitleEn !== null &&
-                        pathOr("", [locale, "Products", "enterProductSecondaryAddressEn"], t)
+                        productPayload.subTitleEn !== null
+                          ? pathOr("", [locale, "Products", "enterProductSecondaryAddressEn"], t)
+                          : "-"
                       }
-                      value={productPayload.subTitleEn}
+                      value={!!productPayload.subTitleEn ? productPayload.subTitleEn : ""}
                       disabled={productPayload.subTitleEn === null}
                       onChange={(e) =>
                         setProductPayload({
@@ -820,7 +553,7 @@ const AddProductStepTwo = ({
                       id="descriptionEn"
                       className={`form-control ${styles["form-control"]}`}
                       placeholder={pathOr("", [locale, "Products", "enterDetailsEn"], t)}
-                      value={productPayload.descriptionEn}
+                      value={!!productPayload.descriptionEn ? productPayload.descriptionEn : ""}
                       onChange={(e) =>
                         setProductPayload({
                           ...productPayload,
@@ -892,7 +625,7 @@ const AddProductStepTwo = ({
                         type="unlimtedQuantity ? 'text' : 'number'"
                         disabled={unlimtedQuantity}
                         className={`form-control ${styles["form-control"]} ${unlimtedQuantity ? "disabled" : ""}`}
-                        value={productPayload.qty == null ? "" : productPayload.qty}
+                        value={productPayload.qty === null ? "" : productPayload.qty}
                         onKeyDown={(e) => onlyNumbersInInputs(e)}
                         onChange={(e) => setProductPayload({ ...productPayload, qty: +e.target.value })}
                       />
@@ -979,8 +712,8 @@ const AddProductStepTwo = ({
                           id="basic-addon1"
                           style={{ padding: "14px" }}
                         >
-                          {productPayload.countryId ? (
-                            <img src={countryFlag} alt="country flag" width={30} height={20} />
+                          {productPayload.countryId && countryFlag ? (
+                            <Image src={countryFlag} alt="country flag" width={30} height={20} />
                           ) : (
                             <FaFlag size={21} style={{ width: "30px" }} />
                           )}
@@ -1099,7 +832,7 @@ const AddProductStepTwo = ({
                           id="District"
                           className={`form-control ${styles["form-control"]}`}
                           placeholder={pathOr("", [locale, "Products", "enterArea"], t)}
-                          value={productPayload.District}
+                          value={!!productPayload.District ? productPayload.District : ""}
                           onChange={(e) => {
                             setProductPayload({ ...productPayload, District: e.target.value })
                           }}
@@ -1114,7 +847,7 @@ const AddProductStepTwo = ({
                           id="Street"
                           className={`form-control ${styles["form-control"]}`}
                           placeholder={pathOr("", [locale, "Products", "enterStreet"], t)}
-                          value={productPayload.Street}
+                          value={!!productPayload.Street ? productPayload.Street : ""}
                           onChange={(e) => setProductPayload({ ...productPayload, Street: e.target.value })}
                         />
                       </div>
@@ -1127,7 +860,7 @@ const AddProductStepTwo = ({
                           type="text"
                           className={`form-control ${styles["form-control"]}`}
                           placeholder={pathOr("", [locale, "Products", "enterCountryCode"], t)}
-                          value={productPayload.GovernmentCode}
+                          value={!!productPayload.GovernmentCode ? productPayload.GovernmentCode : ""}
                           onChange={(e) => setProductPayload({ ...productPayload, GovernmentCode: e.target.value })}
                         />
                       </div>
@@ -1625,7 +1358,7 @@ const AddProductStepTwo = ({
                     </label>
                     <div className="row">
                       {productPayload.ShippingOptions?.includes(2) || productPayload.ShippingOptions?.includes(3)
-                        ? shippingOptions.map((item) => (
+                        ? shippingOptions?.map((item) => (
                             <div className="col-lg-6 col-md-6" key={item.id}>
                               <div className="form-group">
                                 <div
@@ -1650,7 +1383,7 @@ const AddProductStepTwo = ({
                             </div>
                           ))
                         : shippingOptions
-                            .filter((item) => item.id !== 4 && item.id !== 5 && item.id !== 6)
+                            ?.filter((item) => item.id !== 4 && item.id !== 5 && item.id !== 6)
                             .map((item) => (
                               <div className="col-lg-6 col-md-6" key={item.id}>
                                 <div className="form-group">
@@ -1774,11 +1507,14 @@ const AddProductStepTwo = ({
                       <Col md={5}>
                         <div className={styles["box-product"]}>
                           <div className={styles["imge"]}>
-                            <img
+                            <Image
                               src={
                                 productPayload.listMedia?.find((item) => item.isMainMadia === true)?.url ||
                                 URL.createObjectURL(productPayload.listImageFile[0])
                               }
+                              alt="product"
+                              width={400}
+                              height={200}
                             />
                             <div className={styles["two_btn_"]}>
                               <button className={styles["btn_"]}>
@@ -1860,17 +1596,20 @@ const AddProductStepTwo = ({
                       </Col>
                       <Col lg={2}>
                         <div className="text-center mt-3">
-                          <img src={bigger.src} className="img-fluid" />
+                          <Image src={bigger} className="img-fluid" alt="bigger" width={130} height={180} />
                         </div>
                       </Col>
                       <Col md={5} lg={4}>
                         <div className={`${styles["box-product"]} ${styles["box-product2"]}`}>
                           <div className={styles["imge"]}>
-                            <img
+                            <Image
                               src={
                                 productPayload.listMedia?.find((item) => item.isMainMadia === true)?.url ||
                                 URL.createObjectURL(productPayload?.listImageFile?.[0])
                               }
+                              alt="product"
+                              width={300}
+                              height={200}
                             />
                             <div className={styles["two_btn_"]}>
                               <button className={styles["btn_"]}>
