@@ -4,6 +4,9 @@ import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../../../translations.json"
 import { toast } from "react-toastify"
+import moment from "moment"
+import { textAlignStyle } from "../../../../styles/stylesObjects"
+
 const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCatProps }) => {
   const { locale } = useRouter()
   const [activeElementIndex, setActiveElementIndex] = useState(null)
@@ -37,6 +40,25 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
         return `${item} ${pathOr("", [locale, "Products", "months"], t)}`
     }
   }
+  const calculateFutureDate = (item, unit) => {
+    const unitMapping = { 1: "days", 2: "weeks", 3: "months" }
+    return moment()
+      .add(item * (unit === 2 ? 7 : unit === 3 ? 30 : 1), unitMapping[unit])
+      .format("YYYY-MM-DDTHH:mm")
+  }
+
+  const handleSelection = (item, auctionClosingTime) => {
+    if (productPayload.IsAuctionClosingTimeFixed) {
+      setProductPayload({
+        ...productPayload,
+        AuctionClosingTime: auctionClosingTime,
+        IsAuctionClosingTimeFixed: true,
+      })
+      setActiveElementIndex(+item)
+    } else {
+      toast.error(locale === "en" ? "Please Select Duration Type First!" : "رجاء اختر نوع المدة")
+    }
+  }
   return (
     <div className="col-md-12 col-lg-6 d-flex flex-wrap flex-lg-nowrap w-100 gap-5 mb-4">
       <div
@@ -61,84 +83,18 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
         </div>
         <div className="d-flex gap-3 flex-wrap">
           {selectedCatProps.auctionClosingPeriods.split(",").map((item, index) => {
-            if (selectedCatProps.auctionClosingPeriodsUnit == 1) {
-              const daysToAdd = item * 1
-              const millisecondsPerDay = 24 * 60 * 60 * 1000
-              const futureTimestamp = Date.now() + daysToAdd * millisecondsPerDay
-              const futureDate = new Date(futureTimestamp)
-              const auctionClosingTimeIso = futureDate.toISOString()
-              return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    if (productPayload.IsAuctionClosingTimeFixed) {
-                      setProductPayload({
-                        ...productPayload,
-                        AuctionClosingTime: auctionClosingTimeIso,
-                        IsAuctionClosingTimeFixed: true,
-                      })
-                      setActiveElementIndex(+item)
-                    } else
-                      return toast.error(locale === "en" ? "Please Select Duration Type First!" : "رجاء اختر نوع المدة")
-                  }}
-                  className={`${styles.p_select} ${item == activeElementIndex ? styles.p_select_active : ""}`}
-                >
-                  {renderFixedLengthDays(+item)}
-                </div>
-              )
-            }
-            if (selectedCatProps.auctionClosingPeriodsUnit == 2) {
-              const daysToAdd = item * 7
-              const millisecondsPerDay = 24 * 60 * 60 * 1000
-              const futureTimestamp = Date.now() + daysToAdd * millisecondsPerDay
-              const futureDate = new Date(futureTimestamp)
-              const auctionClosingTimeIso = futureDate.toISOString()
-              return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    if (productPayload.IsAuctionClosingTimeFixed) {
-                      setProductPayload({
-                        ...productPayload,
-                        AuctionClosingTime: auctionClosingTimeIso,
-                        IsAuctionClosingTimeFixed: true,
-                      })
-                      setActiveElementIndex(+item)
-                    } else
-                      return toast.error(locale === "en" ? "Please Select Duration Type First!" : "رجاء اختر نوع المدة")
-                  }}
-                  className={`${styles.p_select} ${item == activeElementIndex ? styles.p_select_active : ""}`}
-                >
-                  {renderFixedLengthWeeks(+item)}
-                </div>
-              )
-            }
-            if (selectedCatProps.auctionClosingPeriodsUnit == 3) {
-              const daysToAdd = item * 30
-              const millisecondsPerDay = 24 * 60 * 60 * 1000
-              const futureTimestamp = Date.now() + daysToAdd * millisecondsPerDay
-              const futureDate = new Date(futureTimestamp)
-              const auctionClosingTimeIso = futureDate.toISOString()
-              return (
-                <div
-                  key={index}
-                  onClick={() => {
-                    if (productPayload.IsAuctionClosingTimeFixed) {
-                      setProductPayload({
-                        ...productPayload,
-                        AuctionClosingTime: auctionClosingTimeIso,
-                        IsAuctionClosingTimeFixed: true,
-                      })
-                      setActiveElementIndex(+item)
-                    } else
-                      return toast.error(locale === "en" ? "Please Select Duration Type First!" : "رجاء اختر نوع المدة")
-                  }}
-                  className={`${styles.p_select} ${item == activeElementIndex ? styles.p_select_active : ""}`}
-                >
-                  {renderFixedLengthMonths(+item)}
-                </div>
-              )
-            }
+            const auctionClosingTime = calculateFutureDate(item, selectedCatProps.auctionClosingPeriodsUnit)
+            return (
+              <div
+                key={index}
+                onClick={() => handleSelection(item, auctionClosingTime)}
+                className={`${styles.p_select} ${item == activeElementIndex ? styles.p_select_active : ""}`}
+              >
+                {selectedCatProps.auctionClosingPeriodsUnit === 1 && renderFixedLengthDays(+item)}
+                {selectedCatProps.auctionClosingPeriodsUnit === 2 && renderFixedLengthWeeks(+item)}
+                {selectedCatProps.auctionClosingPeriodsUnit === 3 && renderFixedLengthMonths(+item)}
+              </div>
+            )
           })}
         </div>
       </div>
@@ -162,7 +118,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
             checked={productPayload.IsAuctionClosingTimeFixed === false}
           />
         </div>
-        <p style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>{`+ ${
+        <p style={{ ...textAlignStyle(locale), display: "block" }}>{`+ ${
           selectedCatProps.auctionClosingTimeFee
         } ${pathOr("", [locale, "Products", "currency"], t)}`}</p>
         <input
