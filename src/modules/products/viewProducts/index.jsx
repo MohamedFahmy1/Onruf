@@ -13,23 +13,17 @@ import { FaPlusCircle } from "react-icons/fa"
 import Link from "next/link"
 import { toast } from "react-toastify"
 import t from "../../../translations.json"
-import { useFetch } from "../../../hooks/useFetch"
 import SendOfferModal from "../SendOfferModal"
 import Image from "next/image"
 import Alerto from "../../../common/Alerto"
 
 const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelectedRows }) => {
   const router = useRouter()
-  const {
-    locale,
-    query: { page = 1 },
-    push,
-  } = useRouter()
+  const { locale, push } = useRouter()
   const id = router.query.id
 
   const [products, setProducts] = useState(p)
   const [selectedFilter, setSelectedFilter] = useState("avaliableProducts")
-  // const { data: didnotSellProducts, fetchData: fetchDidntSell } = useFetch("/ListDidntSellProducts", false)
   const [didnotSellProducts, setDidnotSellProducts] = useState()
   const [openQuantityModal, setOpenQuantityModal] = useState(false)
   const [openPriceModal, setOpenPriceModal] = useState(false)

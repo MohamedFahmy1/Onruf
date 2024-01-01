@@ -8,14 +8,18 @@ import t from "../../../../translations.json"
 import Alerto from "../../../../common/Alerto"
 
 const SingleFolder = ({ data }) => {
-  const { locale } = useRouter()
+  const {
+    locale,
+    query: { id },
+  } = useRouter()
   const [products, setProducts] = useState()
   const [productsIds, setProductsIds] = useState([])
   const [selectedRows, setSelectedRows] = useState({})
   const router = useRouter()
-  const id = router.query.id
+  // const id = router.query.id
 
   const getSingleFolder = useCallback(async () => {
+    console.log(id)
     try {
       const {
         data: { data: getSingleFolder },
@@ -27,10 +31,10 @@ const SingleFolder = ({ data }) => {
   }, [id, locale])
 
   useEffect(() => {
-    if (router && router.query) {
+    if (id) {
       id && getSingleFolder()
     }
-  }, [router, getSingleFolder, id])
+  }, [getSingleFolder, id])
 
   const handleRemoveProductFromFolder = async () => {
     if (!productsIds?.length)

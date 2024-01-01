@@ -1,39 +1,39 @@
 import React from "react"
 import { IoIosArrowForward, IoIosArrowBack } from "react-icons/io"
 import Link from "next/link"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/router"
 
 const Pagination = ({ listLength, pageSize = 10 }) => {
-  const route = Router?.router?.state
-  const page = route?.query?.page || 1
+  const router = useRouter()
+  const page = parseInt(router.query.page) || 1
   const length = Math.ceil(listLength / pageSize)
 
-  const router = useRouter()
-  const { locale } = useRouter()
+  // Construct the base URL without query parameters
+  const baseUrl = router.pathname.replace("[id]", router.query.id)
 
   return (
     <nav aria-label="Page navigation" className="mt-3">
       <ul className="pagination justify-content-center">
         <li className="page-item">
-          <Link href={`${router.query.id || router.pathname}?page=${+page === 1 ? page : +page - 1}`}>
-            <button className="page-link" aria-label={`Go to page ${+page - 1}`}>
-              {locale === "en" ? <IoIosArrowBack /> : <IoIosArrowForward />}
+          <Link href={`${baseUrl}?page=${page === 1 ? 1 : page - 1}`}>
+            <button className="page-link" aria-label={`Go to page ${page - 1}`}>
+              {router.locale === "en" ? <IoIosArrowBack /> : <IoIosArrowForward />}
             </button>
           </Link>
         </li>
-        {Array.from({ length }, (_, n) => n).map((p, index) => (
+        {Array.from({ length }, (_, n) => n + 1).map((p) => (
           <li className="page-item" key={p}>
-            <Link href={`${route?.pathname}?page=${p + 1}`}>
-              <button className={`page-link ${+page === index + 1 ? "active" : ""}`} aria-label={`Go to page ${p + 1}`}>
-                {p + 1}
+            <Link href={`${baseUrl}?page=${p}`}>
+              <button className={`page-link ${page === p ? "active" : ""}`} aria-label={`Go to page ${p}`}>
+                {p}
               </button>
             </Link>
           </li>
         ))}
         <li className="page-item">
-          <Link href={`${router.query.id || router.pathname}?page=${+page === length ? page : +page + 1}`}>
-            <button className="page-link" aria-label={`Go to page ${+page + 1}`}>
-              {locale === "ar" ? <IoIosArrowBack /> : <IoIosArrowForward />}
+          <Link href={`${baseUrl}?page=${page === length ? length : page + 1}`}>
+            <button className="page-link" aria-label={`Go to page ${page + 1}`}>
+              {router.locale === "ar" ? <IoIosArrowBack /> : <IoIosArrowForward />}
             </button>
           </Link>
         </li>
