@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from "react"
+import { useState, useEffect } from "react"
 import Modal from "react-bootstrap/Modal"
 import { Row, Col } from "react-bootstrap"
 import folderImg from "../../../../public/icons/folder.svg"
@@ -78,7 +78,7 @@ const Folders = () => {
   const totalNumberOfProducts = folders?.fileList?.length
   const pageSize = 6
   return (
-    <Fragment>
+    <>
       <div className="body-content">
         <div>
           <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
@@ -213,7 +213,7 @@ const Folders = () => {
           )}
         </Modal.Footer>
       </Modal>
-    </Fragment>
+    </>
   )
 }
 

@@ -1,9 +1,10 @@
-import React from "react"
-import Folders from "../../../modules/products/folders"
+import React, { Suspense } from "react"
 import Head from "next/head"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { useRouter } from "next/router"
+
+const Folders = React.lazy(() => import("../../../modules/products/folders"))
 
 const FoldersPage = () => {
   const { locale } = useRouter()
@@ -13,7 +14,9 @@ const FoldersPage = () => {
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "browseFolders"], t)}</title>
       </Head>
-      <Folders />
+      <Suspense fallback={<div>Loading...</div>}>
+        <Folders />
+      </Suspense>
     </>
   )
 }
