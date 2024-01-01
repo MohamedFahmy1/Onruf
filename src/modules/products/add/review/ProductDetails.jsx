@@ -200,7 +200,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                     // <Image src={imageSrc} className="img_table" alt="product" priority width={130} height={100} />
                     <div style={{ position: "relative", width: "106px", height: "100px" }}>
                       <Image
-                        ssrc={imageSrc}
+                        src={imageSrc}
                         className="img_table"
                         alt="product"
                         priority
