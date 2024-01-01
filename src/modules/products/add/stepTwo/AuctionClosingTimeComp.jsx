@@ -42,9 +42,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
   }
   const calculateFutureDate = (item, unit) => {
     const unitMapping = { 1: "days", 2: "weeks", 3: "months" }
-    return moment()
-      .add(item * (unit === 2 ? 7 : unit === 3 ? 30 : 1), unitMapping[unit])
-      .format("YYYY-MM-DDTHH:mm")
+    return moment().add(+item, unitMapping[unit]).format("YYYY-MM-DDTHH:mm")
   }
 
   const handleSelection = (item, auctionClosingTime) => {

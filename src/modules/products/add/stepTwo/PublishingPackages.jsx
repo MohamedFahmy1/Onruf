@@ -6,6 +6,7 @@ import bigger from "../../../../../public/images/screencaptur.png"
 import t from "../../../../translations.json"
 import { FaCheckCircle, FaStar } from "react-icons/fa"
 import Image from "next/image"
+import moment from "moment"
 
 const PublishingPackages = ({
   productPayload,
@@ -28,6 +29,82 @@ const PublishingPackages = ({
       setProductPayload({ ...productPayload, pakatId: pack.id, "ProductPaymentDetailsDto.AdditionalPakatId": pack.id })
       setselectedPack(pack)
     }
+  }
+  const calculateTimeLeft = (closingTime) => {
+    const duration = moment.duration(moment(closingTime).diff(moment()))
+    return {
+      days: Math.floor(duration.asDays()),
+      hours: duration.hours(),
+      minutes: duration.minutes(),
+    }
+  }
+
+  const renderTimeLeft = (closingTime) => {
+    if (new Date(closingTime) - new Date() > 0) {
+      const { days, hours, minutes } = calculateTimeLeft(closingTime)
+      return (
+        <div className={styles["time"]}>
+          <div>
+            <span>{days}</span> Day
+          </div>
+          <div>
+            <span>{hours}</span> Hour
+          </div>
+          <div>
+            <span>{minutes}</span> min
+          </div>
+        </div>
+      )
+    }
+  }
+  const ProductBox = ({ isLargerImage }) => {
+    const imageUrl =
+      productPayload.listMedia?.find((item) => item.isMainMadia === true)?.url ||
+      URL.createObjectURL(productPayload.listImageFile[0])
+    const imageSize = isLargerImage ? { width: 300, height: 200 } : { width: 400, height: 200 }
+    return (
+      <div className={`${styles["box-product"]} ${isLargerImage ? styles["box-product2"] : ""}`}>
+        <div className={styles["imge"]}>
+          <Image src={imageUrl} alt="product" width={imageSize.width} height={imageSize.height} />
+          <div className={styles["two_btn_"]}>
+            <button className={styles["btn_"]}>{pathOr("", [locale, "Products", "merchant"], t)}</button>
+            <button className={styles["btn_"]}>{pathOr("", [locale, "Products", "freeDelivery"], t)}</button>
+          </div>
+          {productPayload.AuctionClosingTime && renderTimeLeft(productPayload.AuctionClosingTime)}
+          <button className={styles["btn-star"]}>
+            <FaStar />
+          </button>
+        </div>
+        <div className={styles["info"]}>
+          <div className="mb-3">
+            <h5 className="f-b mb-1">{productPayload?.nameAr}</h5>
+            <div className="font-18 gray-color">
+              {regions?.find((item) => +item.id === +productPayload?.regionId)?.name} - {moment().format("L")}
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-6">
+              <div className="font-18">
+                <div>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</div>
+                <div className="f-b main-color">
+                  {productPayload?.Price} {pathOr("", [locale, "Products", "currency"], t)}
+                </div>
+              </div>
+            </div>
+            {productPayload?.HighestBidPrice && (
+              <div className="col-md-6">
+                <div className="font-18">
+                  <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
+                  <div className="f-b">
+                    {productPayload?.HighestBidPrice} {pathOr("", [locale, "Products", "currency"], t)}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
   }
   return (
     <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
@@ -104,88 +181,7 @@ const PublishingPackages = ({
               <h5 className="mb-3 f-b text-center">{pathOr("", [locale, "Products", "findChange"], t)}</h5>
               <Row className="align-items-center">
                 <Col md={5}>
-                  <div className={styles["box-product"]}>
-                    <div className={styles["imge"]}>
-                      <Image
-                        src={
-                          productPayload.listMedia?.find((item) => item.isMainMadia === true)?.url ||
-                          URL.createObjectURL(productPayload.listImageFile[0])
-                        }
-                        alt="product"
-                        width={400}
-                        height={200}
-                      />
-                      <div className={styles["two_btn_"]}>
-                        <button className={styles["btn_"]}>{pathOr("", [locale, "Products", "merchant"], t)}</button>
-                        <button className={styles["btn_"]}>
-                          {pathOr("", [locale, "Products", "freeDelivery"], t)}
-                        </button>
-                      </div>
-                      {productPayload.AuctionClosingTime &&
-                        new Date(productPayload.AuctionClosingTime) - new Date() > 0 && (
-                          <div className={styles["time"]}>
-                            <div>
-                              <span>
-                                {Math.floor(
-                                  (new Date(productPayload.AuctionClosingTime) - new Date()) / (1000 * 60 * 60 * 24),
-                                )}
-                              </span>{" "}
-                              Day
-                            </div>
-                            <div>
-                              <span>
-                                {Math.floor(
-                                  ((new Date(productPayload.AuctionClosingTime) - new Date()) % (1000 * 60 * 60 * 24)) /
-                                    (1000 * 60 * 60),
-                                )}
-                              </span>{" "}
-                              Hour
-                            </div>
-                            <div>
-                              <span>
-                                {Math.floor(
-                                  ((new Date(productPayload.AuctionClosingTime) - new Date()) % (1000 * 60 * 60)) /
-                                    (1000 * 60),
-                                )}
-                              </span>{" "}
-                              min
-                            </div>
-                          </div>
-                        )}
-                      <button className={styles["btn-star"]}>
-                        <FaStar />
-                      </button>
-                    </div>
-                    <div className={styles["info"]}>
-                      <div className="mb-3">
-                        <h5 className="f-b mb-1">{productPayload?.nameAr}</h5>
-                        <div className="font-18 gray-color">
-                          {regions?.find((item) => +item.id === +productPayload?.regionId)?.name} -{" "}
-                          {new Date().toLocaleDateString()}
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-md-6">
-                          <div className="font-18">
-                            <div>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</div>
-                            <div className="f-b main-color">
-                              {productPayload?.Price} {pathOr("", [locale, "Products", "currency"], t)}
-                            </div>
-                          </div>
-                        </div>
-                        {productPayload?.HighestBidPrice && (
-                          <div className="col-md-6">
-                            <div className="font-18">
-                              <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
-                              <div className="f-b">
-                                {productPayload?.HighestBidPrice} {pathOr("", [locale, "Products", "currency"], t)}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <ProductBox isLargerImage={true} />
                 </Col>
                 <Col lg={2}>
                   <div className="text-center mt-3">
@@ -193,88 +189,7 @@ const PublishingPackages = ({
                   </div>
                 </Col>
                 <Col md={5} lg={4}>
-                  <div className={`${styles["box-product"]} ${styles["box-product2"]}`}>
-                    <div className={styles["imge"]}>
-                      <Image
-                        src={
-                          productPayload.listMedia?.find((item) => item.isMainMadia === true)?.url ||
-                          URL.createObjectURL(productPayload?.listImageFile?.[0])
-                        }
-                        alt="product"
-                        width={300}
-                        height={200}
-                      />
-                      <div className={styles["two_btn_"]}>
-                        <button className={styles["btn_"]}>{pathOr("", [locale, "Products", "merchant"], t)}</button>
-                        <button className={styles["btn_"]}>
-                          {pathOr("", [locale, "Products", "freeDelivery"], t)}
-                        </button>
-                      </div>
-                      {productPayload.AuctionClosingTime &&
-                        new Date(productPayload.AuctionClosingTime) - new Date() > 0 && (
-                          <div className={styles["time"]}>
-                            <div>
-                              <span>
-                                {Math.floor(
-                                  (new Date(productPayload.AuctionClosingTime) - new Date()) / (1000 * 60 * 60 * 24),
-                                )}
-                              </span>{" "}
-                              Day
-                            </div>
-                            <div>
-                              <span>
-                                {Math.floor(
-                                  ((new Date(productPayload.AuctionClosingTime) - new Date()) % (1000 * 60 * 60 * 24)) /
-                                    (1000 * 60 * 60),
-                                )}
-                              </span>{" "}
-                              Hour
-                            </div>
-                            <div>
-                              <span>
-                                {Math.floor(
-                                  ((new Date(productPayload.AuctionClosingTime) - new Date()) % (1000 * 60 * 60)) /
-                                    (1000 * 60),
-                                )}
-                              </span>{" "}
-                              min
-                            </div>
-                          </div>
-                        )}
-                      <button className={styles["btn-star"]}>
-                        <FaStar />
-                      </button>
-                    </div>
-                    <div className={styles["info"]}>
-                      <div className="mb-3">
-                        <h5 className="f-b mb-1">{productPayload?.nameAr}</h5>
-                        <div className="font-18 gray-color">
-                          {regions?.find((item) => +item.id === +productPayload?.regionId)?.name} -{" "}
-                          {new Date().toLocaleDateString()}
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col-md-6">
-                          <div className="font-18">
-                            <div>{pathOr("", [locale, "Products", "purchasingPrice"], t)}</div>
-                            <div className="f-b main-color">
-                              {productPayload?.Price} {pathOr("", [locale, "Products", "currency"], t)}
-                            </div>
-                          </div>
-                        </div>
-                        {productPayload?.HighestBidPrice && (
-                          <div className="col-md-6">
-                            <div className="font-18">
-                              <div>{pathOr("", [locale, "Products", "highestPrice"], t)}</div>
-                              <div className="f-b">
-                                {productPayload?.HighestBidPrice} {pathOr("", [locale, "Products", "currency"], t)}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <ProductBox isLargerImage={false} />
                 </Col>
               </Row>
             </div>

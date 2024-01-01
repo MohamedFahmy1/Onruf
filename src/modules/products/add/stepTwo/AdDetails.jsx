@@ -50,6 +50,7 @@ const AdDetails = ({ productPayload, setProductPayload, validateAdDetails, setEv
     productPayload.regionId,
     handleFetchNeighbourhoodsOrRegions,
     pathname,
+    setRegions,
   ])
 
   const handleUnlimtedQuantity = ({ target: { checked } }) => {
