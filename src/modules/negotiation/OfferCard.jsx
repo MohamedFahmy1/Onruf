@@ -12,12 +12,15 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
   const { locale } = useRouter()
   const [acceptModal, setAcceptModal] = useState(false)
   const [refuseModal, setRefuseModal] = useState(false)
-  const [image, setImage] = useState(
+  const [productImage, setProductImage] = useState(
     !offer?.productImage.includes("https") ? offer?.productImage.replace("http", "https") : offer?.productImage,
   )
   const handleError = () => {
-    setImage(noImage.src)
+    setProductImage(noImage.src)
   }
+  const receiverImage = !offer?.receiverImage.includes("https")
+    ? offer?.receiverImage.replace("http", "https")
+    : offer?.receiverImage
   return (
     <Grid item xs={12} sm={12} md={6} lg={4}>
       <Card
@@ -47,7 +50,7 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
             },
           }}
         >
-          <CardMedia component="img" image={image} alt="product" sx={{ width: 100 }} onError={handleError} />
+          <CardMedia component="img" image={productImage} alt="product" sx={{ width: 100 }} onError={handleError} />
           <Box>
             <Typography variant="body1" component="p" fontWeight={300} color={"rgba(0, 0, 0, 0.6)"}>
               {offer?.productCategory}
@@ -76,7 +79,7 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
         >
           <Box sx={{ display: "flex", columnGap: "20px", alignItems: "center" }}>
             <Box position={"relative"}>
-              <Avatar alt="receiver" src={offer?.receiverImage} sx={{ height: 60, width: 60 }} />
+              <Avatar alt="receiver" src={receiverImage} sx={{ height: 60, width: 60 }} />
               {selectedTab === 1 && (
                 <Typography
                   variant="subtitle2"
