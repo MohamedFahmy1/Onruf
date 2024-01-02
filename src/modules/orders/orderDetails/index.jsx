@@ -11,6 +11,7 @@ import Image from "next/image"
 import ChangeSingleStatusModal from "./ChangeSingleStatusModal"
 import ChangeBranchModal from "../ChangeBranchModal"
 import { orderStatusTranslate, orderTypesTranslation, paymentTypesTranslation } from "../../../common/functions"
+import ResponsizeImage from "../../../common/ResponsizeImage"
 
 export const OrderDetails = () => {
   const {
@@ -84,20 +85,20 @@ export const OrderDetails = () => {
     <div style={{ padding: "24px" }}>
       <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
         <h6 className="f-b m-0 fs-5">{pathOr("", [locale, "Orders", "order_details"], t)}</h6>
-        <a href="#" className="btn-main">
-          {pathOr("", [locale, "Orders", "download_invoice"], t)}
-        </a>
+        <button className="btn-main">{pathOr("", [locale, "Orders", "download_invoice"], t)}</button>
       </div>
       <div className="row">
         <div className="col-lg-4">
           <div className="d-flex gap-3">
             <div className="form-group flex-grow-1 mb-1">
               <div className="po_R">
-                <label>{pathOr("", [locale, "Orders", "order_status"], t)}</label>
+                <label htmlFor="changeOrderStatus">{pathOr("", [locale, "Orders", "order_status"], t)}</label>
                 <select
+                  id="changeOrderStatus"
                   className="form-control form-select border-0 rounded"
                   onClick={() => setOpenModal(true)}
                   value={""}
+                  readOnly
                 >
                   <option hidden disabled value={""}>
                     {pathOr("", [locale, "Orders", "changeOrderStatus"], t)}
@@ -112,11 +113,13 @@ export const OrderDetails = () => {
             </div>
             <div className="form-group flex-grow-1 mb-1">
               <div className="po_R">
-                <label>{pathOr("", [locale, "Orders", "select_branch"], t)}</label>
+                <label htmlFor="select_branch">{pathOr("", [locale, "Orders", "select_branch"], t)}</label>
                 <select
+                  id="select_branch"
                   className="form-control form-select border-0 rounded"
                   onClick={() => setOpenBranchModal(true)}
                   value={""}
+                  readOnly
                 >
                   <option hidden disabled value={""}>
                     {pathOr("", [locale, "Orders", "select_branch"], t)}
@@ -169,7 +172,7 @@ export const OrderDetails = () => {
           <div className="contint_paner mt-0 p-0">
             <div className="detalis-customer">
               <div className="d-flex gap-2 mb-2 p-3">
-                <Image src={clientImage} className="img img_table2" alt="user" width={110} height={50} />
+                <ResponsizeImage imageSrc={clientImage} alt={"client"} />
                 <div>
                   <div className="mb-2">
                     <h6 className="f-b m-0">{clientName}</h6>
@@ -177,19 +180,13 @@ export const OrderDetails = () => {
                   </div>
                   <ul className="d-flex gap-1 contuct">
                     <li>
-                      <a href="#">
-                        <Image src={email} alt="" width={50} height={50} />
-                      </a>
+                      <Image src={email} alt="email" width={50} height={50} />
                     </li>
                     <li>
-                      <a href="#">
-                        <Image src={sms} alt="" width={50} height={50} />
-                      </a>
+                      <Image src={sms} alt="sms" width={50} height={50} />
                     </li>
                     <li>
-                      <a href="#">
-                        <Image src={whatsapp} alt="" width={50} height={50} />
-                      </a>
+                      <Image src={whatsapp} alt="whatsapp" width={50} height={50} />
                     </li>
                   </ul>
                 </div>
@@ -250,7 +247,7 @@ export const OrderDetails = () => {
                 {orderProductFullInfoDto.map((item, index) => (
                   <li className="item" key={index}>
                     <div className="d-flex align-items-center gap-1">
-                      <Image src={item.iamge} className="img_table" alt="" width={100} height={100} />
+                      <ResponsizeImage imageSrc={item.iamge} alt={"product"} />
                       <div>
                         <div className="gray-color">{item.category}</div>
                         <div className="f-b">{item.productName}</div>
@@ -273,7 +270,7 @@ export const OrderDetails = () => {
                 <span className="f-b">{pathOr("", [locale, "Orders", "free_shipping_in_saudi"], t)}</span>
               </div>
               <div className="info_shan">
-                <span>{pathOr("", [locale, "Orders", "payment_method"], t)}</span> {console.log(paymentType)}
+                <span>{pathOr("", [locale, "Orders", "payment_method"], t)}</span>
                 <span className="f-b">{paymentTypesTranslation(paymentType, locale)}</span>
               </div>
               <div className="po_R upload_filo my-3">

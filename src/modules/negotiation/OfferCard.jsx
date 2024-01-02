@@ -6,22 +6,20 @@ import t from "../../translations.json"
 import AcceptModal from "./AcceptModal"
 import { negotiationTypeTranslation } from "../../common/functions"
 import RefuseModal from "./RefuseModal"
-import noImage from "../../../public/images/noImae.png"
-import Image from "next/image"
+import ResponsizeImage from "../../common/ResponsizeImage"
 
 const OfferCard = ({ offer, getOffers, selectedTab }) => {
   const { locale } = useRouter()
   const [acceptModal, setAcceptModal] = useState(false)
   const [refuseModal, setRefuseModal] = useState(false)
-  const [productImage, setProductImage] = useState(
-    !offer?.productImage.includes("https") ? offer?.productImage.replace("http", "https") : offer?.productImage,
-  )
-  const handleError = () => {
-    setProductImage(noImage.src)
-  }
+
+  const productImage = !offer?.productImage.includes("https")
+    ? offer?.productImage.replace("http", "https")
+    : offer?.productImage
   const receiverImage = !offer?.receiverImage.includes("https")
     ? offer?.receiverImage.replace("http", "https")
     : offer?.receiverImage
+
   return (
     <Grid item xs={12} sm={12} md={6} lg={4}>
       <Card
@@ -51,18 +49,7 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
             },
           }}
         >
-          <div style={{ position: "relative", width: "106px", height: "100px" }}>
-            <Image
-              src={productImage}
-              className="img_table"
-              alt="product"
-              priority
-              layout="fill"
-              objectFit="contain"
-              onError={handleError}
-            />
-          </div>
-          {/* <CardMedia component="img" image={productImage} alt="product" sx={{ width: 100 }} onError={handleError} /> */}
+          <ResponsizeImage imageSrc={productImage} alt={"product"} />
           <Box>
             <Typography variant="body1" component="p" fontWeight={300} color={"rgba(0, 0, 0, 0.6)"}>
               {offer?.productCategory}
