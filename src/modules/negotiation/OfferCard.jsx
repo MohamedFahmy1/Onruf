@@ -62,7 +62,6 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
               onError={handleError}
             />
           </div>
-          {/* <Image  alt="product" width={100} height={100}  /> */}
           {/* <CardMedia component="img" image={productImage} alt="product" sx={{ width: 100 }} onError={handleError} /> */}
           <Box>
             <Typography variant="body1" component="p" fontWeight={300} color={"rgba(0, 0, 0, 0.6)"}>
