@@ -1,35 +1,44 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Tabs, Tab, Box, Typography, Grid } from "@mui/material"
 import OfferCard from "./OfferCard"
 import { pathOr } from "ramda"
 import t from "../../translations.json"
 import { useRouter } from "next/router"
 import axios from "axios"
+import Alerto from "../../common/Alerto"
 
 function NegotiationOffers() {
   const [selectedTab, setSelectedTab] = useState(0)
   const [offersData, setOffersData] = useState()
   const { locale } = useRouter()
-  const getOffers = async () => {
-    const {
-      data: { data: offers },
-    } = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}/GetSaleProductsOffers?isSent=${selectedTab == 0 ? "false" : "true"}`,
-    )
-    setOffersData(offers)
-  }
+
+  const getOffers = useCallback(async () => {
+    try {
+      const {
+        data: { data: offers },
+      } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/GetSaleProductsOffers?isSent=${selectedTab == 0 ? "false" : "true"}`,
+      )
+      setOffersData(offers)
+    } catch (error) {
+      Alerto(error)
+    }
+  }, [selectedTab])
+
   useEffect(() => {
     getOffers()
-  }, [locale, selectedTab])
+  }, [locale, getOffers])
 
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue)
   }
+
   return (
     <Box
       sx={{ flexGrow: 1, backgroundColor: "background.paper", borderRadius: "8px", boxShadow: "none", margin: "2rem" }}
+      component={"article"}
     >
-      <Typography variant="h5" px={2} pt={2} fontWeight={600} color="initial">
+      <Typography variant="h5" px={2} pt={2} fontWeight={600} color="initial" component={"h1"}>
         {pathOr("", [locale, "negotiation", "negotiationOffers"], t)}
       </Typography>
       <Tabs
@@ -64,7 +73,7 @@ function NegotiationOffers() {
         <Tab label={pathOr("", [locale, "negotiation", "recieved"], t)} />
         <Tab label={pathOr("", [locale, "negotiation", "sent"], t)} />
       </Tabs>
-      <Grid container spacing={2} sx={{ px: 3 }}>
+      <Grid container spacing={2} px={3}>
         {offersData?.map((item, index) => (
           <OfferCard offer={offersData[index]} key={item.offerId} getOffers={getOffers} selectedTab={selectedTab} />
         ))}

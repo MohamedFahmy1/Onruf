@@ -73,7 +73,7 @@ const Home = ({ sales: s, ListProduct, ListNewOrder, GetListUser }) => {
   }, [buisnessAccountId, locale, getSales, getProduct, getOrders, getClients])
 
   useEffect(() => {
-    if (products.length === 0) {
+    if (products?.length === 0 || !products) {
       return setAlmostFinishedProducts()
     } else {
       let almostFinishedProducts = []

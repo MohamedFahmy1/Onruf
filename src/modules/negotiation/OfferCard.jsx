@@ -6,15 +6,22 @@ import t from "../../translations.json"
 import AcceptModal from "./AcceptModal"
 import { negotiationTypeTranslation } from "../../common/functions"
 import RefuseModal from "./RefuseModal"
+import noImage from "../../../public/images/noImae.png"
 
 const OfferCard = ({ offer, getOffers, selectedTab }) => {
   const { locale } = useRouter()
   const [acceptModal, setAcceptModal] = useState(false)
   const [refuseModal, setRefuseModal] = useState(false)
-
+  const [image, setImage] = useState(
+    !offer?.productImage.includes("https") ? offer?.productImage.replace("http", "https") : offer?.productImage,
+  )
+  const handleError = () => {
+    setImage(noImage.src)
+  }
   return (
     <Grid item xs={12} sm={12} md={6} lg={4}>
       <Card
+        component={"section"}
         sx={{
           maxWidth: 400,
           border: "1px solid #e0e0e0",
@@ -40,7 +47,7 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
             },
           }}
         >
-          <CardMedia component="img" image={offer?.productImage} alt="product" sx={{ width: 100 }} />
+          <CardMedia component="img" image={image} alt="product" sx={{ width: 100 }} onError={handleError} />
           <Box>
             <Typography variant="body1" component="p" fontWeight={300} color={"rgba(0, 0, 0, 0.6)"}>
               {offer?.productCategory}

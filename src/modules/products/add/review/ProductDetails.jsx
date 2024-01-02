@@ -197,7 +197,6 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
               <Col lg={6}>
                 <div className="d-flex align-items-center gap-1">
                   {productFullData.productImage && !pathname.includes("add") && (
-                    // <Image src={imageSrc} className="img_table" alt="product" priority width={130} height={100} />
                     <div style={{ position: "relative", width: "106px", height: "100px" }}>
                       <Image
                         src={imageSrc}
@@ -210,14 +209,6 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                     </div>
                   )}
                   {pathname.includes("add") && (
-                    // <Image
-                    //   src={URL.createObjectURL(productFullData.listImageFile[productFullData.MainImageIndex])}
-                    //   className="img_table"
-                    //   alt="product"
-                    //   priority
-                    //   width={130}
-                    //   height={100}
-                    // />
                     <div style={{ position: "relative", width: "106px", height: "100px" }}>
                       <Image
                         src={URL.createObjectURL(productFullData.listImageFile[productFullData.MainImageIndex])}
