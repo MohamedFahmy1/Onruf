@@ -16,6 +16,6 @@ const nextConfig = {
     REACT_APP_API_URL: "https://onrufwebsite6-001-site1.htempurl.com/api/v1",
     MAP_API_KEY: "AIzaSyBB0w_4kUGHr54kvjKNBK_eaUo1tFuLoPU",
   },
-  compress: true,
+  compress: false,
 }
 module.exports = nextConfig
