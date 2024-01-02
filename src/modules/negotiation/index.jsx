@@ -6,10 +6,13 @@ import t from "../../translations.json"
 import { useRouter } from "next/router"
 import axios from "axios"
 import Alerto from "../../common/Alerto"
+import Pagination from "@mui/lab/Pagination"
 
 function NegotiationOffers() {
   const [selectedTab, setSelectedTab] = useState(0)
   const [offersData, setOffersData] = useState()
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 12
   const { locale } = useRouter()
 
   const getOffers = useCallback(async () => {
@@ -32,7 +35,11 @@ function NegotiationOffers() {
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue)
   }
-
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value)
+  }
+  const totalPages = Math.ceil(offersData?.length / pageSize)
+  const currentData = offersData?.slice((currentPage - 1) * pageSize, currentPage * pageSize)
   return (
     <Box
       sx={{ flexGrow: 1, backgroundColor: "background.paper", borderRadius: "8px", boxShadow: "none", margin: "2rem" }}
@@ -74,10 +81,17 @@ function NegotiationOffers() {
         <Tab label={pathOr("", [locale, "negotiation", "sent"], t)} />
       </Tabs>
       <Grid container spacing={2} px={3}>
-        {offersData?.map((item, index) => (
-          <OfferCard offer={offersData[index]} key={item.offerId} getOffers={getOffers} selectedTab={selectedTab} />
+        {currentData?.map((item, index) => (
+          <OfferCard offer={item} key={item.offerId} getOffers={getOffers} selectedTab={selectedTab} />
         ))}
       </Grid>
+      <Pagination
+        count={totalPages}
+        page={currentPage}
+        onChange={handlePageChange}
+        color="primary"
+        sx={{ my: 2, p: 2, ".MuiPagination-ul": { justifyContent: "center" } }}
+      />
     </Box>
   )
 }
