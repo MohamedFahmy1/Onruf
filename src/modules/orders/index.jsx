@@ -213,9 +213,9 @@ const Orders = () => {
         accessor: "userName",
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
-            <h6 className="m-0 f-b" style={{ cursor: "pointer" }}>
+            <p className="m-0 f-b" style={{ cursor: "pointer" }}>
               {original?.clientName}
-            </h6>
+            </p>
           </Link>
         ),
       },
@@ -224,9 +224,9 @@ const Orders = () => {
         accessor: "createdAt",
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
-            <h6 className="m-0 f-b" style={{ cursor: "pointer" }}>
+            <p className="m-0 f-b" style={{ cursor: "pointer" }}>
               {formatDate(original?.createdAt)}
-            </h6>
+            </p>
           </Link>
         ),
       },
