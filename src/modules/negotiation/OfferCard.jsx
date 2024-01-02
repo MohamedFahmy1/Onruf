@@ -1,4 +1,4 @@
-import { Box, CardContent, Typography, Card, CardMedia, Avatar, Grid, Button } from "@mui/material"
+import { Box, CardContent, Typography, Card, Avatar, Grid, Button } from "@mui/material"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import { useState } from "react"
@@ -51,7 +51,18 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
             },
           }}
         >
-          <Image src={productImage} alt="product" width={100} height={100} onError={handleError} />
+          <div style={{ position: "relative", width: "106px", height: "100px" }}>
+            <Image
+              src={productImage}
+              className="img_table"
+              alt="product"
+              priority
+              layout="fill"
+              objectFit="contain"
+              onError={handleError}
+            />
+          </div>
+          {/* <Image  alt="product" width={100} height={100}  /> */}
           {/* <CardMedia component="img" image={productImage} alt="product" sx={{ width: 100 }} onError={handleError} /> */}
           <Box>
             <Typography variant="body1" component="p" fontWeight={300} color={"rgba(0, 0, 0, 0.6)"}>
