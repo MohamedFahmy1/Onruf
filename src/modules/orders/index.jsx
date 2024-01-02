@@ -7,12 +7,12 @@ import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../translations.json"
 import Link from "next/link"
-import { useSelector } from "react-redux"
 import { formatDate, orderStatusTranslate, paymentTypesTranslation } from "../../common/functions"
 import styles from "./orders.module.css"
 import { toast } from "react-toastify"
 import ChangeStatusModal from "./ChangeStatusModal"
 import ChangeBranchModal from "./ChangeBranchModal"
+import { Button, ButtonGroup } from "@mui/material"
 const Orders = () => {
   // const [shippingOptions, setShippingOptions] = useState()
   // const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
@@ -180,7 +180,6 @@ const Orders = () => {
   useEffect(() => {
     setSelectedOrders(selectedOrdersObj)
   }, [selectedRows])
-  console.log(selectedRows)
 
   // const changeSelectedOrdersStatus = async () => {
   //   if (selectedOrdersIds) {
@@ -200,7 +199,7 @@ const Orders = () => {
         Cell: ({ row: { original } }) => (
           <Link href={`${`orders/${original.orderId}`}`}>
             <div className="f-b" key={original.orderId} style={{ cursor: "pointer" }}>
-              <a>#{original?.orderId}</a>
+              <span>#{original?.orderId}</span>
             </div>
           </Link>
         ),
@@ -491,6 +490,31 @@ const Orders = () => {
           {pathOr("", [locale, "Orders", "downloadSelectorInvoice"], t)}
         </button>
       </div>
+      {/* <ButtonGroup variant="contained" aria-label="outlined primary button group">
+        <Button
+          onClick={() => {
+            if (selectedOrders.length > 0) {
+              setOpenModal(true)
+            } else {
+              toast.error(locale === "en" ? "Choose at least one order from the grid!" : "!اختر طلب واحد علي الاقل")
+            }
+          }}
+        >
+          {pathOr("", [locale, "Orders", "changeSelectorStatus"], t)}
+        </Button>
+        <Button
+          onClick={() => {
+            if (selectedOrders.length > 0) {
+              setOpenBranchModal(true)
+            } else {
+              toast.error(locale === "en" ? "Choose at least one order from the grid!" : "!اختر طلب واحد علي الاقل")
+            }
+          }}
+        >
+          {pathOr("", [locale, "Orders", "selectBranch"], t)}
+        </Button>
+        <Button>{pathOr("", [locale, "Orders", "downloadSelectorInvoice"], t)}</Button>
+      </ButtonGroup> */}
     </Fragment>
   )
 }

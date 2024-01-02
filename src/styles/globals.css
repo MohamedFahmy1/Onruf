@@ -584,12 +584,12 @@ tbody {
 
 .btns_fixeds {
   position: fixed;
-  left: 50%;
+  left: 55%;
   transform: translateX(-50%);
   bottom: 20px;
   border-radius: 50px;
   overflow: hidden;
-  width: 445px;
+  width: max-content;
   box-shadow: 0 0 5px 0 rgb(0 0 0 / 20%);
   display: flex;
   z-index: 15;
@@ -598,6 +598,7 @@ tbody {
 .btns_fixeds .btn-main {
   flex: 1;
   box-shadow: 0 0 2px 0 rgb(0 0 0 / 20%);
+  text-wrap: nowrap;
 }
 
 .inpt_numb {
