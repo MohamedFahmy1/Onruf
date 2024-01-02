@@ -274,9 +274,15 @@ export const OrderDetails = () => {
                 <span className="f-b">{paymentTypesTranslation(paymentType, locale)}</span>
               </div>
               <div className="po_R upload_filo my-3">
-                <input type="text" className="form-control" readOnly value="تم ارفاق الفاتورة" />
+                <label htmlFor="invoice" className="visually-hidden">
+                  {"تم ارفاق الفاتورة"}
+                </label>
+                <input type="text" id="invoice" className="form-control" readOnly value="تم ارفاق الفاتورة" />
                 <div className="btn_file">
-                  <input type="file" />
+                  <label htmlFor="download_invoice" className="visually-hidden">
+                    {pathOr("", [locale, "Orders", "download_invoice"], t)}
+                  </label>
+                  <input type="file" id="download_invoice" />
                   {pathOr("", [locale, "Orders", "download_invoice"], t)}
                 </div>
               </div>
