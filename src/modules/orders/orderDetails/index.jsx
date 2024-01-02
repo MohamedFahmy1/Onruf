@@ -247,7 +247,8 @@ export const OrderDetails = () => {
                 {orderProductFullInfoDto.map((item, index) => (
                   <li className="item" key={index}>
                     <div className="d-flex align-items-center gap-1">
-                      <ResponsizeImage imageSrc={item.iamge} alt={"product"} />
+                      <Image src={item.iamge} alt="product" width={100} height={64.6} />
+                      {/* <ResponsizeImage imageSrc={item.iamge} alt={"product"} /> */}
                       <div>
                         <div className="gray-color">{item.category}</div>
                         <div className="f-b">{item.productName}</div>
