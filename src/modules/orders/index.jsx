@@ -12,7 +12,6 @@ import styles from "./orders.module.css"
 import { toast } from "react-toastify"
 import ChangeStatusModal from "./ChangeStatusModal"
 import ChangeBranchModal from "./ChangeBranchModal"
-import { Button, ButtonGroup } from "@mui/material"
 const Orders = () => {
   // const [shippingOptions, setShippingOptions] = useState()
   // const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
@@ -171,15 +170,20 @@ const Orders = () => {
       setShowFilter(false)
     }
   }
-  // Selecting Multi Rows in the gird
-  const rows = Object.keys(selectedRows ? selectedRows : {})
-  const selectedOrdersObj = rows.map((row) => {
-    const selectedRow = orders.filter((_, index) => index === +row)
-    return { orderId: selectedRow?.[0]?.orderId, orderStatus: selectedRow?.[0]?.orderStatus }
-  })
+  const selectedOrdersObj = useMemo(() => {
+    const rows = Object.keys(selectedRows || {})
+    return rows.map((row) => {
+      const selectedRow = orders.filter((_, index) => index === +row)
+      return {
+        orderId: selectedRow?.[0]?.orderId,
+        orderStatus: selectedRow?.[0]?.orderStatus,
+      }
+    })
+  }, [selectedRows, orders])
+
   useEffect(() => {
     setSelectedOrders(selectedOrdersObj)
-  }, [selectedRows])
+  }, [selectedRows, selectedOrdersObj])
 
   // const changeSelectedOrdersStatus = async () => {
   //   if (selectedOrdersIds) {
@@ -280,12 +284,16 @@ const Orders = () => {
     <Fragment>
       <div className="body-content">
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-          <h6 className="f-b m-0">
+          <h1 className="f-b fs-6 m-0">
             {" "}
             {pathOr("", [locale, "Orders", "orders"], t)} ( {orders && totalOrders.total} )
-          </h6>
+          </h1>
           <div className="filtter_2">
+            <label htmlFor="yearSelect" className="visually-hidden">
+              {pathOr("", [locale, "Orders", "orderHistory"], t)}
+            </label>
             <select
+              id="yearSelect"
               className="form-control form-select"
               style={{ width: "180px" }}
               onChange={(e) => setFilter((prev) => ({ ...prev, year: e.target.value }))}
@@ -311,7 +319,11 @@ const Orders = () => {
                 <option key={item.id}>{item.shippingOptionName}</option>
               ))}
               </select>*/}
+            <label htmlFor="filterByPayment" className="visually-hidden">
+              {pathOr("", [locale, "Orders", "filterByPayment"], t)}
+            </label>
             <select
+              id="filterByPayment"
               className="form-control form-select"
               style={{ width: "210px" }}
               onChange={(e) => setFilter((prev) => ({ ...prev, paymentType: e.target.value }))}
@@ -335,9 +347,13 @@ const Orders = () => {
           <div className={locale === "en" ? `m-3 text-left ${styles.filter}` : `m-3 text-right ${styles.filter}`}>
             <p className="fs-5">
               {pathOr("", [locale, "Orders", "filter"], t)}{" "}
-              <a href="#" className="text-decoration-underline f-b main-color" onClick={deleteAllFilters}>
+              <button
+                className="text-decoration-underline f-b main-color"
+                aria-label="delete all filters"
+                onClick={deleteAllFilters}
+              >
                 {pathOr("", [locale, "Orders", "deleteAllFilters"], t)}
-              </a>
+              </button>
             </p>
             <div>
               {filter?.year && (
@@ -490,31 +506,6 @@ const Orders = () => {
           {pathOr("", [locale, "Orders", "downloadSelectorInvoice"], t)}
         </button>
       </div>
-      {/* <ButtonGroup variant="contained" aria-label="outlined primary button group">
-        <Button
-          onClick={() => {
-            if (selectedOrders.length > 0) {
-              setOpenModal(true)
-            } else {
-              toast.error(locale === "en" ? "Choose at least one order from the grid!" : "!اختر طلب واحد علي الاقل")
-            }
-          }}
-        >
-          {pathOr("", [locale, "Orders", "changeSelectorStatus"], t)}
-        </Button>
-        <Button
-          onClick={() => {
-            if (selectedOrders.length > 0) {
-              setOpenBranchModal(true)
-            } else {
-              toast.error(locale === "en" ? "Choose at least one order from the grid!" : "!اختر طلب واحد علي الاقل")
-            }
-          }}
-        >
-          {pathOr("", [locale, "Orders", "selectBranch"], t)}
-        </Button>
-        <Button>{pathOr("", [locale, "Orders", "downloadSelectorInvoice"], t)}</Button>
-      </ButtonGroup> */}
     </Fragment>
   )
 }
