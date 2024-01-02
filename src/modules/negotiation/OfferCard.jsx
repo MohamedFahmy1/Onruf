@@ -7,6 +7,7 @@ import AcceptModal from "./AcceptModal"
 import { negotiationTypeTranslation } from "../../common/functions"
 import RefuseModal from "./RefuseModal"
 import noImage from "../../../public/images/noImae.png"
+import Image from "next/image"
 
 const OfferCard = ({ offer, getOffers, selectedTab }) => {
   const { locale } = useRouter()
@@ -50,7 +51,8 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
             },
           }}
         >
-          <CardMedia component="img" image={productImage} alt="product" sx={{ width: 100 }} onError={handleError} />
+          <Image src={productImage} alt="product" width={100} height={100} onError={handleError} />
+          {/* <CardMedia component="img" image={productImage} alt="product" sx={{ width: 100 }} onError={handleError} /> */}
           <Box>
             <Typography variant="body1" component="p" fontWeight={300} color={"rgba(0, 0, 0, 0.6)"}>
               {offer?.productCategory}

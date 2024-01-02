@@ -40,6 +40,7 @@ function NegotiationOffers() {
   }
   const totalPages = Math.ceil(offersData?.length / pageSize)
   const currentData = offersData?.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+
   return (
     <Box
       sx={{ flexGrow: 1, backgroundColor: "background.paper", borderRadius: "8px", boxShadow: "none", margin: "2rem" }}
@@ -81,7 +82,7 @@ function NegotiationOffers() {
         <Tab label={pathOr("", [locale, "negotiation", "sent"], t)} />
       </Tabs>
       <Grid container spacing={2} px={3}>
-        {currentData?.map((item, index) => (
+        {currentData?.map((item) => (
           <OfferCard offer={item} key={item.offerId} getOffers={getOffers} selectedTab={selectedTab} />
         ))}
       </Grid>
