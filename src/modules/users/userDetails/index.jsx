@@ -18,21 +18,22 @@ import moment from "moment"
 import SendNotificationModal from "../SendNotificationModal"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
+import Image from "next/image"
+import ResponsiveImage from "../../../common/ResponsiveImage"
 const UserDetails = () => {
+  const {
+    locale,
+    query: { id },
+  } = useRouter()
   const [user, setUser] = useState()
   const [userOrders, setUserOrders] = useState()
   const [openNotificationModal, setOpenNotificationModal] = useState(false)
-
   const router = useRouter()
-  const { locale } = useRouter()
-
-  const id = Router?.router?.state?.query?.id
 
   const getUserDetails = async () => {
     const {
       data: { data: userDetails },
     } = await axios.get(`${process.env.REACT_APP_API_URL}/ClientDetails?clientId=${id}&lang=${locale}`)
-    console.log(userDetails)
     setUser(userDetails)
   }
 
@@ -44,9 +45,9 @@ const UserDetails = () => {
   }
 
   useEffect(() => {
-    router.query.id && getUserDetails()
-    router.query.id && getUserOrders()
-  }, [router.query.id])
+    id && getUserDetails()
+    id && getUserOrders()
+  }, [id])
 
   // const getUserOrders =async(id) => {
   //  return await axios.get(`${process.env.REACT_APP_API_URL}/GetClientAddedOrders?userId=${id}&pageIndex=1&PageRowsCount=10`)
@@ -131,29 +132,23 @@ const UserDetails = () => {
           <div className="contint_paner">
             <div className="detalis-customer">
               <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
-                {console.log(`${process.env.NEXT_PUBLIC_URL}/${user?.clientImage}`)}
-                <img
-                  src={`${process.env.NEXT_PUBLIC_URL}/${user?.clientImage}`}
-                  className="img"
-                  style={{ borderRadius: "50%" }}
-                  width={50}
-                  height={50}
-                />
+                {user?.clientImage && (
+                  <ResponsiveImage
+                    imageSrc={`${process.env.NEXT_PUBLIC_URL}${user?.clientImage}`}
+                    alt={"client"}
+                    width="50px"
+                    height="50px"
+                  />
+                )}
                 <ul className="d-flex gap-1 contuct">
                   <li>
-                    <a href="">
-                      <img width={50} height={50} src={emailImg.src} />
-                    </a>
+                    <Image width={50} height={50} src={emailImg.src} alt="email" />
                   </li>
                   <li>
-                    <a href="">
-                      <img width={50} height={50} src={smsImg.src} />
-                    </a>
+                    <Image width={50} height={50} src={smsImg.src} alt="sms" />
                   </li>
                   <li>
-                    <a href="">
-                      <img width={50} height={50} src={whatsappImg.src} />
-                    </a>
+                    <Image width={50} height={50} src={whatsappImg.src} alt="whatsapp" />
                   </li>
                 </ul>
               </div>
@@ -187,7 +182,7 @@ const UserDetails = () => {
                 <div className="font-18">الرياض</div>
               </div>
               <div className="map">
-                <img src={mapImg.src} width="100%" height="193px" style={{ objectFit: "cover" }} />
+                <Image src={mapImg.src} width={850} height={180} alt="map" />
               </div>
             </div>
           </div>
@@ -199,6 +194,7 @@ const UserDetails = () => {
         setOpenNotificationModal={setOpenNotificationModal}
       />
       {userOrders && <Table data={userOrders && userOrders} columns={columns} pageSize={10} />}
+      {userOrders?.length > 10 && <Pagination listLength={userOrders.length} pageSize={10} />}
     </div>
   )
 }
