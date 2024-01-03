@@ -1,23 +1,26 @@
-import React, { useState, useMemo, useEffect } from "react"
+import React, { useState, useMemo } from "react"
 import Table from "../../../../common/table"
 import Pagination from "./../../../../common/pagination"
 import Router, { useRouter } from "next/router"
-import { propOr, pathOr } from "ramda"
+import { pathOr } from "ramda"
 import Link from "next/link"
 import axios from "axios"
 import { toast } from "react-toastify"
 import { AiFillFolderOpen } from "react-icons/ai"
 import t from "../../../../translations.json"
+import Alerto from "../../../../common/Alerto"
+import { useFetch } from "../../../../hooks/useFetch"
+import { formatDate } from "../../../../common/functions"
+import ResponsiveImage from "../../../../common/ResponsiveImage"
 const SingleFolder = () => {
-  const [users, setUsers] = useState()
   const [selectedRows, setSelectedRows] = useState({})
   const { locale } = useRouter()
   const router = useRouter()
   const folderId = router.query.id
-
+  const { data: users, fetchData: getFolderUsers } = useFetch(`/GetFolderById?id=${folderId}&lang=${locale}`, true)
   const rows = Object.keys(selectedRows)
   const selectedUsersIds = rows.map((row) => {
-    const selectedRow = users?.filter((_, index) => index === +row)
+    const selectedRow = users?.listUser.filter((_, index) => index === +row)
     return `${selectedRow[0]?.id}`
   })
 
@@ -36,21 +39,9 @@ const SingleFolder = () => {
       setSelectedRows({})
       getFolderUsers()
     } catch (error) {
-      console.error(error)
-      toast.error(error.response.data.message)
+      Alerto(error)
     }
   }
-
-  const getFolderUsers = async () => {
-    const { data: usersData } = await axios(
-      `${process.env.REACT_APP_API_URL}/GetFolderById?id=${folderId}&lang=${locale}`,
-    )
-    setUsers(usersData.data.listUser)
-  }
-
-  useEffect(() => {
-    folderId && getFolderUsers()
-  }, [folderId])
 
   const columns = useMemo(
     () => [
@@ -62,10 +53,15 @@ const SingleFolder = () => {
             original: { img, userName, id },
           },
         }) => (
-          <a onClick={() => Router.push(`/users/${id}`)} className="d-flex align-items-center">
-            <img src={img} className="img_table img_table2 cursor-pointer" />
-            <div className="f-b">{userName}</div>
-          </a>
+          <button onClick={() => Router.push(`/users/${id}`)} className="d-flex align-items-center">
+            <ResponsiveImage
+              imageSrc={img.includes("http") ? img.replace("http", "https") : img}
+              alt={"client"}
+              width="75px"
+              height="75px"
+            />
+            <div className="f-b mx-3">{userName}</div>
+          </button>
         ),
       },
       {
@@ -93,7 +89,7 @@ const SingleFolder = () => {
           row: {
             original: { createdAt },
           },
-        }) => <div className="f-b">{createdAt.slice(0, 10).replaceAll("-", "/")}</div>,
+        }) => <div className="f-b">{formatDate(createdAt)}</div>,
       },
     ],
     [locale],
@@ -105,7 +101,7 @@ const SingleFolder = () => {
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
           <div className="d-flex align-items-center">
             <h6 className="f-b m-0">
-              {pathOr("", [locale, "Users", "users"], t)} ({users?.length})
+              {pathOr("", [locale, "Users", "users"], t)} ({users?.listUser.length})
             </h6>
             <Link href="/users/folders">
               <a className="btn-main btn-main-w mr-20">
@@ -120,14 +116,15 @@ const SingleFolder = () => {
             {users && (
               <Table
                 columns={columns}
-                data={users && users}
+                data={users && users.listUser}
                 selectedRows={selectedRows}
+                pageSize={10}
                 onSelectedRowsChange={setSelectedRows}
               />
             )}
           </div>
         </div>
-
+        {users?.listUser.length > 10 && <Pagination listLength={users?.listUser.length} pageSize={10} />}
         <div className="btns_fixeds">
           <button className="btn-main rounded-0" onClick={() => handleRemoveUserFromFolder(selectedUsersIds)}>
             {pathOr("", [locale, "Users", "removeClient"], t)}
