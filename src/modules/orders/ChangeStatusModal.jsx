@@ -6,7 +6,7 @@ import { useRouter } from "next/router"
 import { toast } from "react-toastify"
 import axios from "axios"
 
-const ChangeStatusModal = ({ openModal, setOpenModal, selectedOrders, setUpdateOrders, setOrderStatus }) => {
+const ChangeStatusModal = ({ openModal, setOpenModal, selectedOrders, getOrders }) => {
   let selectedOrder = selectedOrders ? selectedOrders : []
   const { locale } = useRouter()
   const changeOrderStatus = async (statusId) => {
@@ -19,8 +19,7 @@ const ChangeStatusModal = ({ openModal, setOpenModal, selectedOrders, setUpdateO
         )
         setOpenModal(false)
         // Update the grid of orders and resetting it
-        setUpdateOrders(true)
-        setOrderStatus()
+        getOrders()
       } catch (error) {
         toast.error("Error!")
       }

@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from "react"
+import { useMemo, useState, useEffect } from "react"
 import Pagination from "../../common/pagination"
 import Table from "../../common/table"
 import { formatDate } from "../../common/functions"
@@ -183,7 +183,11 @@ const Users = () => {
               </Link>
             </div>
             <div className="filtter_2">
+              <label htmlFor="byCity" className="visually-hidden">
+                {pathOr("", [locale, "Orders", "byCity"], t)}
+              </label>
               <select
+                id="byCity"
                 className="form-control form-select"
                 style={{ width: "180px" }}
                 ref={selectCityValue}
@@ -198,7 +202,11 @@ const Users = () => {
                   </option>
                 ))}
               </select>
+              <label htmlFor="byOrder" className="visually-hidden">
+                {pathOr("", [locale, "Orders", "byOrder"], t)}
+              </label>
               <select
+                id="byOrder"
                 className="form-control form-select"
                 style={{ width: "140px" }}
                 ref={selectOrderValue}

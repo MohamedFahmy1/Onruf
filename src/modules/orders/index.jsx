@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import Pagination from "../../common/pagination"
 import Table from "../../common/table"
 import axios from "axios"
@@ -12,14 +12,13 @@ import styles from "./orders.module.css"
 import { toast } from "react-toastify"
 import ChangeStatusModal from "./ChangeStatusModal"
 import ChangeBranchModal from "./ChangeBranchModal"
+import { useFetch } from "../../hooks/useFetch"
 
 const Orders = () => {
   // const [shippingOptions, setShippingOptions] = useState()
   const { locale, push } = useRouter()
   const [openBranchModal, setOpenBranchModal] = useState(false)
   const [openModal, setOpenModal] = useState(false)
-  const [branchesData, setBranchesData] = useState()
-  const [updateOrders, setUpdateOrders] = useState(false)
   const [selectedRows, setSelectedRows] = useState({})
   const [filterdOrders, setFilterdOrders] = useState()
   const [showFilter, setShowFilter] = useState(false)
@@ -40,7 +39,14 @@ const Orders = () => {
     // shippingOptionId: "",
     year: "",
   })
+  const { data: branches } = useFetch(`/GetListBrancheByProviderId?lang=${locale}`)
 
+  const branchesData = useMemo(() => {
+    return branches?.map((item) => ({
+      branchName: item.name,
+      branchId: item.id,
+    }))
+  }, [branches])
   const selectedOrdersObj = useMemo(() => {
     const rows = Object.keys(selectedRows || {})
     return rows.map((row) => {
@@ -51,6 +57,7 @@ const Orders = () => {
       }
     })
   }, [selectedRows, orders])
+
   // useEffect(() => {
   //   const fetchShippingOptions = async () => {
   //     const {
@@ -63,54 +70,41 @@ const Orders = () => {
   //   fetchShippingOptions()
   // }, [buisnessAccountId, locale])
 
-  useEffect(() => {
-    const getBranchesData = async () => {
-      const {
-        data: { data: data },
-      } = await axios.get(`${process.env.REACT_APP_API_URL}/GetListBrancheByProviderId?lang=${locale}`)
-      let branches = data.map((item) => {
-        return { branchName: item.name, branchId: item.id }
+  const getOrders = useCallback(async () => {
+    const {
+      data: { data },
+    } = await axios(
+      `${process.env.REACT_APP_API_URL}/GetBusinessAccountOrders?pageIndex=1&PageRowsCount=100000
+        ${orderStatus ? `&orderStatus=${orderStatus}` : ``}`,
+    )
+    if (!orderStatus) {
+      const WaitingForPayment = data.filter((item) => item.status === "Waiting For Payment")
+      const WaitingForReview = data.filter((item) => item.status === "Waiting For Review")
+      const InProgress = data.filter((item) => item.status === "In Progress")
+      const ReadyForDelivery = data.filter((item) => item.status === "Ready For Delivery")
+      const DeliveryInProgress = data.filter((item) => item.status === "Delivery In Progress")
+      const Delivered = data.filter((item) => item.status === "Delivered")
+      const Canceled = data.filter((item) => item.status === "Canceled")
+      setTotalOrders({
+        total: data.length,
+        WaitingForPayment: WaitingForPayment.length,
+        WaitingForReview: WaitingForReview.length,
+        InProgress: InProgress.length,
+        ReadyForDelivery: ReadyForDelivery.length,
+        DeliveryInProgress: DeliveryInProgress.length,
+        Delivered: Delivered.length,
+        Canceled: Canceled.length,
       })
-      setBranchesData(branches)
+      setOrderStatus("WaitingForPayment")
+      setFilterdOrders()
     }
-    getBranchesData()
-  }, [locale, openBranchModal])
+    setSelectedRows()
+    setOrders(data)
+  }, [orderStatus])
 
   useEffect(() => {
-    const getOrder = async () => {
-      const {
-        data: { data },
-      } = await axios(
-        `${process.env.REACT_APP_API_URL}/GetBusinessAccountOrders?pageIndex=1&PageRowsCount=100000
-        ${orderStatus ? `&orderStatus=${orderStatus}` : ``}`,
-      )
-      if (!orderStatus || updateOrders) {
-        const WaitingForPayment = data.filter((item) => item.status === "Waiting For Payment")
-        const WaitingForReview = data.filter((item) => item.status === "Waiting For Review")
-        const InProgress = data.filter((item) => item.status === "In Progress")
-        const ReadyForDelivery = data.filter((item) => item.status === "Ready For Delivery")
-        const DeliveryInProgress = data.filter((item) => item.status === "Delivery In Progress")
-        const Delivered = data.filter((item) => item.status === "Delivered")
-        const Canceled = data.filter((item) => item.status === "Canceled")
-        setTotalOrders({
-          total: data.length,
-          WaitingForPayment: WaitingForPayment.length,
-          WaitingForReview: WaitingForReview.length,
-          InProgress: InProgress.length,
-          ReadyForDelivery: ReadyForDelivery.length,
-          DeliveryInProgress: DeliveryInProgress.length,
-          Delivered: Delivered.length,
-          Canceled: Canceled.length,
-        })
-        setOrderStatus("WaitingForPayment")
-        setUpdateOrders(false)
-        updateOrders && setFilterdOrders()
-      }
-      setSelectedRows()
-      setOrders(data)
-    }
-    getOrder()
-  }, [orderStatus, updateOrders])
+    getOrders()
+  }, [getOrders])
 
   const filterOrders = () => {
     if (!filter?.paymentType && !filter?.year) {
@@ -251,11 +245,10 @@ const Orders = () => {
   )
 
   return (
-    <Fragment>
+    <>
       <div className="body-content">
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
           <h1 className="f-b fs-6 m-0">
-            {" "}
             {pathOr("", [locale, "Orders", "orders"], t)} ( {orders && totalOrders.total} )
           </h1>
           <div className="filtter_2">
@@ -441,8 +434,7 @@ const Orders = () => {
           openModal={openModal}
           setOpenModal={setOpenModal}
           selectedOrders={selectedOrdersObj}
-          setUpdateOrders={setUpdateOrders}
-          setOrderStatus={setOrderStatus}
+          getOrders={getOrders}
         />
         <ChangeBranchModal
           openBranchModal={openBranchModal}
@@ -478,7 +470,7 @@ const Orders = () => {
           {pathOr("", [locale, "Orders", "downloadSelectorInvoice"], t)}
         </button>
       </div>
-    </Fragment>
+    </>
   )
 }
 export default Orders
