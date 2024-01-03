@@ -1,59 +1,29 @@
-import React, { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { Row, Col } from "react-bootstrap"
-import Router, { useRouter } from "next/router"
-import ordersData from "../../../../OrdersStaticData.json"
-import users from "../../../../UsersStaticData.json"
-import userImg from "../../../../public/images/user.png"
+import { useRouter } from "next/router"
 import emailImg from "../../../../public/images/email.png"
 import smsImg from "../../../../public/images/sms.png"
 import whatsappImg from "../../../../public/images/whatsapp.png"
-import mapImg from "../../../../public/images/1366_2000.png"
+import mapImg from "../../../../public/images/map.png"
 import Pagination from "./../../../common/pagination"
 import Table from "../../../common/table"
 import { formatDate } from "./../../../common/functions"
-import { useQuery } from "@tanstack/react-query"
 import { FaEnvelope, FaPhone } from "react-icons/fa6"
-import axios from "axios"
 import moment from "moment"
 import SendNotificationModal from "../SendNotificationModal"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import Image from "next/image"
 import ResponsiveImage from "../../../common/ResponsiveImage"
+import { useFetch } from "../../../hooks/useFetch"
 const UserDetails = () => {
   const {
     locale,
     query: { id },
   } = useRouter()
-  const [user, setUser] = useState()
-  const [userOrders, setUserOrders] = useState()
   const [openNotificationModal, setOpenNotificationModal] = useState(false)
-  const router = useRouter()
-
-  const getUserDetails = async () => {
-    const {
-      data: { data: userDetails },
-    } = await axios.get(`${process.env.REACT_APP_API_URL}/ClientDetails?clientId=${id}&lang=${locale}`)
-    setUser(userDetails)
-  }
-
-  const getUserOrders = async () => {
-    const data = await axios.get(
-      `${process.env.REACT_APP_API_URL}/GetClientAddedOrders?userId=${id}&pageIndex=1&PageRowsCount=10`,
-    )
-    setUserOrders(data.data.data)
-  }
-
-  useEffect(() => {
-    id && getUserDetails()
-    id && getUserOrders()
-  }, [id])
-
-  // const getUserOrders =async(id) => {
-  //  return await axios.get(`${process.env.REACT_APP_API_URL}/GetClientAddedOrders?userId=${id}&pageIndex=1&PageRowsCount=10`)
-  //   }
-
-  //   const { data } = useQuery(["userOrders"], ()=> getUserOrders(router.query.id))
+  const { data: user } = useFetch(`/ClientDetails?clientId=${id}&lang=${locale}`, true)
+  const { data: userOrders } = useFetch(`/GetClientAddedOrders?userId=${id}&pageIndex=1&PageRowsCount=10`, true)
 
   const columns = useMemo(
     () => [
@@ -79,7 +49,6 @@ const UserDetails = () => {
         Cell: ({ row: { original } }) => (
           <div>
             <h6 className="m-0 f-b">{moment(original?.createdAt).format("lll")}</h6>
-            {/* <div className="gray-color">مساء 4:50</div> */}
           </div>
         ),
       },
@@ -114,30 +83,30 @@ const UserDetails = () => {
         ),
       },
     ],
-    [user?.name, locale],
+    [locale],
   )
 
   return (
     <div className="body-content">
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-          <h6 className="f-b m-0">{user && user?.name}</h6>
-          <a href="#" className="btn-main" onClick={() => setOpenNotificationModal(!openNotificationModal)}>
+          <p className="f-b fs-6 m-0">{user && user?.name}</p>
+          <button className="btn-main" onClick={() => setOpenNotificationModal(!openNotificationModal)}>
             {pathOr("", [locale, "Users", "sendNotfi"], t)}
-          </a>
+          </button>
         </div>
       </div>
       <Row>
         <Col lg={3} md={5}>
           <div className="contint_paner">
             <div className="detalis-customer">
-              <div className="d-flex align-items-center justify-content-between gap-2 mb-2">
+              <div className="d-flex align-items-center justify-content-between gap-2">
                 {user?.clientImage && (
                   <ResponsiveImage
                     imageSrc={`${process.env.NEXT_PUBLIC_URL}${user?.clientImage}`}
                     alt={"client"}
-                    width="50px"
-                    height="50px"
+                    width="100px"
+                    height="100px"
                   />
                 )}
                 <ul className="d-flex gap-1 contuct">
@@ -152,7 +121,7 @@ const UserDetails = () => {
                   </li>
                 </ul>
               </div>
-              <h5 className="f-b m-0">{user?.clientName}</h5>
+              <p className="f-b fs-5 m-0">{user?.clientName}</p>
               <div className="gray-color">
                 {pathOr("", [locale, "Users", "memberSince"], t)} {formatDate(user?.createdAt)}
               </div>
@@ -167,9 +136,9 @@ const UserDetails = () => {
                 </li>
               </ul>
               <div className="font-18">{pathOr("", [locale, "Users", "totalOrders"], t)}</div>
-              <h3 className="f-b main-color m-0">
+              <p className="f-b fs-3 main-color m-0">
                 {user?.totalOrdersPrice} {pathOr("", [locale, "Products", "currency"], t)}
-              </h3>
+              </p>
             </div>
           </div>
         </Col>
@@ -182,7 +151,7 @@ const UserDetails = () => {
                 <div className="font-18">الرياض</div>
               </div>
               <div className="map">
-                <Image src={mapImg.src} width={850} height={180} alt="map" />
+                <Image src={mapImg} width={900} height={190} alt="map" />
               </div>
             </div>
           </div>
