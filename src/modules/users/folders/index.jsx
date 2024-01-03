@@ -1,37 +1,40 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Modal from "react-bootstrap/Modal"
 import { Row, Col } from "react-bootstrap"
-// import folderImg from "../../../../public/icons/folder.svg"
-// import homeImg from "../../../../public/images/home1.jpg"
-import rightArrow from "../../../../public/icons/right-arrow (21).svg"
 import Link from "next/link"
 import axios from "axios"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/router"
 import Pagination from "../../../common/pagination"
 import { pathOr } from "ramda"
 import { formatDate } from "../../../common/functions"
 import { toast } from "react-toastify"
 import { RiDeleteBin5Line } from "react-icons/ri"
 import { MdModeEdit } from "react-icons/md"
-import { Fragment } from "react"
 import t from "../../../translations.json"
-const UsersFolders = () => {
-  const { locale } = useRouter()
-  const page = useRouter()?.query?.page || 1
+import Alerto from "../../../common/Alerto"
+import { IoIosArrowRoundBack } from "react-icons/io"
+import ResponsiveImage from "../../../common/ResponsiveImage"
+import { useFetch } from "../../../hooks/useFetch"
 
-  // const folders = useSelector((state) => state.foldersSlice.folder)
+const UsersFolders = () => {
+  const {
+    locale,
+    query: { page },
+    push,
+  } = useRouter()
+
   const [openFolderModal, setOpenFolderModal] = useState(false)
   const [folderName, setFolderName] = useState("")
   const [editedFolderName, setEditedFolderName] = useState("")
   const [folderImage, setFolderImage] = useState("")
-  const [folders, setFolders] = useState()
   const [folderId, setFolderId] = useState(false)
   const [editModal, setEditModal] = useState(false)
-
+  const { data: folders, fetchData: getUserFolders } = useFetch(
+    `/ListFolder?type=2&pageIndex=1&PageRowsCount=10&lang=${locale}`,
+  )
   const editFolder = async () => {
     const values = { id: folderId, type: 2, nameAr: editedFolderName, nameEn: editedFolderName, image: folderImage }
     const formData = new FormData()
-
     for (const key in values) {
       formData.append(key, values[key])
     }
@@ -55,46 +58,33 @@ const UsersFolders = () => {
     formData.append("nameEn", folderName)
     formData.append("image", folderImage)
     try {
-      // const values = { type: 2, nameAr: folderName, nameEn: folderName, image: folderImage }
       await axios.post(process.env.REACT_APP_API_URL + "/AddFolder", formData).then((res) => {})
       toast.success(locale === "en" ? "A folder has been added successfully!" : "تم اضافة الملف الجديد بنجاح")
       setOpenFolderModal(false)
       await axios.get(`${process.env.REACT_APP_API_URL}/ListFolder?type=2&pageIndex=1&PageRowsCount=10&lang=${locale}`)
     } catch (error) {
-      toast.error("Something went wrong!")
+      Alerto(error)
     }
-  }
-
-  const getUserFolders = async () => {
-    const {
-      data: {
-        data: { fileList: folders },
-      },
-    } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/ListFolder?type=2&pageIndex=1&PageRowsCount=10&lang=${locale}`,
-    )
-    setFolders(folders)
   }
 
   useEffect(() => {
     getUserFolders()
-  }, [openFolderModal])
+  }, [openFolderModal, getUserFolders])
 
-  const totalNumberOfUsers = folders?.fileList?.map((folder) => folder.type === "2")
   const pageSize = 6
   return (
-    <Fragment>
+    <>
       <div className="body-content">
         <div>
           <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
             <div className="d-flex align-items-center">
-              <h6 className="f-b m-0">
-                {pathOr("", [locale, "Users", "clientsFolders"], t)} ({folders?.length})
+              <h6 className="f-b mx-2 my-0">
+                {pathOr("", [locale, "Users", "clientsFolders"], t)} ({folders?.fileList.length})
               </h6>
               <Link href="/users">
-                <a className="btn-main btn-main-w mr-20">
-                  {pathOr("", [locale, "Users", "backToAllClientsPage"], t)} <img src={rightArrow.src} />
-                </a>
+                <button className="btn-main btn-main-w mr-20">
+                  {pathOr("", [locale, "Users", "backToAllClientsPage"], t)} <IoIosArrowRoundBack size={40} />
+                </button>
               </Link>
             </div>
             <button
@@ -107,12 +97,11 @@ const UsersFolders = () => {
               {pathOr("", [locale, "Users", "add_folder"], t)} <i className="fas fa-plus-circle font-18"></i>
             </button>
           </div>
-
           <div className="contint_paner">
             <div>
               <Row>
-                {folders &&
-                  folders?.map((folder) => (
+                {!!folders &&
+                  folders?.fileList.map((folder) => (
                     <Col lg={4} md={6} key={folder?.id}>
                       <div
                         className="box_cus_Folder"
@@ -126,7 +115,7 @@ const UsersFolders = () => {
                           <MdModeEdit className="btn_Measures" onClick={() => setOpenFolderModal(true)} />
                           <RiDeleteBin5Line className="btn_Measures" onClick={() => deleteFolder(folder.id)} />
                         </div>
-                        <div onClick={() => Router.push(`/users/folders/${folder?.id}`)}>
+                        <div onClick={() => push(`/users/folders/${folder?.id}`)}>
                           <h6 className="f-b ">{folder?.name}</h6>
                           <div className="gray-color">
                             <span className="main-color f-b">{folder?.fileUser?.length}</span>{" "}
@@ -134,8 +123,15 @@ const UsersFolders = () => {
                           </div>
                           <div className="avatars-stack">
                             {folder.fileUser?.slice(0, 5).map((user, index) => (
-                              <div className="avatar " key={index}>
-                                <img src={user?.image} className="rounded-circle" />
+                              <div className="avatar" key={index}>
+                                <ResponsiveImage
+                                  imageSrc={
+                                    user?.image.includes("http") ? user?.image.replace("http", "https") : user?.image
+                                  }
+                                  alt={"client"}
+                                  width="25px"
+                                  height="25px"
+                                />
                               </div>
                             ))}
                             {folder?.fileUser?.length - 5 > 0 && (
@@ -148,15 +144,14 @@ const UsersFolders = () => {
                     </Col>
                   ))}
               </Row>
-
-              {folders?.length > pageSize && <Pagination listLength={folders?.length} pageSize={pageSize} />}
+              {folders?.fileList.length > pageSize && (
+                <Pagination listLength={folders?.fileList.length} pageSize={pageSize} />
+              )}
             </div>
           </div>
         </div>
       </div>
-
       {/* Folder Modal */}
-
       <Modal
         show={openFolderModal}
         onHide={() => {
@@ -167,7 +162,7 @@ const UsersFolders = () => {
       >
         <Modal.Header>
           <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
-            {!folders?.length
+            {!folders?.fileList.length
               ? pathOr("", [locale, "Users", "addNewFolder"], t)
               : pathOr("", [locale, "Users", "add_folder"], t)}
           </h5>
@@ -193,7 +188,6 @@ const UsersFolders = () => {
             <input type="file" onChange={(e) => setFolderImage(e.target.files[0])} />
           </div>
         </Modal.Body>
-
         <Modal.Footer className="modal-footer">
           {editModal ? (
             <button type="button" className="btn-main" onClick={editFolder}>
@@ -206,7 +200,7 @@ const UsersFolders = () => {
           )}
         </Modal.Footer>
       </Modal>
-    </Fragment>
+    </>
   )
 }
 
