@@ -87,14 +87,12 @@ const UserDetails = () => {
   )
 
   return (
-    <div className="body-content">
-      <div>
-        <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-          <p className="f-b fs-6 m-0">{user && user?.name}</p>
-          <button className="btn-main" onClick={() => setOpenNotificationModal(!openNotificationModal)}>
-            {pathOr("", [locale, "Users", "sendNotfi"], t)}
-          </button>
-        </div>
+    <article className="body-content">
+      <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+        <p className="f-b fs-5 m-0">{user && user?.clientName}</p>
+        <button className="btn-main" onClick={() => setOpenNotificationModal(!openNotificationModal)}>
+          {pathOr("", [locale, "Users", "sendNotfi"], t)}
+        </button>
       </div>
       <Row>
         <Col lg={3} md={5}>
@@ -142,7 +140,6 @@ const UserDetails = () => {
             </div>
           </div>
         </Col>
-
         <Col lg={9} md={7} className="col-lg-9 col-md-7">
           <div className="contint_paner">
             <div>
@@ -164,7 +161,7 @@ const UserDetails = () => {
       />
       {userOrders && <Table data={userOrders && userOrders} columns={columns} pageSize={10} />}
       {userOrders?.length > 10 && <Pagination listLength={userOrders.length} pageSize={10} />}
-    </div>
+    </article>
   )
 }
 
