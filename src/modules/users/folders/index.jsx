@@ -8,10 +8,9 @@ import Link from "next/link"
 import axios from "axios"
 import Router, { useRouter } from "next/router"
 import Pagination from "../../../common/pagination"
-import { propOr, pathOr } from "ramda"
+import { pathOr } from "ramda"
 import { formatDate } from "../../../common/functions"
 import { toast } from "react-toastify"
-import { useSelector } from "react-redux"
 import { RiDeleteBin5Line } from "react-icons/ri"
 import { MdModeEdit } from "react-icons/md"
 import { Fragment } from "react"
@@ -62,7 +61,6 @@ const UsersFolders = () => {
       setOpenFolderModal(false)
       await axios.get(`${process.env.REACT_APP_API_URL}/ListFolder?type=2&pageIndex=1&PageRowsCount=10&lang=${locale}`)
     } catch (error) {
-      console.log({ error })
       toast.error("Something went wrong!")
     }
   }
@@ -84,7 +82,6 @@ const UsersFolders = () => {
 
   const totalNumberOfUsers = folders?.fileList?.map((folder) => folder.type === "2")
   const pageSize = 6
-  console.log(folders)
   return (
     <Fragment>
       <div className="body-content">

@@ -2,7 +2,7 @@ import Image from "next/image"
 import React, { useState } from "react"
 import noImage from "../../public/images/noImae.png"
 
-const ResponsizeImage = ({ imageSrc, alt, width = "106px", height = "100px" }) => {
+const ResponsiveImage = ({ imageSrc, alt, width = "106px", height = "100px" }) => {
   const [image, setImage] = useState(imageSrc)
   const handleError = () => {
     setImage(noImage.src)
@@ -22,4 +22,4 @@ const ResponsizeImage = ({ imageSrc, alt, width = "106px", height = "100px" }) =
   )
 }
 
-export default ResponsizeImage
+export default ResponsiveImage

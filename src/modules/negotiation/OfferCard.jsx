@@ -6,7 +6,7 @@ import t from "../../translations.json"
 import AcceptModal from "./AcceptModal"
 import { negotiationTypeTranslation } from "../../common/functions"
 import RefuseModal from "./RefuseModal"
-import ResponsizeImage from "../../common/ResponsizeImage"
+import ResponsiveImage from "../../common/ResponsiveImage"
 
 const OfferCard = ({ offer, getOffers, selectedTab }) => {
   const { locale } = useRouter()
@@ -49,7 +49,7 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
             },
           }}
         >
-          <ResponsizeImage imageSrc={productImage} alt={"product"} />
+          <ResponsiveImage imageSrc={productImage} alt={"product"} />
           <Box>
             <Typography variant="body1" component="p" fontWeight={300} color={"rgba(0, 0, 0, 0.6)"}>
               {offer?.productCategory}

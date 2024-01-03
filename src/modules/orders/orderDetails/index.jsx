@@ -11,7 +11,7 @@ import Image from "next/image"
 import ChangeSingleStatusModal from "./ChangeSingleStatusModal"
 import ChangeBranchModal from "../ChangeBranchModal"
 import { orderStatusTranslate, orderTypesTranslation, paymentTypesTranslation } from "../../../common/functions"
-import ResponsizeImage from "../../../common/ResponsizeImage"
+import ResponsiveImage from "../../../common/ResponsiveImage"
 
 export const OrderDetails = () => {
   const {
@@ -172,7 +172,7 @@ export const OrderDetails = () => {
           <div className="contint_paner mt-0 p-0">
             <div className="detalis-customer">
               <div className="d-flex gap-2 mb-2 p-3">
-                <ResponsizeImage imageSrc={clientImage} alt={"client"} />
+                <ResponsiveImage imageSrc={clientImage} alt={"client"} />
                 <div>
                   <div className="mb-2">
                     <h6 className="f-b m-0">{clientName}</h6>
@@ -247,8 +247,7 @@ export const OrderDetails = () => {
                 {orderProductFullInfoDto.map((item, index) => (
                   <li className="item" key={index}>
                     <div className="d-flex align-items-center gap-1">
-                      <Image src={item.iamge} alt="product" width={100} height={64.6} />
-                      {/* <ResponsizeImage imageSrc={item.iamge} alt={"product"} /> */}
+                      <ResponsiveImage imageSrc={item.iamge} alt={"product"} />
                       <div>
                         <div className="gray-color">{item.category}</div>
                         <div className="f-b">{item.productName}</div>

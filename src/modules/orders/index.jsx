@@ -12,19 +12,18 @@ import styles from "./orders.module.css"
 import { toast } from "react-toastify"
 import ChangeStatusModal from "./ChangeStatusModal"
 import ChangeBranchModal from "./ChangeBranchModal"
+
 const Orders = () => {
   // const [shippingOptions, setShippingOptions] = useState()
-  // const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+  const { locale, push } = useRouter()
   const [openBranchModal, setOpenBranchModal] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [branchesData, setBranchesData] = useState()
   const [updateOrders, setUpdateOrders] = useState(false)
-  const [selectedOrders, setSelectedOrders] = useState()
   const [selectedRows, setSelectedRows] = useState({})
   const [filterdOrders, setFilterdOrders] = useState()
   const [showFilter, setShowFilter] = useState(false)
   const [orders, setOrders] = useState()
-  const { locale, push } = useRouter()
   const [orderStatus, setOrderStatus] = useState()
   const [totalOrders, setTotalOrders] = useState({
     total: 0,
@@ -42,6 +41,16 @@ const Orders = () => {
     year: "",
   })
 
+  const selectedOrdersObj = useMemo(() => {
+    const rows = Object.keys(selectedRows || {})
+    return rows.map((row) => {
+      const selectedRow = orders.filter((_, index) => index === +row)
+      return {
+        orderId: selectedRow?.[0]?.orderId,
+        orderStatus: selectedRow?.[0]?.orderStatus,
+      }
+    })
+  }, [selectedRows, orders])
   // useEffect(() => {
   //   const fetchShippingOptions = async () => {
   //     const {
@@ -98,27 +107,11 @@ const Orders = () => {
         updateOrders && setFilterdOrders()
       }
       setSelectedRows()
-      setSelectedOrders()
       setOrders(data)
     }
     getOrder()
   }, [orderStatus, updateOrders])
 
-  let paymentTyp
-  switch (filter?.paymentType) {
-    case "1":
-      paymentTyp = pathOr("", [locale, "Products", "cash"], t)
-      break
-    case "2":
-      paymentTyp = pathOr("", [locale, "Products", "bankTransfer"], t)
-      break
-    case "3":
-      paymentTyp = pathOr("", [locale, "Products", "creditCard"], t)
-      break
-    case "4":
-      paymentTyp = pathOr("", [locale, "Products", "mada"], t)
-      break
-  }
   const filterOrders = () => {
     if (!filter?.paymentType && !filter?.year) {
       toast.error(locale === "en" ? "Please Choose at least one filter!" : "أختر علي الاقل فلتر واحد")
@@ -170,30 +163,7 @@ const Orders = () => {
       setShowFilter(false)
     }
   }
-  const selectedOrdersObj = useMemo(() => {
-    const rows = Object.keys(selectedRows || {})
-    return rows.map((row) => {
-      const selectedRow = orders.filter((_, index) => index === +row)
-      return {
-        orderId: selectedRow?.[0]?.orderId,
-        orderStatus: selectedRow?.[0]?.orderStatus,
-      }
-    })
-  }, [selectedRows, orders])
 
-  useEffect(() => {
-    setSelectedOrders(selectedOrdersObj)
-  }, [selectedRows, selectedOrdersObj])
-
-  // const changeSelectedOrdersStatus = async () => {
-  //   if (selectedOrdersIds) {
-  //     try {
-  //       await axios.post(`${process.env.REACT_APP_API_URL}/ChangeOrderStatus?orderId=1&status=`)
-  //     } catch (error) {
-
-  //     }
-  //   }
-  // }
   // Columns of the gird
   const columns = useMemo(
     () => [
@@ -347,13 +317,16 @@ const Orders = () => {
           <div className={locale === "en" ? `m-3 text-left ${styles.filter}` : `m-3 text-right ${styles.filter}`}>
             <p className="fs-5">
               {pathOr("", [locale, "Orders", "filter"], t)}{" "}
-              <button
+              <span
                 className="text-decoration-underline f-b main-color"
                 aria-label="delete all filters"
+                style={{
+                  cursor: "pointer",
+                }}
                 onClick={deleteAllFilters}
               >
                 {pathOr("", [locale, "Orders", "deleteAllFilters"], t)}
-              </button>
+              </span>
             </p>
             <div>
               {filter?.year && (
@@ -366,7 +339,7 @@ const Orders = () => {
               )}
               {filter.paymentType && (
                 <div>
-                  {paymentTyp}
+                  {paymentTypesTranslation(filter?.paymentType, locale)}
                   <button type="button" onClick={deletePaymentTypeFilter}>
                     X
                   </button>
@@ -467,7 +440,7 @@ const Orders = () => {
         <ChangeStatusModal
           openModal={openModal}
           setOpenModal={setOpenModal}
-          selectedOrders={selectedOrders}
+          selectedOrders={selectedOrdersObj}
           setUpdateOrders={setUpdateOrders}
           setOrderStatus={setOrderStatus}
         />
@@ -475,15 +448,14 @@ const Orders = () => {
           openBranchModal={openBranchModal}
           setOpenBranchModal={setOpenBranchModal}
           branchesData={branchesData}
-          ordersId={selectedOrders?.map((item) => item.orderId)}
-          // orderBranch={branchId}
+          ordersId={selectedOrdersObj?.map((item) => item.orderId)}
         />
       </div>
       <div className={`btns_fixeds ${styles.buttons}`}>
         <button
           className="btn-main btn-w rounded-0"
           onClick={() => {
-            if (selectedOrders.length > 0) {
+            if (selectedOrdersObj.length > 0) {
               setOpenModal(true)
             } else
               toast.error(locale === "en" ? "Choose at least one order from the grid!" : "!اختر طلب واحد علي الاقل")
@@ -494,7 +466,7 @@ const Orders = () => {
         <button
           className="btn-main btn-w rounded-0"
           onClick={() => {
-            if (selectedOrders.length > 0) {
+            if (selectedOrdersObj.length > 0) {
               setOpenBranchModal(true)
             } else
               toast.error(locale === "en" ? "Choose at least one order from the grid!" : "!اختر طلب واحد علي الاقل")
