@@ -1,10 +1,9 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../translations.json"
 import Comment from "./comments"
 import Question from "./questions"
-import { useEffect } from "react"
 import axios from "axios"
 import { Pagination } from "@mui/material"
 
@@ -67,13 +66,14 @@ const Reviews = () => {
             {`${pathOr("", [locale, "questionsAndReviews", tab], t)} (${filteredItems.length})`}
           </h6>
         </div>
-
         <div className="d-flex mb-3">
           <ul className="nav nav-pills" id="pills-tab" role="tablist">
             <li className="nav-item" role="presentation">
               <button
+                role="tab"
                 className={tab === "ratings" ? "nav-link active" : "nav-link"}
                 type="button"
+                aria-selected={tab === "ratings"}
                 onClick={() => push({ query: { tab: "ratings" } })}
               >
                 {pathOr("", [locale, "questionsAndReviews", "ratings"], t)}
@@ -81,8 +81,10 @@ const Reviews = () => {
             </li>
             <li className="nav-item" role="presentation">
               <button
+                role="tab"
                 className={tab === "questions" ? "nav-link active" : "nav-link"}
                 type="button"
+                aria-selected={tab === "questions"}
                 onClick={() => push({ query: { tab: "questions" } })}
               >
                 {pathOr("", [locale, "questionsAndReviews", "questions"], t)}
