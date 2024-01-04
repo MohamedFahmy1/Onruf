@@ -26,14 +26,14 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
   //       id,
   //     },
   //   })
-  //   push({ pathname: "/reviews", query: { tab: "reviews" } })
+  //   push({ pathname: "/reviews", query: { tab: "ratings" } })
   // }
 
   const handleShareReview = async (id) => {
     try {
       const result = await axios.post(process.env.REACT_APP_API_URL + `/ShareRate?id=${id}`)
       toast.success(locale === "en" ? "Rating share status successfully changed!" : "!تم تغيير حالة نشر التقييم")
-      push({ pathname: "/reviews", query: { tab: "reviews" } })
+      push({ pathname: "/reviews", query: { tab: "ratings" } })
     } catch (error) {
       toast.error(
         locale === "en" ? "Error happend please try again later!" : "!حدث خطأ الرجاء اعادة المحاولة في وقت أخر",
@@ -53,7 +53,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
       )
       toast.success(locale === "en" ? "Your Reply has been sent!" : "!تم إرسال الرد بنجاح")
       setOpenReplyModal(false)
-      push({ pathname: "/reviews", query: { tab: "reviews" } })
+      push({ pathname: "/reviews", query: { tab: "ratings" } })
     } catch (error) {
       toast.error(
         locale === "en" ? "Error happend please try again later!" : "!حدث خطأ الرجاء اعادة المحاولة في وقت أخر",
@@ -64,7 +64,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
   // const handleEditReview = async (comment, rate) => {
   //   const result = await axios.put(process.env.REACT_APP_API_URL + "/EditRateProduct", { comment, rate, id })
   //   setOpenEditModal(false)
-  //   push({ pathname: "/reviews", query: { tab: "reviews" } })
+  //   push({ pathname: "/reviews", query: { tab: "ratings" } })
   // }
 
   return (
@@ -123,10 +123,12 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
                 className="form-check-input m-0"
                 type="checkbox"
                 role="switch"
-                id="flexSwitchCheckChecked"
+                id={"flexSwitchCheckChecked" + id}
                 defaultChecked={isShare ? true : false}
               />
-              <span className="mx-1"> {pathOr("", [locale, "questionsAndReviews", "shareRating"], t)}</span>
+              <label htmlFor={"flexSwitchCheckChecked" + id} className="mx-1">
+                {pathOr("", [locale, "questionsAndReviews", "shareRating"], t)}
+              </label>
             </div>
           </div>
         </div>

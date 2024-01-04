@@ -69,7 +69,7 @@ const Sidebar = () => {
     },
     {
       name: pathOr("", [locale, "sidebar", "comments"], t),
-      link: "/reviews?tab=reviews",
+      link: "/reviews?tab=ratings",
       lightIcon: RatsLightIcon,
       darkIcon: RatsDarkIcon,
     },

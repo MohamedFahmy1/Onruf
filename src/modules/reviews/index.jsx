@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useMemo, useState } from "react"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../translations.json"
@@ -6,159 +6,135 @@ import Comment from "./comments"
 import Question from "./questions"
 import { useEffect } from "react"
 import axios from "axios"
+import { Pagination } from "@mui/material"
+
 const Reviews = () => {
-  const router = useRouter()
-  const { locale } = useRouter()
-  const [productReviews, setProductReviews] = useState()
-  const [productQuestions, setProductQuestions] = useState([])
+  const {
+    locale,
+    query: { tab },
+    push,
+  } = useRouter()
+  const [items, setItems] = useState({ ratings: [], questions: [] })
   const [selectedFilter, setSelectedFilter] = useState("All")
-  const getProductReviews = async () => {
-    const {
-      data: { data: data },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/ListProviderProductsRates", {
-      params: { pageIndex: 1 },
-    })
-    setProductReviews(data)
-  }
-  const getProductQuestions = async () => {
-    const {
-      data: { data: productQuestions },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/ListQuestionsForProductOwnerToReplyQuestion")
-    setProductQuestions(productQuestions)
-  }
+  const [currentPage, setCurrentPage] = useState(1)
+  const pageSize = 12
 
   useEffect(() => {
-    getProductReviews()
-    getProductQuestions()
+    const fetchReviews = async () => {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/ListProviderProductsRates`, {
+        params: { pageIndex: 1 },
+      })
+      setItems((items) => ({ ...items, ratings: response.data.data }))
+    }
+    const fetchQuestions = async () => {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/ListQuestionsForProductOwnerToReplyQuestion`)
+      setItems((items) => ({ ...items, questions: response.data.data }))
+    }
+    fetchReviews()
+    fetchQuestions()
   }, [])
 
-  const positiveReviews = productReviews?.filter((rev) => rev.rate >= 2)
-  const negativeReviews = productReviews?.filter((rev) => rev.rate < 2)
-
-  const handleSubModule = () => {
-    switch (router.query.tab) {
-      case "reviews":
-        return (
-          <div className="tab-content" id="pills-tabContent">
-            <div className="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
-              <div>
-                <div className="filtter_1">
-                  <button
-                    className={selectedFilter === "All" ? "btn-main active" : "btn-main"}
-                    onClick={() => setSelectedFilter("All")}
-                  >
-                    {pathOr("", [locale, "questionsAndReviews", "all"], t)}
-                  </button>
-                  <button
-                    className={selectedFilter === "Negative" ? "btn-main active" : "btn-main"}
-                    onClick={() => setSelectedFilter("Negative")}
-                  >
-                    {pathOr("", [locale, "questionsAndReviews", "negative"], t)}
-                  </button>
-                  <button
-                    className={selectedFilter === "Positive" ? "btn-main active" : "btn-main"}
-                    onClick={() => setSelectedFilter("Positive")}
-                  >
-                    {pathOr("", [locale, "questionsAndReviews", "positive"], t)}
-                  </button>
-                </div>
-                {console.log(productReviews)}
-                {selectedFilter === "All" && productReviews?.map((review) => <Comment key={review.id} {...review} />)}
-                {selectedFilter === "Positive" &&
-                  positiveReviews?.map((review) => <Comment key={review.id} {...review} />)}
-                {selectedFilter === "Negative" &&
-                  negativeReviews?.map((review) => <Comment key={review.id} {...review} />)}
-              </div>
-            </div>
-          </div>
-        )
-      case "questions":
-        return (
-          <div className="tab-content" id="pills-tabContent-2">
-            <div
-              className="tab-pane fade show active"
-              id="pills-profile"
-              role="tabpanel"
-              aria-labelledby="pills-profile-tab"
-            >
-              <div>
-                {productQuestions?.length > 0 &&
-                  productQuestions?.map((question) => <Question key={question.id} {...question} />)}
-              </div>
-            </div>
-          </div>
-        )
-      default:
-        break
+  const filteredItems = useMemo(() => {
+    const data = items[tab === "ratings" ? "ratings" : "questions"]
+    if (tab === "ratings") {
+      switch (selectedFilter) {
+        case "Positive":
+          return data.filter((item) => item.rate >= 2)
+        case "Negative":
+          return data.filter((item) => item.rate < 2)
+        default:
+          return data
+      }
     }
-  }
+    return data
+  }, [items, tab, selectedFilter])
+
+  const totalPages = Math.ceil(filteredItems.length / pageSize)
+  const currentData = filteredItems.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+
+  const handlePageChange = (event, value) => setCurrentPage(value)
+
+  const renderItems = () =>
+    currentData.map((item) =>
+      tab === "ratings" ? <Comment key={item.id} {...item} /> : <Question key={item.id} {...item} />,
+    )
 
   return (
     <div className="body-content">
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
           <h6 className="f-b m-0 fs-5">
-            {router.query.tab === "reviews" &&
-              `${pathOr("", [locale, "questionsAndReviews", "ratings"], t)} (${productReviews?.length || 0})`}
-            {router.query.tab === "questions" &&
-              `${pathOr("", [locale, "questionsAndReviews", "questions"], t)} (${productQuestions?.length || 0})`}
+            {`${pathOr("", [locale, "questionsAndReviews", tab], t)} (${filteredItems.length})`}
           </h6>
         </div>
+
         <div className="d-flex mb-3">
-          <ul
-            className="nav nav-pills"
-            id="pills-tab"
-            role="tablist"
-            style={{ boxShadow: "0px 4px 12px rgba(0,0,0,0.2)" }}
-          >
+          <ul className="nav nav-pills" id="pills-tab" role="tablist">
             <li className="nav-item" role="presentation">
               <button
-                className={router.query.tab === "reviews" ? "nav-link active" : "nav-link"}
-                id="pills-home-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#pills-home"
+                className={tab === "ratings" ? "nav-link active" : "nav-link"}
                 type="button"
-                role="tab"
-                aria-controls="pills-home"
-                aria-selected="true"
-                onClick={() =>
-                  router.push({
-                    query: {
-                      tab: "reviews",
-                    },
-                  })
-                }
+                onClick={() => push({ query: { tab: "ratings" } })}
               >
                 {pathOr("", [locale, "questionsAndReviews", "ratings"], t)}
               </button>
             </li>
             <li className="nav-item" role="presentation">
               <button
-                className={router.query.tab === "questions" ? "nav-link active" : "nav-link"}
-                id="pills-profile-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#pills-profile"
+                className={tab === "questions" ? "nav-link active" : "nav-link"}
                 type="button"
-                role="tab"
-                aria-controls="pills-profile"
-                aria-selected="false"
-                onClick={() =>
-                  router.push({
-                    query: {
-                      tab: "questions",
-                    },
-                  })
-                }
+                onClick={() => push({ query: { tab: "questions" } })}
               >
                 {pathOr("", [locale, "questionsAndReviews", "questions"], t)}
               </button>
             </li>
           </ul>
         </div>
-        {handleSubModule()}
+        {tab === "ratings" && (
+          <div className="filtter_1">
+            <button
+              className={selectedFilter === "All" ? "btn-main active" : "btn-main"}
+              onClick={() => {
+                setSelectedFilter("All")
+                setCurrentPage(1)
+              }}
+            >
+              {pathOr("", [locale, "questionsAndReviews", "all"], t)}
+            </button>
+            <button
+              className={selectedFilter === "Positive" ? "btn-main active" : "btn-main"}
+              onClick={() => {
+                setSelectedFilter("Positive")
+                setCurrentPage(1)
+              }}
+            >
+              {pathOr("", [locale, "questionsAndReviews", "positive"], t)}
+            </button>
+            <button
+              className={selectedFilter === "Negative" ? "btn-main active" : "btn-main"}
+              onClick={() => {
+                setSelectedFilter("Negative")
+                setCurrentPage(1)
+              }}
+            >
+              {pathOr("", [locale, "questionsAndReviews", "negative"], t)}
+            </button>
+          </div>
+        )}
+        <div className="tab-content">
+          <div className="tab-pane fade show active">
+            <div>{renderItems()}</div>
+            <Pagination
+              count={totalPages}
+              page={currentPage}
+              onChange={handlePageChange}
+              color="primary"
+              sx={{ my: 2, p: 2, ".MuiPagination-ul": { justifyContent: "center" } }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   )
 }
-
 export default Reviews
