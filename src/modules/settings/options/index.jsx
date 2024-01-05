@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useCallback, useState } from "react"
 import { Col, Row } from "react-bootstrap"
 import { Wallet, Point, Budget, Settings, Branch, CompanyWorkers } from "../../../../public/icons"
 import Link from "next/link"
@@ -6,33 +6,26 @@ import Image from "next/image"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { useRouter } from "next/router"
-import { Box, Button, ButtonGroup, Modal, Typography } from "@mui/material"
+import { Box, Button, Modal, Typography } from "@mui/material"
 import { useEffect } from "react"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import Cookies from "js-cookie"
 import { toast } from "react-toastify"
 import Alerto from "../../../common/Alerto"
+import { useFetch } from "../../../hooks/useFetch"
+
 const Options = ({ userWalletState }) => {
   const { locale } = useRouter()
   const [manageAccountPop, setManageAccountPop] = useState(false)
-  const [myPointsData, setPointsData] = useState({})
+  const { data: myPointsData = {} } = useFetch(`/GetUserPointsTransactions`)
 
-  const fetchMyPointsData = async () => {
-    const {
-      data: { data: myPointsData },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetUserPointsTransactions")
-    setPointsData(myPointsData)
-  }
-  useEffect(() => {
-    fetchMyPointsData()
-  }, [])
   return (
-    <Col>
+    <>
       <Row>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Wallet} />
+            <Image {...Wallet} alt="wallet" />
             <h6 className="f-b">
               {pathOr("", [locale, "Settings", "myWallet"], t)}{" "}
               <span>
@@ -46,7 +39,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Point} />
+            <Image {...Point} alt="Points" />
             <h6 className="f-b">
               {pathOr("", [locale, "Settings", "myPoint"], t)}
               <span>
@@ -60,7 +53,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Point} />
+            <Image {...Point} alt="shipping" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "shipping"], t)}</h6>
             <Link href="/settings/shipping">
               <a className="btn-main">{pathOr("", [locale, "Settings", "manageShipping"], t)}</a>
@@ -69,7 +62,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Branch} />
+            <Image {...Branch} alt="branches" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "branches"], t)}</h6>
             <Link href="/settings/branches">
               <a className="btn-main">{pathOr("", [locale, "Settings", "manageBranches"], t)}</a>
@@ -78,7 +71,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...CompanyWorkers} />
+            <Image {...CompanyWorkers} alt="employees" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "employees"], t)}</h6>
             <Link href="/settings/employees?page=1">
               <a className="btn-main">{pathOr("", [locale, "Settings", "manageEmployees"], t)}</a>
@@ -87,7 +80,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Budget} />
+            <Image {...Budget} alt="packages" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "packages"], t)}</h6>
             <Link href="/settings/packages">
               <a className="btn-main">{pathOr("", [locale, "Settings", "manageYourPackage"], t)}</a>
@@ -96,7 +89,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Settings} />
+            <Image {...Settings} alt="account" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "account"], t)}</h6>
             <button
               onClick={() => setManageAccountPop(true)}
@@ -111,16 +104,13 @@ const Options = ({ userWalletState }) => {
         </Col>
       </Row>
       <ManageAccountModal showModal={manageAccountPop} setShowModal={setManageAccountPop} />
-    </Col>
+    </>
   )
 }
 
-// Manage Account Popup - Better to be moved some where else
 const ManageAccountModal = ({ showModal, setShowModal }) => {
   const [accountData, setAccountData] = useState(null)
-  const { locale } = useRouter()
-
-  const router = useRouter()
+  const { locale, push } = useRouter()
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
   const style = {
     position: "absolute",
@@ -136,14 +126,18 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
   }
 
   // Handle Fetch Account
-  const handleFetchAccount = async () => {
-    const {
-      data: { data: accountData },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetBusinessAccountById", {
-      params: { businessAccountId: buisnessAccountId },
-    })
-    setAccountData(accountData)
-  }
+  const handleFetchAccount = useCallback(async () => {
+    try {
+      const {
+        data: { data: accountData },
+      } = await axios.get(process.env.REACT_APP_API_URL + "/GetBusinessAccountById", {
+        params: { businessAccountId: buisnessAccountId },
+      })
+      setAccountData(accountData)
+    } catch (error) {
+      Alerto(error)
+    }
+  }, [buisnessAccountId])
 
   // Handle Delete Account
   const handleDeleteAccount = async () => {
@@ -156,7 +150,7 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
       Cookies.remove("businessAccountId")
       Cookies.remove("Token")
       Cookies.remove("ProviderId")
-      router.push("http://onrufwebsite4-001-site1.htempurl.com")
+      push(process.env.NEXT_PUBLIC_WEBSITE)
     } catch (error) {
       Alerto(error)
     }
@@ -164,7 +158,6 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
 
   // Handle Delete Account
   const handleAccountStatus = async (isActive) => {
-    console.log(buisnessAccountId, isActive)
     try {
       const { data } = await axios.post(
         process.env.REACT_APP_API_URL +
@@ -173,13 +166,13 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
       handleFetchAccount()
       toast.success("Account Status Updated Successfully!")
     } catch (error) {
-      toast.error(error.data.message.error)
+      Alerto(error)
     }
   }
 
   useEffect(() => {
     handleFetchAccount()
-  }, [buisnessAccountId])
+  }, [buisnessAccountId, handleFetchAccount])
 
   if (!accountData) {
     return null
@@ -194,10 +187,9 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
         aria-describedby="modal-manage-account"
       >
         <Box sx={style}>
-          {/* Modal Header */}
           <Box sx={{ flex: 1, pb: 2, display: "flex", justifyContent: "space-between" }}>
             <Typography variant="h1" fontSize={24} fontWeight={"bold"}>
-              {pathOr("", [router.locale, "Settings", "manageAccount"], t)}
+              {pathOr("", [locale, "Settings", "manageAccount"], t)}
             </Typography>
             <button
               type="button"
@@ -207,10 +199,9 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
               onClick={() => setShowModal(false)}
             ></button>
           </Box>
-          {/* Modal - Handle Account Status */}
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mt: 4 }}>
             <Typography variant="h1" fontSize={18} fontWeight={"500"}>
-              {pathOr("", [router.locale, "Settings", "showStore"], t)}
+              {pathOr("", [locale, "Settings", "showStore"], t)}
             </Typography>
             <Box>
               <div
@@ -227,7 +218,7 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
                   role="switch"
                   id="flexSwitchCheckChecked"
                 />
-                <span className="mx-1">{pathOr("", [router.locale, "Settings", "active"], t)}</span>
+                <span className="mx-1">{pathOr("", [locale, "Settings", "active"], t)}</span>
               </div>
             </Box>
           </Box>
@@ -244,7 +235,7 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
               color: "#fff",
             }}
           >
-            {pathOr("", [router.locale, "Settings", "deleteAccount"], t)}
+            {pathOr("", [locale, "Settings", "deleteAccount"], t)}
           </Button>
         </Box>
       </Modal>
