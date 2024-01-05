@@ -10,6 +10,9 @@ import axios from "axios"
 import { toast } from "react-toastify"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
+import { useFetch } from "../../../hooks/useFetch"
+import ResponsiveImage from "../../../common/ResponsiveImage"
+
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
 const MenuProps = {
@@ -28,24 +31,16 @@ function getStyles(name, categoryName, theme) {
   }
 }
 const JoinCampaign = () => {
-  const { locale } = useRouter()
-  const router = useRouter()
+  const {
+    locale,
+    query: { id },
+    push,
+  } = useRouter()
   const theme = useTheme()
-  const [offer, setOffer] = useState()
-
-  const getOffer = async () => {
-    const {
-      data: { data: offers },
-    } = await axios(`${process.env.REACT_APP_API_URL}/GetCouponById?id=${router?.query?.id}`)
-    setOffer(offers)
-  }
-
-  useEffect(() => {
-    router.query.id && getOffer()
-  }, [router.query.id])
+  const { data: offer } = useFetch(`/GetCouponById?id=${id}`, true)
 
   const [offerPayload, setOfferPayload] = useState({
-    id: router.query.id,
+    id: id,
     productIds: [],
     categoryIds: [],
     fileIds: [],
@@ -62,15 +57,13 @@ const JoinCampaign = () => {
 
   const handleBack = (e) => {
     e.preventDefault()
-
-    router.push("/marketing")
+    push("/marketing")
   }
 
   const handleChangeSelectedCat = (e) => {
     const {
       target: { value },
     } = e
-
     setCategoryName(typeof value === "string" ? value.split(",") : value)
     categoryName = typeof value === "string" ? value.split(",") : value
     const selectedCat = categories.filter((category) => categoryName.includes(category.name))
@@ -95,7 +88,6 @@ const JoinCampaign = () => {
     } = await axios.get(
       `${process.env.REACT_APP_API_URL}/ListProductByBusinessAccountId?currentPage=1&maxRows=100&lang=${locale}`,
     )
-
     setProducts([...productsList])
     const productsOptionsList = productsList.map((product) => {
       return {
@@ -145,7 +137,7 @@ const JoinCampaign = () => {
     const { data: joinOfferRes } = joinOffer
     if (joinOfferRes.status_code === 200) {
       toast.success(locale === "en" ? "You Subscribed To Coupon Successfully!" : "تم الاشتراك بالكوبون بنجاح")
-      router.push("/")
+      push("/")
     }
   }
 
@@ -164,16 +156,16 @@ const JoinCampaign = () => {
       )
       setFolders(folders)
     })()
-  }, [])
+  }, [locale])
 
   return (
     <div className="body-content">
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
           <h6 className="f-b m-0">{pathOr("", [locale, "marketing", "join_the_coupon"], t)}</h6>
-          <a onClick={handleBack} className="btn-main btn-main-o">
+          <button onClick={handleBack} className="btn-main btn-main-o">
             {pathOr("", [locale, "marketing", "cancel"], t)}
-          </a>
+          </button>
         </div>
         <Accordion activeKey={eventKey} flush>
           <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="0">
@@ -383,10 +375,6 @@ const JoinCampaign = () => {
                           />
                         )}
                       />
-                      {/* <input type="search" className="form-control" onFocus={handleLoadProducts} onChange={e => handleProductSearch(e, products)} />
-                                            <span className="icon_fa">
-                                                <img src="../core/imgs/search.svg" />
-                                            </span> */}
                     </div>
                   </div>
                   {Boolean(selectedProducts.length) && (
@@ -399,14 +387,19 @@ const JoinCampaign = () => {
                       </div>
                       <ul>
                         {selectedProducts.map((product) => (
-                          <li key={product.id} className="d-flex align-items-center justify-content-between mb-3">
+                          <li key={product?.id} className="d-flex align-items-center justify-content-between mb-3">
                             <div className="d-flex align-items-center">
-                              {Boolean(product.listMedia.length) && (
-                                <img src={product.listMedia[0].url} className="img_table" />
+                              {Boolean(product?.listMedia.length) && (
+                                <ResponsiveImage
+                                  imageSrc={product?.listMedia[0].url}
+                                  alt="product"
+                                  width="120px"
+                                  height="100px"
+                                />
                               )}
                               <div>
-                                <h6 className="m-0 f-b">{product.name}</h6>
-                                <div className="gray-color">{new Date(product.updateDate).toLocaleDateString()}</div>
+                                <h6 className="m-0 f-b">{product?.name}</h6>
+                                <div className="gray-color">{new Date(product?.updatedAt).toLocaleDateString()}</div>
                               </div>
                             </div>
                             <button
