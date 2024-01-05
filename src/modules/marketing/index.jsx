@@ -6,9 +6,11 @@ import axios from "axios"
 import { pathOr } from "ramda"
 import t from "../../translations.json"
 import { useRouter } from "next/router"
+import ResponsiveImage from "../../common/ResponsiveImage"
+import Image from "next/image"
+
 const Marketing = () => {
   const token = useSelector((state) => state.authSlice.token)
-  const providerId = useSelector((state) => state.authSlice.providerId)
   const { locale } = useRouter()
   const [offers, setOffers] = useState()
   const getOffers = async () => {
@@ -16,6 +18,7 @@ const Marketing = () => {
       data: { data: offers },
     } = await axios(`${process.env.REACT_APP_API_URL}/ListAdminCoupons?currentPage=${1}&maxRows=${10}`)
     setOffers(offers)
+    console.log(offers)
   }
 
   useEffect(() => {
@@ -35,25 +38,33 @@ const Marketing = () => {
         <div className="row">
           {Boolean(offers && offers?.length) &&
             offers.map((offer) => (
-              <div className="col-lg-4" key={offer.id}>
+              <div className="col-md-4" key={offer.id}>
                 <div className={styles["box_shopping"]}>
-                  <img src={offer.image} />
-                  <h6 className="f-b">{offer.couponCode}</h6>
+                  <Image
+                    src={offer.image.includes("http") ? offer.image.replace("http", "https") : offer.image}
+                    alt="offer"
+                    width={340}
+                    height={260}
+                  />
+                  <h6 className="f-b">{offer.title}</h6>
                   <p className="mb-2">{offer.description}</p>
-                  {offer.discountTypeID === 1 && (
+                  {offer.discountTypeID === "FixedAmount" ? (
                     <>
                       <div className="font-18">{pathOr("", [locale, "marketing", "discount_value"], t)}</div>
+                      <h4 className="f-b main-color">
+                        {offer.discountValue} {pathOr("", [locale, "Products", "currency"], t)}
+                      </h4>
+                    </>
+                  ) : (
+                    <>
+                      <div className="font-18">{pathOr("", [locale, "marketing", "discount_percentage"], t)}</div>
                       <h4 className="f-b main-color">{offer.discountValue}%</h4>
                     </>
                   )}
-                  {offer.discountTypeID === 2 && (
-                    <>
-                      <div className="font-18">{pathOr("", [locale, "marketing", "discount_percentage"], t)}</div>
-                      <h4 className="f-b main-color">{offer.discountPercentage}%</h4>
-                    </>
-                  )}
                   <Link href={`marketing/join-campaign/${offer.id}`}>
-                    <a className="btn-main d-block">{pathOr("", [locale, "marketing", "join_the_coupon"], t)}</a>
+                    <button className="btn-main d-block w-100 fs-5">
+                      {pathOr("", [locale, "marketing", "join_the_coupon"], t)}
+                    </button>
                   </Link>
                 </div>
               </div>
