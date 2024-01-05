@@ -202,13 +202,16 @@ p {
 .flex-grow-1 {
   flex-grow: 1;
 }
-
+.pointer {
+  cursor: pointer;
+}
 input[type="checkbox"],
 input[type="radio"] {
   position: relative;
   width: 20px;
   height: 20px;
   vertical-align: middle;
+  cursor: pointer;
 }
 
 input[type="checkbox"]:before {
