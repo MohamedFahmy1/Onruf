@@ -7,7 +7,7 @@ import Image from "next/image"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { useRouter } from "next/router"
-import { Box, Button, Modal, Typography } from "@mui/material"
+import { Box, Button, Modal, Skeleton, Typography } from "@mui/material"
 import { useEffect } from "react"
 import axios from "axios"
 import { useSelector } from "react-redux"
@@ -24,13 +24,18 @@ const Options = ({ userWalletState }) => {
   return (
     <section>
       <Row>
-        <Col lg={3} md={4}>
+        <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
             <Image src={Wallet} alt="wallet" {...Wallet} height={82} />
             <h6 className="f-b">
               {pathOr("", [locale, "Settings", "myWallet"], t)}{" "}
-              <span>
-                {userWalletState?.walletBalance} {pathOr("", [locale, "Products", "currency"], t)}
+              <span className="d-flex justify-content-center">
+                {userWalletState?.walletBalance ? (
+                  userWalletState?.walletBalance
+                ) : (
+                  <Skeleton variant="text" width={21} />
+                )}{" "}
+                {pathOr("", [locale, "Products", "currency"], t)}
               </span>
             </h6>
             <Link href="/settings/wallet">
@@ -38,13 +43,14 @@ const Options = ({ userWalletState }) => {
             </Link>
           </div>
         </Col>
-        <Col lg={3} md={4}>
+        <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
             <Image src={Point} {...Point} alt="Points" />
             <h6 className="f-b">
-              {pathOr("", [locale, "Settings", "myPoint"], t)}
-              <span>
-                {myPointsData.pointsBalance} {pathOr("", [locale, "Settings", "point"], t)}
+              {pathOr("", [locale, "Settings", "myPoints"], t)}
+              <span className="d-flex justify-content-center">
+                {myPointsData ? myPointsData.pointsBalance : <Skeleton variant="text" width={16} />}{" "}
+                {pathOr("", [locale, "Settings", "point"], t)}
               </span>
             </h6>
             <Link href="/settings/mypoints">
@@ -52,7 +58,7 @@ const Options = ({ userWalletState }) => {
             </Link>
           </div>
         </Col>
-        <Col lg={3} md={4}>
+        <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
             <Image src={Point} {...Point} alt="shipping" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "shipping"], t)}</h6>
@@ -61,7 +67,7 @@ const Options = ({ userWalletState }) => {
             </Link>
           </div>
         </Col>
-        <Col lg={3} md={4}>
+        <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
             <Image src={Branch} {...Branch} alt="branches" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "branches"], t)}</h6>
@@ -70,7 +76,7 @@ const Options = ({ userWalletState }) => {
             </Link>
           </div>
         </Col>
-        <Col lg={3} md={4}>
+        <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
             <Image src={CompanyWorkers} {...CompanyWorkers} alt="employees" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "employees"], t)}</h6>
@@ -79,7 +85,7 @@ const Options = ({ userWalletState }) => {
             </Link>
           </div>
         </Col>
-        <Col lg={3} md={4}>
+        <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
             <Image src={Budget} {...Budget} alt="packages" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "packages"], t)}</h6>
@@ -88,7 +94,7 @@ const Options = ({ userWalletState }) => {
             </Link>
           </div>
         </Col>
-        <Col lg={3} md={4}>
+        <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
             <Image src={Settings} width={81} height={73} alt="Settings" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "account"], t)}</h6>

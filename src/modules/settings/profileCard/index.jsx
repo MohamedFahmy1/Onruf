@@ -1,6 +1,5 @@
 import React from "react"
 import { Col } from "react-bootstrap"
-import Avatar from "../../../../public/images/user.png"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
@@ -9,6 +8,7 @@ import rating from "../../../../public/images/rating.png"
 import Image from "next/image"
 import ResponsiveImage from "../../../common/ResponsiveImage"
 import Link from "next/link"
+import { Skeleton } from "@mui/material"
 const ProfileCard = ({
   id,
   businessAccountNameEn,
@@ -24,18 +24,23 @@ const ProfileCard = ({
       <section className="contint_paner">
         <div className="text-center">
           <div className="img_table mx-auto rounded-circle mb-2">
-            {businessAccountImage && (
-              <ResponsiveImage imageSrc={businessAccountImage || Avatar} alt="user" width="100px" height="100px" />
+            {businessAccountImage ? (
+              <ResponsiveImage imageSrc={businessAccountImage} alt="user" width="100px" height="100px" />
+            ) : (
+              <Skeleton variant="circular" width={100} height={100} />
             )}
           </div>
-          <h6 className="f-b">{businessAccountNameEn}</h6>
+          <h6 className="f-b">
+            {businessAccountNameEn ? businessAccountNameEn : <Skeleton variant="text" sx={{ fontSize: "16px" }} />}
+          </h6>
           <div className="gray-color font-11 f-b mb-2">
             <div className="mb-1">
-              {pathOr("", [locale, "Settings", "userFrom"], t)} : {formatDate(createdAt)}
+              {pathOr("", [locale, "Settings", "userFrom"], t)} :{" "}
+              {formatDate(createdAt) ? formatDate(createdAt) : <Skeleton variant="text" sx={{ fontSize: "11px" }} />}
             </div>
           </div>
           <div className="imogy">
-            <span>{rate?.toFixed(1)}</span>
+            <span>{rate ? rate?.toFixed(1) : <Skeleton variant="text" width={20} sx={{ fontSize: "15px" }} />}</span>
             <Image src={rating} alt="rating" width={30} height={30} />
           </div>
           <Link href={`/settings/editAccount/${id}`}>
