@@ -130,18 +130,23 @@ const MyPoints = () => {
           </div>
           <div className="mt-4">
             <h5 className="mb-4">{pathOr("", [locale, "Points", "lastProcesses"], t)}</h5>
-            {pointsTransactionslist?.map((transaction) => (
-              <div key={transaction.id} className="item_Processes">
-                <div className="f-b">
-                  <div>{transaction.transactionSource}</div>
-                  <div className="gray-color">{formatDate(transaction.transactionDate)}</div>
+            {console.log(pointsTransactionslist)}
+            {pointsTransactionslist?.length > 0 ? (
+              pointsTransactionslist?.map((transaction) => (
+                <div key={transaction.id} className="item_Processes">
+                  <div className="f-b">
+                    <div>{transaction.transactionSource}</div>
+                    <div className="gray-color">{formatDate(transaction.transactionDate)}</div>
+                  </div>
+                  <h5 className="m-0 main-color f-b text-center">
+                    <span className="d-block">{transaction.transactionAmount}</span>
+                    {pathOr("", [locale, "Points", "points"], t)}
+                  </h5>
                 </div>
-                <h5 className="m-0 main-color f-b text-center">
-                  <span className="d-block">{transaction.transactionAmount}</span>
-                  {pathOr("", [locale, "Points", "points"], t)}
-                </h5>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p>{locale === "en" ? "No Data to Show !" : "لا يوجد بيانات"}</p>
+            )}
           </div>
           <ShareModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} registrationCode={newInvitationCode} />
         </div>
