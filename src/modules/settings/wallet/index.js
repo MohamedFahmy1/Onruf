@@ -57,7 +57,6 @@ const Wallet = () => {
     const {
       data: { data: userWalletState },
     } = await axios.get(process.env.REACT_APP_API_URL + "/GetUserWalletTransactions")
-    console.log()
     setUserWalletState(userWalletState)
   }
 
@@ -87,25 +86,6 @@ const Wallet = () => {
             </Col>
             <Col lg={5}>
               <form onSubmit={handleSubmit(handleWalletSubmit)}>
-                {/*<div className="form-group">
-                  <label style={{ textAlign: locale === "en" ? "left" : "right", display: "block" }}>
-                    {pathOr("", [locale, "Products", "productCondition"], t)}
-                  </label>
-                  <div className="d-flex gap-3">
-                    <div
-                      onClick={() => {}}
-                      className={`${styles.p_select} ${transType == "In" ? styles.p_select_active : ""}`}
-                    >
-                      {pathOr("", [locale, "Products", "new"], t)}
-                    </div>
-                    <div
-                      onClick={() => {}}
-                      className={`${styles.p_select} ${transType == "Out" ? styles.p_select_active : ""}`}
-                    >
-                      {pathOr("", [locale, "Products", "used"], t)}
-                    </div>
-                  </div>
-  </div>*/}
                 <ul className="swich_larg d-flex justify-content-center gap-5">
                   <li
                     className="transaction-type"
@@ -152,6 +132,9 @@ const Wallet = () => {
                   </li>
                 </ul>
                 <div className="my-2 po_R">
+                  <label htmlFor="TransactionAmount" className="visually-hidden">
+                    {"TransactionAmount"}
+                  </label>
                   <input
                     {...register("TransactionAmount", {
                       required: "You can't submit an empty field",
@@ -164,6 +147,7 @@ const Wallet = () => {
                       },
                     })}
                     type="text"
+                    id="TransactionAmount"
                     className="form-control"
                     onKeyDown={(e) => {
                       // Allow only numbers, decimal point, backspace, and delete keys
@@ -194,7 +178,6 @@ const Wallet = () => {
                       }
                     }}
                   />
-
                   <span
                     className="icon_fa main-color"
                     style={{
@@ -216,7 +199,7 @@ const Wallet = () => {
             </Col>
           </Row>
           <div className="mt-4">
-            <h5 className="mb-4">{pathOr("", [locale, "Wallet", "latestProcesses"], t)}</h5>
+            <h5 className="mb-4 f-b">{pathOr("", [locale, "Wallet", "latestProcesses"], t)}</h5>
             {walletTransactionslist?.slice(0, 15).map((transaction) => (
               <div className="item_Processes" key={transaction.id}>
                 <div className="f-b">
