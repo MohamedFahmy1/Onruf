@@ -1,10 +1,10 @@
-import {UnAuthorisedPage} from "../../modules/404/Unauthorised" 
+import { UnAuthorisedPage } from "../../modules/404/Unauthorised"
 const BlankPage = () => {
-    return (
-        <> <UnAuthorisedPage/> </>
-    );
+  return (
+    <main>
+      <UnAuthorisedPage />
+    </main>
+  )
 }
 
-
- 
 export default BlankPage

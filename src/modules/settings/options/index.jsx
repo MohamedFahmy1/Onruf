@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react"
 import { Col, Row } from "react-bootstrap"
-import { Wallet, Point, Budget, Settings, Branch, CompanyWorkers } from "../../../../public/icons"
+import { Wallet, Point, Budget, Branch, CompanyWorkers } from "../../../../public/icons"
+import Settings from "../../../../public/icons/settings(9).svg"
 import Link from "next/link"
 import Image from "next/image"
 import { pathOr } from "ramda"
@@ -21,11 +22,11 @@ const Options = ({ userWalletState }) => {
   const { data: myPointsData = {} } = useFetch(`/GetUserPointsTransactions`)
 
   return (
-    <>
+    <section>
       <Row>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Wallet} alt="wallet" />
+            <Image src={Wallet} alt="wallet" {...Wallet} />
             <h6 className="f-b">
               {pathOr("", [locale, "Settings", "myWallet"], t)}{" "}
               <span>
@@ -33,13 +34,13 @@ const Options = ({ userWalletState }) => {
               </span>
             </h6>
             <Link href="/settings/wallet">
-              <a className="btn-main">{pathOr("", [locale, "Settings", "topUpCredit"], t)}</a>
+              <span className="btn-main">{pathOr("", [locale, "Settings", "topUpCredit"], t)}</span>
             </Link>
           </div>
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Point} alt="Points" />
+            <Image src={Point} {...Point} alt="Points" />
             <h6 className="f-b">
               {pathOr("", [locale, "Settings", "myPoint"], t)}
               <span>
@@ -47,49 +48,49 @@ const Options = ({ userWalletState }) => {
               </span>
             </h6>
             <Link href="/settings/mypoints">
-              <a className="btn-main">{pathOr("", [locale, "Settings", "transferMyPoints"], t)}</a>
+              <span className="btn-main">{pathOr("", [locale, "Settings", "transferMyPoints"], t)}</span>
             </Link>
           </div>
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Point} alt="shipping" />
+            <Image src={Point} {...Point} alt="shipping" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "shipping"], t)}</h6>
             <Link href="/settings/shipping">
-              <a className="btn-main">{pathOr("", [locale, "Settings", "manageShipping"], t)}</a>
+              <span className="btn-main">{pathOr("", [locale, "Settings", "manageShipping"], t)}</span>
             </Link>
           </div>
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Branch} alt="branches" />
+            <Image src={Branch} {...Branch} alt="branches" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "branches"], t)}</h6>
             <Link href="/settings/branches">
-              <a className="btn-main">{pathOr("", [locale, "Settings", "manageBranches"], t)}</a>
+              <span className="btn-main">{pathOr("", [locale, "Settings", "manageBranches"], t)}</span>
             </Link>
           </div>
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...CompanyWorkers} alt="employees" />
+            <Image src={CompanyWorkers} {...CompanyWorkers} alt="employees" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "employees"], t)}</h6>
             <Link href="/settings/employees?page=1">
-              <a className="btn-main">{pathOr("", [locale, "Settings", "manageEmployees"], t)}</a>
+              <span className="btn-main">{pathOr("", [locale, "Settings", "manageEmployees"], t)}</span>
             </Link>
           </div>
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Budget} alt="packages" />
+            <Image src={Budget} {...Budget} alt="packages" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "packages"], t)}</h6>
             <Link href="/settings/packages">
-              <a className="btn-main">{pathOr("", [locale, "Settings", "manageYourPackage"], t)}</a>
+              <span className="btn-main">{pathOr("", [locale, "Settings", "manageYourPackage"], t)}</span>
             </Link>
           </div>
         </Col>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image {...Settings} alt="account" />
+            <Image src={Settings} width={81} height={73} alt="Settings" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "account"], t)}</h6>
             <button
               onClick={() => setManageAccountPop(true)}
@@ -104,7 +105,7 @@ const Options = ({ userWalletState }) => {
         </Col>
       </Row>
       <ManageAccountModal showModal={manageAccountPop} setShowModal={setManageAccountPop} />
-    </>
+    </section>
   )
 }
 

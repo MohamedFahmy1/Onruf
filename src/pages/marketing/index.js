@@ -7,12 +7,12 @@ import { pathOr } from "ramda"
 const MarketingPage = () => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Marketing"], t)}</title>
       </Head>
       <Marketing />
-    </>
+    </main>
   )
 }
 

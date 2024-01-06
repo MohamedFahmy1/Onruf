@@ -1,6 +1,10 @@
-import React from 'react'
-import AddShipping from '../../../../modules/settings/Shipping/add'
+import React from "react"
+import AddShipping from "../../../../modules/settings/Shipping/add"
 
-const AddShippingPage = () => <AddShipping />
+const AddShippingPage = () => (
+  <main>
+    <AddShipping />
+  </main>
+)
 
 export default AddShippingPage

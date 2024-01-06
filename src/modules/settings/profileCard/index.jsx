@@ -7,6 +7,8 @@ import t from "../../../translations.json"
 import { formatDate } from "../../../common/functions"
 import rating from "../../../../public/images/rating.png"
 import Image from "next/image"
+import ResponsiveImage from "../../../common/ResponsiveImage"
+import Link from "next/link"
 const ProfileCard = ({
   id,
   businessAccountNameEn,
@@ -16,16 +18,16 @@ const ProfileCard = ({
   businessAccountImage,
   ...props
 }) => {
-  const { locale, push } = useRouter()
+  const { locale } = useRouter()
   return (
     <Col lg={4}>
-      <div className="contint_paner">
+      <section className="contint_paner">
         <div className="text-center">
-          <img
-            src={businessAccountImage ? businessAccountImage : Avatar}
-            className="img_table m-0 rounded-circle mb-2"
-            alt="user"
-          />
+          <div className="img_table mx-auto rounded-circle mb-2">
+            {businessAccountImage && (
+              <ResponsiveImage imageSrc={businessAccountImage || Avatar} alt="user" width="100px" height="100px" />
+            )}
+          </div>
           <h6 className="f-b">{businessAccountNameEn}</h6>
           <div className="gray-color font-11 f-b mb-2">
             <div className="mb-1">
@@ -36,11 +38,11 @@ const ProfileCard = ({
             <span>{rate?.toFixed(1)}</span>
             <Image src={rating} alt="rating" width={30} height={30} />
           </div>
-          <a className="btn-main d-block mt-3" onClick={() => push({ pathname: `/settings/editAccount/${id}` })}>
-            {pathOr("", [locale, "Settings", "editAccount"], t)}
-          </a>
+          <Link href={`/settings/editAccount/${id}`}>
+            <span className="btn-main d-block mt-3">{pathOr("", [locale, "Settings", "editAccount"], t)}</span>
+          </Link>
         </div>
-      </div>
+      </section>
     </Col>
   )
 }

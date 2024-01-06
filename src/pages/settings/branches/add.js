@@ -8,12 +8,12 @@ import t from "../../../translations.json"
 const AddNewBranch = () => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "AddBranch"], t)}</title>
       </Head>
       <AddBranch />
-    </>
+    </main>
   )
 }
 

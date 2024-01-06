@@ -7,12 +7,12 @@ import t from "../../../translations.json"
 const MyPointsPage = () => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Points"], t)}</title>
       </Head>
       <MyPoints />
-    </>
+    </main>
   )
 }
 

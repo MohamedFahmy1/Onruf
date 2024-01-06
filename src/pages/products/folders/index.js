@@ -9,12 +9,12 @@ const FoldersPage = () => {
   const { locale } = useRouter()
 
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "browseFolders"], t)}</title>
       </Head>
       <Folders />
-    </>
+    </main>
   )
 }
 

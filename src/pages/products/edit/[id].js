@@ -7,12 +7,12 @@ import { useRouter } from "next/router"
 const EditPage = () => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "editProduct"], t)}</title>
       </Head>
       <EditProduct />
-    </>
+    </main>
   )
 }
 

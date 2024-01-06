@@ -539,6 +539,7 @@ tbody {
   border: 1px solid #eee;
   border-radius: 15px;
   margin-inline-end: 15px;
+  overflow: hidden;
 }
 
 .img_table2 {

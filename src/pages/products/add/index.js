@@ -7,12 +7,12 @@ import { useRouter } from "next/router"
 const AddProductPage = () => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "addProduct"], t)}</title>
       </Head>
       <AddProduct />
-    </>
+    </main>
   )
 }
 

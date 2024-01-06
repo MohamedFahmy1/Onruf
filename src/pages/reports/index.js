@@ -9,12 +9,12 @@ const ReportsPage = () => {
   const { locale } = useRouter()
 
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Reports"], t)}</title>
       </Head>
       <Reports />
-    </>
+    </main>
   )
 }
 

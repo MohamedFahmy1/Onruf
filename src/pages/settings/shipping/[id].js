@@ -143,7 +143,7 @@ const ShippingOptionPage = ({}) => {
   } = shippingOptionData
 
   return (
-    <Box sx={{ padding: 4, position: "relative" }}>
+    <Box sx={{ padding: 4, position: "relative" }} component={"main"}>
       <div ref={ref} style={{ display: "none" }}>
         <input
           type="file"

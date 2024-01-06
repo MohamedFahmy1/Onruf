@@ -8,12 +8,12 @@ import t from "../../translations.json"
 const AddCouponPage = () => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "addCoupon"], t)}</title>
       </Head>
       <AddCoupon />
-    </>
+    </main>
   )
 }
 

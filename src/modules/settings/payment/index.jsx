@@ -15,11 +15,13 @@ import axios from "axios"
 import "react-datepicker/dist/react-datepicker.css"
 import t from "../../../translations.json"
 import { pathOr } from "ramda"
+import Alerto from "../../../common/Alerto"
+import Image from "next/image"
+import { textAlignStyle } from "../../../styles/stylesObjects"
 
 const PaymentCards = ({ bankTransfers }) => {
   const { locale } = useRouter()
   const [openModal, setOpenModal] = useState()
-  // This is for edit
   const [id, setId] = useState()
   const [bankTransferData, setBankTransferData] = useState(bankTransfers || [])
   const {
@@ -27,8 +29,6 @@ const PaymentCards = ({ bankTransfers }) => {
     handleSubmit,
     formState: { errors },
     reset,
-    setValue,
-    watch,
   } = useForm({ mode: "onBlur" })
 
   const fetchBankTransfer = async () => {
@@ -94,8 +94,7 @@ const PaymentCards = ({ bankTransfers }) => {
         }
       }
     } catch (error) {
-      console.error({ error })
-      toast.error(error.response.data.message)
+      Alerto(error)
     } finally {
       reset({})
     }
@@ -121,10 +120,9 @@ const PaymentCards = ({ bankTransfers }) => {
   useEffect(() => {
     setBankTransferData(bankTransfers)
   }, [bankTransfers])
-  if (!bankTransferData) return "Loading"
   return (
     <Col lg={8}>
-      <div className="contint_paner">
+      <section className="contint_paner">
         <h6 className="f-b mb-3">{pathOr("", [locale, "Settings", "bankAccounts"], t)}</h6>
         <div className="d-flex gap-4">
           <button
@@ -133,11 +131,12 @@ const PaymentCards = ({ bankTransfers }) => {
             onClick={handleOpenModal}
             data-bs-toggle="modal"
             data-bs-target="#acount_Banck"
+            aria-label="add new account"
           >
             <AiOutlinePlus />
           </button>
           <div
-            className="d-flex justify-content-around overflow-scroll gap-4"
+            className="d-flex justify-content-between overflow-scroll gap-4"
             style={{ height: "300px", alignItems: "center" }}
           >
             {bankTransferData?.map((bank) => (
@@ -150,16 +149,25 @@ const PaymentCards = ({ bankTransfers }) => {
                 }}
               >
                 <div>
-                  <div className="d-flex align-items-center justify-content-between mb-10">
-                    {bank.paymentAccountType === "CreditCard" && <img src={VisaImg.src} className="img_" />}
-                    {bank.paymentAccountType === "STCPay" && <img src={stcPayImg.src} className="img_" />}
+                  <div className="d-flex align-items-center justify-evenly-between mb-10">
+                    {bank.paymentAccountType === "CreditCard" && (
+                      <Image src={VisaImg} className="img_" alt="visa logo" width={50} height={16} priority />
+                    )}
+                    {bank.paymentAccountType === "STCPay" && (
+                      <Image src={stcPayImg} className="img_" alt="stc pay" width={50} height={16} priority />
+                    )}
                     <button
                       className="btn_edit"
+                      aria-label="edit account"
                       onClick={() => handleOpenEditModalAndSetFormWithDefaultValues(bank?.id)}
                     >
                       <BiEditAlt />
                     </button>
-                    <button className="btn_edit" onClick={() => handleDeleteBankTransfer(bank?.id)}>
+                    <button
+                      className="btn_edit"
+                      aria-label="delete account"
+                      onClick={() => handleDeleteBankTransfer(bank?.id)}
+                    >
                       <RiDeleteBin5Line />
                     </button>
                   </div>
@@ -183,16 +191,28 @@ const PaymentCards = ({ bankTransfers }) => {
                     </div>
                   )}
                 </div>
-                {bank.paymentAccountType === "CreditCard" && <img src={BoxBankImg.src} className="baner" />}
-                {bank.paymentAccountType === "STCPay" && <img src={stc.src} className="baner" />}
+                {bank.paymentAccountType === "CreditCard" && (
+                  <div className="baner">
+                    <Image src={BoxBankImg} alt="visa" width={145} height={285} layout="fixed" priority />
+                  </div>
+                )}
+                {bank.paymentAccountType === "STCPay" && (
+                  <div className="baner">
+                    <Image src={stc} alt="stc pay" width={145} height={285} layout="fixed" priority />
+                  </div>
+                )}
               </div>
             ))}
           </div>
         </div>
-      </div>
+      </section>
       {/* Payment Modal */}
       <form>
-        <Modal show={openModal} onHide={() => setOpenModal(false)}>
+        <Modal
+          show={openModal}
+          onHide={() => setOpenModal(false)}
+          style={{ ...textAlignStyle(locale), direction: locale === "en" ? "ltr" : "rtl" }}
+        >
           <Modal.Header>
             <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
               {!id ? (locale === "en" ? "Add" : "اضافة") : locale === "en" ? "Edit" : "تعديل"}{" "}
@@ -203,7 +223,7 @@ const PaymentCards = ({ bankTransfers }) => {
           <Modal.Body>
             <div className="mb-2">
               <label className="f-b">{pathOr("", [locale, "BankAccounts", "accountType"], t)}</label>
-              <div className="d-flex gap-3">
+              <div className="d-flex gap-3 justify-content-between">
                 <div className="status-P">
                   <input
                     type="radio"
@@ -225,8 +245,7 @@ const PaymentCards = ({ bankTransfers }) => {
                       required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
                     })}
                   />
-
-                  <img src={StcPayImg.src} width="65px" />
+                  <Image src={StcPayImg} alt="stc pay" width={65} height={20} priority />
                   <span className="pord rounded-pill"></span>
                 </div>
                 <div className="status-P">

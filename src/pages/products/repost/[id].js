@@ -7,12 +7,12 @@ import { useRouter } from "next/router"
 const RepostPage = () => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "repostProduct"], t)}</title>
       </Head>
       <EditProduct />
-    </>
+    </main>
   )
 }
 

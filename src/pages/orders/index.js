@@ -8,12 +8,12 @@ import { useRouter } from "next/router"
 const OrdersPage = () => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Orders"], t)}</title>
       </Head>
       <Orders />
-    </>
+    </main>
   )
 }
 

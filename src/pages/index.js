@@ -8,12 +8,12 @@ import axios from "axios"
 export default function HomePage({ sales, ListProduct, ListNewOrder, GetListUser }) {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Home"], t)}</title>
       </Head>
       <Home sales={sales} ListProduct={ListProduct} ListNewOrder={ListNewOrder} GetListUser={GetListUser} />
-    </>
+    </main>
   )
 }
 export async function getServerSideProps({ req, locale }) {

@@ -87,7 +87,7 @@ const Home = ({ sales: s, ListProduct, ListNewOrder, GetListUser }) => {
   }, [products])
 
   return (
-    <main className="body-content">
+    <article className="body-content">
       <Row>
         <Chart sales={sales && sales} />
         <Notifications />
@@ -97,7 +97,7 @@ const Home = ({ sales: s, ListProduct, ListNewOrder, GetListUser }) => {
         <LatestOrdersWithClients clients={clients && clients} />
         <ProductsAlmostOut products={almostFinishedProducts && almostFinishedProducts} />
       </Row>
-    </main>
+    </article>
   )
 }
 

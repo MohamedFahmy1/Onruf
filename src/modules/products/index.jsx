@@ -115,7 +115,7 @@ const Products = ({ products: p }) => {
   }
 
   return (
-    <div>
+    <article>
       <ViewProducts
         products={products}
         setProductsIds={setProductsIds}
@@ -194,7 +194,7 @@ const Products = ({ products: p }) => {
           </button>
         </Modal.Footer>
       </Modal>
-      <div className="btns_fixeds">
+      <section className="btns_fixeds">
         <button
           className="btn-main rounded-0"
           aria-label={locale === "en" ? "Delete selected" : "حذف المحدد"}
@@ -215,8 +215,8 @@ const Products = ({ products: p }) => {
           {locale === "en" ? "Add selected to folder" : "اضافة المحدد الي مجلد"}
           <RiFolder5Fill />
         </button>
-      </div>
-    </div>
+      </section>
+    </article>
   )
 }
 

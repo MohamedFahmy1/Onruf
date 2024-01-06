@@ -9,12 +9,12 @@ const EvaluationAndQuestionsPage = () => {
   const { locale } = useRouter()
 
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Ratings"], t)}</title>
       </Head>
       <Reviews />
-    </>
+    </main>
   )
 }
 

@@ -7,12 +7,12 @@ import { useRouter } from "next/router"
 const NegotiationPage = () => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Negotiation"], t)}</title>
       </Head>
       <NegotiationOffers />
-    </>
+    </main>
   )
 }
 

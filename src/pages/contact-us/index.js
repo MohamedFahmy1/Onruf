@@ -8,12 +8,12 @@ const ContactUSPage = () => {
   const { locale } = useRouter()
 
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Contact"], t)}</title>
       </Head>
       <ContactUS />
-    </>
+    </main>
   )
 }
 

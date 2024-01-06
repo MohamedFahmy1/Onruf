@@ -10,12 +10,12 @@ const Products = dynamic(() => import("../../modules/products/index.jsx"), { ssr
 const ProductsPage = ({ products }) => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Products"], t)}</title>
       </Head>
       <Products products={products} />
-    </>
+    </main>
   )
 }
 

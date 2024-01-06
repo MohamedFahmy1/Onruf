@@ -14,18 +14,17 @@ const Settings = () => {
   const { data: bankTransfers } = useFetch("/ListBankTransfers?currentPage=1")
   const { data: userWalletState = {} } = useFetch("/GetUserWalletTransactions")
   const { data: accountData = {} } = useFetch(`/GetBusinessAccountById?businessAccountId=${buisnessAccountId}`)
-
   return (
-    <div className="body-content">
-      <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+    <article className="body-content">
+      <section className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
         <h6 className="f-b m-0">{pathOr("", [locale, "Settings", "settings"], t)}</h6>
-      </div>
+      </section>
       <Row>
         <ProfileCard {...accountData} />
         <PaymentCards bankTransfers={bankTransfers} />
       </Row>
       <Options userWalletState={userWalletState} />
-    </div>
+    </article>
   )
 }
 

@@ -7,12 +7,12 @@ import t from "../../../translations.json"
 const ShippingPage = (props) => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Shipping"], t)}</title>
       </Head>
       <Shipping />
-    </>
+    </main>
   )
 }
 

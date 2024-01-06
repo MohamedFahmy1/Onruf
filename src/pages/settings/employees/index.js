@@ -7,12 +7,12 @@ import t from "../../../translations.json"
 const EmployeesPage = () => {
   const { locale } = useRouter()
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "Employees"], t)}</title>
       </Head>
       <Employees />
-    </>
+    </main>
   )
 }
 

@@ -7,12 +7,12 @@ const EditBussinessAccountPage = () => {
   const { locale } = useRouter()
 
   return (
-    <>
+    <main>
       <Head>
         <title>{pathOr("", [locale, "websiteTitles", "editAccount"], t)}</title>
       </Head>
       <EditBussinessAccount />
-    </>
+    </main>
   )
 }
 export default EditBussinessAccountPage
