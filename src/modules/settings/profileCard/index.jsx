@@ -34,9 +34,13 @@ const ProfileCard = ({
             {businessAccountNameEn ? businessAccountNameEn : <Skeleton variant="text" sx={{ fontSize: "16px" }} />}
           </h6>
           <div className="gray-color font-11 f-b mb-2">
-            <div className="mb-1">
-              {pathOr("", [locale, "Settings", "userFrom"], t)} :{" "}
-              {formatDate(createdAt) ? formatDate(createdAt) : <Skeleton variant="text" sx={{ fontSize: "11px" }} />}
+            <div className="mb-1 d-flex justify-content-center">
+              {pathOr("", [locale, "Settings", "userFrom"], t)} :
+              {createdAt !== undefined ? (
+                formatDate(createdAt)
+              ) : (
+                <Skeleton variant="text" sx={{ fontSize: "11px" }} width={70} />
+              )}
             </div>
           </div>
           <div className="imogy">
