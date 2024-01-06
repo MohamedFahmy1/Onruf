@@ -45,7 +45,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
-            <Image src={Point} {...Point} alt="Points" />
+            <Image src={Point} {...Point} alt="Points" height={82} />
             <h6 className="f-b">
               {pathOr("", [locale, "Settings", "myPoints"], t)}
               <span className="d-flex justify-content-center">
@@ -60,7 +60,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
-            <Image src={Point} {...Point} alt="shipping" />
+            <Image src={Point} {...Point} alt="shipping" height={100} />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "shipping"], t)}</h6>
             <Link href="/settings/shipping">
               <span className="btn-main">{pathOr("", [locale, "Settings", "manageShipping"], t)}</span>
@@ -69,7 +69,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
-            <Image src={Branch} {...Branch} alt="branches" />
+            <Image src={Branch} {...Branch} alt="branches" height={100} />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "branches"], t)}</h6>
             <Link href="/settings/branches">
               <span className="btn-main">{pathOr("", [locale, "Settings", "manageBranches"], t)}</span>
@@ -78,7 +78,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
-            <Image src={CompanyWorkers} {...CompanyWorkers} alt="employees" />
+            <Image src={CompanyWorkers} {...CompanyWorkers} alt="employees" height={100} />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "employees"], t)}</h6>
             <Link href="/settings/employees?page=1">
               <span className="btn-main">{pathOr("", [locale, "Settings", "manageEmployees"], t)}</span>
@@ -87,7 +87,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
-            <Image src={Budget} {...Budget} alt="packages" />
+            <Image src={Budget} {...Budget} alt="packages" height={100} />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "packages"], t)}</h6>
             <Link href="/settings/packages">
               <span className="btn-main">{pathOr("", [locale, "Settings", "manageYourPackage"], t)}</span>
@@ -96,7 +96,7 @@ const Options = ({ userWalletState }) => {
         </Col>
         <Col xl={3} lg={4} md={6}>
           <div className="box-setting_">
-            <Image src={Settings} width={81} height={73} alt="Settings" />
+            <Image src={Settings} width={81} height={100} alt="Settings" />
             <h6 className="f-b">{pathOr("", [locale, "Settings", "account"], t)}</h6>
             <button
               onClick={() => setManageAccountPop(true)}

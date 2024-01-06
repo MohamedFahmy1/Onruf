@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { getTokensFromCookie } from "../../../appState/personalData/authActions"
 import Image from "next/image"
 import Alerto from "../../../common/Alerto"
+import { Skeleton } from "@mui/material"
 
 const Navbar = () => {
   const [toggleLangMenu, setToggleLangMenu] = useState(false)
@@ -86,7 +87,7 @@ const Navbar = () => {
           <div className="d-flex align-items-center">
             {<Image src={userImage || userImg} alt="user" width={50} height={50} />}
             <div className="mx-1">
-              <h6 className="f-b m-0">{userName}</h6>
+              <h6 className="f-b m-0">{userName ? userName : <Skeleton variant="text" width={129} height={19} />}</h6>
               <button className="main-color" onClick={() => onClick()}>
                 {pathOr("", [locale, "navbar", "switch"], t)}
                 <FaExchangeAlt className="mx-2" />
