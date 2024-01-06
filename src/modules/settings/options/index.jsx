@@ -26,7 +26,7 @@ const Options = ({ userWalletState }) => {
       <Row>
         <Col lg={3} md={4}>
           <div className="box-setting_">
-            <Image src={Wallet} alt="wallet" {...Wallet} />
+            <Image src={Wallet} alt="wallet" {...Wallet} height={82} />
             <h6 className="f-b">
               {pathOr("", [locale, "Settings", "myWallet"], t)}{" "}
               <span>

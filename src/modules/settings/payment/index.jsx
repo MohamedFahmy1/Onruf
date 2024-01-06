@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/router"
 import { Row, Col, Modal } from "react-bootstrap"
 import { AiOutlinePlus } from "react-icons/ai"
@@ -136,8 +136,8 @@ const PaymentCards = ({ bankTransfers }) => {
             <AiOutlinePlus />
           </button>
           <div
-            className="d-flex justify-content-between overflow-scroll gap-4"
-            style={{ height: "300px", alignItems: "center" }}
+            className="d-flex justify-content-between overflow-scroll"
+            style={{ height: "300px", alignItems: "center", columnGap: "20px" }}
           >
             {bankTransferData?.map((bank) => (
               <div
@@ -149,29 +149,47 @@ const PaymentCards = ({ bankTransfers }) => {
                 }}
               >
                 <div>
-                  <div className="d-flex align-items-center justify-evenly-between mb-10">
+                  <div className="d-flex align-items-center justify-content-between mb-10 gap-3">
                     {bank.paymentAccountType === "CreditCard" && (
-                      <Image src={VisaImg} className="img_" alt="visa logo" width={50} height={16} priority />
+                      <Image
+                        src={VisaImg}
+                        className="img_"
+                        alt="visa logo"
+                        layout="fixed"
+                        width={50}
+                        height={16}
+                        priority
+                      />
                     )}
                     {bank.paymentAccountType === "STCPay" && (
-                      <Image src={stcPayImg} className="img_" alt="stc pay" width={50} height={16} priority />
+                      <Image
+                        src={stcPayImg}
+                        className="img_"
+                        alt="stc pay"
+                        layout="fixed"
+                        width={50}
+                        height={16}
+                        priority
+                      />
                     )}
-                    <button
-                      className="btn_edit"
-                      aria-label="edit account"
-                      onClick={() => handleOpenEditModalAndSetFormWithDefaultValues(bank?.id)}
-                    >
-                      <BiEditAlt />
-                    </button>
-                    <button
-                      className="btn_edit"
-                      aria-label="delete account"
-                      onClick={() => handleDeleteBankTransfer(bank?.id)}
-                    >
-                      <RiDeleteBin5Line />
-                    </button>
+                    <div className="d-flex">
+                      <button
+                        className="btn_edit"
+                        aria-label="edit account"
+                        onClick={() => handleOpenEditModalAndSetFormWithDefaultValues(bank?.id)}
+                      >
+                        <BiEditAlt />
+                      </button>
+                      <button
+                        className="btn_edit"
+                        aria-label="delete account"
+                        onClick={() => handleDeleteBankTransfer(bank?.id)}
+                      >
+                        <RiDeleteBin5Line />
+                      </button>
+                    </div>
                   </div>
-                  <div>{bank?.accountNumber}</div>
+                  <div style={{ width: "145px" }}>{bank?.accountNumber}</div>
                 </div>
                 <div>
                   <div className="mt-10">
@@ -193,12 +211,12 @@ const PaymentCards = ({ bankTransfers }) => {
                 </div>
                 {bank.paymentAccountType === "CreditCard" && (
                   <div className="baner">
-                    <Image src={BoxBankImg} alt="visa" width={145} height={285} layout="fixed" priority />
+                    <Image src={BoxBankImg} alt="visa" width={188} height={285} layout="fixed" priority />
                   </div>
                 )}
                 {bank.paymentAccountType === "STCPay" && (
                   <div className="baner">
-                    <Image src={stc} alt="stc pay" width={145} height={285} layout="fixed" priority />
+                    <Image src={stc} alt="stc pay" width={188} height={285} layout="fixed" priority />
                   </div>
                 )}
               </div>
