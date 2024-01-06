@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import t from "../../../translations.json"
 import { pathOr } from "ramda"
-import { formatDate } from "../../../common/functions"
+import { formatDate, onlyNumbersInInputs } from "../../../common/functions"
 import axios from "axios"
 import { toast } from "react-toastify"
 import PointsIcon from "../../../assets/images/point_icon.svg"
@@ -10,7 +10,7 @@ import Image from "next/image"
 import ShareModal from "./ShareModal"
 
 const MyPoints = () => {
-  const { locale, push } = useRouter()
+  const { locale } = useRouter()
   const [points, setPoints] = useState(0)
   const [myPointsData, setPointsData] = useState({})
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -100,10 +100,15 @@ const MyPoints = () => {
                   </div>
                 </div>
                 <div className="my-2 po_R">
+                  <label htmlFor="points" className="visually-hidden">
+                    {"points"}
+                  </label>
                   <input
+                    id="points"
                     value={points}
                     onChange={(e) => setPoints(e.target.value)}
                     type="number"
+                    onKeyDown={onlyNumbersInInputs}
                     className="form-control"
                   />
                   <span
