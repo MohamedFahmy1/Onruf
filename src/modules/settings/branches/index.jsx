@@ -145,8 +145,8 @@ const Branches = ({ branches: b = [] }) => {
   )
 
   return (
-    <div className="body-content">
-      <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+    <article className="body-content">
+      <section className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
         <h6 className="f-b m-0">
           {pathOr("", [locale, "Branch", "branches"], t)} ({branches?.length})
         </h6>
@@ -156,8 +156,8 @@ const Branches = ({ branches: b = [] }) => {
             <AiOutlinePlusCircle />
           </span>
         </Link>
-      </div>
-      <div className="filtter_1">
+      </section>
+      <section className="filtter_1">
         <button
           className={`btn-main ${toggleActiveBtn ? "active" : ""}`}
           onClick={() => {
@@ -176,11 +176,11 @@ const Branches = ({ branches: b = [] }) => {
         >
           {pathOr("", [locale, "Branch", "inActiveBranches"], t)}{" "}
         </button>
-      </div>
-      <div className="contint_paner">
+      </section>
+      <section className="contint_paner">
         <Table columns={columns} data={branches} pageSize={10} isCheckbox={false} />
         {branches?.length > 10 && <Pagination listLength={branches.length} pageSize={10} />}
-      </div>
+      </section>
       <Modal style={{ marginTop: "250px", padding: "10px" }} show={openModal} onHide={() => setOpenModal(false)}>
         <Modal.Header className="mb-4 px-3">
           <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
@@ -207,7 +207,7 @@ const Branches = ({ branches: b = [] }) => {
           </button>
         </Modal.Body>
       </Modal>
-    </div>
+    </article>
   )
 }
 

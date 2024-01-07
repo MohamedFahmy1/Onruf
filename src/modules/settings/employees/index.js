@@ -93,14 +93,13 @@ const Employees = () => {
         </td>
         <td>
           <div className="d-flex align-items-center gap-2">
-            <button type="button" className="btn_Measures">
-              <i className="fas fa-trash-alt"></i>
-            </button>
             <div className="form-check form-switch p-0 m-0">
               <Link href={`employees/add/${employee.id}`}>
-                <MdModeEdit className="btn_Measures" />
+                <a aria-label="Edit Employee">
+                  <MdModeEdit className="btn_Measures pointer" />
+                </a>
               </Link>
-              <RiDeleteBin5Line className="btn_Measures" onClick={() => handleDeleteEmployee(employee.id)} />
+              <RiDeleteBin5Line className="btn_Measures pointer" onClick={() => handleDeleteEmployee(employee.id)} />
               <label htmlFor={`flexSwitchCheckChecked${employee.id}`} className="visually-hidden">
                 Change employee status
               </label>
@@ -138,19 +137,19 @@ const Employees = () => {
   }, [page])
 
   return (
-    <div className="body-content">
-      <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+    <article className="body-content">
+      <section className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
         <h6 className="f-b m-0">
           {pathOr("", [locale, "Employee", "employees"], t)} ({employees?.length})
         </h6>
         <Link href="/settings/employees/add">
-          <span className="btn-main">
+          <a aria-label="add employee" className="btn-main">
             {pathOr("", [locale, "Employee", "addEmployee"], t)}
             <i className="fas fa-plus-circle font-18"></i>
-          </span>
+          </a>
         </Link>
-      </div>
-      <div className="d-flex">
+      </section>
+      <section className="d-flex">
         <div className="filtter_2">
           <input
             className="form-control rounded-0"
@@ -161,7 +160,7 @@ const Employees = () => {
             {pathOr("", [locale, "Users", "filter"], t)}
           </button>
         </div>
-      </div>
+      </section>
       {filter && (
         <button
           className="btn-main d-flex mt-3 justifiy-content-center"
@@ -174,7 +173,7 @@ const Employees = () => {
           {pathOr("", [locale, "Users", "resetFilter"], t)}
         </button>
       )}
-      <div className="contint_paner">
+      <section className="contint_paner">
         <div className="outer_table">
           <table className="table table_dash">
             <thead>
@@ -190,26 +189,26 @@ const Employees = () => {
           </table>
           {!employees.length > 0 && <p className="text-center f-b fs-5">No Data To Show!</p>}
         </div>
-        <nav aria-label="Page navigation example" className="mt-3">
+        <section aria-label="Page navigation example" className="mt-3">
           <ul className="pagination justify-content-center">
             <li className="page-item">
-              <a className="page-link" aria-label="Next">
+              <button type="button" className="page-link" aria-label="Next">
                 <i className="fas fa-chevron-left" onClick={() => handleTableNextPrevPage("prev")}>
                   {locale === "en" ? <IoIosArrowBack /> : <IoIosArrowForward />}
                 </i>
-              </a>
+              </button>
             </li>
             <li className="page-item">
-              <a className="page-link" aria-label="Previous">
+              <button type="button" className="page-link" aria-label="Previous">
                 <i className="fas fa-chevron-right" onClick={handleTableNextPrevPage}>
                   {locale === "en" ? <IoIosArrowForward /> : <IoIosArrowBack />}
                 </i>
-              </a>
+              </button>
             </li>
           </ul>
-        </nav>
-      </div>
-    </div>
+        </section>
+      </section>
+    </article>
   )
 }
 
