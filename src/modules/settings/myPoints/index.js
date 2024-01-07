@@ -8,11 +8,14 @@ import { toast } from "react-toastify"
 import PointsIcon from "../../../assets/images/point_icon.svg"
 import Image from "next/image"
 import ShareModal from "./ShareModal"
+import { mulitFormData } from "../../../../token"
+import { useFetch } from "../../../hooks/useFetch"
+import Alerto from "../../../common/Alerto"
 
 const MyPoints = () => {
   const { locale } = useRouter()
   const [points, setPoints] = useState(0)
-  const [myPointsData, setPointsData] = useState({})
+  const { data: myPointsData = {}, fetchData: fetchMyPointsData } = useFetch(`/GetUserPointsTransactions`)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { newInvitationCode, pointsTransactionslist, invitationCodePoints, monyOfPointsTransfered, pointsBalance } =
     myPointsData
@@ -23,29 +26,14 @@ const MyPoints = () => {
         {
           params: { transactionPointsAmount: parseInt(points) },
         },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        },
+        mulitFormData,
       )
       toast.success(locale === "en" ? "Transaction Successfull" : "تمت العملية بنجاح")
       fetchMyPointsData()
     } catch (error) {
-      toast.error(error.message)
+      Alerto(error)
     }
   }
-
-  const fetchMyPointsData = async () => {
-    const {
-      data: { data: myPointsData },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetUserPointsTransactions")
-    setPointsData(myPointsData)
-  }
-
-  useEffect(() => {
-    fetchMyPointsData()
-  }, [])
 
   return (
     <div className="body-content">

@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useRouter } from "next/router"
-import React, { useEffect, useState } from "react"
+import { useState } from "react"
 import { Row, Col } from "react-bootstrap"
 import { useForm } from "react-hook-form"
 import { formatDate, handleFormErrors } from "../../../common/functions"
@@ -11,20 +11,19 @@ import t from "../../../translations.json"
 import { toast } from "react-toastify"
 import wallet from "../../../assets/images/wallet_icon.svg"
 import Image from "next/image"
-import styles from "../../../modules/products/add/stepTwo/stepTwo.module.css"
+import { useFetch } from "../../../hooks/useFetch"
 
 const Wallet = () => {
   const [transType, setTransType] = useState("In")
   const [success, setSuccess] = useState(false)
-  const [userWalletState, setUserWalletState] = useState({})
-  const { walletBalance, walletTransactionslist } = userWalletState
+  const { data: userWalletState = {}, fetchData: fetchWalletInfo } = useFetch(`/GetUserWalletTransactions`)
+  const { walletBalance, walletTransactionslist = [] } = userWalletState
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm()
-
-  const { push, locale } = useRouter()
+  const { locale } = useRouter()
 
   const handleWalletSubmit = async (values) => {
     const formData = new FormData()
@@ -37,32 +36,13 @@ const Wallet = () => {
       return toast.error(locale === "en" ? "Not enough wallet balance!" : "لا يوجد رصيد كافي بالمحفظة")
     }
     try {
-      const result = await axios.post(
-        process.env.REACT_APP_API_URL + "/AddWalletTransaction",
-        formData,
-        //  {
-        //   TransactionSource: transType === "In" ? "ChargeWallet" : "DrawFromWallet",
-        //   TransactionType: transType === "In" ? "In" : "Out",
-        //   ...values,
-        // }
-      )
+      const result = await axios.post(process.env.REACT_APP_API_URL + "/AddWalletTransaction", formData)
       toast.success(locale === "en" ? "Transacation Done!" : "تمت العملية بنجاح")
       fetchWalletInfo()
     } catch (e) {
-      toast.error("Error")
+      Alerto(e)
     }
   }
-
-  const fetchWalletInfo = async () => {
-    const {
-      data: { data: userWalletState },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetUserWalletTransactions")
-    setUserWalletState(userWalletState)
-  }
-
-  useEffect(() => {
-    fetchWalletInfo()
-  }, [])
 
   return (
     <div className="body-content">
