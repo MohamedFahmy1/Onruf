@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react"
+import { Fragment, useState } from "react"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
@@ -8,14 +8,23 @@ import { useSelector } from "react-redux"
 import PaymentModal from "./PaymentModal"
 import { formatDate } from "../../../common/functions"
 import { AiFillCheckCircle } from "react-icons/ai"
+import ResponsiveImage from "../../../common/ResponsiveImage"
+import Alerto from "../../../common/Alerto"
+import { useFetch } from "../../../hooks/useFetch"
+import { Skeleton } from "@mui/material"
+
 const Packages = () => {
-  const { locale, push } = useRouter()
+  const { locale } = useRouter()
+  const providerId = useSelector((state) => state.authSlice.providerId)
   const [selectedPaka, setSelectedPaka] = useState(null)
   const [paymentModal, setPaymentModal] = useState(false)
-  const [PublishPakat, setPublishPakat] = useState([])
-  const [CurrentPakat, setCurrentPakat] = useState([])
-  const [SMSPakat, setSMSPakat] = useState([])
-  const providerId = useSelector((state) => state.authSlice.providerId)
+  const { data: SMSPakat, fetchData: fetchSMSPakat } = useFetch(`/GetAllPakatsList?isAdmin=${false}&PakatType=SMS`)
+  const { data: PublishPakat, fetchData: fetchPublishPakat } = useFetch(
+    `/GetAllPakatsList?isAdmin=${false}&PakatType=Publish`,
+  )
+  const { data: CurrentPakat, fetchData: fetchCurrentPakat } = useFetch(
+    `/GetClientSubcripePakats?clientId=${providerId}`,
+  )
 
   // Loop through an object and filter couple of keys ex: image, id and then remove all empty keys...
   const mapAndRenderOnObject = (object) => {
@@ -29,48 +38,6 @@ const Packages = () => {
     })
     return resultObject
   }
-
-  const fetchSMSPakat = async () => {
-    const {
-      data: { data: SMSPakat },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllPakatsList", {
-      params: {
-        isAdmin: false,
-        PakatType: "SMS",
-      },
-    })
-
-    setSMSPakat(SMSPakat)
-  }
-
-  const fetchPublishPakat = async () => {
-    const {
-      data: { data: PublishPakat },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllPakatsList", {
-      params: {
-        isAdmin: false,
-        PakatType: "Publish",
-      },
-    })
-    setPublishPakat(PublishPakat)
-  }
-
-  const fetchCurrentPakat = async () => {
-    const {
-      data: { data: CurrentPakat },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetClientSubcripePakats", {
-      params: {
-        clientId: providerId,
-      },
-    })
-    setCurrentPakat(CurrentPakat)
-  }
-
-  useEffect(() => {
-    fetchSMSPakat()
-    fetchPublishPakat()
-    fetchCurrentPakat()
-  }, [])
 
   // Check if key is from the forbiden Keys
   const isForbidenKey = (key) => {
@@ -90,7 +57,6 @@ const Packages = () => {
     return !keysList.includes(key)
   }
 
-  // Handle Subscribe Package
   const handleSubscribePackage = async (pakaID) => {
     try {
       //     const paymentTrans = await axios.post(process.env.REACT_APP_API_URL + "/PakatPaymentTransaction", {
@@ -99,7 +65,6 @@ const Packages = () => {
       //         typePay: "Cash",
       //       },
       //     })
-
       // If payment success do subsribe
       // if (paymentTrans.status === 200) {
       try {
@@ -110,11 +75,11 @@ const Packages = () => {
         fetchPublishPakat()
         fetchSMSPakat()
       } catch (error) {
-        toast.error(error.response.data.message)
+        Alerto(error)
       }
       // }
     } catch (error) {
-      toast.error(error.response.data.message)
+      Alerto(error)
     }
   }
   const handlePackageRenew = async (pakaID, id) => {
@@ -123,15 +88,15 @@ const Packages = () => {
         PakatSubsriptionId: id,
         pakatId: pakaID,
       }
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/RenewPaka`, {}, { params: params })
+      await axios.post(`${process.env.REACT_APP_API_URL}/RenewPaka`, {}, { params: params })
       toast.success(locale === "en" ? "You Renewed Package!" : "!تم تجديد الباقة بنجاح")
       setPaymentModal(false)
       fetchCurrentPakat()
     } catch (error) {
-      toast.error(error.response.data.message)
+      Alerto(error)
     }
   }
-  // Re-usable paka card
+  // Re-usable PackageCard
   const PackageCard = ({ paka, isCurrent }) => {
     return (
       <div
@@ -147,7 +112,7 @@ const Packages = () => {
               backgroundColor: paka.popular ? "var(--main)" : undefined,
             }}
           >
-            <img src={paka.image} width={48} alt={`Package ${paka.name}`} />
+            <ResponsiveImage imageSrc={paka.image} width={"48px"} height={"48px"} alt={`Package ${paka.name}`} />
             <div>{paka.name}</div>
             <div>
               {paka.price} {pathOr("", [locale, "Products", "currency"], t)}
@@ -175,7 +140,16 @@ const Packages = () => {
           ) : (
             <Fragment></Fragment>
           )}
-          <input type="checkbox" name="Bouquet-SMS" checked={paka.isBusinessAccountSubscriped || isCurrent} />
+          <label htmlFor="Bouquet-SMS" className="visually-hidden">
+            Bouquet-SMS
+          </label>
+          <input
+            id="Bouquet-SMS"
+            type="checkbox"
+            name="Bouquet-SMS"
+            readOnly
+            checked={paka.isBusinessAccountSubscriped || isCurrent}
+          />
           <span className="check">
             <AiFillCheckCircle size={100} />
           </span>
@@ -207,31 +181,39 @@ const Packages = () => {
           <h6 className="f-b m-0">{pathOr("", [locale, "Packages", "currentPaka"], t)}</h6>
         </div>
         <div className="outer_boxsBouquet">
-          {CurrentPakat?.map((paka, idx) => (
-            <div className="d-flex" key={idx}>
-              <PackageCard isCurrent={true} paka={paka} key={idx} />
-              <div className="box-Bouquet p-4">
-                <ul>
-                  <li className="mb-4 d-flex justify-content-between">
-                    <div>
-                      <p>{pathOr("", [locale, "Packages", "lastPackageUpdate"], t)}</p>
-                      <div className="f-b">{formatDate(paka.startDate)}</div>
-                    </div>
-                    <button className="btn-main">{pathOr("", [locale, "Orders", "download_invoice"], t)}</button>
-                  </li>
-                  <li className="mb-4 d-flex justify-content-between">
-                    <div>
-                      <p>{pathOr("", [locale, "Packages", "nextRenewalDate"], t)}</p>
-                      <div className="f-b">{formatDate(paka.endDate)}</div>
-                    </div>
-                    <button className="btn-main btn-main-B" onClick={() => handlePackageRenew(paka.pakaId, paka.id)}>
-                      {pathOr("", [locale, "Packages", "renewPaka"], t)}
-                    </button>
-                  </li>
-                </ul>
+          {CurrentPakat !== undefined ? (
+            CurrentPakat?.map((paka, idx) => (
+              <div className="d-flex" key={idx}>
+                <PackageCard isCurrent={true} paka={paka} key={idx} />
+                <div className="box-Bouquet p-4">
+                  <ul>
+                    <li className="mb-4 d-flex justify-content-between">
+                      <div>
+                        <p>{pathOr("", [locale, "Packages", "lastPackageUpdate"], t)}</p>
+                        <div className="f-b">{formatDate(paka.startDate)}</div>
+                      </div>
+                      <button className="btn-main">{pathOr("", [locale, "Orders", "download_invoice"], t)}</button>
+                    </li>
+                    <li className="mb-4 d-flex justify-content-between">
+                      <div>
+                        <p>{pathOr("", [locale, "Packages", "nextRenewalDate"], t)}</p>
+                        <div className="f-b">{formatDate(paka.endDate)}</div>
+                      </div>
+                      <button className="btn-main btn-main-B" onClick={() => handlePackageRenew(paka.pakaId, paka.id)}>
+                        {pathOr("", [locale, "Packages", "renewPaka"], t)}
+                      </button>
+                    </li>
+                  </ul>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <>
+              <Skeleton variant="rectangular" width={730} height={405} />
+              <Skeleton variant="rectangular" width={730} height={405} />
+              <Skeleton variant="rectangular" width={730} height={405} />
+            </>
+          )}
         </div>
       </div>
       {/* SMS Pakat */}
@@ -254,7 +236,6 @@ const Packages = () => {
         <div className="mb-4">
           <h3 className="f-b m-0">Publish {pathOr("", [locale, "Packages", "packages"], t)}</h3>
         </div>
-
         {PublishPakat?.length > 1 ? (
           <div className="outer_boxsBouquet">
             {PublishPakat?.map((paka) => (
@@ -262,7 +243,7 @@ const Packages = () => {
             ))}
           </div>
         ) : (
-          <h1>No Pakat to show</h1>
+          <h2>{pathOr("", [locale, "Packages", "noPakat"], t)}</h2>
         )}
       </div>
       <PaymentModal
