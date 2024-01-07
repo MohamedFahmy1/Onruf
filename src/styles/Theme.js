@@ -20,6 +20,9 @@ const theme = createTheme({
       default: "red",
     },
   },
+  typography: {
+    fontFamily: "serif",
+  },
 })
 
 export default theme

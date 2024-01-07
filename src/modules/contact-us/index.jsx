@@ -49,24 +49,33 @@ const ContactUS = () => {
       }}
     >
       <Box sx={{ width: "100%" }}>
-        <Typography variant="h3" sx={{ textAlign: "center" }}>
+        <Typography variant="h1" fontSize={40} sx={{ textAlign: "center" }}>
           {pathOr("", [locale, "ContactUs", "welcome"], t)}
         </Typography>
-        <Typography variant="h5" sx={{ textAlign: "center", m: "24px 0" }}>
+        <Typography variant="h2" fontSize={20} sx={{ textAlign: "center", m: "24px 0" }}>
           {pathOr("", [locale, "ContactUs", "ask"], t)}{" "}
         </Typography>
         <form onSubmit={handleSubmit(handleSubmitQuestion)}>
           <Box className="row">
             <Box className="form-group col-md-6">
-              <Typography variant="body2"> {pathOr("", [locale, "ContactUs", "typeOfCumm"], t)}</Typography>
-              <select {...register("typeOfCommunication")} className="form-control form-select">
+              <Typography component={"label"} htmlFor="typeOfCommunication" variant="body2">
+                {pathOr("", [locale, "ContactUs", "typeOfCumm"], t)}
+              </Typography>
+              <select
+                id="typeOfCommunication"
+                {...register("typeOfCommunication")}
+                className="form-control form-select"
+              >
                 <option value={0}>{pathOr("", [locale, "ContactUs", "complaint"], t)}</option>
                 <option value={1}>{pathOr("", [locale, "ContactUs", "question"], t)}</option>
               </select>
             </Box>
             <Box className="form-group col-md-6">
-              <Typography variant="body2">{pathOr("", [locale, "ContactUs", "problemTitle"], t)}</Typography>
+              <Typography component={"label"} htmlFor="problemTitle" variant="body2">
+                {pathOr("", [locale, "ContactUs", "problemTitle"], t)}
+              </Typography>
               <input
+                id="problemTitle"
                 {...register("problemTitle")}
                 className="form-control"
                 placeholder={locale === "en" ? "ex: Technical Issue" : "مثال: مشكلة تقنية"}
@@ -77,8 +86,11 @@ const ContactUS = () => {
           <Box className="row">
             <Box className="col-md-6">
               <Box className="form-group col-md-12">
-                <Typography variant="body2">{pathOr("", [locale, "ContactUs", "phoneNumber"], t)}</Typography>
+                <Typography component={"label"} htmlFor="mobileNumber" variant="body2">
+                  {pathOr("", [locale, "ContactUs", "phoneNumber"], t)}
+                </Typography>
                 <input
+                  id="mobileNumber"
                   {...register("mobileNumber")}
                   style={{ ...textAlignStyle(locale) }}
                   type={"tel"}
@@ -88,8 +100,11 @@ const ContactUS = () => {
                 <p className="errorMsg">{handleFormErrors(errors, "mobileNumber")}</p>
               </Box>
               <Box className="form-group col-md-12">
-                <Typography variant="body2"> {pathOr("", [locale, "ContactUs", "email"], t)}</Typography>
+                <Typography component={"label"} htmlFor="email" variant="body2">
+                  {pathOr("", [locale, "ContactUs", "email"], t)}
+                </Typography>
                 <input
+                  id="email"
                   {...register("email")}
                   className="form-control"
                   placeholder={locale === "en" ? "ex: test@example.com" : "مثال: text@example.com"}
@@ -98,15 +113,18 @@ const ContactUS = () => {
               </Box>
             </Box>
             <Box className="form-group col-md-6">
-              <Typography variant="body2"> {pathOr("", [locale, "ContactUs", "message"], t)}</Typography>
+              <Typography component={"label"} htmlFor="message" variant="body2">
+                {pathOr("", [locale, "ContactUs", "message"], t)}
+              </Typography>
               <textarea
+                id="message"
                 {...register("meassageDetails")}
                 className="form-control"
                 placeholder={locale === "en" ? "Descripe your question or problem" : "أذكر مشكلتك أو استفسارك"}
               />
               <p className="errorMsg">{handleFormErrors(errors, "meassageDetails")}</p>
             </Box>
-            <Button type="submit" className="btn btn-main">
+            <Button type="submit" variant="contained" sx={{ borderRadius: "20px" }}>
               {pathOr("", [locale, "ContactUs", "send"], t)}
             </Button>
           </Box>
