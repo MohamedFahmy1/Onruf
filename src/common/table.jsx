@@ -83,7 +83,7 @@ const Table = ({
         ) : (
           <tr>
             <td className="text-center" rowSpan={3} colSpan={8}>
-              <b>No data found</b>
+              <b>No data found !</b>
             </td>
           </tr>
         )}

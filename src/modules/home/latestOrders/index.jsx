@@ -103,9 +103,9 @@ const LatestOrders = ({ orders }) => {
         <section className="d-flex align-items-center justify-content-between mb-3">
           <p className="f-b fs-5 m-0">{pathOr("", [locale, "LastOrders", "lastorders"], t)}</p>
           <Link href={`/${locale || "en"}/orders`}>
-            <button className="main-color font-18 text-dcoration-none">
+            <a aria-label="view all" className="main-color font-18 text-dcoration-none">
               {pathOr("", [locale, "Notifications", "viewall"], t)}
-            </button>
+            </a>
           </Link>
         </section>
         <section className="outer_table">

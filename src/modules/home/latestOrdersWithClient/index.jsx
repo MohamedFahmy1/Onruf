@@ -15,9 +15,9 @@ const LatestOrdersWithClients = ({ clients }) => {
         <section className="d-flex align-items-center justify-content-between mb-2">
           <p className="f-b fs-5 m-0">{pathOr("", [locale, "LastOrdersWithClients", "lastOrdersWithClients"], t)}</p>
           <Link href={`/${locale}/users`}>
-            <button className="main-color font-18 text-decoration-none">
+            <a aria-label="all clients" className="main-color font-18 text-decoration-none">
               {pathOr("", [locale, "LastOrdersWithClients", "allClients"], t)}
-            </button>
+            </a>
           </Link>
         </section>
         <ul className="all_pro_cus">

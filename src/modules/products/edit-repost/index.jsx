@@ -95,16 +95,7 @@ const EditProduct = () => {
             District: productData.district,
             Street: productData.street,
             GovernmentCode: productData.governmentCode,
-            productSep: productData.listProductSep.map((item) => {
-              return {
-                HeaderSpeAr: item.headerSpeAr,
-                HeaderSpeEn: item.headerSpeEn,
-                SpecificationId: item.specificationId,
-                Type: item.type,
-                ValueSpeAr: item.valueSpeAr,
-                ValueSpeEn: item.valueSpeEn,
-              }
-            }),
+            productSep: transformProductSepData(productData.listProductSep),
             listMedia: productData.listMedia,
             MainImageIndex: productData.listMedia.findIndex((item) => item.isMainMadia === true),
             Lat: productData.lat,
@@ -153,17 +144,53 @@ const EditProduct = () => {
       }))
     }
   }, [shippingOptions, paymentOptions, query.id, bankAccounts])
+
+  // tranformation data from back-end to match front-end
+  const transformProductSepData = (data) => {
+    console.log(data)
+    let updatedData = data.map((item) => {
+      return {
+        HeaderSpeAr: item.headerSpeAr,
+        HeaderSpeEn: item.headerSpeEn,
+        SpecificationId: item.specificationId,
+        Type: item.type,
+        ValueSpeAr: item.valueSpeAr,
+        ValueSpeEn: item.valueSpeEn,
+      }
+    })
+    let combined = {}
+    updatedData.forEach((item) => {
+      const specId = item.SpecificationId
+      if (!combined[specId]) {
+        // Create a new entry if it doesn't exist
+        combined[specId] = { ...item, ValueSpeAr: [item.ValueSpeAr], ValueSpeEn: [item.ValueSpeEn] }
+      } else {
+        // Concatenate the values if the entry already exists
+        combined[specId].ValueSpeAr.push(item.ValueSpeAr)
+        combined[specId].ValueSpeEn.push(item.ValueSpeEn)
+      }
+    })
+    // Convert the values arrays to comma-separated strings
+    Object.keys(combined).forEach((key) => {
+      combined[key].ValueSpeAr = combined[key].ValueSpeAr.join(",")
+      combined[key].ValueSpeEn = combined[key].ValueSpeEn.join(",")
+    })
+    // Convert the result back to an array
+    let combinedArray = Object.values(combined)
+    return combinedArray
+  }
+
   return (
-    <div className="body-content">
-      <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+    <article className="body-content">
+      <section className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
         <h6 className="f-b m-0">{pathOr("", [locale, "Products", "review_product_before_adding"], t)}</h6>
         <button>
           <p onClick={() => (step === 1 ? push("/products") : setStep(1))} className="btn-main btn-main-o">
             {pathOr("", [locale, "Products", "cancel"], t)}
           </p>
         </button>
-      </div>
-      <div>
+      </section>
+      <section>
         {step === 1 && productPayload.listMedia && paymentOptions && shippingOptions && bankAccounts && (
           <ProductDetails
             selectedCatProps={selectedCatProps}
@@ -182,8 +209,8 @@ const EditProduct = () => {
             editModeOn={true}
           />
         )}
-      </div>
-    </div>
+      </section>
+    </article>
   )
 }
 

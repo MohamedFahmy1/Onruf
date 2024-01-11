@@ -5,8 +5,10 @@ import { useRouter } from "next/router"
 
 export const useFetch = (apiPath, dynamicPage) => {
   const [data, setData] = useState()
-  const { locale, query } = useRouter()
-  const id = query.id
+  const {
+    locale,
+    query: { id },
+  } = useRouter()
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${apiPath}`)

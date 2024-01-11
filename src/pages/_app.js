@@ -27,6 +27,7 @@ import { AppWrapper } from "../appWrapper/index"
 import { useRouter } from "next/router"
 import { getTokensFromCookie } from "../appState/personalData/authActions"
 import { pathOr } from "ramda"
+import FirebaseMessaging from "../common/firebaseConfig"
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -78,6 +79,7 @@ const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache, da
                     textAlign: locale === "en" ? "left" : "right",
                   }}
                 >
+                  <FirebaseMessaging />
                   <Navbar />
                   <Component {...pageProps} />
                   <ToastContainer
