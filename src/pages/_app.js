@@ -7,7 +7,7 @@ import { CacheProvider, ThemeProvider as EmotionCacheProvider } from "@emotion/r
 import createEmotionCache from "../styles/createEmotionCache"
 import Navbar from "../modules/layout/navbar"
 import Sidebar from "../modules/layout/sidebar/SideBar"
-import { ToastContainer } from "react-toastify"
+import { ToastContainer, toast } from "react-toastify"
 import theme from "../styles/Theme"
 import t from "../translations.json"
 import "react-toastify/dist/ReactToastify.css"
