@@ -1,8 +1,8 @@
 import { useCallback, useEffect } from "react"
-import firebase from "firebase/app"
-import "firebase/messaging"
+import { initializeApp } from "firebase/app"
 import { toast } from "react-toastify"
 import axios from "axios"
+import { getMessaging } from "firebase/messaging"
 
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
@@ -13,13 +13,9 @@ const firebaseConfig = {
   appId: "YOUR_APP_ID",
 }
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig)
-} else {
-  firebase.app()
-}
+const app = initializeApp(firebaseConfig)
 
-const messaging = firebase.messaging.isSupported() ? firebase.messaging() : null
+const messaging = getMessaging(app)
 
 const FirebaseMessaging = () => {
   useEffect(() => {
