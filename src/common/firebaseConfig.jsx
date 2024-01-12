@@ -2,7 +2,6 @@ import { useEffect, useCallback } from "react"
 import { initializeApp } from "firebase/app"
 import { getMessaging, onMessage, getToken } from "firebase/messaging"
 import { toast } from "react-toastify"
-import axios from "axios"
 
 const firebaseConfig = {
   apiKey: "AIzaSyBskk5sKS3cdZBG3bYOCsqFaN7OIOC1KOU",
@@ -20,6 +19,7 @@ const messaging = getMessaging(app)
 
 const FirebaseMessaging = () => {
   useEffect(() => {
+    // Use messaging here
     requestPermissionAndSubscribe()
     onMessage(messaging, (payload) => {
       console.log(payload)
@@ -27,7 +27,7 @@ const FirebaseMessaging = () => {
     })
   }, [requestPermissionAndSubscribe])
 
-  const requestPermissionAndSubscribe = useCallback(() => {
+  const requestPermissionAndSubscribe = useCallback(async () => {
     Notification.requestPermission()
       .then((permission) => {
         if (permission === "granted") {
@@ -54,24 +54,9 @@ const FirebaseMessaging = () => {
       })
   }, [])
 
-  // const sendTokenToServer = (token) => {
-  //   axios
-  //     .post(
-  //       "/SendNotification",
-  //       { token },
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       },
-  //     )
-  //     .then((response) => console.log("Token saved:", response.data))
-  //     .catch((err) => console.error("Error saving token:", err))
-  // }
-
   const showNotification = (payload) => {
     console.log(payload)
-    toast.info(`New message: ${payload.notification.title}`)
+    toast.info(`New message: ${payload.notification}`)
   }
 
   return null

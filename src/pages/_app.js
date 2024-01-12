@@ -28,11 +28,22 @@ import { useRouter } from "next/router"
 import { getTokensFromCookie } from "../appState/personalData/authActions"
 import { pathOr } from "ramda"
 import dynamic from "next/dynamic"
+import { generateToken, messaging } from "../common/firebase"
+import { onMessage } from "firebase/messaging"
 
-const FirebaseMessaging = dynamic(() => import("../common/firebaseConfig.jsx"), { ssr: false })
+// const FirebaseMessaging = dynamic(() => import("../common/firebaseConfig.jsx"), { ssr: false })
 const clientSideEmotionCache = createEmotionCache()
 
 const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache, data }) => {
+  useEffect(() => {
+    if (messaging) {
+      generateToken()
+      onMessage(messaging, (payload) => {
+        console.log(payload)
+      })
+    }
+  }, [])
+
   const [queryClient] = React.useState(() => new QueryClient())
   const { locale } = useRouter()
   useEffect(() => {
@@ -80,7 +91,7 @@ const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache, da
                     textAlign: locale === "en" ? "left" : "right",
                   }}
                 >
-                  <FirebaseMessaging />
+                  {/* <FirebaseMessaging /> */}
                   <Navbar />
                   <Component {...pageProps} />
                   <ToastContainer
