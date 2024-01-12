@@ -1,8 +1,8 @@
-import { useCallback, useEffect } from "react"
+import { useEffect, useCallback } from "react"
 import { initializeApp } from "firebase/app"
+import { getMessaging, onMessage, getToken } from "firebase/messaging"
 import { toast } from "react-toastify"
 import axios from "axios"
-import { getMessaging } from "firebase/messaging"
 
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
@@ -12,27 +12,38 @@ const firebaseConfig = {
   messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
   appId: "YOUR_APP_ID",
 }
-
-const app = initializeApp(firebaseConfig)
-
-const messaging = getMessaging(app)
+const app = typeof window !== "undefined" ? initializeApp(firebaseConfig) : null
+const messaging = app ? getMessaging(app) : null
 
 const FirebaseMessaging = () => {
   useEffect(() => {
     if (messaging) {
       requestPermissionAndSubscribe()
-      messaging.onMessage((payload) => {
+      onMessage(messaging, (payload) => {
         showNotification(payload)
       })
     }
   }, [requestPermissionAndSubscribe])
 
   const requestPermissionAndSubscribe = useCallback(() => {
-    messaging
-      .requestPermission()
-      .then(() => messaging.getToken())
-      .then((token) => {
-        sendTokenToServer(token)
+    Notification.requestPermission()
+      .then((permission) => {
+        if (permission === "granted") {
+          console.log("Notification permission granted.")
+          getToken(messaging, { vapidKey: "YOUR_VAPID_KEY" })
+            .then((currentToken) => {
+              if (currentToken) {
+                sendTokenToServer(currentToken)
+              } else {
+                console.log("No registration token available. Request permission to generate one.")
+              }
+            })
+            .catch((err) => {
+              console.log("An error occurred while retrieving token. ", err)
+            })
+        } else {
+          console.log("Unable to get permission to notify.")
+        }
       })
       .catch((err) => {
         console.error("Permission denied", err)

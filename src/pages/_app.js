@@ -27,8 +27,9 @@ import { AppWrapper } from "../appWrapper/index"
 import { useRouter } from "next/router"
 import { getTokensFromCookie } from "../appState/personalData/authActions"
 import { pathOr } from "ramda"
-import FirebaseMessaging from "../common/firebaseConfig"
+import dynamic from "next/dynamic"
 
+const FirebaseMessaging = dynamic(() => import("../common/firebaseConfig.jsx"), { ssr: false })
 const clientSideEmotionCache = createEmotionCache()
 
 const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache, data }) => {
