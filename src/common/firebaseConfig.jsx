@@ -56,7 +56,7 @@ const FirebaseMessaging = () => {
 
   const showNotification = (payload) => {
     console.log(payload)
-    toast.info(`New message: ${payload.notification}`)
+    toast.info(`New message: ${payload.notification.title} - ${payload.notification.body}`)
   }
 
   return null

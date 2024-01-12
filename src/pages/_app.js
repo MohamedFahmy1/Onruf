@@ -40,10 +40,14 @@ const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache, da
       generateToken()
       onMessage(messaging, (payload) => {
         console.log(payload)
+        showNotification(payload)
       })
     }
   }, [])
-
+  const showNotification = (payload) => {
+    console.log(payload)
+    toast.info(`New message: ${payload.notification.title} - ${payload.notification.body}`)
+  }
   const [queryClient] = React.useState(() => new QueryClient())
   const { locale } = useRouter()
   useEffect(() => {
