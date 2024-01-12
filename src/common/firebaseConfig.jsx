@@ -5,24 +5,26 @@ import { toast } from "react-toastify"
 import axios from "axios"
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyBskk5sKS3cdZBG3bYOCsqFaN7OIOC1KOU",
+  authDomain: "onruf-8ac34.firebaseapp.com",
+  projectId: "onruf-8ac34",
+  storageBucket: "onruf-8ac34.appspot.com",
+  messagingSenderId: "862346458200",
+  appId: "1:862346458200:web:456a18d0afde627279c62d",
+  measurementId: "G-NFE4E1JX6J",
 }
-const app = typeof window !== "undefined" ? initializeApp(firebaseConfig) : null
-const messaging = app ? getMessaging(app) : null
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig)
+const messaging = getMessaging(app)
 
 const FirebaseMessaging = () => {
   useEffect(() => {
-    if (messaging) {
-      requestPermissionAndSubscribe()
-      onMessage(messaging, (payload) => {
-        showNotification(payload)
-      })
-    }
+    requestPermissionAndSubscribe()
+    onMessage(messaging, (payload) => {
+      console.log(payload)
+      showNotification(payload)
+    })
   }, [requestPermissionAndSubscribe])
 
   const requestPermissionAndSubscribe = useCallback(() => {
@@ -30,10 +32,12 @@ const FirebaseMessaging = () => {
       .then((permission) => {
         if (permission === "granted") {
           console.log("Notification permission granted.")
-          getToken(messaging, { vapidKey: "YOUR_VAPID_KEY" })
+          getToken(messaging, {
+            vapidKey: "BHqMILeXcbLN1Uef8b_XamNqzWaSEUz8Ukqg6lXKIOYTkcKT7sYhJoVQhW1q4xM3YtOeELd6lq5yycvrgBUtdws",
+          })
             .then((currentToken) => {
               if (currentToken) {
-                sendTokenToServer(currentToken)
+                console.log(currentToken)
               } else {
                 console.log("No registration token available. Request permission to generate one.")
               }
@@ -50,22 +54,23 @@ const FirebaseMessaging = () => {
       })
   }, [])
 
-  const sendTokenToServer = (token) => {
-    axios
-      .post(
-        "/SendNotification",
-        { token },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      )
-      .then((response) => console.log("Token saved:", response.data))
-      .catch((err) => console.error("Error saving token:", err))
-  }
+  // const sendTokenToServer = (token) => {
+  //   axios
+  //     .post(
+  //       "/SendNotification",
+  //       { token },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       },
+  //     )
+  //     .then((response) => console.log("Token saved:", response.data))
+  //     .catch((err) => console.error("Error saving token:", err))
+  // }
 
   const showNotification = (payload) => {
+    console.log(payload)
     toast.info(`New message: ${payload.notification.title}`)
   }
 
