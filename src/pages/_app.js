@@ -7,7 +7,7 @@ import { CacheProvider, ThemeProvider as EmotionCacheProvider } from "@emotion/r
 import createEmotionCache from "../styles/createEmotionCache"
 import Navbar from "../modules/layout/navbar"
 import Sidebar from "../modules/layout/sidebar/SideBar"
-import { ToastContainer, toast } from "react-toastify"
+import { ToastContainer } from "react-toastify"
 import theme from "../styles/Theme"
 import t from "../translations.json"
 import "react-toastify/dist/ReactToastify.css"
@@ -27,27 +27,11 @@ import { AppWrapper } from "../appWrapper/index"
 import { useRouter } from "next/router"
 import { getTokensFromCookie } from "../appState/personalData/authActions"
 import { pathOr } from "ramda"
-import dynamic from "next/dynamic"
-import { generateToken, messaging } from "../common/firebase"
-import { onMessage } from "firebase/messaging"
+import FirebaseMessaging from "../common/FirebaseMessaging"
 
-// const FirebaseMessaging = dynamic(() => import("../common/firebaseConfig.jsx"), { ssr: false })
 const clientSideEmotionCache = createEmotionCache()
 
 const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache, data }) => {
-  useEffect(() => {
-    if (messaging) {
-      generateToken()
-      onMessage(messaging, (payload) => {
-        console.log(payload)
-        showNotification(payload)
-      })
-    }
-  }, [])
-  const showNotification = (payload) => {
-    console.log(payload)
-    toast.info(`New message: ${payload.notification.title} - ${payload.notification.body}`)
-  }
   const [queryClient] = React.useState(() => new QueryClient())
   const { locale } = useRouter()
   useEffect(() => {
@@ -95,7 +79,7 @@ const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache, da
                     textAlign: locale === "en" ? "left" : "right",
                   }}
                 >
-                  {/* <FirebaseMessaging /> */}
+                  <FirebaseMessaging />
                   <Navbar />
                   <Component {...pageProps} />
                   <ToastContainer

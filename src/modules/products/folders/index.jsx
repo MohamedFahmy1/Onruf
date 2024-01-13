@@ -5,7 +5,7 @@ import folderImg from "../../../../public/icons/folder.svg"
 import { BsArrowLeft } from "react-icons/bs"
 import Link from "next/link"
 import axios from "axios"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/router"
 import Pagination from "../../../common/pagination"
 import { propOr, pathOr } from "ramda"
 import { formatDate } from "../../../common/functions"
@@ -127,7 +127,7 @@ const Folders = () => {
                           <MdModeEdit className="btn_Measures" onClick={() => setOpenFolderModal(true)} />
                           <RiDeleteBin5Line className="btn_Measures" onClick={() => deleteFolder(folder.id)} />
                         </div>
-                        <div onClick={() => Router.push(`/products/folders/${folder?.id}`)}>
+                        <Link href={`/products/folders/${folder?.id}`}>
                           <div className="img_ alot-img" style={{ width: "185px", margin: "auto" }}>
                             <Image
                               src={
@@ -141,16 +141,16 @@ const Folders = () => {
                               priority
                               className="d-block m-auto"
                             />
-                          </div>
-                          <div className="text-center">
-                            <h6 className="f-b m-0">{folder?.name}</h6>
-                            <div className="gray-color">
-                              <span className="main-color f-b">{folder?.fileProducts?.length}</span>
-                              {pathOr("", [locale, "Products", "added_product"], t)}
+                            <div className="text-center">
+                              <h6 className="f-b m-0">{folder?.name}</h6>
+                              <div className="gray-color">
+                                <span className="main-color f-b">{folder?.fileProducts?.length}</span>
+                                {pathOr("", [locale, "Products", "added_product"], t)}
+                              </div>
+                              <div className="gray-color">{formatDate(folder?.createdAt)}</div>
                             </div>
-                            <div className="gray-color">{formatDate(folder?.createdAt)}</div>
                           </div>
-                        </div>
+                        </Link>
                       </div>
                     </Col>
                   ))}

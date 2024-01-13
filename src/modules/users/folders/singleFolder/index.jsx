@@ -12,6 +12,7 @@ import Alerto from "../../../../common/Alerto"
 import { useFetch } from "../../../../hooks/useFetch"
 import { formatDate } from "../../../../common/functions"
 import ResponsiveImage from "../../../../common/ResponsiveImage"
+
 const SingleFolder = () => {
   const [selectedRows, setSelectedRows] = useState({})
   const { locale } = useRouter()
@@ -34,7 +35,6 @@ const SingleFolder = () => {
           usersIds: selectedUsersIds,
         },
       })
-
       toast.success(locale === "en" ? "user has been deleted successfully!" : "تم حذف المنتج بنجاح")
       setSelectedRows({})
       getFolderUsers()
@@ -104,13 +104,12 @@ const SingleFolder = () => {
               {pathOr("", [locale, "Users", "users"], t)} ({users?.listUser.length})
             </h6>
             <Link href="/users/folders">
-              <a className="btn-main btn-main-w mr-20">
+              <a aria-label={pathOr("", [locale, "Users", "browse"], t)} className="btn-main btn-main-w mr-20">
                 {pathOr("", [locale, "Users", "browse"], t)} <AiFillFolderOpen />{" "}
               </a>
             </Link>
           </div>
         </div>
-
         <div className="contint_paner">
           <div className="outer_table">
             {users && (

@@ -17,6 +17,7 @@ import { onlyNumbersInInputs } from "../../../common/functions"
 import t from "../../../translations.json"
 import Image from "next/image"
 import ResponsiveImage from "../../../common/ResponsiveImage"
+import Link from "next/link"
 
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
@@ -37,8 +38,7 @@ function getStyles(name, categoryName, theme) {
 }
 
 const AddCoupon = () => {
-  const router = useRouter()
-  const { locale } = useRouter()
+  const { locale, push } = useRouter()
   const theme = useTheme()
 
   const [couponPayload, setCouponPayload] = useState({
@@ -69,11 +69,6 @@ const AddCoupon = () => {
   const [productsOptions, setProductsOptions] = useState([])
   const [eventKey, setEventKey] = useState("0")
   const [selectedProducts, setSelectedProducts] = useState([])
-
-  const handleBack = (e) => {
-    e.preventDefault()
-    router.push("./")
-  }
 
   const handleDate = (date) => {
     return new Date(Boolean(date) && date).toISOString().replace(/T.*/, "").split("-").join("-")
@@ -174,7 +169,7 @@ const AddCoupon = () => {
     const { data: submitCouponRes } = submitCoupon
 
     if (submitCouponRes.status_code === 200) {
-      router.push("./")
+      push("./")
       toast.success(locale === "en" ? "Coupon Added Successfully!" : "!تم اضافة الكوبون بنجاح")
     }
   }
@@ -212,9 +207,11 @@ const AddCoupon = () => {
     <article className="body-content">
       <section className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
         <h6 className="f-b m-0">{pathOr("", [locale, "Coupons", "addCoupon"], t)}</h6>
-        <button onClick={handleBack} className="btn-main btn-main-o">
-          {pathOr("", [locale, "Coupons", "cancel"], t)}
-        </button>
+        <Link href={"/coupons"}>
+          <a aria-label="cancel" className="btn-main btn-main-o">
+            {pathOr("", [locale, "Coupons", "cancel"], t)}
+          </a>
+        </Link>
       </section>
       <Accordion activeKey={eventKey} flush>
         <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="0">

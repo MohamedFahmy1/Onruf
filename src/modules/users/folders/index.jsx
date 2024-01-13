@@ -115,31 +115,33 @@ const UsersFolders = () => {
                           <MdModeEdit className="btn_Measures" onClick={() => setOpenFolderModal(true)} />
                           <RiDeleteBin5Line className="btn_Measures" onClick={() => deleteFolder(folder.id)} />
                         </div>
-                        <div onClick={() => push(`/users/folders/${folder?.id}`)}>
-                          <h6 className="f-b ">{folder?.name}</h6>
-                          <div className="gray-color">
-                            <span className="main-color f-b">{folder?.fileUser?.length}</span>{" "}
-                            {pathOr("", [locale, "Users", "clientsAdded"], t)}
-                          </div>
-                          <div className="avatars-stack">
-                            {folder.fileUser?.slice(0, 5).map((user, index) => (
-                              <div className="avatar" key={index}>
-                                <ResponsiveImage
-                                  imageSrc={
-                                    user?.image.includes("http") ? user?.image.replace("http", "https") : user?.image
-                                  }
-                                  alt={"client"}
-                                  width="25px"
-                                  height="25px"
-                                />
-                              </div>
-                            ))}
-                            {folder?.fileUser?.length - 5 > 0 && (
-                              <div className="avatar">+{folder?.fileUser?.length - 5}</div>
-                            )}
-                          </div>
-                          <div className="gray-color">{formatDate(folder?.createdAt)}</div>
-                        </div>
+                        <Link href={`/users/folders/${folder?.id}`}>
+                          <a aria-label="open folder">
+                            <h6 className="f-b ">{folder?.name}</h6>
+                            <div className="gray-color">
+                              <span className="main-color f-b">{folder?.fileUser?.length}</span>{" "}
+                              {pathOr("", [locale, "Users", "clientsAdded"], t)}
+                            </div>
+                            <div className="avatars-stack">
+                              {folder.fileUser?.slice(0, 5).map((user, index) => (
+                                <div className="avatar" key={index}>
+                                  <ResponsiveImage
+                                    imageSrc={
+                                      user?.image.includes("http") ? user?.image.replace("http", "https") : user?.image
+                                    }
+                                    alt={"client"}
+                                    width="25px"
+                                    height="25px"
+                                  />
+                                </div>
+                              ))}
+                              {folder?.fileUser?.length - 5 > 0 && (
+                                <div className="avatar">+{folder?.fileUser?.length - 5}</div>
+                              )}
+                            </div>
+                            <div className="gray-color">{formatDate(folder?.createdAt)}</div>
+                          </a>
+                        </Link>
                       </div>
                     </Col>
                   ))}

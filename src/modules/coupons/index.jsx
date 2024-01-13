@@ -11,6 +11,7 @@ import { toast } from "react-toastify"
 import { RiDeleteBin5Line } from "react-icons/ri"
 import t from "../../translations.json"
 import Alerto from "../../common/Alerto"
+import Link from "next/link"
 
 const Coupons = () => {
   const { locale, push } = useRouter()
@@ -156,52 +157,52 @@ const Coupons = () => {
   )
   return (
     <div className="body-content">
-      <div>
-        <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-          <div className="d-flex align-items-center">
-            <h6 className="f-b m-0">
-              {pathOr("", [locale, "Coupons", "discountCoupons"], t)} ({couponsCount})
-            </h6>
-          </div>
-          <button className="btn-main" onClick={() => push("/coupons/add")}>
+      <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+        <div className="d-flex align-items-center">
+          <h6 className="f-b m-0">
+            {pathOr("", [locale, "Coupons", "discountCoupons"], t)} ({couponsCount})
+          </h6>
+        </div>
+        <Link href={"/coupons/add"}>
+          <a aria-label={pathOr("", [locale, "Coupons", "addCoupon"], t)} className="btn-main">
             {pathOr("", [locale, "Coupons", "addCoupon"], t)} <FiPlusCircle />
-          </button>
+          </a>
+        </Link>
+      </div>
+      <div className="filtter_1">
+        <button
+          className={`btn-main ${selectedFilter === "all" ? "active" : ""}`}
+          onClick={() => {
+            setSelectedFilter("all")
+            push({ query: { page: 1 } })
+          }}
+        >
+          {pathOr("", [locale, "Coupons", "all"], t)}
+        </button>
+        <button
+          className={`btn-main ${selectedFilter === "active" ? "active" : ""}`}
+          onClick={() => {
+            setSelectedFilter("active")
+            push({ query: { page: 1 } })
+          }}
+        >
+          {pathOr("", [locale, "Coupons", "active"], t)}
+        </button>
+        <button
+          className={`btn-main ${selectedFilter === "expired" ? "active" : ""}`}
+          onClick={() => {
+            setSelectedFilter("expired")
+            push({ query: { page: 1 } })
+          }}
+        >
+          {pathOr("", [locale, "Coupons", "expired"], t)}
+        </button>
+      </div>
+      <div className="contint_paner">
+        <div className="outer_table">
+          {coupons && <Table columns={columns} data={filterCoupons} isCheckbox={false} pageSize={10} />}
         </div>
-        <div className="filtter_1">
-          <button
-            className={`btn-main ${selectedFilter === "all" ? "active" : ""}`}
-            onClick={() => {
-              setSelectedFilter("all")
-              push({ query: { page: 1 } })
-            }}
-          >
-            {pathOr("", [locale, "Coupons", "all"], t)}
-          </button>
-          <button
-            className={`btn-main ${selectedFilter === "active" ? "active" : ""}`}
-            onClick={() => {
-              setSelectedFilter("active")
-              push({ query: { page: 1 } })
-            }}
-          >
-            {pathOr("", [locale, "Coupons", "active"], t)}
-          </button>
-          <button
-            className={`btn-main ${selectedFilter === "expired" ? "active" : ""}`}
-            onClick={() => {
-              setSelectedFilter("expired")
-              push({ query: { page: 1 } })
-            }}
-          >
-            {pathOr("", [locale, "Coupons", "expired"], t)}
-          </button>
-        </div>
-        <div className="contint_paner">
-          <div className="outer_table">
-            {coupons && <Table columns={columns} data={filterCoupons} isCheckbox={false} pageSize={10} />}
-          </div>
-          {filterCoupons?.length > 10 && <Pagination listLength={filterCoupons?.length} pageSize={10} />}
-        </div>
+        {filterCoupons?.length > 10 && <Pagination listLength={filterCoupons?.length} pageSize={10} />}
       </div>
     </div>
   )

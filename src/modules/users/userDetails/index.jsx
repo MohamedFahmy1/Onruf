@@ -16,6 +16,7 @@ import t from "../../../translations.json"
 import Image from "next/image"
 import ResponsiveImage from "../../../common/ResponsiveImage"
 import { useFetch } from "../../../hooks/useFetch"
+
 const UserDetails = () => {
   const {
     locale,

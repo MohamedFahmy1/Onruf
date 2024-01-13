@@ -18,12 +18,12 @@ export const OrderDetails = () => {
     locale,
     query: { id },
   } = useRouter()
-  const router = useRouter()
   const [orderData, setOrderData] = useState()
   const [branchesData, setBranchesData] = useState()
   const [openModal, setOpenModal] = useState(false)
   const [openBranchModal, setOpenBranchModal] = useState(false)
   const [orderStatusHistory, setOrderStatusHistory] = useState()
+
   const getOrderData = async (id) => {
     const {
       data: { data: orderData },
@@ -57,8 +57,8 @@ export const OrderDetails = () => {
   }, [locale, openModal, id])
 
   useEffect(() => {
-    router.query.id && getOrderData(router.query.id)
-  }, [router.query.id, openModal])
+    id && getOrderData(id)
+  }, [id, openModal])
   if (!orderData) return ""
   // Render Order Data
   const {
@@ -107,7 +107,7 @@ export const OrderDetails = () => {
                 <ChangeSingleStatusModal
                   openModal={openModal}
                   setOpenModal={setOpenModal}
-                  selectedOrder={{ orderStatus: orderStatus, orderId: router.query.id }}
+                  selectedOrder={{ orderStatus: orderStatus, orderId: id }}
                 />
               </div>
             </div>
@@ -129,7 +129,7 @@ export const OrderDetails = () => {
                   openBranchModal={openBranchModal}
                   setOpenBranchModal={setOpenBranchModal}
                   branchesData={branchesData}
-                  ordersId={[+router.query.id]}
+                  ordersId={[+id]}
                   orderBranch={branchId}
                   getOrderData={getOrderData}
                 />
@@ -140,7 +140,7 @@ export const OrderDetails = () => {
             <ul className="info_box_order d-flex flex-wrap">
               <li>
                 <span className="gray-color">{pathOr("", [locale, "Orders", "order_number"], t)}</span>
-                <div className="f-b">#{router.query.id}</div>
+                <div className="f-b">#{id}</div>
               </li>
               <li>
                 <span className="gray-color">{pathOr("", [locale, "Orders", "order_type"], t)}</span>

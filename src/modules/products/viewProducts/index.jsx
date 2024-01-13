@@ -315,15 +315,11 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
             <div className="d-flex align-items-center gap-2 flex-column">
               {selectedFilter === "didnotSell" ? (
                 <div>
-                  <button
-                    type="button"
-                    className="info_ mx-1"
-                    onClick={() => {
-                      push(`/products/repost/${productId || id}`)
-                    }}
-                  >
-                    {pathOr("", [locale, "Products", "repost"], t)}
-                  </button>
+                  <Link href={`/products/repost/${productId || id}`}>
+                    <button type="button" className="info_ mx-1">
+                      {pathOr("", [locale, "Products", "repost"], t)}
+                    </button>
+                  </Link>
                   {original.isAuctionEnabled && new Date(original.auctionClosingTime) - new Date() < 0 && (
                     <button
                       type="button"

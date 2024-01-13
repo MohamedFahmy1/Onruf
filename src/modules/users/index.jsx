@@ -19,7 +19,7 @@ import Alerto from "../../common/Alerto"
 import ResponsiveImage from "../../common/ResponsiveImage"
 
 const Users = () => {
-  const { locale, push } = useRouter()
+  const { locale } = useRouter()
   const [isNewFolder, setIsNewFolder] = useState()
   const [openFolderModal, setOpenFolderModal] = useState(false)
   const [openNotificationModal, setOpenNotificationModal] = useState(false)
@@ -130,10 +130,12 @@ const Users = () => {
             original: { image, userName, id },
           },
         }) => (
-          <button onClick={() => push(`/users/${id}`)} className="d-flex align-items-center">
-            <ResponsiveImage imageSrc={image} alt={"user"} width="75px" height="75px" />
-            <div className="f-b mx-2">{userName}</div>
-          </button>
+          <Link href={`/users/${id}`}>
+            <a aria-label="go to client profile" className="d-flex align-items-center">
+              <ResponsiveImage imageSrc={image} alt={"user"} width="75px" height="75px" />
+              <div className="f-b mx-2">{userName}</div>
+            </a>
+          </Link>
         ),
       },
       {
@@ -164,7 +166,7 @@ const Users = () => {
         }) => <div className="f-b">{formatDate(createdAt)}</div>,
       },
     ],
-    [locale, push],
+    [locale],
   )
 
   return (

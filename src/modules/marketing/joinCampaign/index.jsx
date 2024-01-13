@@ -12,6 +12,7 @@ import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import { useFetch } from "../../../hooks/useFetch"
 import ResponsiveImage from "../../../common/ResponsiveImage"
+import Link from "next/link"
 
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
@@ -54,11 +55,6 @@ const JoinCampaign = () => {
   const [productsOptions, setProductsOptions] = useState([])
   const [eventKey, setEventKey] = useState("0")
   const [selectedProducts, setSelectedProducts] = useState([])
-
-  const handleBack = (e) => {
-    e.preventDefault()
-    push("/marketing")
-  }
 
   const handleChangeSelectedCat = (e) => {
     const {
@@ -163,9 +159,11 @@ const JoinCampaign = () => {
       <div>
         <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
           <h6 className="f-b m-0">{pathOr("", [locale, "marketing", "join_the_coupon"], t)}</h6>
-          <button onClick={handleBack} className="btn-main btn-main-o">
-            {pathOr("", [locale, "marketing", "cancel"], t)}
-          </button>
+          <Link href={"/marketing"}>
+            <a aria-label={pathOr("", [locale, "marketing", "cancel"], t)} className="btn-main btn-main-o">
+              {pathOr("", [locale, "marketing", "cancel"], t)}
+            </a>
+          </Link>
         </div>
         <Accordion activeKey={eventKey} flush>
           <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="0">
