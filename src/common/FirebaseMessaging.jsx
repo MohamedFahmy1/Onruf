@@ -1,9 +1,29 @@
-import { useEffect } from "react"
-import { onMessage } from "firebase/messaging"
+import { useCallback, useEffect } from "react"
+import { getToken, onMessage } from "firebase/messaging"
 import { toast } from "react-toastify"
-import { generateToken, messaging } from "./firebase"
+import { messaging } from "./firebase"
+import axios from "axios"
+import { useSelector } from "react-redux"
 
 const FirebaseMessaging = () => {
+  const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+
+  const generateToken = useCallback(async () => {
+    const permission = await Notification.requestPermission()
+    console.log(permission)
+    if (permission === "granted") {
+      const token = await getToken(messaging, {
+        vapidKey: process.env.NEXT_PUBLIC_FCM,
+      })
+      if (token) {
+        console.log(token)
+        await axios(
+          `${process.env.NEXT_PUBLIC_API_URL}/ChangeAccount?businessAccountId=${buisnessAccountId}&deviceId=${token}&deviceType=BusinessAccount`,
+        )
+      }
+    }
+  }, [buisnessAccountId])
+
   useEffect(() => {
     if (messaging) {
       generateToken()
@@ -12,7 +32,7 @@ const FirebaseMessaging = () => {
         showNotification(payload)
       })
     }
-  }, [])
+  }, [generateToken])
 
   const showNotification = (payload) => {
     console.log(payload)

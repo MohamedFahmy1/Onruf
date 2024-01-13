@@ -18,7 +18,7 @@ export const UnAuthorisedPage = () => {
   return (
     <main className={style.container}>
       <article className={style.content}>
-        <Image src={Logo} alt="logo" height={150} width={300} />
+        <Image src={Logo} alt="logo" height={150} width={300} priority />
         <span className={style.text}>{message}</span>
       </article>
     </main>

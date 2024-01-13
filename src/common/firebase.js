@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app"
-import { getMessaging, getToken } from "firebase/messaging"
+import { getMessaging } from "firebase/messaging"
 
 const firebaseConfig = {
   apiKey: "AIzaSyBskk5sKS3cdZBG3bYOCsqFaN7OIOC1KOU",
@@ -21,14 +21,3 @@ if (typeof window !== "undefined") {
 }
 
 export { messaging }
-
-export const generateToken = async () => {
-  const permission = await Notification.requestPermission()
-  console.log(permission)
-  if (permission === "granted") {
-    const token = await getToken(messaging, {
-      vapidKey: process.env.NEXT_PUBLIC_FCM,
-    })
-    console.log(token)
-  }
-}
