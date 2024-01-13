@@ -210,10 +210,10 @@ const Products = ({ products: p }) => {
             setOpenFolderModal(!openFolderModal)
           }}
           aria-label={locale === "en" ? "Add selected to folder" : "اضافة المحدد الي مجلد"}
-          className="btn-main btn-main-w rounded-0"
+          className="btn-main btn-main-w rounded-0 "
         >
           {locale === "en" ? "Add selected to folder" : "اضافة المحدد الي مجلد"}
-          <RiFolder5Fill />
+          <RiFolder5Fill size={15} />
         </button>
       </section>
     </article>

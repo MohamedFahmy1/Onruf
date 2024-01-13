@@ -128,20 +128,22 @@ const Folders = () => {
                           <RiDeleteBin5Line className="btn_Measures" onClick={() => deleteFolder(folder.id)} />
                         </div>
                         <Link href={`/products/folders/${folder?.id}`}>
-                          <div className="img_ alot-img" style={{ width: "185px", margin: "auto" }}>
-                            <Image
-                              src={
-                                !folder.image || folder.image === "http://onrufwebsite6-001-site1.htempurl.com/"
-                                  ? folderImg
-                                  : folder.image
-                              }
-                              alt="folder"
-                              width={185}
-                              height={150}
-                              priority
-                              className="d-block m-auto"
-                            />
-                            <div className="text-center">
+                          <div>
+                            <div className="img_ alot-img" style={{ width: "185px", margin: "auto" }}>
+                              <Image
+                                src={
+                                  !folder.image || folder.image === "http://onrufwebsite6-001-site1.htempurl.com/"
+                                    ? folderImg
+                                    : folder.image
+                                }
+                                alt="folder"
+                                width={185}
+                                height={150}
+                                priority
+                                className="d-block m-auto"
+                              />
+                            </div>
+                            <div className="text-center mt-2">
                               <h6 className="f-b m-0">{folder?.name}</h6>
                               <div className="gray-color">
                                 <span className="main-color f-b">{folder?.fileProducts?.length}</span>

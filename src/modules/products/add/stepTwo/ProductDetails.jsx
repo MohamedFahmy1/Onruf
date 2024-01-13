@@ -8,6 +8,7 @@ import t from "../../../../translations.json"
 import Alerto from "../../../../common/Alerto"
 import axios from "axios"
 import { Box, Chip, FormControl, MenuItem, OutlinedInput, Select } from "@mui/material"
+import { onlyNumbersInInputs } from "../../../../common/functions"
 
 const ITEM_HEIGHT = 48
 const ITEM_PADDING_TOP = 8
@@ -141,7 +142,7 @@ const ProductDetails = ({
                     ))}
                 </select>
               )}
-              {spesfication.type === 2 && (
+              {!!(spesfication.type === 2 || spesfication.type === 3) && (
                 <input
                   type={"text"}
                   id={index}
@@ -154,6 +155,24 @@ const ProductDetails = ({
                   }
                   required={spesfication.isRequired}
                   placeholder={spesfication.placeHolder}
+                  onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
+                  className={`${styles["form-control"]} form-control`}
+                />
+              )}
+              {spesfication.type === 4 && (
+                <input
+                  type={"number"}
+                  id={index}
+                  value={
+                    (locale === "en"
+                      ? productPayload?.productSep?.find(({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.nameEn)
+                          ?.ValueSpeEn
+                      : productPayload?.productSep?.find(({ HeaderSpeAr }) => HeaderSpeAr === spesfication?.nameAr)
+                          ?.ValueSpeAr) || ""
+                  }
+                  required={spesfication.isRequired}
+                  placeholder={spesfication.placeHolder}
+                  onKeyDown={(e) => onlyNumbersInInputs(e)}
                   onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
                   className={`${styles["form-control"]} form-control`}
                 />

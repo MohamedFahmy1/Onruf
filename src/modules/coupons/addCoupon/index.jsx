@@ -150,6 +150,16 @@ const AddCoupon = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    for (const key in couponPayload) {
+      const value = couponPayload[key]
+      if (key === "Image" && value?.length === 0) {
+        return toast.error(locale === "en" ? "please enter an image for coupon" : "من فضلك ادخل صورةالكوبون")
+      } else if (value === "") {
+        return toast.error(locale === "en" ? `please enter all required info` : "من فضلك ادخل جميع البيانات المطلوبة")
+      } else {
+        continue
+      }
+    }
     const form_data = new FormData()
     for (let key in couponPayload) {
       if (key === "Image") {

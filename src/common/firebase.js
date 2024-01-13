@@ -12,9 +12,11 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig)
+
 let messaging
+
 if (typeof window !== "undefined") {
-  // This code will run in the browser
+  // code will run in the browser only and not ssr
   messaging = getMessaging(app)
 }
 
@@ -25,7 +27,7 @@ export const generateToken = async () => {
   console.log(permission)
   if (permission === "granted") {
     const token = await getToken(messaging, {
-      vapidKey: "BHqMILeXcbLN1Uef8b_XamNqzWaSEUz8Ukqg6lXKIOYTkcKT7sYhJoVQhW1q4xM3YtOeELd6lq5yycvrgBUtdws",
+      vapidKey: process.env.NEXT_PUBLIC_FCM,
     })
     console.log(token)
   }
