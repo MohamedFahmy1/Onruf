@@ -15,7 +15,7 @@ const FirebaseMessaging = () => {
       const token = await getToken(messaging, {
         vapidKey: process.env.NEXT_PUBLIC_FCM,
       })
-      if (token) {
+      if (token && buisnessAccountId) {
         console.log(token)
         await axios(
           `${process.env.NEXT_PUBLIC_API_URL}/ChangeAccount?businessAccountId=${buisnessAccountId}&deviceId=${token}&deviceType=BusinessAccount`,
