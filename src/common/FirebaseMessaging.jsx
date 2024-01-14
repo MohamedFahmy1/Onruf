@@ -24,6 +24,15 @@ const FirebaseMessaging = () => {
     }
   }, [buisnessAccountId])
 
+  const showNotification = (payload) => {
+    toast.info(
+      <div>
+        <strong>{payload.notification.title}</strong>
+        <div>{payload.notification.body}</div>
+      </div>,
+    )
+  }
+
   useEffect(() => {
     if (messaging) {
       generateToken()
@@ -33,10 +42,6 @@ const FirebaseMessaging = () => {
       })
     }
   }, [generateToken])
-
-  const showNotification = (payload) => {
-    toast.info(`New message: ${payload.notification.title} \n ${payload.notification.body}`)
-  }
 
   return null
 }

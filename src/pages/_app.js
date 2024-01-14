@@ -1,5 +1,5 @@
 import Head from "next/head"
-import React, { useEffect } from "react"
+import React from "react"
 import { ThemeProvider } from "@mui/material/styles"
 import { Hydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import CssBaseline from "@mui/material/CssBaseline"
@@ -25,7 +25,6 @@ import { Provider } from "react-redux"
 import { store } from "../appState/Store"
 import { AppWrapper } from "../appWrapper/index"
 import { useRouter } from "next/router"
-import { getTokensFromCookie } from "../appState/personalData/authActions"
 import { pathOr } from "ramda"
 import FirebaseMessaging from "../common/FirebaseMessaging"
 
@@ -34,9 +33,7 @@ const clientSideEmotionCache = createEmotionCache()
 const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache, data }) => {
   const [queryClient] = React.useState(() => new QueryClient())
   const { locale } = useRouter()
-  useEffect(() => {
-    store.dispatch(getTokensFromCookie())
-  }, [])
+
   const pageDir = locale === "en" ? "ltr" : "rtl"
   const mLeft = locale === "en" ? "250px" : undefined
   const mRight = locale === "en" ? undefined : "250px"

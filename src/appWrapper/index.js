@@ -8,13 +8,16 @@ import { useRouter } from "next/router"
 
 export const AppWrapper = ({ children }) => {
   const { locale, pathname } = useRouter()
-  const dispatch = useDispatch()
-  useEffect(() => {
-    dispatch(getTokensFromCookie())
-  }, [dispatch])
   const Token = useSelector((state) => state.authSlice.token)
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
   const providerId = useSelector((state) => state.authSlice.providerId)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (!Token || !buisnessAccountId || !providerId) {
+      dispatch(getTokensFromCookie())
+    }
+  }, [dispatch, Token, buisnessAccountId, providerId])
 
   axios.defaults.headers.common["Authorization"] = Token
   axios.defaults.headers.common["Provider-Id"] = providerId

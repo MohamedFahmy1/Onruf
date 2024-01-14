@@ -9,8 +9,7 @@ import t from "../../../translations.json"
 import { pathOr } from "ramda"
 import { BusinessAccountList } from "./BusinessAccountList"
 import axios from "axios"
-import { useSelector, useDispatch } from "react-redux"
-import { getTokensFromCookie } from "../../../appState/personalData/authActions"
+import { useSelector } from "react-redux"
 import Image from "next/image"
 import Alerto from "../../../common/Alerto"
 import { Skeleton } from "@mui/material"
@@ -18,7 +17,6 @@ import { Skeleton } from "@mui/material"
 const Navbar = () => {
   const [toggleLangMenu, setToggleLangMenu] = useState(false)
   const { locale, asPath } = useRouter()
-  const dispatch = useDispatch()
   const [toggleBusinessAccountList, setToggleBusinessAccountList] = useState()
   const [businessAccountList, setBusinessAccountList] = useState([])
   const [userImage, setUserImage] = useState()
@@ -39,10 +37,6 @@ const Navbar = () => {
     setUserName(account[0]?.businessAccountName)
     setUserImage(`${account[0]?.businessAccountImage}`)
   }, [buisnessAccountId, businessAccountList])
-
-  useEffect(() => {
-    dispatch(getTokensFromCookie())
-  }, [dispatch])
 
   useEffect(() => {
     buisnessAccountId && getAllBuisnessAccounts()

@@ -67,6 +67,7 @@ export const BusinessAccountList = ({
         >
           <AiOutlineCloseCircle size={40} />
         </button>
+        {console.log(businessAccountList)}
         {businessAccountList &&
           businessAccountList.map((account) => {
             return (

@@ -16,7 +16,6 @@ const messaging = firebase.messaging()
 
 // Optional: Add background message handler
 messaging.onBackgroundMessage((payload) => {
-  console.log("[firebase-messaging-sw.js] Received background message ", payload)
   // Customize notification here
   const notificationTitle = payload.notification.title
   const notificationOptions = {
@@ -28,12 +27,11 @@ messaging.onBackgroundMessage((payload) => {
 })
 
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("/firebase-messaging-sw.js")
-    .then(function (registration) {
-      console.log("Service Worker Registered", registration)
-    })
-    .catch(function (err) {
-      console.log("Service Worker registration failed", err)
-    })
+  navigator.serviceWorker.register("/firebase-messaging-sw.js")
+  // .then(function (registration) {
+  //   console.log("Service Worker Registered", registration)
+  // })
+  // .catch(function (err) {
+  //   console.log("Service Worker registration failed", err)
+  // })
 }
