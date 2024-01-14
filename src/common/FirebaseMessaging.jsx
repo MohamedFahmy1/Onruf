@@ -10,13 +10,13 @@ const FirebaseMessaging = () => {
 
   const generateToken = useCallback(async () => {
     const permission = await Notification.requestPermission()
-    console.log(permission)
     if (permission === "granted") {
+      // get user token from firebase
       const token = await getToken(messaging, {
         vapidKey: process.env.NEXT_PUBLIC_FCM,
       })
       if (token && buisnessAccountId) {
-        console.log(token)
+        // Send token to back-end
         await axios(
           `${process.env.NEXT_PUBLIC_API_URL}/ChangeAccount?businessAccountId=${buisnessAccountId}&deviceId=${token}&deviceType=BusinessAccount`,
         )
@@ -35,7 +35,6 @@ const FirebaseMessaging = () => {
   }, [generateToken])
 
   const showNotification = (payload) => {
-    console.log(payload)
     toast.info(`New message: ${payload.notification.title} - ${payload.notification.body}`)
   }
 
