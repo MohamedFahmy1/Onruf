@@ -20,7 +20,6 @@ const Options = ({ userWalletState }) => {
   const { locale } = useRouter()
   const [manageAccountPop, setManageAccountPop] = useState(false)
   const { data: myPointsData = {} } = useFetch(`/GetUserPointsTransactions`)
-
   return (
     <section>
       <Row>
@@ -119,6 +118,8 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
   const [accountData, setAccountData] = useState(null)
   const { locale, push } = useRouter()
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+  const deviceId = useSelector((state) => state.id)
+
   const style = {
     position: "absolute",
     top: "50%",
@@ -149,7 +150,10 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
   // Handle Delete Account
   const handleDeleteAccount = async () => {
     try {
-      const { data } = await axios.delete(process.env.REACT_APP_API_URL + "/DeleteBusinessAccount", {
+      await axios.post(process.env.REACT_APP_API_URL + "/LogoutWebsite", {
+        params: { deviceId: deviceId },
+      })
+      await axios.delete(process.env.REACT_APP_API_URL + "/DeleteBusinessAccount", {
         params: { businessAccountId: buisnessAccountId },
       })
       setShowModal(false)
@@ -166,7 +170,7 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
   // Handle Delete Account
   const handleAccountStatus = async (isActive) => {
     try {
-      const { data } = await axios.post(
+      await axios.post(
         process.env.REACT_APP_API_URL +
           `/ChangeBusinessAccountStatus?businessAccountId=${buisnessAccountId}&isActive=${isActive}`,
       )

@@ -8,12 +8,35 @@ import axios from "axios"
 import Alerto from "../../common/Alerto"
 import Pagination from "@mui/lab/Pagination"
 
+const tabsStyles = {
+  ".MuiTabs-flexContainer": {
+    padding: "20px",
+  },
+  ".MuiTab-root": {
+    borderRadius: "20px",
+    marginRight: "8px",
+    textTransform: "none",
+    fontWeight: 600,
+    fontSize: "1rem",
+    color: "rgba(0, 0, 0, 0.6)",
+    backgroundColor: "#fff",
+    border: "1px solid #ccc",
+    "&:hover": {
+      backgroundColor: "#ee6c4d",
+      color: "#fff",
+    },
+    "&.Mui-selected": {
+      color: "#fff",
+      backgroundColor: "#ee6c4d",
+    },
+  },
+}
 function NegotiationOffers() {
+  const { locale } = useRouter()
   const [selectedTab, setSelectedTab] = useState(0)
   const [offersData, setOffersData] = useState()
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 12
-  const { locale } = useRouter()
 
   const getOffers = useCallback(async () => {
     try {
@@ -54,29 +77,7 @@ function NegotiationOffers() {
         onChange={handleChange}
         aria-label="Negotiation offers tabs"
         indicatorColor="transparent"
-        sx={{
-          ".MuiTabs-flexContainer": {
-            padding: "20px",
-          },
-          ".MuiTab-root": {
-            borderRadius: "20px",
-            marginRight: "8px",
-            textTransform: "none",
-            fontWeight: 600,
-            fontSize: "1rem",
-            color: "rgba(0, 0, 0, 0.6)",
-            backgroundColor: "#fff",
-            border: "1px solid #ccc",
-            "&:hover": {
-              backgroundColor: "#ee6c4d",
-              color: "#fff",
-            },
-            "&.Mui-selected": {
-              color: "#fff",
-              backgroundColor: "#ee6c4d",
-            },
-          },
-        }}
+        sx={tabsStyles}
       >
         <Tab label={pathOr("", [locale, "negotiation", "recieved"], t)} />
         <Tab label={pathOr("", [locale, "negotiation", "sent"], t)} />

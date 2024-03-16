@@ -18,7 +18,6 @@ const Home = ({ sales: s, ListProduct, ListNewOrder, GetListUser }) => {
   const [orders, setOrders] = useState(ListNewOrder)
   const [clients, setClients] = useState(GetListUser)
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
-
   const getSales = useCallback(async () => {
     try {
       const {

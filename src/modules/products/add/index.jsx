@@ -21,7 +21,7 @@ const AddProduct = () => {
     descriptionAr: "",
     descriptionEn: "",
     qty: 1,
-    status: 1,
+    status: null,
     categoryId: selectedCatId,
     countryId: null,
     regionId: null,

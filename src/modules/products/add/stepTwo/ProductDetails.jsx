@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { Accordion } from "react-bootstrap"
 import styles from "./stepTwo.module.css"
 import { useRouter } from "next/router"
@@ -32,27 +32,7 @@ const ProductDetails = ({
   const { locale, pathname } = useRouter()
   const [specifications, setSpecifications] = useState([])
   const [multiSelectedSpecifications, setMultiSelectedSpecifications] = useState({})
-  // const [multiSelectedSpecificationsOnEditOrRepost, setMultiSelectedSpecificationsOnEditOrRepost] = useState({
-  //   16: [64, 65],
-  //   17: [66, 67],
-  // })
-
-  function transformCommaSepratedMultiValuesFromBackend(data) {
-    let updatedData = data.filter((item) => item.ValueSpeAr.includes(","))
-    let result = {}
-    updatedData.forEach((item) => {
-      // Split ValueSpeAr by comma and convert each item to a number
-      let values = item.ValueSpeAr.split(",").map(Number)
-      if (!result[item.SpecificationId]) {
-        // Create a new array if the key doesn't exist
-        result[item.SpecificationId] = values
-      } else {
-        // Concatenate values if the key already exists
-        result[item.SpecificationId] = result[item.SpecificationId].concat(values)
-      }
-    })
-    setMultiSelectedSpecifications(result)
-  }
+  const hasRunEffect = useRef(false)
 
   const fetchSpecificationsList = useCallback(async () => {
     try {
@@ -61,24 +41,11 @@ const ProductDetails = ({
       } = await axios(
         `${process.env.NEXT_PUBLIC_API_URL}/ListAllSpecificationAndSubSpecificationByCatId?lang=${locale}&id=${catId}&currentPage=1`,
       )
-      // this will make new productSep array when adding new product and user still didn't edit it
-      if (pathname.includes("add") && !editModeOn) {
-        const speficationsPayloadList = spefications.map((spefication) => ({
-          HeaderSpeAr: spefication.nameAr,
-          HeaderSpeEn: spefication.nameEn,
-          Type: spefication.type,
-          SpecificationId: spefication.id,
-        }))
-        setProductPayload((prev) => ({ ...prev, productSep: speficationsPayloadList }))
-      }
-      if (!pathname.includes("add")) {
-        transformCommaSepratedMultiValuesFromBackend(productPayload.productSep)
-      }
       setSpecifications(spefications)
     } catch (e) {
       Alerto(e)
     }
-  }, [locale, catId, pathname, setProductPayload, editModeOn, productPayload.productSep])
+  }, [locale, catId])
 
   const onChangeSpesfication = ({ target: { value } }, index, type, specificationId) => {
     if (type == 7) {
@@ -107,9 +74,45 @@ const ProductDetails = ({
 
   useEffect(() => {
     fetchSpecificationsList()
-  }, [locale, fetchSpecificationsList])
+  }, [fetchSpecificationsList])
 
-  console.log(multiSelectedSpecifications)
+  useEffect(() => {
+    function transformCommaSepratedMultiValuesFromBackend(data) {
+      let updatedData = data.filter((item) => item.ValueSpeAr.includes(","))
+      let result = {}
+      updatedData.forEach((item) => {
+        // Split ValueSpeAr by comma and convert each item to a number
+        let values = item.ValueSpeAr.split(",").map(Number)
+        if (!result[item.SpecificationId]) {
+          // Create a new array if the key doesn't exist
+          result[item.SpecificationId] = values
+        } else {
+          // Concatenate values if the key already exists
+          result[item.SpecificationId] = result[item.SpecificationId].concat(values)
+        }
+      })
+      setMultiSelectedSpecifications(result)
+    }
+    if (!pathname.includes("add")) {
+      transformCommaSepratedMultiValuesFromBackend(productPayload.productSep)
+    }
+  }, [pathname, productPayload.productSep])
+
+  useEffect(() => {
+    // This will make new productSep array when adding new product and user still didn't edit it
+    if (!hasRunEffect.current && pathname.includes("add") && !editModeOn && specifications?.length > 0) {
+      const speficationsPayloadList = specifications.map((spefication) => ({
+        HeaderSpeAr: spefication.nameAr,
+        HeaderSpeEn: spefication.nameEn,
+        Type: spefication.type,
+        SpecificationId: spefication.id,
+      }))
+      setProductPayload((prev) => ({ ...prev, productSep: speficationsPayloadList }))
+      // This will check the effect run only once
+      hasRunEffect.current = true
+    }
+  }, [specifications, editModeOn, pathname, setProductPayload])
+
   return (
     <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
       <section className="form-content">

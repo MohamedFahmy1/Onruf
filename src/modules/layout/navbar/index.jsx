@@ -32,6 +32,13 @@ const Navbar = () => {
       Alerto(error)
     }
   }
+  const handleSendCurrentLang = async (lang) => {
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/ChangeLanguage?language=${lang}`)
+    } catch (error) {
+      Alerto(error)
+    }
+  }
   const accountData = useCallback(() => {
     const account = businessAccountList.filter((buisness) => buisness.id == buisnessAccountId)
     setUserName(account[0]?.businessAccountName)
@@ -125,7 +132,7 @@ const Navbar = () => {
               }}
             >
               <Link locale="ar" href={asPath}>
-                <button className="dropdown-item">
+                <button className="dropdown-item" onClick={() => handleSendCurrentLang("ar")}>
                   <span> {t[locale]?.Settings.arLang}</span> <span className="icon">AR</span>
                 </button>
               </Link>
@@ -136,7 +143,7 @@ const Navbar = () => {
               }}
             >
               <Link locale="en" href={asPath}>
-                <button className="dropdown-item">
+                <button className="dropdown-item" onClick={() => handleSendCurrentLang("en")}>
                   <span> {t[locale]?.Settings.enLang}</span> <span className="icon">EN</span>
                 </button>
               </Link>

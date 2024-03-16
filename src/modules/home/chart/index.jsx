@@ -48,7 +48,7 @@ const Chart = ({ sales }) => {
         <div className="d-flex gap-4">
           <div className="option_chart">
             <div className="form-group">
-              <label htmlFor="chart-type" className="opacity-0">
+              <label htmlFor="chart-type" className="visually-hidden">
                 {locale === "en" ? "Chart Type" : "نوع المخطط"}
               </label>
               <select id="chart-type" name="chart-type" defaultValue={1} className="form-control form-select">

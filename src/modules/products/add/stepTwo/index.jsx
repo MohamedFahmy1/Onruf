@@ -84,7 +84,8 @@ const AddProductStepTwo = ({
         !productPayload.productSep[i].ValueSpeAr ||
         !productPayload.productSep[i].ValueSpeEn
       ) {
-        return toast.error(locale === "en" ? "Please enter all Product data!" : "رجاء ادخال جميع بيانات المنتج")
+        toast.error(locale === "en" ? "Please enter all Product Details!" : "رجاء ادخال جميع بيانات المنتج")
+        return false
       }
     }
     return true
@@ -94,6 +95,9 @@ const AddProductStepTwo = ({
       return toast.error(
         locale === "en" ? "You can't add product with quantity less than 1" : "لا يمكنك اضافة منتج بكمية اقل من 1",
       )
+    }
+    if (productPayload.status === null || productPayload.status === undefined) {
+      return toast.error(locale === "en" ? "Please select Item status" : "من فضلك اختر حالة المنتج")
     }
     const productDetailsInputs = [
       productPayload.nameAr,
@@ -156,14 +160,14 @@ const AddProductStepTwo = ({
   }
   const validateAll = () => {
     if (
-      validateProductImages() &&
-      validateProductDetails() &&
-      validateAdDetails() &&
-      validateSaleDetails() &&
-      validateDurationAndShipping() === true
+      (validateProductImages() &&
+        validateProductDetails() &&
+        validateAdDetails() &&
+        validateSaleDetails() &&
+        validateDurationAndShipping()) === true
     ) {
       return true
-    }
+    } else return false
   }
   console.log("productPayload", productPayload)
   return (
