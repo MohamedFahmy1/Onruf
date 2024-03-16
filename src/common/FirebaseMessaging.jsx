@@ -3,12 +3,12 @@ import { getToken, onMessage } from "firebase/messaging"
 import { toast } from "react-toastify"
 import { messaging } from "./firebase"
 import axios from "axios"
-import { useDispatch, useSelector } from "react-redux"
-import { setId } from "../appState/deviceId/reducer"
+import { useSelector } from "react-redux"
+// import { setId } from "../appState/deviceId/reducer"
 
 const FirebaseMessaging = () => {
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
   const generateToken = useCallback(async () => {
     const permission = await Notification.requestPermission()
     if (permission === "granted") {
@@ -16,7 +16,7 @@ const FirebaseMessaging = () => {
       const token = await getToken(messaging, {
         vapidKey: process.env.NEXT_PUBLIC_FCM,
       })
-      dispatch(setId(token))
+      // dispatch(setId(token))
       if (token && buisnessAccountId) {
         // Send token to back-end
         await axios(
@@ -24,7 +24,7 @@ const FirebaseMessaging = () => {
         )
       }
     }
-  }, [buisnessAccountId, dispatch])
+  }, [buisnessAccountId])
 
   const showNotification = (payload) => {
     toast.info(
