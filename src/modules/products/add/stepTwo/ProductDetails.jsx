@@ -46,30 +46,47 @@ const ProductDetails = ({
       Alerto(e)
     }
   }, [locale, catId])
+  const onChangeSpesfication = ({ target: { value, checked } }, index, type) => {
+    let updatedSpec = { ...productPayload.productSep[index] }
 
-  const onChangeSpesfication = ({ target: { value } }, index, type, specificationId) => {
-    if (type == 7) {
-      const changedSpesfication = [...value]
-      setMultiSelectedSpecifications(
-        Object.assign({}, multiSelectedSpecifications, {
-          [specificationId]: changedSpesfication,
-        }),
-      )
-      let stringSepratedCommaIds = value.join()
-      const changedProductSpesfication = {
-        ...productPayload.productSep[index],
-        ValueSpeAr: stringSepratedCommaIds,
-        ValueSpeEn: stringSepratedCommaIds,
-      }
-      const updatedSpecififcations = Object.assign([], productPayload.productSep, {
-        [index]: changedProductSpesfication,
-      })
-      setProductPayload((prev) => ({ ...prev, productSep: updatedSpecififcations }))
-    } else {
-      const changedSpesfication = { ...productPayload.productSep[index], ValueSpeAr: value, ValueSpeEn: value }
-      const updatedSpecififcations = Object.assign([], productPayload.productSep, { [index]: changedSpesfication })
-      setProductPayload((prev) => ({ ...prev, productSep: updatedSpecififcations }))
+    switch (type) {
+      case 1: // Dropdown
+      case 2: // Text input
+      case 3: // Textarea
+      case 4: // Number input
+        updatedSpec.ValueSpeAr = value
+        updatedSpec.ValueSpeEn = value
+        break
+      case 5: // Radio buttons
+        updatedSpec.ValueSpeAr = value
+        updatedSpec.ValueSpeEn = value
+        break
+      case 6: // Checkboxes
+        let values = updatedSpec.ValueSpeAr ? updatedSpec.ValueSpeAr.split(",").map(Number) : []
+        if (checked) {
+          values.push(parseInt(value))
+        } else {
+          values = values.filter((val) => val !== parseInt(value))
+        }
+        updatedSpec.ValueSpeAr = values.join(",")
+        updatedSpec.ValueSpeEn = values.join(",")
+        break
+      case 7: // Multi-select
+        // This will be an array for the Select component with 'multiple' attribute
+        const allValues = typeof value === "string" ? value.split(",") : value
+        updatedSpec.ValueSpeAr = allValues.join(",")
+        updatedSpec.ValueSpeEn = allValues.join(",")
+        // Update the state to reflect the selected values for the multi-select
+        setMultiSelectedSpecifications((prev) => ({
+          ...prev,
+          [updatedSpec.SpecificationId]: allValues,
+        }))
+        break
+      default:
+        console.error("Unhandled type: ", type)
     }
+    const updatedSpecifications = Object.assign([], productPayload.productSep, { [index]: updatedSpec })
+    setProductPayload((prev) => ({ ...prev, productSep: updatedSpecifications }))
   }
 
   useEffect(() => {
@@ -145,9 +162,9 @@ const ProductDetails = ({
                     ))}
                 </select>
               )}
-              {!!(spesfication.type === 2 || spesfication.type === 3) && (
+              {!!(spesfication.type === 2 || spesfication.type === 3 || spesfication.type === 4) && (
                 <input
-                  type={"text"}
+                  type={spesfication.type === 4 ? "number" : "text"}
                   id={index}
                   value={
                     (locale === "en"
@@ -162,23 +179,49 @@ const ProductDetails = ({
                   className={`${styles["form-control"]} form-control`}
                 />
               )}
-              {spesfication.type === 4 && (
-                <input
-                  type={"number"}
-                  id={index}
-                  value={
-                    (locale === "en"
-                      ? productPayload?.productSep?.find(({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.nameEn)
-                          ?.ValueSpeEn
-                      : productPayload?.productSep?.find(({ HeaderSpeAr }) => HeaderSpeAr === spesfication?.nameAr)
-                          ?.ValueSpeAr) || ""
-                  }
-                  required={spesfication.isRequired}
-                  placeholder={spesfication.placeHolder}
-                  onKeyDown={(e) => onlyNumbersInInputs(e)}
-                  onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
-                  className={`${styles["form-control"]} form-control`}
-                />
+              {spesfication.type === 5 && (
+                <div className="d-flex gap-3">
+                  {spesfication.subSpecifications.map((subSpecification) => (
+                    <div key={subSpecification.id}>
+                      <label htmlFor={subSpecification.id}>
+                        {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
+                      </label>
+                      <input
+                        type="radio"
+                        id={subSpecification.id}
+                        name={spesfication.id}
+                        className="mx-2"
+                        checked={productPayload.productSep[index]?.ValueSpeAr === String(subSpecification.id)}
+                        onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
+                        value={subSpecification.id}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+              {spesfication.type === 6 && (
+                <div className="d-flex gap-3">
+                  {spesfication.subSpecifications.map((subSpecification) => (
+                    <div key={subSpecification.id}>
+                      <label htmlFor={subSpecification.id}>
+                        {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
+                      </label>
+                      <input
+                        type="checkbox"
+                        id={subSpecification.id}
+                        name={spesfication.id}
+                        className="mx-2"
+                        checked={
+                          productPayload.productSep[index]?.ValueSpeAr?.split(",").includes(
+                            String(subSpecification.id),
+                          ) || false
+                        }
+                        onChange={(e) => onChangeSpesfication(e, index, spesfication.type)}
+                        value={subSpecification.id}
+                      />
+                    </div>
+                  ))}
+                </div>
               )}
               {spesfication.type === 7 && (
                 <FormControl
@@ -196,65 +239,34 @@ const ProductDetails = ({
                   }}
                   className="no-outline"
                 >
-                  {pathname.includes("add") ? (
-                    <Select
-                      multiple
-                      value={multiSelectedSpecifications[spesfication.id] || []}
-                      labelId="selectedRoles-label"
-                      id="selectedRoles"
-                      onChange={(e) => {
-                        onChangeSpesfication(e, index, 7, spesfication.id)
-                      }}
-                      input={<OutlinedInput />}
-                      renderValue={(selected) => (
-                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                          {selected.map((selectedId, index) => {
-                            // Find the subSpecification object that matches the selectedId
-                            const selectedSpec = spesfication.subSpecifications.find((sub) => sub.id === selectedId)
-                            return (
-                              <Chip key={index} label={locale === "en" ? selectedSpec?.nameEn : selectedSpec?.nameAr} />
-                            )
-                          })}
-                        </Box>
-                      )}
-                      MenuProps={MenuProps}
-                    >
-                      {spesfication.subSpecifications?.map((subSpecification) => (
-                        <MenuItem key={subSpecification.id} value={subSpecification.id}>
-                          {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  ) : (
-                    <Select
-                      multiple
-                      value={multiSelectedSpecifications[spesfication.id] || []}
-                      labelId="selectedRoles-label"
-                      id="selectedRoles"
-                      onChange={(e) => {
-                        onChangeSpesfication(e, index, 7, spesfication.id)
-                      }}
-                      input={<OutlinedInput />}
-                      renderValue={(selected) => (
-                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                          {selected.map((selectedId, index) => {
-                            // Find the subSpecification object that matches the selectedId
-                            const selectedSpec = spesfication.subSpecifications.find((sub) => sub.id === selectedId)
-                            return (
-                              <Chip key={index} label={locale === "en" ? selectedSpec?.nameEn : selectedSpec?.nameAr} />
-                            )
-                          })}
-                        </Box>
-                      )}
-                      MenuProps={MenuProps}
-                    >
-                      {spesfication.subSpecifications?.map((subSpecification) => (
-                        <MenuItem key={subSpecification.id} value={subSpecification.id}>
-                          {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  )}
+                  <Select
+                    multiple
+                    value={multiSelectedSpecifications[spesfication.id] || []}
+                    labelId="selectedRoles-label"
+                    id="selectedRoles"
+                    onChange={(e) => {
+                      onChangeSpesfication(e, index, 7)
+                    }}
+                    input={<OutlinedInput />}
+                    renderValue={(selected) => (
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                        {selected.map((selectedId, index) => {
+                          // Find the subSpecification object that matches the selectedId
+                          const selectedSpec = spesfication.subSpecifications.find((sub) => sub.id === selectedId)
+                          return (
+                            <Chip key={index} label={locale === "en" ? selectedSpec?.nameEn : selectedSpec?.nameAr} />
+                          )
+                        })}
+                      </Box>
+                    )}
+                    MenuProps={MenuProps}
+                  >
+                    {spesfication.subSpecifications?.map((subSpecification) => (
+                      <MenuItem key={subSpecification.id} value={subSpecification.id}>
+                        {locale === "en" ? subSpecification.nameEn : subSpecification.nameAr}
+                      </MenuItem>
+                    ))}
+                  </Select>
                 </FormControl>
               )}
             </div>
