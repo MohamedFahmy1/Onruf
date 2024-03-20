@@ -64,12 +64,14 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                             role="switch"
                             id="IsFixedPriceEnabled"
                             checked={productPayload.IsFixedPriceEnabled === 0 ? "" : productPayload.IsFixedPriceEnabled}
-                            onChange={() =>
+                            onChange={() => {
                               setProductPayload({
                                 ...productPayload,
                                 IsFixedPriceEnabled: !productPayload.IsFixedPriceEnabled,
+                                // if you choose negotion you must set price to 0
+                                Price: productPayload.IsNegotiationEnabled ? 0 : productPayload.Price,
                               })
-                            }
+                            }}
                             disabled={pathname.includes("edit")}
                           />
                           <label htmlFor="IsFixedPriceEnabled">{pathOr("", [locale, "Products", "adFixed"], t)}</label>
@@ -118,6 +120,7 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                               setProductPayload({
                                 ...productPayload,
                                 IsNegotiationEnabled: !productPayload.IsNegotiationEnabled,
+                                Price: !productPayload.IsNegotiationEnabled ? 0 : productPayload.Price,
                               })
                             }
                             disabled={pathname.includes("edit")}
@@ -133,7 +136,8 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                 </div>
               </div>
             </div>
-            {(productPayload.IsFixedPriceEnabled || productPayload.IsNegotiationEnabled) && (
+            {(!!(productPayload.IsFixedPriceEnabled && !productPayload.IsNegotiationEnabled) ||
+              !!productPayload.IsFixedPriceEnabled) && (
               <div className="col-md-6">
                 <div className="form-group">
                   <label htmlFor="Price" style={{ ...textAlignStyle(locale), display: "block" }}>

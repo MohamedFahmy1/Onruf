@@ -135,8 +135,6 @@ const AddProductStepTwo = ({
         !productPayload.AuctionNegotiateForWhom)
     ) {
       return toast.error(locale === "en" ? "Please enter all auction details!" : "من فضلك ادخل جميع بيانات المزاد")
-    } else if (productPayload.IsNegotiationEnabled && !productPayload.Price) {
-      return toast.error(locale === "en" ? "Please enter purchasing price!" : "من فضلك ادخل سعر المنتج")
     } else return true
   }
   const validateDurationAndShipping = () => {
