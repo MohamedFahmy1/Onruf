@@ -166,6 +166,9 @@ const ProductDetails = ({
                 <input
                   type={spesfication.type === 4 ? "number" : "text"}
                   id={index}
+                  onKeyDown={(e) => {
+                    spesfication.type === 4 && onlyNumbersInInputs(e)
+                  }}
                   value={
                     (locale === "en"
                       ? productPayload?.productSep?.find(({ HeaderSpeEn }) => HeaderSpeEn === spesfication?.nameEn)
