@@ -21,6 +21,9 @@ const ProductsAlmostOut = ({ products }) => {
           </Link>
         </section>
         <ul className="all_pro_cus">
+          {!products?.length > 0 && (
+            <p className="text-center fs-4 my-4">{pathOr("", [locale, "Home", "noProducts"], t)}</p>
+          )}
           {products?.map(({ name, updatedAt, id, qty, image, createdAt }) => (
             <li key={id} className="item d-flex justify-content-between my-2 border-bottom">
               <section className="d-flex align-items-center">

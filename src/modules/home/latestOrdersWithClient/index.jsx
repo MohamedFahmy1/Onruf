@@ -21,6 +21,9 @@ const LatestOrdersWithClients = ({ clients }) => {
           </Link>
         </section>
         <ul className="all_pro_cus">
+          {!clients?.length > 0 && (
+            <p className="text-center fs-4 my-4">{pathOr("", [locale, "Home", "noOrders"], t)}</p>
+          )}
           {Boolean(clients && clients?.length) &&
             clients.map((client, idx) => (
               <li className="item d-flex justify-content-between my-5 border-bottom" key={idx}>

@@ -77,7 +77,9 @@
       "viewAll": "عرض الكل",
       "remaining": "الكمية المتبقية",
       "singleProduct": "قطعة واحدة",
-      "products": "قطع"
+      "products": "قطع",
+      "noProducts": "لا يوجد منتجات",
+      "noOrders": "لا يوجد اي طلبات"
     },
     "Chart": {
       "profit": "الارباح",
@@ -764,7 +766,9 @@
       "viewAll": "View all",
       "remaining": "Remaining Quantity",
       "singleProduct": "Single Product",
-      "products": "Products"
+      "products": "Products",
+      "noProducts": "No Products",
+      "noOrders": "No Orders Exists"
     },
     "Chart": {
       "profit": "Profit",
