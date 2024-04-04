@@ -26,6 +26,7 @@ import {
 } from "../../../../public/icons"
 import "react-toastify/dist/ReactToastify.css"
 import Image from "next/image"
+import Link from "next/link"
 
 const Sidebar = () => {
   const { locale } = useRouter()
@@ -99,7 +100,9 @@ const Sidebar = () => {
   return (
     <StyledSidebar variant={"permanent"} component={"aside"} anchor={locale === "en" ? "left" : "right"}>
       <StyledLogo>
-        <Image src={Logo.src} width={234} height={76} alt={"Logo"} onClick={() => Router.push(`/${locale}`)} />
+        <Link href={`/${locale}`}>
+          <Image src={Logo.src} width={234} height={76} alt={"Logo"} className="pointer" />
+        </Link>
       </StyledLogo>
       <List component={"nav"}>
         <Box component={"ul"}>

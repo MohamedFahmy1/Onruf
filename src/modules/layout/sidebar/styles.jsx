@@ -17,9 +17,9 @@ export const StyledSidebar = styled(Drawer)({
 
 export const StyledLogo = styled("div")(({ theme }) => ({
   display: "block",
-  padding: theme.spacing(2, 0, 4, 0),
+  padding: theme.spacing(0, 0, 0, 0),
   maxWidth: "145px",
   maxHeight: "45px",
-  marginBottom: "25px",
+  marginBottom: "15px",
   alignSelf: "center",
 }))

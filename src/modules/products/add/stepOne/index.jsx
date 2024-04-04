@@ -143,7 +143,7 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
         `${process.env.NEXT_PUBLIC_API_URL}/GetListCategoriesByProductName?productName=${catSearchInputVal}&lang=${locale}`,
         { signal },
       )
-      !filteredCategories?.[0] && toast.error("no data found")
+      !filteredCategories?.[0] && toast.error(locale === "en" ? "No Categories Found" : "لم يتم العثور على تصنيفات")
       setCategoriesAndSubListByName(filteredCategories)
       setSelectedCatId(filteredCategories[0]?.productCategoryId)
       setCategoriesAndSubList([])
