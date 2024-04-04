@@ -147,7 +147,6 @@ const EditProduct = () => {
 
   // tranformation data from back-end to match front-end
   const transformProductSepData = (data) => {
-    console.log(data)
     let updatedData = data.map((item) => {
       return {
         HeaderSpeAr: item.headerSpeAr,

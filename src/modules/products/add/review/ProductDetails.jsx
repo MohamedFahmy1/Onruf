@@ -43,6 +43,13 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
     +fixedFee +
     +pakaFee -
     +couponDiscount
+  const aditionalImagesFee =
+    selectedCatProps?.extraProductImageFee *
+    (productFullData.listImageFile.length - selectedCatProps?.freeProductImagesCount)
+  const aditionalVideoFee =
+    selectedCatProps?.extraProductVidoeFee *
+    (productFullData.videoUrl.length - selectedCatProps?.freeProductVidoesCount)
+  const taxValue = (totalCost * (12 / 100)).toFixed(2)
 
   const getShippingOptions = useCallback(async () => {
     const data = await axios.get(process.env.NEXT_PUBLIC_API_URL + `/GetAllShippingOptions`)
@@ -67,6 +74,14 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
     try {
       const res = await axios.get(process.env.NEXT_PUBLIC_API_URL + `/GetCouponByCode?couponCode=${couponCode}`)
       const couponData = res?.data?.data
+      if (new Date(couponData.expiryDate) < new Date()) {
+        toast.error(
+          locale === "en"
+            ? "Coupon has expired please enter another valid coupon"
+            : "انتهت صلاحية الكوبون الرجاء ادخال كوبون أخر صالح",
+        )
+        return
+      }
       setCouponData(couponData)
       setProductPayload((prev) => ({
         ...prev,
@@ -125,7 +140,6 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
         formData.append(key, value)
       }
     }
-    console.log("formData", formData)
     if (pathname.includes("add")) {
       try {
         const {
@@ -453,43 +467,45 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                   </button>
                 </div>
                 <ul className={styles["list_salary"]}>
-                  <li>
-                    <span>{pathOr("", [locale, "Products", "publishing_price"], t)}</span>{" "}
-                    <span>
-                      {selectedCatProps?.productPublishPrice} {pathOr("", [locale, "Products", "currency"], t)}
-                    </span>
-                  </li>
+                  {selectedCatProps?.productPublishPrice > 0 && (
+                    <li>
+                      <span>{pathOr("", [locale, "Products", "publishing_price"], t)}</span>{" "}
+                      <span>
+                        {selectedCatProps?.productPublishPrice} {pathOr("", [locale, "Products", "currency"], t)}
+                      </span>
+                    </li>
+                  )}
                   {couponData && (
                     <li>
                       <span>{pathOr("", [locale, "Products", "couponCode"], t)}</span> <span>{couponCode}</span>
                     </li>
                   )}
-                  <li>
-                    <span>{pathOr("", [locale, "Products", "subtitle_fee"], t)}</span>{" "}
-                    <span>
-                      {selectedCatProps?.subTitleFee} {pathOr("", [locale, "Products", "currency"], t)}
-                    </span>
-                  </li>
-                  {productFullData.listImageFile.length > selectedCatProps?.freeProductImagesCount && (
+                  {selectedCatProps?.productPublishPrice > 0 && (
                     <li>
-                      <span>{pathOr("", [locale, "Products", "additional_product_images_fee"], t)}</span>{" "}
+                      <span>{pathOr("", [locale, "Products", "subtitle_fee"], t)}</span>{" "}
                       <span>
-                        {selectedCatProps?.extraProductImageFee *
-                          (productFullData.listImageFile.length - selectedCatProps?.freeProductImagesCount)}{" "}
-                        {pathOr("", [locale, "Products", "currency"], t)}
+                        {selectedCatProps?.subTitleFee} {pathOr("", [locale, "Products", "currency"], t)}
                       </span>
                     </li>
                   )}
-                  {productFullData.videoUrl?.length > selectedCatProps?.freeProductVidoesCount && (
-                    <li>
-                      <span>{pathOr("", [locale, "Products", "additional_product_videos_fee"], t)}</span>{" "}
-                      <span>
-                        {selectedCatProps?.extraProductVidoeFee *
-                          (productFullData.videoUrl.length - selectedCatProps?.freeProductVidoesCount)}{" "}
-                        {pathOr("", [locale, "Products", "currency"], t)}
-                      </span>
-                    </li>
-                  )}
+                  {!!(productFullData.listImageFile.length > selectedCatProps?.freeProductImagesCount) &&
+                    !!(aditionalImagesFee > 0) && (
+                      <li>
+                        <span>{pathOr("", [locale, "Products", "additional_product_images_fee"], t)}</span>{" "}
+                        <span>
+                          {aditionalImagesFee} {pathOr("", [locale, "Products", "currency"], t)}
+                        </span>
+                      </li>
+                    )}
+                  {!!(productFullData.videoUrl?.length > selectedCatProps?.freeProductVidoesCount) &&
+                    !!(aditionalVideoFee > 0) && (
+                      <li>
+                        <span>{pathOr("", [locale, "Products", "additional_product_videos_fee"], t)}</span>{" "}
+                        <span>
+                          {aditionalVideoFee} {pathOr("", [locale, "Products", "currency"], t)}
+                        </span>
+                      </li>
+                    )}
                   {productFullData.IsAuctionEnabled && (
                     <li>
                       <span>{pathOr("", [locale, "Products", "auction_fee"], t)}</span>{" "}
@@ -506,7 +522,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                       </span>
                     </li>
                   )}
-                  {productFullData.IsFixedPriceEnabled && (
+                  {productFullData.IsFixedPriceEnabled && selectedCatProps?.enableFixedPriceSaleFee > 0 && (
                     <li>
                       <span>{pathOr("", [locale, "Products", "fixed_price_selling_fee"], t)}</span>{" "}
                       <span>
@@ -531,13 +547,14 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                       </span>
                     </li>
                   )}
-                  <li>
-                    <span>{pathOr("", [locale, "Products", "tax"], t)}</span>{" "}
-                    <span>
-                      {totalCost < 0 ? 0 : (totalCost * (12 / 100)).toFixed(2)}{" "}
-                      {pathOr("", [locale, "Products", "currency"], t)}
-                    </span>
-                  </li>
+                  {taxValue > 0 && (
+                    <li>
+                      <span>{pathOr("", [locale, "Products", "tax"], t)}</span>{" "}
+                      <span>
+                        {totalCost < 0 ? 0 : taxValue} {pathOr("", [locale, "Products", "currency"], t)}
+                      </span>
+                    </li>
+                  )}
                   <li>
                     <span>{pathOr("", [locale, "Orders", "total"], t)}</span>{" "}
                     <span>
