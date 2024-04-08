@@ -25,8 +25,3 @@ export const headersJson = {
     "Application-Source": "BusinessAccount",
   },
 }
-export const mulitFormData = {
-  headers: {
-    "Content-Type": "multipart/form-data",
-  },
-}

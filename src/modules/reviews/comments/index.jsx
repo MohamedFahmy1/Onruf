@@ -11,7 +11,7 @@ import Image from "next/image"
 import ratingImage from "../../../../public/images/rating.png"
 import { toast } from "react-toastify"
 import { useSelector } from "react-redux"
-import { mulitFormData } from "../../../../token"
+import { mulitFormData } from "../../../common/axiosHeaders"
 
 const Comment = ({ orderId, rate, comment, productName, userName, userImage, createdAt, id, isShare }) => {
   const { locale, push } = useRouter()

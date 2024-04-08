@@ -8,7 +8,7 @@ import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import Image from "next/image"
 import { toast } from "react-toastify"
-import { mulitFormData } from "../../../../token"
+import { mulitFormData } from "../../../common/axiosHeaders"
 
 const Question = ({ id, question, isShared, productName, clientName, clientImage, createdAt }) => {
   const [openReplyModal, setOpenReplyModal] = useState(false)

@@ -23,6 +23,13 @@ const ProductImages = ({ productPayload, setProductPayload, validateProductImage
     }
     if (file) {
       file.id = Date.now()
+      if (!mainImgId) {
+        // setMainImgId(file.id)
+        setProductPayload((prev) => ({
+          ...prev,
+          MainImageIndex: 0,
+        }))
+      }
       setProductPayload((prev) => ({
         ...prev,
         listImageFile: [...prev?.listImageFile, file],
@@ -30,6 +37,7 @@ const ProductImages = ({ productPayload, setProductPayload, validateProductImage
     }
     e.target.value = null
   }
+
   const handleUrlChange = (index, event) => {
     const newVideoUrls = [...productPayload.videoUrl]
     newVideoUrls[index] = event.target.value

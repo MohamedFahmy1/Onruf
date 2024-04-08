@@ -8,7 +8,7 @@ import { toast } from "react-toastify"
 import PointsIcon from "../../../assets/images/point_icon.svg"
 import Image from "next/image"
 import ShareModal from "./ShareModal"
-import { mulitFormData } from "../../../../token"
+import { mulitFormData } from "../../../common/axiosHeaders"
 import { useFetch } from "../../../hooks/useFetch"
 import Alerto from "../../../common/Alerto"
 

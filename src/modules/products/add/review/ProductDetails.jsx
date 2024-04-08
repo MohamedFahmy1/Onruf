@@ -10,6 +10,7 @@ import { pathOr } from "ramda"
 import t from "../../../../translations.json"
 import Image from "next/image"
 import moment from "moment/moment"
+import { multiFormData } from "../../../../common/axiosHeaders"
 
 const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProductPayload }) => {
   const { locale, pathname, push } = useRouter()
@@ -142,14 +143,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
     }
     if (pathname.includes("add")) {
       try {
-        const {
-          data: { data: id },
-        } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData, {
-          headers: {
-            accept: "*/*",
-            "Content-Type": "multipart/form-data",
-          },
-        })
+        await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData, multiFormData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
         push(`/${locale}/products`)
       } catch (error) {
@@ -161,14 +155,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       }
     } else {
       try {
-        const {
-          data: { data: id },
-        } = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/EditProduct", formData, {
-          headers: {
-            accept: "*/*",
-            "Content-Type": "multipart/form-data",
-          },
-        })
+        await axios.post(process.env.NEXT_PUBLIC_API_URL + "/EditProduct", formData, multiFormData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
         push(`/${locale}/products`)
       } catch (error) {
