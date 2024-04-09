@@ -12,16 +12,14 @@ import { RiDeleteBin5Line } from "react-icons/ri"
 import { MdModeEdit } from "react-icons/md"
 import t from "../../../translations.json"
 import Alerto from "../../../common/Alerto"
-import { IoIosArrowRoundBack } from "react-icons/io"
+import { IoIosArrowRoundBack, IoIosCloseCircle } from "react-icons/io"
 import ResponsiveImage from "../../../common/ResponsiveImage"
 import { useFetch } from "../../../hooks/useFetch"
+import { FaCamera } from "react-icons/fa"
+import Image from "next/image"
 
 const UsersFolders = () => {
-  const {
-    locale,
-    query: { page },
-    push,
-  } = useRouter()
+  const { locale } = useRouter()
 
   const [openFolderModal, setOpenFolderModal] = useState(false)
   const [folderName, setFolderName] = useState("")
@@ -33,6 +31,7 @@ const UsersFolders = () => {
     `/ListFolder?type=2&pageIndex=1&PageRowsCount=10&lang=${locale}`,
   )
   const editFolder = async () => {
+    if (!editedFolderName) return toast.error(locale === "en" ? "Please enter folder name!" : "من فضلك ادخل اسم الملف")
     const values = { id: folderId, type: 2, nameAr: editedFolderName, nameEn: editedFolderName, image: folderImage }
     const formData = new FormData()
     for (const key in values) {
@@ -52,6 +51,7 @@ const UsersFolders = () => {
   }
 
   const addNewFolder = async () => {
+    if (!folderName) return toast.error(locale === "en" ? "Please enter folder name!" : "من فضلك ادخل اسم الملف")
     const formData = new FormData()
     formData.append("type", 2)
     formData.append("nameAr", folderName)
@@ -179,16 +179,48 @@ const UsersFolders = () => {
           ></button>
         </Modal.Header>
         <Modal.Body>
-          <div className="form-group">
-            <label>{pathOr("", [locale, "Users", "folderName"], t)}</label>
-            <input
-              type="text"
-              className="form-control"
-              onChange={editModal ? (e) => setEditedFolderName(e.target.value) : (e) => setFolderName(e.target.value)}
-              value={editModal ? editedFolderName : folderName}
-            />
-            <input type="file" onChange={(e) => setFolderImage(e.target.files[0])} />
-          </div>
+          <>
+            <div className="m-auto" style={{ width: "fit-content", textAlign: "start" }}>
+              <div className={"d-flex m-auto"} style={{ position: "relative" }}>
+                {folderImage && (
+                  <>
+                    <IoIosCloseCircle
+                      onClick={() => setFolderImage("")}
+                      size={20}
+                      role="button"
+                      style={{
+                        cursor: "pointer",
+                        position: "absolute",
+                        top: 5,
+                        right: 5,
+                        zIndex: 1,
+                      }}
+                    />
+                    <Image src={URL.createObjectURL(folderImage)} alt="coupon" width={160} height={160} />
+                  </>
+                )}
+              </div>
+              {!folderImage && (
+                <div className={"btn_apload_img"}>
+                  <FaCamera />
+                  <label htmlFor="handleUploadImages" className="visually-hidden">
+                    {"handleUploadImages"}
+                  </label>
+                  <input id="handleUploadImages" type="file" onChange={(e) => setFolderImage(e.target.files[0])} />
+                </div>
+              )}
+            </div>
+            <div className="form-group">
+              <label>{pathOr("", [locale, "Users", "folderName"], t)}</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder={pathOr("", [locale, "Users", "writeFolderName"], t)}
+                onChange={editModal ? (e) => setEditedFolderName(e.target.value) : (e) => setFolderName(e.target.value)}
+                value={editModal ? editedFolderName : folderName}
+              />
+            </div>
+          </>
         </Modal.Body>
         <Modal.Footer className="modal-footer">
           {editModal ? (

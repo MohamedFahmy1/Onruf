@@ -86,33 +86,6 @@
   flex-wrap: wrap;
 }
 
-.btn_apload_img {
-  width: 160px;
-  height: 160px;
-  border: 1px solid #eee;
-  background: #fff;
-  border-radius: 15px;
-  overflow: hidden;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 35px;
-  color: #45495e;
-}
-
-.btn_apload_img input[type="file"] {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 5;
-  font-size: 0;
-  transform: scale(1.5);
-  cursor: pointer;
-}
-
 .the_img_upo {
   width: 160px;
   height: 160px;

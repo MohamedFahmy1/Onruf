@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment, useCallback } from "react"
+import { useState, useEffect, Fragment, useCallback } from "react"
 import ViewProducts from "../../viewProducts"
 import { toast } from "react-toastify"
 import { useRouter } from "next/router"
@@ -7,7 +7,7 @@ import { pathOr } from "ramda"
 import t from "../../../../translations.json"
 import Alerto from "../../../../common/Alerto"
 
-const SingleFolder = ({ data }) => {
+const SingleFolder = () => {
   const {
     locale,
     query: { id },
@@ -15,11 +15,8 @@ const SingleFolder = ({ data }) => {
   const [products, setProducts] = useState()
   const [productsIds, setProductsIds] = useState([])
   const [selectedRows, setSelectedRows] = useState({})
-  const router = useRouter()
-  // const id = router.query.id
 
   const getSingleFolder = useCallback(async () => {
-    console.log(id)
     try {
       const {
         data: { data: getSingleFolder },
@@ -52,6 +49,7 @@ const SingleFolder = ({ data }) => {
       Alerto(error)
     }
   }
+
   return (
     <Fragment>
       <ViewProducts

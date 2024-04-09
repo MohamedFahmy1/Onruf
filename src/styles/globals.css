@@ -397,7 +397,6 @@ body {
 
 #main .body-content {
   padding: 20px 3%;
-  /* min-height: 100vh; */
 }
 
 .form-group {
@@ -406,7 +405,8 @@ body {
 
 /*.form-content*/
 .form-group > label:first-child {
-  display: inline-block;
+  display: block;
+  text-align: start;
   margin-bottom: 8px;
   font-weight: bold;
   font-size: 21px;
@@ -603,7 +603,11 @@ tbody {
 .btns_fixeds .btn-main {
   flex: 1;
   box-shadow: 0 0 2px 0 rgb(0 0 0 / 20%);
+  display: flex;
+  flex-direction: row;
   text-wrap: nowrap;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .inpt_numb {
@@ -1406,6 +1410,37 @@ div.dt-buttons {
   background-color: var(--main);
   border-radius: 50%;
   font-style: normal;
+}
+
+img {
+  object-fit: contain;
+}
+
+.btn_apload_img {
+  width: 160px;
+  height: 160px;
+  border: 1px solid #eee;
+  background: #fff;
+  border-radius: 15px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 35px;
+  color: #45495e;
+}
+
+.btn_apload_img input[type="file"] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  font-size: 0;
+  transform: scale(1.5);
+  cursor: pointer;
 }
 
 /*----------mults imgs--------------*/

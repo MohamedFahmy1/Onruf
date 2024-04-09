@@ -250,7 +250,7 @@ const AddCoupon = () => {
                         <Image src={URL.createObjectURL(img)} alt="coupon" width={160} height={160} />
                       </div>
                     ))}
-                    <div className={styles["btn_apload_img"]}>
+                    <div className={"btn_apload_img"}>
                       <FaCamera />
                       <label htmlFor="handleUploadImages" className="visually-hidden">
                         {"handleUploadImages"}

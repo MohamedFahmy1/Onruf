@@ -24,7 +24,6 @@ const ProductImages = ({ productPayload, setProductPayload, validateProductImage
     if (file) {
       file.id = Date.now()
       if (!mainImgId) {
-        // setMainImgId(file.id)
         setProductPayload((prev) => ({
           ...prev,
           MainImageIndex: 0,
@@ -154,7 +153,7 @@ const ProductImages = ({ productPayload, setProductPayload, validateProductImage
               </label>
             </div>
           ))}
-          <div className={styles["btn_apload_img"]}>
+          <div className={"btn_apload_img"}>
             <FaCamera />
             <input
               type="file"
@@ -227,7 +226,7 @@ const ProductImages = ({ productPayload, setProductPayload, validateProductImage
               </div>
             )
           })}
-          <div className={styles["btn_apload_img"]}>
+          <div className={"btn_apload_img"}>
             <FaCamera />
             <input
               type="file"

@@ -14,6 +14,10 @@ export const AppWrapper = ({ children }) => {
   const dispatch = useDispatch()
 
   useEffect(() => {
+    document.body.dir = locale === "ar" ? "rtl" : "ltr"
+  }, [locale])
+
+  useEffect(() => {
     if (!Token || !buisnessAccountId || !providerId) {
       dispatch(getTokensFromCookie())
     }

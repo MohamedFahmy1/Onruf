@@ -16,8 +16,10 @@ import { RiDeleteBin5Line } from "react-icons/ri"
 import { MdModeEdit } from "react-icons/md"
 import t from "../../../translations.json"
 import Image from "next/image"
-import { textAlignStyle } from "../../../styles/stylesObjects"
 import Alerto from "../../../common/Alerto"
+import { IoIosCloseCircle } from "react-icons/io"
+import { FaCamera } from "react-icons/fa"
+import styles from "./folders.module.css"
 
 const Folders = () => {
   const { locale } = useRouter()
@@ -32,6 +34,7 @@ const Folders = () => {
   const [folderId, setFolderId] = useState(false)
 
   const editFolder = async () => {
+    if (!editedFolderName) return toast.error(locale === "en" ? "Please enter folder name!" : "من فضلك ادخل اسم الملف")
     const values = { id: folderId, type: 1, nameAr: editedFolderName, nameEn: editedFolderName, image: folderImage }
     const formData = new FormData()
     for (const key in values) {
@@ -48,12 +51,13 @@ const Folders = () => {
   const deleteFolder = async (folderId) => {
     alert("Delete this folder")
     await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/RemoveFolder?id=${folderId}`)
-    toast.success(locale === "en" ? "A folder has been added successfully!" : "تم مسح الملف بنجاح")
+    toast.success(locale === "en" ? "A folder has been deleted successfully!" : "تم مسح الملف بنجاح")
     setOpenFolderModal(false)
     dispatch(getFolderList(locale))
   }
 
   const addNewFolder = async () => {
+    if (!folderName) return toast.error(locale === "en" ? "Please enter folder name!" : "من فضلك ادخل اسم الملف")
     const formData = new FormData()
     formData.append("type", 1)
     formData.append("nameAr", folderName)
@@ -65,7 +69,7 @@ const Folders = () => {
         data: { data },
       } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/ListFolder?currentPage=${page}&lang=${locale}&type=1`)
       toast.success(locale === "en" ? "A folder has been added successfully!" : "تم اضافة الملف الجديد بنجاح")
-      dispatch(getFolderList(locale))
+      dispatch(getFolderList(data))
       setOpenFolderModal(false)
     } catch (error) {
       Alerto(error)
@@ -75,92 +79,92 @@ const Folders = () => {
   useEffect(() => {
     dispatch(getFolderList(locale))
   }, [locale, openFolderModal, dispatch])
+
   const totalNumberOfProducts = folders?.fileList?.length
   const pageSize = 6
+
   return (
     <>
       <div className="body-content">
-        <div>
-          <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
-            <div className="d-flex align-items-center ">
-              <h6 className="f-b m-0">
-                {pathOr("", [locale, "Products", "product_folders"], t)} ({totalNumberOfProducts})
-              </h6>
-              <Link href="/products">
-                <button className="btn-main btn-main-w mr-20 mx-3">
-                  <span>{pathOr("", [locale, "Products", "return_to_products_page"], t)} </span>
-                  <BsArrowLeft size={25} />
-                </button>
-              </Link>
-            </div>
-            <button
-              className="btn-main"
-              onClick={() => {
-                setEditModal(false)
-                setOpenFolderModal(!openFolderModal)
-              }}
-            >
-              {pathOr("", [locale, "Products", "add_folder"], t)}
-              <i className="fas fa-plus-circle font-18"></i>
-            </button>
+        <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
+          <div className="d-flex align-items-center ">
+            <h6 className="f-b m-0">
+              {pathOr("", [locale, "Products", "product_folders"], t)} ({totalNumberOfProducts})
+            </h6>
+            <Link href="/products">
+              <button className="btn-main btn-main-w mr-20 mx-3">
+                <span>{pathOr("", [locale, "Products", "return_to_products_page"], t)} </span>
+                <BsArrowLeft size={25} />
+              </button>
+            </Link>
           </div>
-          <div className="contint_paner">
-            <div>
-              <Row>
-                {!totalNumberOfProducts && (
-                  <h4 className="text-center my-3">{locale === "en" ? "No folders found" : "لا يوجد ملفات"}</h4>
-                )}
-                {propOr([], ["fileList"], folders)
-                  .filter(({ isActive }) => isActive)
-                  .slice((page - 1) * pageSize, page * pageSize)
-                  .map((folder) => (
-                    <Col lg={4} md={6} key={folder?.id}>
-                      <div
-                        className="box_pro_Folder"
-                        onClick={() => {
-                          setEditedFolderName(folder.name)
-                          setEditModal(true)
-                          setFolderId(folder.id)
-                        }}
-                      >
-                        <div className="folder__actions__btn">
-                          <MdModeEdit className="btn_Measures" onClick={() => setOpenFolderModal(true)} />
-                          <RiDeleteBin5Line className="btn_Measures" onClick={() => deleteFolder(folder.id)} />
-                        </div>
-                        <Link href={`/products/folders/${folder?.id}`}>
-                          <div>
-                            <div className="img_ alot-img" style={{ width: "185px", margin: "auto" }}>
-                              <Image
-                                src={
-                                  !folder.image || folder.image === "http://onrufwebsite6-001-site1.htempurl.com/"
-                                    ? folderImg
-                                    : folder.image
-                                }
-                                alt="folder"
-                                width={185}
-                                height={150}
-                                priority
-                                className="d-block m-auto"
-                              />
-                            </div>
-                            <div className="text-center mt-2">
-                              <h6 className="f-b m-0">{folder?.name}</h6>
-                              <div className="gray-color">
-                                <span className="main-color f-b">{folder?.fileProducts?.length}</span>
-                                {pathOr("", [locale, "Products", "added_product"], t)}
-                              </div>
-                              <div className="gray-color">{formatDate(folder?.createdAt)}</div>
-                            </div>
-                          </div>
-                        </Link>
-                      </div>
-                    </Col>
-                  ))}
-              </Row>
-              {totalNumberOfProducts > pageSize && (
-                <Pagination listLength={folders?.fileList?.length} pageSize={pageSize} />
+          <button
+            className="btn-main"
+            onClick={() => {
+              setEditModal(false)
+              setOpenFolderModal(!openFolderModal)
+            }}
+          >
+            {pathOr("", [locale, "Products", "add_folder"], t)}
+            <i className="fas fa-plus-circle font-18"></i>
+          </button>
+        </div>
+        <div className="contint_paner">
+          <div>
+            <Row>
+              {!totalNumberOfProducts && (
+                <h4 className="text-center my-3">{locale === "en" ? "No folders found" : "لا يوجد ملفات"}</h4>
               )}
-            </div>
+              {propOr([], ["fileList"], folders)
+                .filter(({ isActive }) => isActive)
+                .slice((page - 1) * pageSize, page * pageSize)
+                .map((folder) => (
+                  <Col lg={4} md={6} key={folder?.id}>
+                    <div
+                      className="box_pro_Folder"
+                      onClick={() => {
+                        setEditedFolderName(folder.name)
+                        setEditModal(true)
+                        setFolderId(folder.id)
+                      }}
+                    >
+                      <div className="folder__actions__btn">
+                        <MdModeEdit className="btn_Measures" onClick={() => setOpenFolderModal(true)} />
+                        <RiDeleteBin5Line className="btn_Measures" onClick={() => deleteFolder(folder.id)} />
+                      </div>
+                      <Link href={`/products/folders/${folder?.id}`}>
+                        <div>
+                          <div className="img_ alot-img" style={{ width: "185px", margin: "auto" }}>
+                            <Image
+                              src={
+                                !folder.image || folder.image === "http://onrufwebsite6-001-site1.htempurl.com/"
+                                  ? folderImg
+                                  : folder.image
+                              }
+                              alt="folder"
+                              width={185}
+                              height={150}
+                              priority
+                              className="object-fit-contain"
+                            />
+                          </div>
+                          <div className="text-center mt-2">
+                            <h6 className="f-b m-0">{folder?.name}</h6>
+                            <div className="gray-color">
+                              <span className="main-color f-b">{folder?.fileProducts?.length}</span>
+                              {pathOr("", [locale, "Products", "added_product"], t)}
+                            </div>
+                            <div className="gray-color">{formatDate(folder?.createdAt)}</div>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  </Col>
+                ))}
+            </Row>
+            {totalNumberOfProducts > pageSize && (
+              <Pagination listLength={folders?.fileList?.length} pageSize={pageSize} />
+            )}
           </div>
         </div>
       </div>
@@ -191,7 +195,37 @@ const Folders = () => {
           ></button>
         </Modal.Header>
         <Modal.Body>
-          <div className="form-group" style={textAlignStyle(locale)}>
+          <div className="m-auto" style={{ width: "fit-content", textAlign: "start" }}>
+            <div className={"d-flex m-auto"} style={{ position: "relative" }}>
+              {folderImage && (
+                <>
+                  <IoIosCloseCircle
+                    onClick={() => setFolderImage("")}
+                    size={20}
+                    role="button"
+                    style={{
+                      cursor: "pointer",
+                      position: "absolute",
+                      top: 5,
+                      right: 5,
+                      zIndex: 1,
+                    }}
+                  />
+                  <Image src={URL.createObjectURL(folderImage)} alt="coupon" width={160} height={160} />
+                </>
+              )}
+            </div>
+            {!folderImage && (
+              <div className={"btn_apload_img"}>
+                <FaCamera />
+                <label htmlFor="handleUploadImages" className="visually-hidden">
+                  {"handleUploadImages"}
+                </label>
+                <input id="handleUploadImages" type="file" onChange={(e) => setFolderImage(e.target.files[0])} />
+              </div>
+            )}
+          </div>
+          <div className="form-group">
             <label>{pathOr("", [locale, "Users", "folderName"], t)}</label>
             <input
               type="text"
@@ -200,7 +234,6 @@ const Folders = () => {
               onChange={editModal ? (e) => setEditedFolderName(e.target.value) : (e) => setFolderName(e.target.value)}
               value={editModal ? editedFolderName : folderName}
             />
-            <input type="file" onChange={(e) => setFolderImage(e.target.files[0])} className="mt-3" />
           </div>
         </Modal.Body>
         <Modal.Footer className="modal-footer">

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useMemo, useEffect, useCallback } from "react"
+import React, { useState, useMemo, useEffect, useCallback } from "react"
 import Table from "../../../common/table"
 import Pagination from "./../../../common/pagination"
 import { useRouter } from "next/router"
@@ -239,7 +239,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         accessor: "price",
         Cell: ({ row: { values, original } }) => (
           <div>
-            {original?.isFixedPriceEnabled || original?.isNegotiationEnabled ? (
+            {original?.isFixedPriceEnabled ? (
               <div>
                 <span>
                   <span>
@@ -382,7 +382,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
           className={`btn-main ${selectedFilter === "avaliableProducts" ? "active" : ""}`}
           onClick={() => {
             setSelectedFilter("avaliableProducts")
-            push({ query: { page: 1 } })
           }}
         >
           {pathOr("", [locale, "Products", "availableProducts"], t)} ({avaliableProducts?.length})
@@ -391,7 +390,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
           className={`btn-main ${selectedFilter === "productsAlmostOut" ? "active" : ""}`}
           onClick={() => {
             setSelectedFilter("productsAlmostOut")
-            push({ query: { page: 1 } })
+            push({ pathname: id ? `/products/folders/${id}` : "/products", query: { page: 1 } })
           }}
         >
           {pathOr("", [locale, "Products", "almostOut"], t)} ({productsAlmostOut?.length})
@@ -400,7 +399,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
           className={`btn-main ${!selectedFilter ? "active" : ""}`}
           onClick={() => {
             setSelectedFilter("")
-            push({ query: { page: 1 } })
+            push({ pathname: id ? `/products/folders/${id}` : "/products", query: { page: 1 } })
           }}
         >
           {pathOr("", [locale, "Products", "inActiveProducts"], t)} ({inActiveProducts?.length})

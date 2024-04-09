@@ -11,6 +11,9 @@ import { pathOr } from "ramda"
 import Image from "next/image"
 import { flexDirectionStyle } from "../../styles/stylesObjects"
 import Alerto from "../../common/Alerto"
+import { IoIosCloseCircle } from "react-icons/io"
+import { FaCamera } from "react-icons/fa"
+import styles from "./folders/folders.module.css"
 
 const Products = ({ products: p }) => {
   const [products, setProducts] = useState(p)
@@ -23,6 +26,7 @@ const Products = ({ products: p }) => {
   const [productsIds, setProductsIds] = useState([])
   const [selectedRows, setSelectedRows] = useState({})
   const { locale } = useRouter()
+
   useEffect(() => {
     setCreateNewFolder(folders?.fileList?.length)
   }, [folders])
@@ -53,6 +57,7 @@ const Products = ({ products: p }) => {
   const addNewFolder = async () => {
     try {
       if (!createNewFolder) {
+        if (!folderName) return toast.error(locale === "en" ? "Please enter folder name!" : "من فضلك ادخل اسم الملف")
         const formData = new FormData()
         formData.append("type", 1)
         formData.append("nameAr", folderName)
@@ -64,7 +69,9 @@ const Products = ({ products: p }) => {
           productId: productsIds,
         })
         setOpenFolderModal(false)
-        toast.success("A folder has been created successfully!")
+        toast.success(
+          locale === "en" ? "Your new folder has been created successfully!" : "تم انشاء الملف الجديد بنجاح",
+        )
         setCreateNewFolder(true)
       } else {
         setCreateNewFolder(false)
@@ -76,7 +83,7 @@ const Products = ({ products: p }) => {
 
   const addProductToFolder = async (id) => {
     if (!productsIds?.length)
-      return toast.warning(locale === "en" ? "No products were selected!" : "من فضلك قم بأضافة المنتجات")
+      return toast.warning(locale === "en" ? "No products were selected!" : "من فضلك قم بأخيار المنتجات")
     setAddProductToFolderLoading({ id, loader: true })
     try {
       await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddFolderProduct", {
@@ -85,7 +92,7 @@ const Products = ({ products: p }) => {
       })
       setAddProductToFolderLoading({ loader: false })
       setOpenFolderModal(false)
-      toast.success("Products has been added successfully!")
+      toast.success(locale === "en" ? "Products has been added successfully!" : "تم اضافة المنتجات بنجاح")
       setSelectedRows({})
     } catch (error) {
       setAddProductToFolderLoading({ loader: false })
@@ -139,16 +146,47 @@ const Products = ({ products: p }) => {
         </Modal.Header>
         <Modal.Body>
           {!createNewFolder ? (
-            <div className="form-group">
-              <label>{pathOr("", [locale, "Products", "folderName"], t)}</label>
-              <input
-                type="text"
-                className="form-control"
-                placeholder={locale === "en" ? "Enter folder's name" : "اكتب اسم المجلد"}
-                onChange={(e) => setFolderName(e.target.value)}
-              />
-              <input type="file" onChange={(e) => setFolderImage(e?.target?.files[0])} />
-            </div>
+            <>
+              <div className="m-auto" style={{ width: "fit-content", textAlign: "start" }}>
+                <div className={"d-flex m-auto"} style={{ position: "relative" }}>
+                  {folderImage && (
+                    <>
+                      <IoIosCloseCircle
+                        onClick={() => setFolderImage("")}
+                        size={20}
+                        role="button"
+                        style={{
+                          cursor: "pointer",
+                          position: "absolute",
+                          top: 5,
+                          right: 5,
+                          zIndex: 1,
+                        }}
+                      />
+                      <Image src={URL.createObjectURL(folderImage)} alt="coupon" width={160} height={160} />
+                    </>
+                  )}
+                </div>
+                {!folderImage && (
+                  <div className={"btn_apload_img"}>
+                    <FaCamera />
+                    <label htmlFor="handleUploadImages" className="visually-hidden">
+                      {"handleUploadImages"}
+                    </label>
+                    <input id="handleUploadImages" type="file" onChange={(e) => setFolderImage(e.target.files[0])} />
+                  </div>
+                )}
+              </div>
+              <div className="form-group">
+                <label>{pathOr("", [locale, "Products", "folderName"], t)}</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder={locale === "en" ? "Enter folder's name" : "اكتب اسم المجلد"}
+                  onChange={(e) => setFolderName(e.target.value)}
+                />
+              </div>
+            </>
           ) : (
             <ul className="list_folder scroll-modal-folders">
               {folders?.fileList
