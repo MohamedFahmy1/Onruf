@@ -337,6 +337,10 @@ input[type="radio"]:checked + span {
 
 .btn-main {
   display: flex;
+  flex-direction: row;
+  text-wrap: nowrap;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   justify-content: center;
   align-items: center;
   gap: 5px;

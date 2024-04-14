@@ -84,6 +84,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
         return
       }
       setCouponData(couponData)
+      toast.success(locale === "en" ? "Coupon applied successfully!" : "تم تطبيق الكوبون بنجاح")
       setProductPayload((prev) => ({
         ...prev,
         "ProductPaymentDetailsDto.CouponId": couponData.id,
@@ -91,7 +92,6 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
         "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": totalCost,
         "ProductPaymentDetailsDto.TotalAmountAfterCoupon": totalCost - couponData.discountValue,
       }))
-      setCouponCode("")
     } catch (err) {
       toast.error(locale === "en" ? "Please enter correct coupon!" : "من فضلك ادخل الكوبون بشكل صحيح")
     }
