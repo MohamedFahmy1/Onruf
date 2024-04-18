@@ -33,6 +33,21 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
     }
   }
 
+  const handleSendNegotiationOffer = () => {
+    if (productPayload.SendOfferForAuction === true) {
+      return setProductPayload({
+        ...productPayload,
+        SendOfferForAuction: !productPayload.SendOfferForAuction,
+        AuctionNegotiatePrice: null,
+        AuctionNegotiateForWhom: null,
+      })
+    } else
+      setProductPayload({
+        ...productPayload,
+        SendOfferForAuction: !productPayload.SendOfferForAuction,
+      })
+  }
+
   const { PaymentOptions } = productPayload
   useEffect(() => {
     if (PaymentOptions?.includes(1)) {
@@ -242,84 +257,89 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                           role="switch"
                           id="flexSwitchCheckChecked"
                           checked={productPayload.SendOfferForAuction}
-                          onChange={() =>
-                            setProductPayload({
-                              ...productPayload,
-                              SendOfferForAuction: !productPayload.SendOfferForAuction,
-                            })
-                          }
+                          onChange={() => handleSendNegotiationOffer()}
                         />
                       </div>
                     </div>
                   </div>
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <label>
-                          {pathOr("", [locale, "Products", "negotiation_price"], t)}
-                          <RequiredSympol />
-                        </label>
-                        <div
-                          className={`input-group ${styles["input-group"]} flex-nowrap`}
-                          style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}
-                        >
-                          <span
-                            className={`${styles["input-group-text"]} input-group-text main-color f-b`}
-                            id="basic-addon1"
-                          >
-                            {pathOr("", [locale, "Products", "currency"], t)}
-                          </span>
-                          <div className="po_R flex-grow-1">
-                            <input
-                              type="number"
-                              className={`form-control ${styles["form-control"]}`}
-                              onKeyDown={(e) => onlyNumbersInInputs(e)}
-                              value={
-                                productPayload.AuctionNegotiatePrice === 0 ? "" : productPayload.AuctionNegotiatePrice
-                              }
-                              onChange={(e) =>
-                                setProductPayload({ ...productPayload, AuctionNegotiatePrice: +e.target.value })
-                              }
-                            />
+                  {productPayload.SendOfferForAuction && (
+                    <>
+                      <div className="row">
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <label>
+                              {pathOr("", [locale, "Products", "negotiation_price"], t)}
+                              <RequiredSympol />
+                            </label>
+                            <div
+                              className={`input-group ${styles["input-group"]} flex-nowrap`}
+                              style={{ flexDirection: locale === "en" ? "row-reverse" : "row" }}
+                            >
+                              <span
+                                className={`${styles["input-group-text"]} input-group-text main-color f-b`}
+                                id="basic-addon1"
+                              >
+                                {pathOr("", [locale, "Products", "currency"], t)}
+                              </span>
+                              <div className="po_R flex-grow-1">
+                                <input
+                                  type="number"
+                                  className={`form-control ${styles["form-control"]}`}
+                                  onKeyDown={(e) => onlyNumbersInInputs(e)}
+                                  value={
+                                    productPayload.AuctionNegotiatePrice === 0
+                                      ? ""
+                                      : productPayload.AuctionNegotiatePrice
+                                  }
+                                  onChange={(e) =>
+                                    setProductPayload({ ...productPayload, AuctionNegotiatePrice: +e.target.value })
+                                  }
+                                />
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="col-12">
-                    <div className="form-group">
-                      <label style={{ ...textAlignStyle(locale), display: "block" }}>
-                        {pathOr("", [locale, "Products", "who_to_send_offer"], t)}
-                        <RequiredSympol />
-                      </label>
-                      <div className="d-flex gap-3 flex-wrap">
-                        <div
-                          onClick={() => setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "All" })}
-                          className={`${styles.p_select} ${
-                            productPayload.AuctionNegotiateForWhom == "All" ? styles.p_select_active : ""
-                          }`}
-                        >
-                          {pathOr("", [locale, "Products", "all_bidders"], t)}
-                        </div>
-                        <div
-                          onClick={() => setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Highest3" })}
-                          className={`${styles.p_select} ${
-                            productPayload.AuctionNegotiateForWhom == "Highest3" ? styles.p_select_active : ""
-                          }`}
-                        >
-                          {pathOr("", [locale, "Products", "top_three_bidders"], t)}
-                        </div>
-                        <div
-                          onClick={() => setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Favorit" })}
-                          className={`${styles.p_select} ${
-                            productPayload.AuctionNegotiateForWhom == "Favorit" ? styles.p_select_active : ""
-                          }`}
-                        >
-                          {pathOr("", [locale, "Products", "product_favorites"], t)}
+                      <div className="col-12">
+                        <div className="form-group">
+                          <label style={{ ...textAlignStyle(locale), display: "block" }}>
+                            {pathOr("", [locale, "Products", "who_to_send_offer"], t)}
+                            <RequiredSympol />
+                          </label>
+                          <div className="d-flex gap-3 flex-wrap">
+                            <div
+                              onClick={() => setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "All" })}
+                              className={`${styles.p_select} ${
+                                productPayload.AuctionNegotiateForWhom == "All" ? styles.p_select_active : ""
+                              }`}
+                            >
+                              {pathOr("", [locale, "Products", "all_bidders"], t)}
+                            </div>
+                            <div
+                              onClick={() =>
+                                setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Highest3" })
+                              }
+                              className={`${styles.p_select} ${
+                                productPayload.AuctionNegotiateForWhom == "Highest3" ? styles.p_select_active : ""
+                              }`}
+                            >
+                              {pathOr("", [locale, "Products", "top_three_bidders"], t)}
+                            </div>
+                            <div
+                              onClick={() =>
+                                setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Favorit" })
+                              }
+                              className={`${styles.p_select} ${
+                                productPayload.AuctionNegotiateForWhom == "Favorit" ? styles.p_select_active : ""
+                              }`}
+                            >
+                              {pathOr("", [locale, "Products", "product_favorites"], t)}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
+                    </>
+                  )}
                   {
                     <div className="col-12 d-flex align-items-center justify-content-between flex-wrap mb-2 px-1">
                       <span className="f-b fs-5">
