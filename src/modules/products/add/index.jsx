@@ -86,6 +86,7 @@ const AddProduct = () => {
   const handleGoToSteptwo = () => {
     setStep(2)
   }
+
   return (
     <div className="body-content">
       <div>

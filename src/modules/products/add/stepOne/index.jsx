@@ -191,12 +191,12 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
             {!Boolean(selectedCat) && (
               <div className="text-center mb-3">
                 <h2 className="f-b fs-3">{pathOr("", [locale, "Products", "sellWhat"], t)}</h2>
-                <p className="fs-4">{pathOr("", [locale, "Products", "enterAddress"], t)}</p>
+                {/* <p className="fs-4">{pathOr("", [locale, "Products", "enterAddress"], t)}</p> */}
               </div>
             )}
             <div className="form-content">
               <form>
-                {!Boolean(selectedCat) && (
+                {/* {!Boolean(selectedCat) && (
                   <div className="form-group">
                     <div className={`po_R overflow-hidden ${styles["search_P"]}`}>
                       <input
@@ -258,7 +258,7 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
                       </ul>
                     )}
                   </div>
-                )}
+                )} */}
                 {!!allCats?.length && !Boolean(categoriesAndSubListByName?.length) && (
                   <div className={`form-group ${styles["select_P"]}`}>
                     <label className="d-block text-center" htmlFor="selectCategory">

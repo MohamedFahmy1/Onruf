@@ -74,15 +74,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
   const applyCoupon = async () => {
     try {
       const res = await axios.get(process.env.NEXT_PUBLIC_API_URL + `/GetCouponByCode?couponCode=${couponCode}`)
-      const couponData = res?.data?.data
-      if (new Date(couponData.expiryDate) < new Date()) {
-        toast.error(
-          locale === "en"
-            ? "Coupon has expired please enter another valid coupon"
-            : "انتهت صلاحية الكوبون الرجاء ادخال كوبون أخر صالح",
-        )
-        return
-      }
+      const couponData = res?.data?.data.coupon
       setCouponData(couponData)
       toast.success(locale === "en" ? "Coupon applied successfully!" : "تم تطبيق الكوبون بنجاح")
       setProductPayload((prev) => ({
@@ -93,7 +85,13 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
         "ProductPaymentDetailsDto.TotalAmountAfterCoupon": totalCost - couponData.discountValue,
       }))
     } catch (err) {
-      toast.error(locale === "en" ? "Please enter correct coupon!" : "من فضلك ادخل الكوبون بشكل صحيح")
+      if (err.response.status === 400) {
+        const message =
+          locale === "en"
+            ? "Coupon has expired, please enter another valid coupon."
+            : "انتهت صلاحية الكوبون، الرجاء إدخال كوبون آخر صالح."
+        return toast.error(message)
+      } else toast.error(locale === "en" ? "Please enter correct coupon!" : "من فضلك ادخل الكوبون بشكل صحيح")
     }
   }
   useEffect(() => {
