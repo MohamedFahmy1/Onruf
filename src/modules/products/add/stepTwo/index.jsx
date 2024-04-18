@@ -129,12 +129,20 @@ const AddProductStepTwo = ({
       return toast.error(locale === "en" ? "Please enter purchasing price!" : "من فضلك ادخل سعر شراء المنتج")
     } else if (
       productPayload.IsAuctionEnabled &&
-      (!productPayload.AuctionStartPrice ||
-        !productPayload.AuctionMinimumPrice ||
-        !productPayload.AuctionNegotiatePrice ||
-        !productPayload.AuctionNegotiateForWhom)
+      (!productPayload.AuctionStartPrice || !productPayload.AuctionMinimumPrice)
     ) {
-      return toast.error(locale === "en" ? "Please enter all auction details!" : "من فضلك ادخل جميع بيانات المزاد")
+      return toast.error(
+        locale === "en"
+          ? "Please enter start price and minimum price!"
+          : "من فضلك ادخل سعر البداية وسعر الحد الادنى للمزاد",
+      )
+    } else if (
+      productPayload.SendOfferForAuction &&
+      (!productPayload.AuctionNegotiatePrice || !productPayload.AuctionNegotiateForWhom)
+    ) {
+      return toast.error(
+        locale === "en" ? "Please enter negotiation price and for whom!" : "!من فضلك ادخل سعر التفاوض ولمن",
+      )
     } else return true
   }
   const validateDurationAndShipping = () => {

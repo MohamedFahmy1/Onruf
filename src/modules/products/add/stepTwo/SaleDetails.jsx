@@ -37,14 +37,14 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
     if (productPayload.SendOfferForAuction === true) {
       return setProductPayload({
         ...productPayload,
-        SendOfferForAuction: !productPayload.SendOfferForAuction,
+        SendOfferForAuction: false,
         AuctionNegotiatePrice: null,
         AuctionNegotiateForWhom: null,
       })
     } else
       setProductPayload({
         ...productPayload,
-        SendOfferForAuction: !productPayload.SendOfferForAuction,
+        SendOfferForAuction: true,
       })
   }
 
@@ -257,7 +257,7 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                           role="switch"
                           id="flexSwitchCheckChecked"
                           checked={productPayload.SendOfferForAuction}
-                          onChange={() => handleSendNegotiationOffer()}
+                          onChange={handleSendNegotiationOffer}
                         />
                       </div>
                     </div>
