@@ -22,7 +22,7 @@ const MyPoints = () => {
   const handleTransferPointsToMoney = async () => {
     try {
       await axios.post(
-        process.env.REACT_APP_API_URL + "/TransferPointsToMoney",
+        "/TransferPointsToMoney",
         {
           params: { transactionPointsAmount: parseInt(points) },
         },

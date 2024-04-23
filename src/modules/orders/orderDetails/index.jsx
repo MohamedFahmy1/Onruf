@@ -27,7 +27,7 @@ export const OrderDetails = () => {
   const getOrderData = async (id) => {
     const {
       data: { data: orderData },
-    } = await axios.get(`${process.env.REACT_APP_API_URL}/GetOrderDetailsByOrderId`, {
+    } = await axios.get(`/GetOrderDetailsByOrderId`, {
       params: {
         orderId: id,
       },
@@ -38,7 +38,7 @@ export const OrderDetails = () => {
     const getBranchesData = async () => {
       const {
         data: { data: data },
-      } = await axios.get(`${process.env.REACT_APP_API_URL}/GetListBrancheByProviderId?lang=${locale}`)
+      } = await axios.get(`/GetListBrancheByProviderId?lang=${locale}`)
       let branches = data.map((item) => {
         return { branchName: item.name, branchId: item.id }
       })
@@ -50,7 +50,7 @@ export const OrderDetails = () => {
     const getListOrderStatusHistory = async () => {
       const {
         data: { data: data },
-      } = await axios.post(`${process.env.REACT_APP_API_URL}/ListOrderStatusHistory?orderId=${id}`)
+      } = await axios.post(`/ListOrderStatusHistory?orderId=${id}`)
       setOrderStatusHistory(data)
     }
     id && getListOrderStatusHistory()

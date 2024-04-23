@@ -44,7 +44,7 @@ const EditEmployee = () => {
 
   const handleEditEmployee = async ({ userName, mobileNumber, email, branchId }) => {
     try {
-      const result = await axios.post(process.env.REACT_APP_API_URL + "/AddEditBusinessAccountEmployee", {
+      const result = await axios.post("/AddEditBusinessAccountEmployee", {
         userName,
         mobileNumber,
         email,

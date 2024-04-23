@@ -11,9 +11,7 @@ const ChangeStatusModal = ({ openModal, setOpenModal, selectedOrder }) => {
   const changeOrderStatus = async (statusId) => {
     if (selectedOrder) {
       try {
-        await axios.post(
-          `${process.env.REACT_APP_API_URL}/ChangeOrderStatus?orderId=${selectedOrder?.orderId}&status=${statusId}`,
-        )
+        await axios.post(`/ChangeOrderStatus?orderId=${selectedOrder?.orderId}&status=${statusId}`)
         toast.success(locale === "en" ? "Order Status Updated Successfully!" : "!تم تغيير حالة المنتج بنجاح")
         setOpenModal(false)
       } catch (error) {

@@ -22,7 +22,7 @@ const Employees = () => {
 
   const handleFetchEmployees = async (pageIndex = 1, PageRowsCount = 10) => {
     try {
-      const { data } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllBusinessAccountEmployees", {
+      const { data } = await axios.get("/GetAllBusinessAccountEmployees", {
         params: {
           pageIndex,
           PageRowsCount,
@@ -36,7 +36,7 @@ const Employees = () => {
 
   const handleDeleteEmployee = async (employeeId) => {
     try {
-      const result = await axios.delete(process.env.REACT_APP_API_URL + "/DeleteBusinessAccountEmployee", {
+      const result = await axios.delete("/DeleteBusinessAccountEmployee", {
         params: { employeeId },
       })
       handleFetchEmployees(1)
@@ -49,8 +49,7 @@ const Employees = () => {
   const handleChangeEmployeeStatus = async (employeeId, isActive) => {
     try {
       const result = await axios.post(
-        process.env.REACT_APP_API_URL +
-          `/ChangeBusinessAccountEmployeeStatus?employeeId=${employeeId}&isActive=${isActive}`,
+        `/ChangeBusinessAccountEmployeeStatus?employeeId=${employeeId}&isActive=${isActive}`,
       )
       toast.success(locale === "en" ? "Employee data changed successfully!" : "تم تغيير بيانات الموظف")
     } catch (error) {

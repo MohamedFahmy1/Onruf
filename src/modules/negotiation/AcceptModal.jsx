@@ -14,9 +14,7 @@ const AcceptModal = ({ acceptModal, setAcceptModal, offerId, productId, getOffer
     if (offerExpireHours) {
       try {
         await axios.post(
-          `${
-            process.env.NEXT_PUBLIC_API_URL
-          }/AcceptRejectOffer?offerId=${offerId}&productId=${productId}&acceptOffer=${true}&OfferExpireHours=${offerExpireHours}`,
+          `/AcceptRejectOffer?offerId=${offerId}&productId=${productId}&acceptOffer=${true}&OfferExpireHours=${offerExpireHours}`,
         )
         toast.success(locale === "en" ? "Offer Sent Successfully!" : "تم ارسال العرض بنجاح")
         setAcceptModal(false)

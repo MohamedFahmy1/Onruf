@@ -35,7 +35,7 @@ const AddBankForm = ({ setShowAddAcc, setfetchNewData }) => {
       finalData.append("swiftCode", formData.swiftCode)
       finalData.append("bankName", formData.bankName)
       finalData.append("SaveForLaterUse", formData.SaveForLaterUse)
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/AddBankTransfer`, finalData)
+      await axios.post(`/AddBankTransfer`, finalData)
       toast.success(locale === "en" ? "Account has been added successfully!" : "تم اضافةالحساب بنجاح")
       setfetchNewData(true)
       setShowAddAcc(false)

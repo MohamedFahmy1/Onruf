@@ -58,7 +58,7 @@ const Users = () => {
     formData.append("nameEn", folder.folderName)
     formData.append("image", folder.folderImage)
     try {
-      await axios.post(process.env.REACT_APP_API_URL + "/AddFolder", formData)
+      await axios.post("/AddFolder", formData)
       toast.success(locale === "en" ? "A folder has been added successfully!" : "تم اضافة الملف الجديد بنجاح")
       setOpenFolderModal(false)
       fetchFolders()
@@ -82,7 +82,7 @@ const Users = () => {
     let msg = ""
     try {
       if (!id) return
-      const { message } = await axios.post(process.env.REACT_APP_API_URL + "/AddFolderUser", {
+      const { message } = await axios.post("/AddFolderUser", {
         folderId: id,
         userId: selectedUsersIds,
       })

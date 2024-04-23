@@ -54,7 +54,7 @@ const AddShippingCondition = ({
   }) => {
     try {
       // Wait for the API send response
-      await axios.post(process.env.REACT_APP_API_URL + "/AddEditShippingOptionsConditions", {
+      await axios.post("/AddEditShippingOptionsConditions", {
         shippingOptionsId,
         cashOnDeliveryFee: parseInt(cashOnDeliveryFee),
         measurableType: parseInt(measurableType),
@@ -83,7 +83,7 @@ const AddShippingCondition = ({
   const fetchRegionsByCountry = async () => {
     const {
       data: { data: regionList },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/ListRegionsByCountryId", {
+    } = await axios.get("/ListRegionsByCountryId", {
       params: { currentPage: 1, countriesIds: [watch("countries")], lang: "ar" },
     })
     setRegions(regionList)

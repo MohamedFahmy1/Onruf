@@ -76,7 +76,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     if (!id) {
       const {
         data: { data: prod },
-      } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/ListDidntSellProducts`)
+      } = await axios(`/ListDidntSellProducts`)
       setDidnotSellProducts(prod)
     }
   }, [id])
@@ -85,12 +85,12 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     if (id) {
       const {
         data: { data: getSingleFolder },
-      } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/GetFolderById?id=${id}&lang=${locale}`)
+      } = await axios(`/GetFolderById?id=${id}&lang=${locale}`)
       setProducts(getSingleFolder.listProduct)
     } else {
       const {
         data: { data },
-      } = await axios(process.env.NEXT_PUBLIC_API_URL + `/ListProductByBusinessAccountId`)
+      } = await axios(`/ListProductByBusinessAccountId`)
       setProducts(data)
     }
   }, [id, locale])
@@ -102,7 +102,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
           locale === "en" ? "Are you sure you want to delete this product ?" : "هل ترغب في مسح تلك المنتجات ؟",
         )
         if (!isDelete) return
-        await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/RemoveProduct?id=${productId}`)
+        await axios.delete(`/RemoveProduct?id=${productId}`)
         toast.success(locale === "en" ? "Products has been deleted successfully!" : "تم حذف المنتج بنجاح")
         getProductData()
         fetchDidntSell()
@@ -137,7 +137,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const handleChangeStatus = useCallback(
     async (id) => {
       try {
-        await axios.post(process.env.NEXT_PUBLIC_API_URL + `/ChangeStatusProduct?id=${id}`, {})
+        await axios.post(`/ChangeStatusProduct?id=${id}`, {})
         toast.success(locale === "en" ? "Product Status Changed Successfully!" : "تم تغيير حالة المنتج بنجاح")
         getProductData()
       } catch (err) {
@@ -154,7 +154,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         return toast.error(locale === "en" ? "Please put quantity more than 0" : "من فضلك ادخل كمية اكبر من 0")
       }
       const qtyApi = quantityValueInfinity ? "" : `&quantity=${quantityValue}`
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/ProductAdjustQuantity?productId=${idApi}${qtyApi}`)
+      await axios.post(`/ProductAdjustQuantity?productId=${idApi}${qtyApi}`)
       setOpenQuantityModal(false)
       toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
       getProductData()
@@ -168,7 +168,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       if (!priceValue && !discountDate)
         return toast.error(locale === "en" ? "Please Enter Missing Data!" : "من فضلك ادخل جميع البيانات")
       await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/ProductDiscount?productId=${
+        `/ProductDiscount?productId=${
           singleSelectedRow?.id || singleSelectedRow?.productId
         }&PriceDiscount=${priceValue}&discountEndDate=${discountDate}`,
         {},

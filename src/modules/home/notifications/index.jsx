@@ -17,7 +17,7 @@ const Notifications = () => {
     try {
       const {
         data: { data: notifications },
-      } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/ListNotifications?pageIndex=1&PageRowsCount=10`)
+      } = await axios.post(`/ListNotifications?pageIndex=1&PageRowsCount=10`)
       setNotificationsList(notifications)
     } catch (error) {
       Alerto(error)

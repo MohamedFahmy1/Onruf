@@ -42,9 +42,7 @@ function NegotiationOffers() {
     try {
       const {
         data: { data: offers },
-      } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/GetSaleProductsOffers?isSent=${selectedTab == 0 ? "false" : "true"}`,
-      )
+      } = await axios.post(`/GetSaleProductsOffers?isSent=${selectedTab == 0 ? "false" : "true"}`)
       setOffersData(offers)
     } catch (error) {
       Alerto(error)

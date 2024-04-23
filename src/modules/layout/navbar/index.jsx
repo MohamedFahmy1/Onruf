@@ -16,17 +16,18 @@ import { Skeleton } from "@mui/material"
 
 const Navbar = () => {
   const [toggleLangMenu, setToggleLangMenu] = useState(false)
-  const { locale, asPath } = useRouter()
+  const { locale, asPath, push } = useRouter()
   const [toggleBusinessAccountList, setToggleBusinessAccountList] = useState()
   const [businessAccountList, setBusinessAccountList] = useState([])
   const [userImage, setUserImage] = useState()
   const [userName, setUserName] = useState()
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
+  const deviceId = useSelector((state) => state.id)
   const dropdownRef = useRef(null)
 
   const getAllBuisnessAccounts = async (id) => {
     try {
-      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/GatAllBusinessAccounts`)
+      const { data } = await axios.get(`/GatAllBusinessAccounts`)
       setBusinessAccountList(data.data)
     } catch (error) {
       Alerto(error)
@@ -34,7 +35,7 @@ const Navbar = () => {
   }
   const handleSendCurrentLang = async (lang) => {
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/ChangeLanguage?language=${lang}`)
+      await axios.post(`/ChangeLanguage?language=${lang}`)
     } catch (error) {
       Alerto(error)
     }
@@ -45,6 +46,21 @@ const Navbar = () => {
     setUserImage(`${account[0]?.businessAccountImage}`)
   }, [buisnessAccountId, businessAccountList])
 
+  const handleLogout = async () => {
+    try {
+      await axios.post("/LogoutWebsite", {
+        params: { deviceId: deviceId },
+      })
+      push(process.env.NEXT_PUBLIC_WEBSITE)
+    } catch (error) {
+      Alerto(error)
+    }
+  }
+
+  const onClick = () => {
+    setToggleBusinessAccountList(!toggleBusinessAccountList)
+  }
+
   useEffect(() => {
     buisnessAccountId && getAllBuisnessAccounts()
   }, [locale, buisnessAccountId])
@@ -53,9 +69,6 @@ const Navbar = () => {
     businessAccountList.length > 0 && accountData()
   }, [businessAccountList, locale, accountData])
 
-  const onClick = () => {
-    setToggleBusinessAccountList(!toggleBusinessAccountList)
-  }
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -67,6 +80,7 @@ const Navbar = () => {
       document.removeEventListener("mousedown", handleClickOutside)
     }
   }, [])
+
   return (
     <header id="header">
       <div className="d-flex align-items-center flex-grow-1">
@@ -95,11 +109,9 @@ const Navbar = () => {
               </button>
             </div>
           </div>
-          <Link href={process.env.NEXT_PUBLIC_WEBSITE}>
-            <button className="close_" aria-label="close Business Account">
-              <AiOutlinePoweroff />
-            </button>
-          </Link>
+          <button className="close_" aria-label="close Business Account" onClick={handleLogout}>
+            <AiOutlinePoweroff />
+          </button>
           {toggleBusinessAccountList && (
             <BusinessAccountList
               businessAccountList={businessAccountList}

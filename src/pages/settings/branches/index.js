@@ -24,7 +24,7 @@ export default BranchesPage
 //   try {
 //     const {
 //       data: { data },
-//     } = await axios(`${process.env.REACT_APP_API_URL}/GetListBranche?lang=${locale}`)
+//     } = await axios(`/GetListBranche?lang=${locale}`)
 //     getBranches = data
 //   } catch (error) {
 //     console.error({ error }, "getBranches query")

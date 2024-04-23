@@ -17,7 +17,7 @@ const Shipping = () => {
   const fetchShippingOptions = async () => {
     const {
       data: { data: shippingOptions },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllShippingOptions", {
+    } = await axios.get("/GetAllShippingOptions", {
       params: { businessAccountId: buisnessId, lang: "ar" },
     })
 

@@ -34,7 +34,7 @@ const PaymentCards = ({ bankTransfers }) => {
   const fetchBankTransfer = async () => {
     const {
       data: { data },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/ListBankTransfers", {
+    } = await axios.get("/ListBankTransfers", {
       params: {
         currentPage: 1,
       },
@@ -51,7 +51,7 @@ const PaymentCards = ({ bankTransfers }) => {
 
   const handleDeleteBankTransfer = async (bankId) => {
     try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/RemoveBankTransfer`, { params: { id: bankId } })
+      await axios.delete(`/RemoveBankTransfer`, { params: { id: bankId } })
       setBankTransferData([...bankTransferData.filter((b) => b.id !== bankId)])
       toast.success(locale === "en" ? "Bank transfer has been deleted successfully!" : "تم مسح الحساب البنكي بنجاح")
       fetchBankTransfer()
@@ -71,7 +71,7 @@ const PaymentCards = ({ bankTransfers }) => {
         for (let key in values) {
           formData.append(key, values[key])
         }
-        await axios.put(process.env.REACT_APP_API_URL + "/EditBankTransfer", formData)
+        await axios.put("/EditBankTransfer", formData)
         setBankTransferData([...bankTransferData?.filter((b) => b.id !== id), { ...values }])
         setOpenModal(false)
         setId(undefined)
@@ -83,7 +83,7 @@ const PaymentCards = ({ bankTransfers }) => {
           for (let key in values) {
             formData.append(key, values[key])
           }
-          await axios.post(process.env.REACT_APP_API_URL + "/AddBankTransfer", formData)
+          await axios.post("/AddBankTransfer", formData)
           setBankTransferData([...bankTransferData, { ...values }])
           setOpenModal(false)
           toast.success(locale === "en" ? "Bank transfer has been added successfully!" : "تم اضافة الحساب البنكي بنجاح")

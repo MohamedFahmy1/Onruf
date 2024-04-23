@@ -46,7 +46,7 @@ const SendOfferModal = ({ sendOfferModal, setSendOfferModal, id }) => {
       userIds: selectedUsers,
     }
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/AddProductBidOffers`, offerData)
+      await axios.post(`/AddProductBidOffers`, offerData)
       toast.success(locale === "en" ? "Offer Sent Successfully!" : "تم ارسال العروض بنجاح")
       setSendOfferModal(false)
     } catch (error) {

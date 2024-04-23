@@ -11,7 +11,7 @@ export const useFetch = (apiPath, dynamicPage) => {
   } = useRouter()
   const fetchData = useCallback(async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}${apiPath}`)
+      const response = await axios.get(`${apiPath}`)
       setData(response.data.data)
     } catch (error) {
       Alerto(error)

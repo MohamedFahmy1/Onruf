@@ -25,7 +25,7 @@ const AdDetails = ({ productPayload, setProductPayload, validateAdDetails, setEv
       try {
         const {
           data: { data },
-        } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
+        } = await axios(`/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
         setState(data)
       } catch (e) {
         Alerto(e)

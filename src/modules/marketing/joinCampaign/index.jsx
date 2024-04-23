@@ -81,9 +81,7 @@ const JoinCampaign = () => {
   const handleLoadProducts = async () => {
     const {
       data: { data: productsList },
-    } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/ListProductByBusinessAccountId?currentPage=1&maxRows=100&lang=${locale}`,
-    )
+    } = await axios.get(`/ListProductByBusinessAccountId?currentPage=1&maxRows=100&lang=${locale}`)
     setProducts([...productsList])
     const productsOptionsList = productsList.map((product) => {
       return {
@@ -126,10 +124,7 @@ const JoinCampaign = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const joinOffer = await axios.post(
-      `${process.env.REACT_APP_API_URL}/BusinessAccountSubscribeInCoupon`,
-      offerPayload,
-    )
+    const joinOffer = await axios.post(`/BusinessAccountSubscribeInCoupon`, offerPayload)
     const { data: joinOfferRes } = joinOffer
     if (joinOfferRes.status_code === 200) {
       toast.success(locale === "en" ? "You Subscribed To Coupon Successfully!" : "تم الاشتراك بالكوبون بنجاح")
@@ -141,15 +136,13 @@ const JoinCampaign = () => {
     ;(async () => {
       const {
         data: { data: categories },
-      } = await axios.get(`${process.env.REACT_APP_API_URL}/ListAllCategory?currentPage=1`)
+      } = await axios.get(`/ListAllCategory?currentPage=1`)
       setCategories(categories)
       const {
         data: {
           data: { fileList: folders },
         },
-      } = await axios.get(
-        `${process.env.REACT_APP_API_URL}/ListFolder?type=1&pageIndex=1&PageRowsCount=10&lang=${locale}`,
-      )
+      } = await axios.get(`/ListFolder?type=1&pageIndex=1&PageRowsCount=10&lang=${locale}`)
       setFolders(folders)
     })()
   }, [locale])

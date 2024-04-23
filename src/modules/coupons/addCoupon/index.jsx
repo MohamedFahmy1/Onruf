@@ -108,7 +108,7 @@ const AddCoupon = () => {
   const handleLoadProducts = async (e) => {
     const {
       data: { data: productsList },
-    } = await axios.get(`${process.env.REACT_APP_API_URL}/ListProductByBusinessAccountId?lang=${locale}`)
+    } = await axios.get(`/ListProductByBusinessAccountId?lang=${locale}`)
     setProducts([...productsList])
     const productsOptionsList = productsList.map((product) => {
       return {
@@ -175,7 +175,7 @@ const AddCoupon = () => {
       }
     }
 
-    const submitCoupon = await axios.post(process.env.REACT_APP_API_URL + "/AddEditCoupon", form_data)
+    const submitCoupon = await axios.post("/AddEditCoupon", form_data)
     const { data: submitCouponRes } = submitCoupon
 
     if (submitCouponRes.status_code === 200) {
@@ -188,15 +188,13 @@ const AddCoupon = () => {
     ;(async () => {
       const {
         data: { data: categories },
-      } = await axios.get(`${process.env.REACT_APP_API_URL}/ListAllCategory?currentPage=1`)
+      } = await axios.get(`/ListAllCategory?currentPage=1`)
       setCategories(categories)
       const {
         data: {
           data: { fileList: folders },
         },
-      } = await axios.get(
-        `${process.env.REACT_APP_API_URL}/ListFolder?type=1&pageIndex=1&PageRowsCount=10&lang=${locale}`,
-      )
+      } = await axios.get(`/ListFolder?type=1&pageIndex=1&PageRowsCount=10&lang=${locale}`)
       setFolders(folders)
     })()
   }, [locale])

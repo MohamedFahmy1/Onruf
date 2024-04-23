@@ -43,16 +43,16 @@ export async function getServerSideProps({ req, locale }) {
       "Application-Source": "BusinessAccount",
     }
     const [salesResponse, listProductResponse, listNewOrderResponse, getListUserResponse] = await Promise.all([
-      axios.get(`${process.env.NEXT_PUBLIC_API_URL}/SalesPrice`, {
+      axios.get(`/SalesPrice`, {
         headers: mainHeader,
       }),
-      axios.get(`${process.env.NEXT_PUBLIC_API_URL}/ListProductForProvider`, {
+      axios.get(`/ListProductForProvider`, {
         headers: mainHeader,
       }),
-      axios.get(`${process.env.NEXT_PUBLIC_API_URL}/ListNewOrderForProvider?lang=ar`, {
+      axios.get(`/ListNewOrderForProvider?lang=ar`, {
         headers: mainHeader,
       }),
-      axios.get(`${process.env.NEXT_PUBLIC_API_URL}/GetListUserForProvider`, {
+      axios.get(`/GetListUserForProvider`, {
         headers: mainHeader,
       }),
     ])

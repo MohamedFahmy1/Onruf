@@ -13,9 +13,7 @@ const RefuseModal = ({ refuseModal, setRefuseModal, offerId, productId, getOffer
     if (refuseReason) {
       try {
         await axios.post(
-          `${
-            process.env.NEXT_PUBLIC_API_URL
-          }/AcceptRejectOffer?offerId=${offerId}&productId=${productId}&acceptOffer=${false}&refuseReason=${refuseReason}&OfferExpireHours=${0}`,
+          `/AcceptRejectOffer?offerId=${offerId}&productId=${productId}&acceptOffer=${false}&refuseReason=${refuseReason}&OfferExpireHours=${0}`,
         )
         toast.success(locale === "en" ? "Offer rejected Successfully!" : "تم رفض العرض ")
         setRefuseModal(false)

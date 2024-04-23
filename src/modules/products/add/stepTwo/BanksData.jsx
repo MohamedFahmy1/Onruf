@@ -43,7 +43,7 @@ const BanksData = ({ data, setShowBanksData, productPayload, setProductPayload }
     if (fetchNewData) {
       const fetchBanksData = async () => {
         try {
-          const { data: data } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/BankTransfersList`)
+          const { data: data } = await axios(`/BankTransfersList`)
           const { data: banksData } = data
           setuserData(banksData)
         } catch (e) {

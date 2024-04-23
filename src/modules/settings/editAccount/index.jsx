@@ -54,7 +54,7 @@ const EditBussinessAccount = () => {
   const getAccountData = useCallback(async () => {
     const {
       data: { data: accountData },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetBusinessAccountById", {
+    } = await axios.get("/GetBusinessAccountById", {
       params: { businessAccountId: buisnessAccountId },
     })
     setAccountData(accountData)
@@ -63,9 +63,7 @@ const EditBussinessAccount = () => {
 
   const fetchCountries = useCallback(async () => {
     try {
-      const { data: countriesData } = await axios(
-        process.env.NEXT_PUBLIC_API_URL + `/ListCountries?lang=${locale}&currentPage=1`,
-      )
+      const { data: countriesData } = await axios(`/ListCountries?lang=${locale}&currentPage=1`)
       const { data: countriesList } = countriesData
       setCountries(countriesList)
     } catch (e) {
@@ -76,9 +74,7 @@ const EditBussinessAccount = () => {
   const fetchRegions = useCallback(
     async (id) => {
       try {
-        const { data: data } = await axios(
-          process.env.NEXT_PUBLIC_API_URL + `/ListRegionsByCountryId?countriesIds=${id}&lang=${locale}&currentPage=1`,
-        )
+        const { data: data } = await axios(`/ListRegionsByCountryId?countriesIds=${id}&lang=${locale}&currentPage=1`)
         const { data: regions } = data
         setRegions(regions)
       } catch (e) {
@@ -91,9 +87,7 @@ const EditBussinessAccount = () => {
   const fetchNeighbourhoods = useCallback(
     async (id) => {
       try {
-        const { data: data } = await axios(
-          process.env.NEXT_PUBLIC_API_URL + `/ListNeighborhoodByRegionId?regionsIds=${id}&lang=${locale}&currentPage=1`,
-        )
+        const { data: data } = await axios(`/ListNeighborhoodByRegionId?regionsIds=${id}&lang=${locale}&currentPage=1`)
         const { data: neighbourhood } = data
         setNeighbourhoods(neighbourhood)
       } catch (e) {
@@ -154,7 +148,7 @@ const EditBussinessAccount = () => {
     formData.append("id", accountData?.id)
     formData.append("BusinessAccountNameEn", values.businessAccountName)
     try {
-      const { data } = await axios.post(process.env.REACT_APP_API_URL + "/AddEditBusinessAccount", formData, {
+      const { data } = await axios.post("/AddEditBusinessAccount", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

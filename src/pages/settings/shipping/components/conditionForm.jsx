@@ -44,7 +44,7 @@ function ConditionForm({ fetchedCountries, products, conditions, setAddCondition
   const fetchRegionsByCountry = async () => {
     const {
       data: { data: regionList },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/ListRegionsByCountryId", {
+    } = await axios.get("/ListRegionsByCountryId", {
       params: { currentPage: 1, countriesIds: [watch("countries")], lang: "ar" },
     })
     setRegions(regionList)
@@ -67,7 +67,7 @@ function ConditionForm({ fetchedCountries, products, conditions, setAddCondition
     try {
       // Wait for the API send response
       await axios.post(
-        process.env.REACT_APP_API_URL + "/AddEditShippingOptionsConditions",
+        "/AddEditShippingOptionsConditions",
         {
           id,
           shippingOptionsId,
@@ -98,7 +98,7 @@ function ConditionForm({ fetchedCountries, products, conditions, setAddCondition
   const handleDeleteCondition = async (condID, conditionIndex) => {
     try {
       // Wait for the API send response
-      await axios.delete(process.env.REACT_APP_API_URL + "/DeleteShippingOptionsConditions", {
+      await axios.delete("/DeleteShippingOptionsConditions", {
         params: { shippingOptionsConditionsId: condID },
       })
       toast.success("Condition Deleted!")

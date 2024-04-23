@@ -44,7 +44,7 @@ const Wallet = () => {
       return toast.error(locale === "en" ? "Not enough wallet balance!" : "لا يوجد رصيد كافي بالمحفظة")
     }
     try {
-      const result = await axios.post(process.env.REACT_APP_API_URL + "/AddWalletTransaction", formData)
+      const result = await axios.post("/AddWalletTransaction", formData)
       toast.success(locale === "en" ? "Transacation Done!" : "تمت العملية بنجاح")
       fetchWalletInfo()
     } catch (e) {

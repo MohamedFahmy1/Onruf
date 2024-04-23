@@ -20,13 +20,13 @@ const Reviews = () => {
 
   useEffect(() => {
     const fetchReviews = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/ListProviderProductsRates`, {
+      const response = await axios.get(`/ListProviderProductsRates`, {
         params: { pageIndex: 1 },
       })
       setItems((items) => ({ ...items, ratings: response.data.data }))
     }
     const fetchQuestions = async () => {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/ListQuestionsForProductOwnerToReplyQuestion`)
+      const response = await axios.get(`/ListQuestionsForProductOwnerToReplyQuestion`)
       setItems((items) => ({ ...items, questions: response.data.data }))
     }
     fetchReviews()

@@ -20,7 +20,7 @@ const ChangeBranchModal = ({
   } = useRouter()
   const changeOrderBranch = async (branchId) => {
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/ChangeMultiOrderBranch?branchId=${branchId}`, ordersId, {
+      await axios.post(`/ChangeMultiOrderBranch?branchId=${branchId}`, ordersId, {
         headers: {
           "content-type": "application/json",
         },

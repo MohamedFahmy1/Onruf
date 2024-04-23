@@ -29,7 +29,7 @@ const Coupons = () => {
       try {
         const formData = new FormData()
         formData.append("id", couponId)
-        const data = await axios.patch(`${process.env.REACT_APP_API_URL}/ChangeCouponStatus?couponId=${couponId}`, null)
+        const data = await axios.patch(`/ChangeCouponStatus?couponId=${couponId}`, null)
         toast.success(locale === "en" ? "Coupon has been updated successfully!" : "تم تعديل الكوبون بنجاح")
         getCopounsList()
       } catch (err) {
@@ -46,7 +46,7 @@ const Coupons = () => {
           locale === "en" ? "Are you sure you want to delete this Coupon ?" : "هل ترغب في مسح الكوبون ؟",
         )
         if (!isDelete) return
-        await axios.post(process.env.REACT_APP_API_URL + `/DeleteCoupon?couponId=${id}`, null)
+        await axios.post(`/DeleteCoupon?couponId=${id}`, null)
         toast.success(locale === "en" ? "Coupon has been deleted successfully!" : "تم حذف الكوبون بنجاح")
         getCopounsList()
       } catch (error) {
@@ -57,9 +57,7 @@ const Coupons = () => {
   )
 
   const getCopounsList = async () => {
-    const data = await axios.get(
-      `${process.env.REACT_APP_API_URL}/ListBusinessAccountCoupons?pageIndex=1&PageRowsCount=50`,
-    )
+    const data = await axios.get(`/ListBusinessAccountCoupons?pageIndex=1&PageRowsCount=50`)
     setCoupons(data.data.data)
   }
 

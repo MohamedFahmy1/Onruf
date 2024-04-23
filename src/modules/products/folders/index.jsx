@@ -41,7 +41,7 @@ const Folders = () => {
       formData.append(key, values[key])
     }
     try {
-      await axios.put(process.env.NEXT_PUBLIC_API_URL + "/EditFolder", formData)
+      await axios.put("/EditFolder", formData)
       toast.success(locale === "en" ? "A folder has been added successfully!" : "تم تعديل الملف بنجاح")
       setOpenFolderModal(false)
     } catch (error) {
@@ -50,7 +50,7 @@ const Folders = () => {
   }
   const deleteFolder = async (folderId) => {
     alert("Delete this folder")
-    await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/RemoveFolder?id=${folderId}`)
+    await axios.delete(`/RemoveFolder?id=${folderId}`)
     toast.success(locale === "en" ? "A folder has been deleted successfully!" : "تم مسح الملف بنجاح")
     setOpenFolderModal(false)
     dispatch(getFolderList(locale))
@@ -64,10 +64,10 @@ const Folders = () => {
     formData.append("nameEn", folderName)
     formData.append("image", folderImage)
     try {
-      await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddFolder", formData)
+      await axios.post("/AddFolder", formData)
       const {
         data: { data },
-      } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/ListFolder?currentPage=${page}&lang=${locale}&type=1`)
+      } = await axios(`/ListFolder?currentPage=${page}&lang=${locale}&type=1`)
       toast.success(locale === "en" ? "A folder has been added successfully!" : "تم اضافة الملف الجديد بنجاح")
       dispatch(getFolderList(data))
       setOpenFolderModal(false)

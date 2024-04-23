@@ -7,13 +7,11 @@ import t from "../../../../translations.json"
 import SimpleSnackbar from "../../../../common/SnackBar"
 import { handleFormErrors } from "../../../../common/functions"
 import { toast } from "react-toastify"
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux"
 
-
-const AddShippingOption = ({ setAddConditionModal , fetchShippingOptions }) => {
+const AddShippingOption = ({ setAddConditionModal, fetchShippingOptions }) => {
   const [image, setImage] = useState(null)
-  const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId);
-
+  const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
 
   // Next Router
   const router = useRouter()
@@ -33,16 +31,13 @@ const AddShippingOption = ({ setAddConditionModal , fetchShippingOptions }) => {
     try {
       const formData = new FormData()
       for (const key in values) {
-       formData.append(key,values[key])
-     }
+        formData.append(key, values[key])
+      }
       formData.append("file", image)
-      formData.append("BusinessAccountId",buisnessAccountId)
-      formData.append("ShippingOptionTypeId",1)
-      formData.append("ShippingOptionImage",image)
-      const result = await axios.post(
-        process.env.REACT_APP_API_URL + "/AddEditShippingOptions",
-        formData
-      )
+      formData.append("BusinessAccountId", buisnessAccountId)
+      formData.append("ShippingOptionTypeId", 1)
+      formData.append("ShippingOptionImage", image)
+      const result = await axios.post("/AddEditShippingOptions", formData)
       setAddConditionModal(false)
       fetchShippingOptions()
       router.push({ pathname: "/settings/shipping" })

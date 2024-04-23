@@ -27,7 +27,7 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
   const fetchCategories = useCallback(async () => {
     const {
       data: { data: cats },
-    } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/ListCategoryAndSub?lang=${locale}&currentPage=1`)
+    } = await axios(`/ListCategoryAndSub?lang=${locale}&currentPage=1`)
     setAllCats(cats)
   }, [locale])
 
@@ -139,10 +139,7 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
     try {
       const {
         data: { data: filteredCategories },
-      } = await axios(
-        `${process.env.NEXT_PUBLIC_API_URL}/GetListCategoriesByProductName?productName=${catSearchInputVal}&lang=${locale}`,
-        { signal },
-      )
+      } = await axios(`/GetListCategoriesByProductName?productName=${catSearchInputVal}&lang=${locale}`, { signal })
       !filteredCategories?.[0] && toast.error(locale === "en" ? "No Categories Found" : "لم يتم العثور على تصنيفات")
       setCategoriesAndSubListByName(filteredCategories)
       setSelectedCatId(filteredCategories[0]?.productCategoryId)

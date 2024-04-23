@@ -21,7 +21,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
   // const [openEditModal, setOpenEditModal] = useState(false)
   // Handle Delete a review
   // const handleDeleteReview = async (id) => {
-  //   const result = await axios.delete(process.env.REACT_APP_API_URL + "/RemoveRateProduct", {
+  //   const result = await axios.delete( "/RemoveRateProduct", {
   //     params: {
   //       id,
   //     },
@@ -31,7 +31,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
 
   const handleShareReview = async (id) => {
     try {
-      const result = await axios.post(process.env.REACT_APP_API_URL + `/ShareRate?id=${id}`)
+      const result = await axios.post(`/ShareRate?id=${id}`)
       toast.success(locale === "en" ? "Rating share status successfully changed!" : "!تم تغيير حالة نشر التقييم")
       push({ pathname: "/reviews", query: { tab: "ratings" } })
     } catch (error) {
@@ -43,7 +43,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
   const handleReplyReview = async (id) => {
     try {
       await axios.post(
-        process.env.REACT_APP_API_URL + `/ReplyToRate`,
+        `/ReplyToRate`,
         {
           rateId: id,
           userId: buisnessAccountId,
@@ -62,7 +62,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
   }
   // Handle Edit a review
   // const handleEditReview = async (comment, rate) => {
-  //   const result = await axios.put(process.env.REACT_APP_API_URL + "/EditRateProduct", { comment, rate, id })
+  //   const result = await axios.put( "/EditRateProduct", { comment, rate, id })
   //   setOpenEditModal(false)
   //   push({ pathname: "/reviews", query: { tab: "ratings" } })
   // }

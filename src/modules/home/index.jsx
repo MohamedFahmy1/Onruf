@@ -22,7 +22,7 @@ const Home = ({ sales: s, ListProduct, ListNewOrder, GetListUser }) => {
     try {
       const {
         data: { data },
-      } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/SalesPrice`)
+      } = await axios.get(`/SalesPrice`)
       setSales(data)
     } catch (error) {
       Alerto(error)
@@ -33,7 +33,7 @@ const Home = ({ sales: s, ListProduct, ListNewOrder, GetListUser }) => {
     try {
       const {
         data: { data: products },
-      } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/ListProductForProvider`)
+      } = await axios.get(`/ListProductForProvider`)
       setProducts(products)
     } catch (error) {
       Alerto(error)
@@ -44,7 +44,7 @@ const Home = ({ sales: s, ListProduct, ListNewOrder, GetListUser }) => {
     try {
       const {
         data: { data: orders },
-      } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/ListNewOrderForProvider?lang=${locale}`)
+      } = await axios(`/ListNewOrderForProvider?lang=${locale}`)
       setOrders(orders)
     } catch (error) {
       Alerto(error)
@@ -55,7 +55,7 @@ const Home = ({ sales: s, ListProduct, ListNewOrder, GetListUser }) => {
     try {
       const {
         data: { data: clients },
-      } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/GetListUserForProvider`)
+      } = await axios(`/GetListUserForProvider`)
       setClients(clients)
     } catch (error) {
       Alerto(error)

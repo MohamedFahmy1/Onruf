@@ -72,9 +72,7 @@ const EditProduct = () => {
       try {
         if (query.id) {
           const currentLocale = localeRef.current
-          const { data } = await axios(
-            `${process.env.NEXT_PUBLIC_API_URL}/GetProductById?id=${query.id}&lang=${currentLocale}`,
-          )
+          const { data } = await axios(`/GetProductById?id=${query.id}&lang=${currentLocale}`)
           const productData = data.data
           setSelectedCatProps({ ...productData.categoryDto })
           setProductPayload((prev) => ({

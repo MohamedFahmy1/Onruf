@@ -41,7 +41,7 @@ const AddBranch = () => {
   const getCountries = useCallback(async () => {
     const {
       data: { data: countries },
-    } = await axios(process.env.REACT_APP_API_URL + `/ListCountries?lang=${locale}`)
+    } = await axios(`/ListCountries?lang=${locale}`)
     setCountries(countries)
   }, [locale])
 
@@ -50,7 +50,7 @@ const AddBranch = () => {
       try {
         const {
           data: { data },
-        } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
+        } = await axios(`/${url}?${params}=${id}&currentPage=1&lang=${locale}`)
         setState(data)
       } catch (e) {
         Alerto(e)
@@ -67,7 +67,7 @@ const AddBranch = () => {
     try {
       const {
         data: { data },
-      } = await axios(`${process.env.REACT_APP_API_URL}/GetBrancheById?id=${id}&lang=${locale}`)
+      } = await axios(`/GetBrancheById?id=${id}&lang=${locale}`)
       handleFetchNeighbourhoodsOrRegions(
         "ListNeighborhoodByRegionId",
         "regionsIds",
@@ -138,10 +138,10 @@ const AddBranch = () => {
         formData.append(key, values[key])
       }
       if (id) {
-        await axios.put(process.env.REACT_APP_API_URL + "/EditBranche", formData)
+        await axios.put("/EditBranche", formData)
         toast.success(locale === "en" ? "Branch has been edited successfully!" : "تم تعديل الفرع بنجاح")
       } else {
-        await axios.post(process.env.REACT_APP_API_URL + "/AddBranche", formData)
+        await axios.post("/AddBranche", formData)
         toast.success(locale === "en" ? "Branch has been created successfully!" : "تم انشاء الفرع بنجاح")
       }
       push("/settings/branches")

@@ -29,7 +29,7 @@ const SingleFolder = () => {
     if (!selectedUsersIds?.length)
       return toast.warning(locale === "en" ? "No user was selected!" : "من فضلك قم بأضافة المنتجات")
     try {
-      await axios.delete(process.env.REACT_APP_API_URL + `/RemoveListUsersFolder`, {
+      await axios.delete(`/RemoveListUsersFolder`, {
         data: {
           folderId: folderId,
           usersIds: selectedUsersIds,

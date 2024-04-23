@@ -24,7 +24,7 @@ const Branches = ({ branches: b = [] }) => {
     try {
       const {
         data: { data },
-      } = await axios(`${process.env.REACT_APP_API_URL}/GetListBranche?lang=${locale}`)
+      } = await axios(`/GetListBranche?lang=${locale}`)
       setAllBranches(data)
       setBranches(data.filter((branch) => branch?.isActive))
     } catch (error) {
@@ -56,11 +56,11 @@ const Branches = ({ branches: b = [] }) => {
           formData.append(key, value[key])
         }
         if (id) {
-          await axios.put(process.env.REACT_APP_API_URL + "/EditBranche", formData)
+          await axios.put("/EditBranche", formData)
           toast.success(locale === "en" ? "Branch has been edited successfully!" : "تم تعديل الفرع بنجاح")
           const {
             data: { data },
-          } = await axios(`${process.env.REACT_APP_API_URL}/GetListBranche?lang=${locale}`)
+          } = await axios(`/GetListBranche?lang=${locale}`)
           setBranches(data.filter((branch) => branch?.isActive !== isActive))
           setAllBranches(data)
         }
@@ -74,7 +74,7 @@ const Branches = ({ branches: b = [] }) => {
   const handleDeleteBranch = useCallback(
     async (id) => {
       try {
-        await axios.delete(`${process.env.REACT_APP_API_URL}/RemoveBranche?id=${id}`)
+        await axios.delete(`/RemoveBranche?id=${id}`)
         toast.success(locale === "en" ? "Branch has been deleted successfully!" : "تم مسح الفرع بنجاح")
         setBranches((prev) => prev.filter((branch) => branch?.id !== id))
       } catch (error) {

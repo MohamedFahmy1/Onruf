@@ -53,7 +53,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
   const taxValue = (totalCost * (12 / 100)).toFixed(2)
 
   const getShippingOptions = useCallback(async () => {
-    const data = await axios.get(process.env.NEXT_PUBLIC_API_URL + `/GetAllShippingOptions`)
+    const data = await axios.get(`/GetAllShippingOptions`)
     const shippingNames = (data?.data?.data).filter((item) => productFullData.ShippingOptions.includes(item.id))
     setShippingOptions(shippingNames)
   }, [productFullData.ShippingOptions])
@@ -61,10 +61,9 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
   const getPackage = useCallback(async () => {
     if (productFullData.pakatId || productFullData["ProductPaymentDetailsDto.AdditionalPakatId"]) {
       const data = await axios.get(
-        process.env.NEXT_PUBLIC_API_URL +
-          `/GetPakaById?Pakatid=${
-            productFullData.pakatId || productFullData["ProductPaymentDetailsDto.AdditionalPakatId"]
-          }
+        `/GetPakaById?Pakatid=${
+          productFullData.pakatId || productFullData["ProductPaymentDetailsDto.AdditionalPakatId"]
+        }
       `,
       )
       setPackageDetails(data?.data?.data)
@@ -73,7 +72,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
 
   const applyCoupon = async () => {
     try {
-      const res = await axios.get(process.env.NEXT_PUBLIC_API_URL + `/GetCouponByCode?couponCode=${couponCode}`)
+      const res = await axios.get(`/GetCouponByCode?couponCode=${couponCode}`)
       const couponData = res?.data?.data.coupon
       setCouponData(couponData)
       toast.success(locale === "en" ? "Coupon applied successfully!" : "تم تطبيق الكوبون بنجاح")
@@ -141,7 +140,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
     }
     if (pathname.includes("add")) {
       try {
-        await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddProduct", formData, multiFormData)
+        await axios.post("/AddProduct", formData, multiFormData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
         push(`/${locale}/products`)
       } catch (error) {
@@ -153,7 +152,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       }
     } else {
       try {
-        await axios.post(process.env.NEXT_PUBLIC_API_URL + "/EditProduct", formData, multiFormData)
+        await axios.post("/EditProduct", formData, multiFormData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
         push(`/${locale}/products`)
       } catch (error) {

@@ -23,6 +23,7 @@ export const AppWrapper = ({ children }) => {
     }
   }, [dispatch, Token, buisnessAccountId, providerId])
 
+  axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
   axios.defaults.headers.common["Authorization"] = Token
   axios.defaults.headers.common["Provider-Id"] = providerId
   axios.defaults.headers.common["Business-Account-Id"] = buisnessAccountId

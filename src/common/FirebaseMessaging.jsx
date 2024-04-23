@@ -20,7 +20,7 @@ const FirebaseMessaging = () => {
       if (token && buisnessAccountId) {
         // Send token to back-end
         await axios(
-          `${process.env.NEXT_PUBLIC_API_URL}/ChangeAccount?businessAccountId=${buisnessAccountId}&deviceId=${token}&deviceType=BusinessAccount`,
+          `/ChangeAccount?businessAccountId=${buisnessAccountId}&deviceId=${token}&deviceType=BusinessAccount`,
         )
       }
     }

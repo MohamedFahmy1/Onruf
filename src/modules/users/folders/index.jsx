@@ -37,14 +37,14 @@ const UsersFolders = () => {
     for (const key in values) {
       formData.append(key, values[key])
     }
-    await axios.put(process.env.REACT_APP_API_URL + "/EditFolder", formData)
+    await axios.put("/EditFolder", formData)
     toast.success(locale === "en" ? "A folder has been added successfully!" : "تم تعديل الملف بنجاح")
     setOpenFolderModal(false)
   }
 
   const deleteFolder = async (folderId) => {
     alert("Delete this folder")
-    await axios.delete(process.env.REACT_APP_API_URL + `/RemoveFolder?id=${folderId}`)
+    await axios.delete(`/RemoveFolder?id=${folderId}`)
     toast.success(locale === "en" ? "A folder has been added successfully!" : "تم مسح الملف بنجاح")
     setOpenFolderModal(false)
     getUserFolders()
@@ -58,10 +58,10 @@ const UsersFolders = () => {
     formData.append("nameEn", folderName)
     formData.append("image", folderImage)
     try {
-      await axios.post(process.env.REACT_APP_API_URL + "/AddFolder", formData).then((res) => {})
+      await axios.post("/AddFolder", formData).then((res) => {})
       toast.success(locale === "en" ? "A folder has been added successfully!" : "تم اضافة الملف الجديد بنجاح")
       setOpenFolderModal(false)
-      await axios.get(`${process.env.REACT_APP_API_URL}/ListFolder?type=2&pageIndex=1&PageRowsCount=10&lang=${locale}`)
+      await axios.get(`/ListFolder?type=2&pageIndex=1&PageRowsCount=10&lang=${locale}`)
     } catch (error) {
       Alerto(error)
     }

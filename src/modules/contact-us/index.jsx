@@ -30,7 +30,7 @@ const ContactUS = () => {
 
   const handleSubmitQuestion = async (values) => {
     try {
-      const res = await axios.post(process.env.REACT_APP_API_URL + "/AddEditContactUs", { ...values })
+      const res = await axios.post("/AddEditContactUs", { ...values })
       toast.success(locale === "en" ? "Your Question has been sent successfully!" : "!تم إرسال سؤالك بنجاح")
       push("/")
     } catch (error) {

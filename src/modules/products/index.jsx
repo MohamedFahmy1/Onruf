@@ -40,12 +40,8 @@ const Products = ({ products: p }) => {
           data: { data: folders },
         },
       ] = await Promise.all([
-        await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`,
-        ),
-        await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/ListFolder?type=1&pageIndex=1&PageRowsCount=10&lang=${locale}`,
-        ),
+        await axios.get(`/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`),
+        await axios.get(`/ListFolder?type=1&pageIndex=1&PageRowsCount=10&lang=${locale}`),
       ])
       setProducts(products)
       setFolders(folders)
@@ -62,8 +58,8 @@ const Products = ({ products: p }) => {
         formData.append("nameAr", folderName)
         formData.append("nameEn", folderName)
         formData.append("image", folderImage)
-        const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddFolder", formData)
-        await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddFolderProduct", {
+        const res = await axios.post("/AddFolder", formData)
+        await axios.post("/AddFolderProduct", {
           folderId: res?.data.data,
           productId: productsIds,
         })
@@ -85,7 +81,7 @@ const Products = ({ products: p }) => {
       return toast.warning(locale === "en" ? "No products were selected!" : "من فضلك قم بأخيار المنتجات")
     setAddProductToFolderLoading({ id, loader: true })
     try {
-      await axios.post(process.env.NEXT_PUBLIC_API_URL + "/AddFolderProduct", {
+      await axios.post("/AddFolderProduct", {
         folderId: id,
         productId: productsIds,
       })
@@ -107,12 +103,12 @@ const Products = ({ products: p }) => {
         locale === "en" ? "Are you sure you want to delete this product ?" : "هل ترغب في مسح تلك المنتجات ؟",
       )
       if (!isDelete) return
-      await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/RemoveListProductByBusinessAccount`, { data: productsIds })
+      await axios.delete(`/RemoveListProductByBusinessAccount`, { data: productsIds })
       setOpenFolderModal(false)
       toast.success(locale === "en" ? "Products has been deleted successfully!" : "تم حذف المنتج بنجاح")
       const {
         data: { data },
-      } = await axios(`${process.env.NEXT_PUBLIC_API_URL}/ListProductByBusinessAccountId?currentPage=1&lang=en`)
+      } = await axios(`/ListProductByBusinessAccountId?currentPage=1&lang=en`)
       setProducts(data)
     } catch (error) {
       console.error(error)

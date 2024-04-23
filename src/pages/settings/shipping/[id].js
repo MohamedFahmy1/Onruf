@@ -48,7 +48,7 @@ const ShippingOptionPage = ({}) => {
 
   const handleDeleteOption = async (shippingOptionsId) => {
     try {
-      const result = await axios.delete(process.env.REACT_APP_API_URL + "/DeleteShippingOptions", {
+      const result = await axios.delete("/DeleteShippingOptions", {
         params: {
           shippingOptionsId,
         },
@@ -67,7 +67,7 @@ const ShippingOptionPage = ({}) => {
   const handleEditOption = async (values) => {
     try {
       await axios.post(
-        process.env.REACT_APP_API_URL + "/AddEditShippingOptions",
+        "/AddEditShippingOptions",
         newImage
           ? { ...values, shippingOptionImage: newImage, businessAccountId, shippingOptionTypeId, id }
           : { ...values, businessAccountId, shippingOptionTypeId, id },
@@ -82,7 +82,7 @@ const ShippingOptionPage = ({}) => {
   const fetchShippingOptionData = async () => {
     const {
       data: { data: shippingOptionData },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetShippingOptionsById", {
+    } = await axios.get("/GetShippingOptionsById", {
       params: { shippingOptionsId: query?.id },
     })
 
@@ -92,7 +92,7 @@ const ShippingOptionPage = ({}) => {
   const fetchShippingOptionConditionsData = async () => {
     const {
       data: { data: shippingOptionConditionsData },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllShippingOptionsConditions", {
+    } = await axios.get("/GetAllShippingOptionsConditions", {
       params: { shippingOptionId: query?.id, lang: "en" },
     })
 
@@ -102,7 +102,7 @@ const ShippingOptionPage = ({}) => {
   const fetchCountries = async () => {
     const {
       data: { data: countriesList },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/ListCountries", {
+    } = await axios.get("/ListCountries", {
       params: { currentPage: 1, maxRows: 10, lang: "en" },
     })
 
@@ -112,7 +112,7 @@ const ShippingOptionPage = ({}) => {
   const fetchProducts = async () => {
     const {
       data: { data: productList },
-    } = await axios.get(process.env.REACT_APP_API_URL + "/ListProductByBusinessAccountId", {
+    } = await axios.get("/ListProductByBusinessAccountId", {
       params: { currentPage: 1, lang: "en" },
     })
 

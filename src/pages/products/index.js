@@ -40,18 +40,15 @@ export async function getServerSideProps({ req, locale }) {
     return { redirect: { destination: "/404", permanent: false } }
   }
   try {
-    const products = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`,
-      {
-        headers: {
-          "Business-Account-Id": businessId,
-          "Provider-Id": providerId,
-          Authorization: authToken,
-          "User-Language": locale,
-          "Application-Source": "BusinessAccount",
-        },
+    const products = await axios.get(`/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`, {
+      headers: {
+        "Business-Account-Id": businessId,
+        "Provider-Id": providerId,
+        Authorization: authToken,
+        "User-Language": locale,
+        "Application-Source": "BusinessAccount",
       },
-    )
+    })
     return {
       props: {
         products: products.data.data,

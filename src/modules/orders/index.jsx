@@ -62,7 +62,7 @@ const Orders = () => {
   //   const fetchShippingOptions = async () => {
   //     const {
   //       data: { data: shippingOptions },
-  //     } = await axios.get(process.env.REACT_APP_API_URL + "/GetAllShippingOptions", {
+  //     } = await axios.get( "/GetAllShippingOptions", {
   //       params: { businessAccountId: buisnessAccountId, lang: locale },
   //     })
   //     setShippingOptions(shippingOptions)
@@ -74,7 +74,7 @@ const Orders = () => {
     const {
       data: { data },
     } = await axios(
-      `${process.env.REACT_APP_API_URL}/GetBusinessAccountOrders?pageIndex=1&PageRowsCount=100000
+      `/GetBusinessAccountOrders?pageIndex=1&PageRowsCount=100000
         ${orderStatus ? `&orderStatus=${orderStatus}` : ``}`,
     )
     if (!orderStatus) {

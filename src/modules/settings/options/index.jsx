@@ -138,7 +138,7 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
     try {
       const {
         data: { data: accountData },
-      } = await axios.get(process.env.REACT_APP_API_URL + "/GetBusinessAccountById", {
+      } = await axios.get("/GetBusinessAccountById", {
         params: { businessAccountId: buisnessAccountId },
       })
       setAccountData(accountData)
@@ -150,10 +150,10 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
   // Handle Delete Account
   const handleDeleteAccount = async () => {
     try {
-      await axios.post(process.env.REACT_APP_API_URL + "/LogoutWebsite", {
+      await axios.post("/LogoutWebsite", {
         params: { deviceId: deviceId },
       })
-      await axios.delete(process.env.REACT_APP_API_URL + "/DeleteBusinessAccount", {
+      await axios.delete("/DeleteBusinessAccount", {
         params: { businessAccountId: buisnessAccountId },
       })
       setShowModal(false)
@@ -170,10 +170,7 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
   // Handle Delete Account
   const handleAccountStatus = async (isActive) => {
     try {
-      await axios.post(
-        process.env.REACT_APP_API_URL +
-          `/ChangeBusinessAccountStatus?businessAccountId=${buisnessAccountId}&isActive=${isActive}`,
-      )
+      await axios.post(`/ChangeBusinessAccountStatus?businessAccountId=${buisnessAccountId}&isActive=${isActive}`)
       handleFetchAccount()
       toast.success("Account Status Updated Successfully!")
     } catch (error) {

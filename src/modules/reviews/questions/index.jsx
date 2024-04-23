@@ -16,13 +16,13 @@ const Question = ({ id, question, isShared, productName, clientName, clientImage
 
   // Handle Share a review
   // const handleShareQuestion = async (id) => {
-  //   const result = await axios.patch(process.env.REACT_APP_API_URL + "/ChangeQuestionStatus", { id })
+  //   const result = await axios.patch( "/ChangeQuestionStatus", { id })
   //   push({ pathname: "/reviews", query: { tab: "questions" } })
   // }
 
   const handleAnswerQuestion = async (answer) => {
     try {
-      const result = await axios.post(process.env.REACT_APP_API_URL + "/ReplyQuestion", { answer, id }, mulitFormData)
+      const result = await axios.post("/ReplyQuestion", { answer, id }, mulitFormData)
       toast.success(locale === "en" ? "Your reply has been sent successfully!" : "!تم إرسال ردك بنجاح")
       setOpenReplyModal(false)
       push({

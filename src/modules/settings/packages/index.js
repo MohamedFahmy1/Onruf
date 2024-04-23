@@ -59,7 +59,7 @@ const Packages = () => {
 
   const handleSubscribePackage = async (pakaID) => {
     try {
-      //     const paymentTrans = await axios.post(process.env.REACT_APP_API_URL + "/PakatPaymentTransaction", {
+      //     const paymentTrans = await axios.post( "/PakatPaymentTransaction", {
       //       params: {
       //         pakatId: pakaID,
       //         typePay: "Cash",
@@ -68,7 +68,7 @@ const Packages = () => {
       // If payment success do subsribe
       // if (paymentTrans.status === 200) {
       try {
-        await axios.post(process.env.REACT_APP_API_URL + "/AddPakatSubcription", [pakaID])
+        await axios.post("/AddPakatSubcription", [pakaID])
         toast.success(locale === "en" ? "You Subscribed To Package!" : "!تم الاشتراك  بالباقة بنجاح")
         setPaymentModal(false)
         fetchCurrentPakat()
@@ -88,7 +88,7 @@ const Packages = () => {
         PakatSubsriptionId: id,
         pakatId: pakaID,
       }
-      await axios.post(`${process.env.REACT_APP_API_URL}/RenewPaka`, {}, { params: params })
+      await axios.post(`/RenewPaka`, {}, { params: params })
       toast.success(locale === "en" ? "You Renewed Package!" : "!تم تجديد الباقة بنجاح")
       setPaymentModal(false)
       fetchCurrentPakat()
