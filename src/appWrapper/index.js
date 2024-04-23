@@ -27,6 +27,7 @@ export const AppWrapper = ({ children }) => {
   axios.defaults.headers.common["Provider-Id"] = providerId
   axios.defaults.headers.common["Business-Account-Id"] = buisnessAccountId
   axios.defaults.headers.common["User-Language"] = locale
+  axios.defaults.headers.common["Accept-Language"] = locale
   axios.defaults.headers.common["Application-Source"] = "BusinessAccount"
 
   let content

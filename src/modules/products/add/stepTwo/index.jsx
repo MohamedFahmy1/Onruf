@@ -24,9 +24,9 @@ const AddProductStepTwo = ({
 }) => {
   const { locale, pathname } = useRouter()
   const [eventKey, setEventKey] = useState("0")
-  // states used in 2 or more child components
+
   const { data: packat } = useFetch(
-    `/getAllPakatsList?lang=${locale}&categoryId=${catId}&isAdmin=${true}&PakatType=Additional`,
+    `/getAllPakatsList?lang=${locale}&categoryId=${catId}&isAdmin=${false}&PakatType=Additional`,
   )
   const [selectedPack, setselectedPack] = useState(packat?.length ? packat[0]?.id : 0)
   const [regions, setRegions] = useState([])
