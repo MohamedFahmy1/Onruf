@@ -11,7 +11,6 @@ import AdDetails from "./AdDetails"
 import SaleDetails from "./SaleDetails"
 import ShippingAndDuration from "./ShippingAndDuration"
 import PublishingPackages from "./PublishingPackages"
-import { useFetch } from "../../../../hooks/useFetch"
 
 const AddProductStepTwo = ({
   catId,
@@ -24,11 +23,6 @@ const AddProductStepTwo = ({
 }) => {
   const { locale, pathname } = useRouter()
   const [eventKey, setEventKey] = useState("0")
-
-  const { data: packat } = useFetch(
-    `/getAllPakatsList?lang=${locale}&categoryId=${catId}&isAdmin=${false}&PakatType=Additional`,
-  )
-  const [selectedPack, setselectedPack] = useState(packat?.length ? packat[0]?.id : 0)
   const [regions, setRegions] = useState([])
 
   const toggleAccordionPanel = (eKey) => {
@@ -76,6 +70,7 @@ const AddProductStepTwo = ({
       }
     }
   }
+
   const validateProductDetails = () => {
     for (let i = 0; i < productPayload.productSep.length; i++) {
       if (
@@ -90,6 +85,7 @@ const AddProductStepTwo = ({
     }
     return true
   }
+
   const validateAdDetails = () => {
     if (productPayload.qty <= 0 && productPayload.qty !== null) {
       return toast.error(
@@ -118,6 +114,7 @@ const AddProductStepTwo = ({
             : "من فضلك ادخل اسم المنتج بالعربي و الانجليزي و العنوان",
         )
   }
+
   const validateSaleDetails = () => {
     if (
       !productPayload.IsFixedPriceEnabled &&
@@ -145,6 +142,7 @@ const AddProductStepTwo = ({
       )
     } else return true
   }
+
   const validateDurationAndShipping = () => {
     // if you choosed shipping options 2 or 3 you must choose 4,5 or 6
     const hasTwoOrThree = productPayload.ShippingOptions.includes(2) || productPayload.ShippingOptions.includes(3)
@@ -164,6 +162,7 @@ const AddProductStepTwo = ({
       )
     } else return true
   }
+
   const validateAll = () => {
     if (
       (validateProductImages() &&
@@ -175,7 +174,9 @@ const AddProductStepTwo = ({
       return true
     } else return false
   }
+
   console.log("productPayload", productPayload)
+
   return (
     <Accordion activeKey={eventKey} flush>
       <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="0">
@@ -191,6 +192,7 @@ const AddProductStepTwo = ({
           selectedPack={selectedPack}
         />
       </Accordion.Item>
+
       <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="1">
         <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("1")}>
           <span>2</span>
@@ -205,6 +207,7 @@ const AddProductStepTwo = ({
           setEventKey={setEventKey}
         />
       </Accordion.Item>
+
       <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="2">
         <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("2")}>
           <span>3</span>
@@ -219,6 +222,7 @@ const AddProductStepTwo = ({
           setRegions={setRegions}
         />
       </Accordion.Item>
+
       <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="3">
         <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("3")}>
           <span>4</span>
@@ -231,6 +235,7 @@ const AddProductStepTwo = ({
           setEventKey={setEventKey}
         />
       </Accordion.Item>
+
       <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="4">
         <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("4")}>
           <span>5</span>
@@ -246,6 +251,7 @@ const AddProductStepTwo = ({
           selectedCatProps={selectedCatProps}
         />
       </Accordion.Item>
+
       {!pathname.includes("edit") && (
         <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="5">
           <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => toggleAccordionPanel("5")}>
@@ -258,9 +264,6 @@ const AddProductStepTwo = ({
             setEditModeOn={setEditModeOn}
             validateAll={validateAll}
             handleGoToReviewPage={handleGoToReviewPage}
-            selectedPack={selectedPack}
-            setselectedPack={setselectedPack}
-            packat={packat}
             regions={regions}
           />
         </Accordion.Item>

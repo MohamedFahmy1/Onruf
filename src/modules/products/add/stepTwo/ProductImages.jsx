@@ -10,30 +10,34 @@ import t from "../../../../translations.json"
 import styles from "./stepTwo.module.css"
 import { toast } from "react-toastify"
 
-const ProductImages = ({ productPayload, setProductPayload, validateProductImages, setEventKey, selectedPack }) => {
+const ProductImages = ({ productPayload, setProductPayload, validateProductImages, setEventKey }) => {
   const { locale, pathname } = useRouter()
   const [mainImgId, setMainImgId] = useState(null)
   const id = useId()
 
   const handleUploadImages = (e) => {
-    let file = e.target.files[0]
+    const files = Array.from(e.target.files)
     const allowedTypes = ["image/jpeg", "image/png", "image/gif"]
-    if (!allowedTypes.includes(file.type)) {
-      return toast.error(locale === "en" ? "Only image files are allowed!" : "مسموح برفع الصور")
-    }
-    if (file) {
-      file.id = Date.now()
-      if (!mainImgId) {
-        setProductPayload((prev) => ({
-          ...prev,
-          MainImageIndex: 0,
-        }))
+    const newFiles = []
+
+    files.forEach((file) => {
+      if (!allowedTypes.includes(file.type)) {
+        return toast.error(locale === "en" ? "Only image files are allowed!" : "مسموح برفع الصور")
       }
+      file.id = Date.now()
+      newFiles.push(file)
+    })
+    // if first time upload images
+    if (!mainImgId) {
+      setProductPayload((prev) => ({ ...prev, MainImageIndex: 0 }))
+    }
+    if (newFiles.length > 0) {
       setProductPayload((prev) => ({
         ...prev,
-        listImageFile: [...prev?.listImageFile, file],
+        listImageFile: [...(prev.listImageFile || []), ...newFiles],
       }))
     }
+
     e.target.value = null
   }
 

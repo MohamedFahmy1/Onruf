@@ -7,6 +7,8 @@ import t from "../../../../translations.json"
 import { FaCheckCircle, FaStar } from "react-icons/fa"
 import Image from "next/image"
 import moment from "moment"
+import { useState } from "react"
+import { useFetch } from "../../../../hooks/useFetch"
 
 const PublishingPackages = ({
   productPayload,
@@ -14,12 +16,13 @@ const PublishingPackages = ({
   setEditModeOn,
   validateAll,
   handleGoToReviewPage,
-  selectedPack,
-  setselectedPack,
-  packat,
   regions,
 }) => {
   const { locale, pathname } = useRouter()
+  const { data: packat } = useFetch(
+    `/getAllPakatsList?lang=${locale}&categoryId=${catId}&isAdmin=${false}&PakatType=Additional`,
+  )
+  const [selectedPack, setselectedPack] = useState(packat?.length ? packat[0]?.id : 0)
 
   const handleChoosePackat = (pack) => {
     if (productPayload.pakatId) {
@@ -30,6 +33,7 @@ const PublishingPackages = ({
       setselectedPack(pack)
     }
   }
+
   const calculateTimeLeft = (closingTime) => {
     const duration = moment.duration(moment(closingTime).diff(moment()))
     return {
@@ -57,6 +61,7 @@ const PublishingPackages = ({
       )
     }
   }
+
   const ProductBox = ({ isLargerImage }) => {
     const imageUrl =
       productPayload.listMedia?.find((item) => item.isMainMadia === true)?.url ||
