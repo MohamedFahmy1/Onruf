@@ -42,6 +42,7 @@ export async function getServerSideProps({ req, locale }) {
       "User-Language": locale,
       "Application-Source": "BusinessAccount",
     }
+    axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
     const [salesResponse, listProductResponse, listNewOrderResponse, getListUserResponse] = await Promise.all([
       axios.get(`/SalesPrice`, {
         headers: mainHeader,

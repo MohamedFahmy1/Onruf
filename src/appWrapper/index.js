@@ -22,7 +22,7 @@ export const AppWrapper = ({ children }) => {
       dispatch(getTokensFromCookie())
     }
   }, [dispatch, Token, buisnessAccountId, providerId])
-
+  console.log(Token, buisnessAccountId)
   axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL
   axios.defaults.headers.common["Authorization"] = Token
   axios.defaults.headers.common["Provider-Id"] = providerId
