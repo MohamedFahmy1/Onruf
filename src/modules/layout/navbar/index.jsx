@@ -22,7 +22,7 @@ const Navbar = () => {
   const [userImage, setUserImage] = useState()
   const [userName, setUserName] = useState()
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
-  const deviceId = useSelector((state) => state.id)
+  const deviceId = useSelector((state) => state.idSlice.id)
   const dropdownRef = useRef(null)
 
   const getAllBuisnessAccounts = async (id) => {
@@ -48,9 +48,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post("/LogoutWebsite", {
-        params: { deviceId: deviceId },
-      })
+      await axios.post(`/LogoutWebsite?deviceId=${deviceId}`)
       push(process.env.NEXT_PUBLIC_WEBSITE)
     } catch (error) {
       Alerto(error)

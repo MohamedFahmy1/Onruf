@@ -118,7 +118,7 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
   const [accountData, setAccountData] = useState(null)
   const { locale, push } = useRouter()
   const buisnessAccountId = useSelector((state) => state.authSlice.buisnessId)
-  const deviceId = useSelector((state) => state.id)
+  const deviceId = useSelector((state) => state.idSlice.id)
 
   const style = {
     position: "absolute",
@@ -150,9 +150,7 @@ const ManageAccountModal = ({ showModal, setShowModal }) => {
   // Handle Delete Account
   const handleDeleteAccount = async () => {
     try {
-      await axios.post("/LogoutWebsite", {
-        params: { deviceId: deviceId },
-      })
+      await axios.post(`/LogoutWebsite?deviceId=${deviceId}`)
       await axios.delete("/DeleteBusinessAccount", {
         params: { businessAccountId: buisnessAccountId },
       })

@@ -2,9 +2,9 @@ import { NextResponse } from "next/server"
 
 export default function middleware(req) {
   let url = req.url
+  let domainName = process.env.NODE_ENV === "development" ? "http://localhost:3030/" : "https://onruf.vercel.app/"
   if (url.includes("businessAccountId") && url.includes("ProviderId") && url.includes("Token")) {
-    // let parsedUrl = new URL(url, "http://localhost:3030/")
-    let parsedUrl = new URL(url, "https://onruf.vercel.app/")
+    let parsedUrl = new URL(url, domainName)
     let params = new URLSearchParams(parsedUrl.search)
     let businessAccountId = params.get("businessAccountId")
     let providerId = params.get("ProviderId")
@@ -19,8 +19,7 @@ export default function middleware(req) {
     if (token) {
       cookies.push(`Token=${token}; Path=/;`)
     }
-    // const response = NextResponse.redirect("http://localhost:3030/en")
-    const response = NextResponse.redirect("https://onruf.vercel.app/en")
+    const response = NextResponse.redirect(domainName)
     for (let cookie of cookies) {
       response.headers.append("Set-Cookie", cookie)
     }

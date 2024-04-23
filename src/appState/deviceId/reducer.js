@@ -4,7 +4,9 @@ export const idSlice = createSlice({
   name: "id",
   initialState: { id: null },
   reducers: {
-    setId: (action) => action.payload,
+    setId: (state, action) => {
+      state.id = action.payload
+    },
   },
 })
 
