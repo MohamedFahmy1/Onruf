@@ -13,7 +13,6 @@ import { flexDirectionStyle } from "../../styles/stylesObjects"
 import Alerto from "../../common/Alerto"
 import { IoIosCloseCircle } from "react-icons/io"
 import { FaCamera } from "react-icons/fa"
-import styles from "./folders/folders.module.css"
 
 const Products = ({ products: p }) => {
   const [products, setProducts] = useState(p)

@@ -158,8 +158,8 @@ const ProductImages = ({ productPayload, setProductPayload, validateProductImage
             <input
               type="file"
               accept="image/jpeg, image/png, image/gif"
+              multiple
               onChange={(e) => handleUploadImages(e)}
-              multiple={selectedPack?.countImage >= 1}
             />
           </div>
         </div>
@@ -228,12 +228,7 @@ const ProductImages = ({ productPayload, setProductPayload, validateProductImage
           })}
           <div className={"btn_apload_img"}>
             <FaCamera />
-            <input
-              type="file"
-              accept="image/jpeg, image/png, image/gif"
-              onChange={(e) => handleUploadImages(e)}
-              multiple={selectedPack?.countImage >= 1}
-            />
+            <input type="file" accept="image/jpeg, image/png, image/gif" onChange={(e) => handleUploadImages(e)} />
           </div>
         </div>
       )}

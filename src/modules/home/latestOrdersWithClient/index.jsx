@@ -9,6 +9,7 @@ import Image from "next/image"
 
 const LatestOrdersWithClients = ({ clients }) => {
   const { locale } = useRouter()
+
   return (
     <Col md={6}>
       <article className="contint_paner">
