@@ -17,6 +17,7 @@ const PublishingPackages = ({
   validateAll,
   handleGoToReviewPage,
   regions,
+  catId,
 }) => {
   const { locale, pathname } = useRouter()
   const { data: packat } = useFetch(

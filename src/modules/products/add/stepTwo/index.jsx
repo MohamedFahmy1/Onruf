@@ -189,7 +189,6 @@ const AddProductStepTwo = ({
           setProductPayload={setProductPayload}
           validateProductImages={validateProductImages}
           setEventKey={setEventKey}
-          selectedPack={selectedPack}
         />
       </Accordion.Item>
 
@@ -265,6 +264,7 @@ const AddProductStepTwo = ({
             validateAll={validateAll}
             handleGoToReviewPage={handleGoToReviewPage}
             regions={regions}
+            catId={catId}
           />
         </Accordion.Item>
       )}
