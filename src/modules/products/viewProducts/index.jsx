@@ -181,6 +181,25 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     }
   }
 
+  const getSaleTypes = useCallback(
+    (original) => {
+      const saleTypes = []
+      if (original.isAuctionEnabled) {
+        saleTypes.push(pathOr("", [locale, "Products", "auction"], t))
+      }
+      if (original.isNegotiationEnabled) {
+        saleTypes.push(pathOr("", [locale, "Orders", "negotiation"], t))
+      }
+      if (original.isFixedPriceEnabled) {
+        saleTypes.length < 1
+          ? saleTypes.push(pathOr("", [locale, "Orders", "fixedPrice"], t))
+          : saleTypes.push(pathOr("", [locale, "Products", "fixed"], t))
+      }
+      return saleTypes.length > 0 ? saleTypes.join(" - ") : "-"
+    },
+    [locale],
+  )
+
   const columns = useMemo(
     () => [
       {
@@ -287,16 +306,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         accessor: "isMazad",
         Cell: ({ row: { original } }) => (
           <div>
-            <h6 className="m-0 f-b">
-              {original.isAuctionEnabled && original.isFixedPriceEnabled
-                ? `${pathOr("", [locale, "Products", "fixed"], t)}, ${pathOr("", [locale, "Products", "auction"], t)}`
-                : original.isAuctionEnabled && !original.isFixedPriceEnabled
-                ? pathOr("", [locale, "Products", "auction"], t)
-                : !original.isAuctionEnabled && original.isFixedPriceEnabled
-                ? pathOr("", [locale, "Orders", "fixedPrice"], t)
-                : "-"}
-              {original.isNegotiationEnabled && ` ${pathOr("", [locale, "Orders", "negotiation"], t)}`}
-            </h6>
+            <h6 className="m-0 f-b">{getSaleTypes(original)}</h6>
           </div>
         ),
       },
@@ -356,7 +366,16 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         },
       },
     ],
-    [locale, openPriceModal, openQuantityModal, selectedFilter, handleDeleteProduct, push, handleChangeStatus],
+    [
+      locale,
+      openPriceModal,
+      openQuantityModal,
+      selectedFilter,
+      handleDeleteProduct,
+      push,
+      handleChangeStatus,
+      getSaleTypes,
+    ],
   )
   return (
     <section className="body-content p-4">

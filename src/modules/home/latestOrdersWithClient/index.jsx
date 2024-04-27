@@ -6,6 +6,7 @@ import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import Image from "next/image"
+import moment from "moment"
 
 const LatestOrdersWithClients = ({ clients }) => {
   const { locale } = useRouter()
@@ -35,7 +36,8 @@ const LatestOrdersWithClients = ({ clients }) => {
                   <figcaption>
                     <p className="m-0 fs-6 f-b">{client.userName}</p>
                     <p className="gray-color">
-                      {pathOr("", [locale, "LastOrdersWithClients", "clientSince"], t)} 1/1/2020
+                      {pathOr("", [locale, "LastOrdersWithClients", "clientSince"], t)}{" "}
+                      {moment(client.createdAt).format("DD/MM/yyyy")}
                     </p>
                   </figcaption>
                 </section>

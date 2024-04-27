@@ -6,6 +6,7 @@ import t from "../../../translations.json"
 import { pathOr } from "ramda"
 import moment from "moment"
 import Image from "next/image"
+
 const ProductsAlmostOut = ({ products }) => {
   const { locale } = useRouter()
 
