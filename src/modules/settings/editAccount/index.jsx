@@ -34,7 +34,6 @@ const EditBussinessAccount = () => {
     register,
     handleSubmit,
     setValue,
-    getValues,
     reset,
     watch,
     control,
@@ -126,27 +125,32 @@ const EditBussinessAccount = () => {
   const toggleAccordionPanel = (eKey) => {
     eventKey === eKey ? setEventKey("") : setEventKey(eKey)
   }
-  const handleEditBusinessAccount = async ({ ...values }) => {
+  const handleEditBusinessAccount = async (data) => {
+    const { businessAccountCertificates, ...rest } = data
+    const updatedValues = registeryFile
+      ? { ...rest, businessAccountCertificates: businessAccountCertificates }
+      : { ...rest }
+    console.log(registeryFile)
     const formData = new FormData()
-    for (const key of Object.keys(values)) {
+    for (const key of Object.keys(updatedValues)) {
       if (key === "businessAccountImage" && businessAccountImage == null) {
         continue
       } else if (key === "businessAccountImage") {
-        if (values[key] && values[key].length > 0) {
-          formData.append(key, values[key][0])
+        if (updatedValues[key] && updatedValues[key].length > 0) {
+          formData.append(key, updatedValues[key][0])
         }
       } else if (key === "businessAccountCertificates") {
-        if (values[key] && values[key].length > 0) {
-          formData.append(key, values[key][0])
+        if (updatedValues[key] && updatedValues[key].length > 0) {
+          formData.append(key, updatedValues[key][0])
         }
       } else if (key === "businessAccountUserName") {
         formData.append(key, "test")
       } else {
-        formData.append(key, values[key])
+        formData.append(key, updatedValues[key])
       }
     }
     formData.append("id", accountData?.id)
-    formData.append("BusinessAccountNameEn", values.businessAccountName)
+    formData.append("BusinessAccountNameEn", data.businessAccountName)
     try {
       const { data } = await axios.post("/AddEditBusinessAccount", formData, {
         headers: {
@@ -270,8 +274,9 @@ const EditBussinessAccount = () => {
                             <span className="text-danger">*</span>
                           </span>
                           <input
-                            onChange={(e) => {
-                              setRegisteryFile(e.target.files[0])
+                            multiple
+                            onClick={(e) => {
+                              setRegisteryFile(e.target.files)
                             }}
                             type="file"
                             required
