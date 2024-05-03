@@ -3,17 +3,14 @@ import axios from "axios"
 import { useRouter } from "next/router"
 import styles from "./stepOne.module.css"
 import { FaTimes } from "react-icons/fa"
-import { pathOr, propOr } from "ramda"
+import { pathOr } from "ramda"
 import t from "../../../../translations.json"
 import { Col, Row } from "react-bootstrap"
 import Alerto from "../../../../common/Alerto"
 import { toast } from "react-toastify"
 
 const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProductPayload }) => {
-  const {
-    locale,
-    query: { id },
-  } = useRouter()
+  const { locale } = useRouter()
   const mainCatRef = useRef(null)
   const [catSearchInputVal, setCatSearchInputVal] = useState("")
   const [allCats, setAllCats] = useState([])
@@ -78,10 +75,14 @@ const AddProductStepOne = ({ next, setSelectedCatProps, productPayload, setProdu
     setProductPayload((prev) => ({
       ...prev,
       categoryId: selectedCatId,
+      "ProductPaymentDetailsDto.CategoryId": selectedCatId,
       "ProductPaymentDetailsDto.ProductPublishPrice": catProps?.productPublishPrice,
       "ProductPaymentDetailsDto.EnableFixedPriceSaleFee": catProps?.enableFixedPriceSaleFee,
       "ProductPaymentDetailsDto.EnableAuctionFee": catProps?.enableAuctionFee,
       "ProductPaymentDetailsDto.EnableNegotiationFee": catProps?.enableNegotiationFee,
+      "ProductPaymentDetailsDto.FixedPriceSaleFee": catProps?.enableFixedPriceSaleFee,
+      "ProductPaymentDetailsDto.AuctionFee": catProps?.enableAuctionFee,
+      "ProductPaymentDetailsDto.NegotiationFee": catProps?.enableNegotiationFee,
       "ProductPaymentDetailsDto.ExtraProductImageFee": catProps?.extraProductImageFee,
       "ProductPaymentDetailsDto.ExtraProductVidoeFee": catProps?.extraProductVidoeFee,
       "ProductPaymentDetailsDto.SubTitleFee": catProps?.subTitleFee,

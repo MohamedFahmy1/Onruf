@@ -101,6 +101,16 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
     productFullData.pakatId && getPackage()
   }, [productFullData.pakatId, getPackage])
 
+  useEffect(() => {
+    setProductPayload((prev) => ({
+      ...prev,
+      "ProductPaymentDetailsDto.TotalAmountBeforeCoupon": couponData?.discountValue
+        ? totalCost + couponData?.discountValue
+        : totalCost,
+      "ProductPaymentDetailsDto.TotalAmountAfterCoupon": totalCost,
+    }))
+  }, [totalCost, setProductPayload, couponData?.discountValue])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     let formData = new FormData()

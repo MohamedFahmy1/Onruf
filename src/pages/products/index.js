@@ -1,11 +1,9 @@
-import dynamic from "next/dynamic"
 import Head from "next/head"
 import { pathOr } from "ramda"
 import t from "../../translations.json"
 import { useRouter } from "next/router"
 import axios from "axios"
-
-const Products = dynamic(() => import("../../modules/products/index.jsx"), { ssr: true })
+import Products from "../../modules/products/index.jsx"
 
 const ProductsPage = ({ products }) => {
   const { locale } = useRouter()
