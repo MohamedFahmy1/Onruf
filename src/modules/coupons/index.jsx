@@ -19,8 +19,8 @@ const Coupons = () => {
   const [selectedFilter, setSelectedFilter] = useState("all")
   const couponsCount = coupons && coupons?.length
   const allCoupons = coupons && coupons
-  const activeCoupons = coupons && coupons?.filter(({ isActive }) => isActive)
-  const expiredCoupons = coupons && coupons?.filter(({ expiryDate }) => new Date(expiryDate) < new Date())
+  const activeCoupons = coupons && coupons?.filter(({ expiryDate }) => new Date(expiryDate) < new Date())
+  const expiredCoupons = coupons && coupons?.filter(({ expiryDate }) => new Date(expiryDate) >= new Date())
   const filterCoupons =
     selectedFilter === "all" ? allCoupons : selectedFilter === "active" ? activeCoupons : expiredCoupons
 

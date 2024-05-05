@@ -8,7 +8,7 @@ import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import Image from "next/image"
 import { toast } from "react-toastify"
-import { mulitFormData } from "../../../common/axiosHeaders"
+import { multiFormData } from "../../../common/axiosHeaders"
 
 const Question = ({ id, question, isShared, productName, clientName, clientImage, createdAt }) => {
   const [openReplyModal, setOpenReplyModal] = useState(false)
@@ -22,7 +22,7 @@ const Question = ({ id, question, isShared, productName, clientName, clientImage
 
   const handleAnswerQuestion = async (answer) => {
     try {
-      const result = await axios.post("/ReplyQuestion", { answer, id }, mulitFormData)
+      await axios.post("/ReplyQuestion", { answer, id }, multiFormData)
       toast.success(locale === "en" ? "Your reply has been sent successfully!" : "!تم إرسال ردك بنجاح")
       setOpenReplyModal(false)
       push({

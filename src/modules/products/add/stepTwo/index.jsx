@@ -95,6 +95,13 @@ const AddProductStepTwo = ({
     if (productPayload.status === null || productPayload.status === undefined) {
       return toast.error(locale === "en" ? "Please select Item status" : "من فضلك اختر حالة المنتج")
     }
+    if (productPayload.qty <= productPayload.AlmostSoldOutQuantity && productPayload.qty !== null) {
+      return toast.error(
+        locale === "en"
+          ? "Quantity of product should be more than almost sold out"
+          : "الكميه للمنتج يجب ان تكون اكبر من كمية اوشكت على النفاذ",
+      )
+    }
     const productDetailsInputs = [
       productPayload.nameAr,
       productPayload.nameEn,

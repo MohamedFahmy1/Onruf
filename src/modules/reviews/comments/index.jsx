@@ -11,7 +11,7 @@ import Image from "next/image"
 import ratingImage from "../../../../public/images/rating.png"
 import { toast } from "react-toastify"
 import { useSelector } from "react-redux"
-import { mulitFormData } from "../../../common/axiosHeaders"
+import { multiFormData } from "../../../common/axiosHeaders"
 
 const Comment = ({ orderId, rate, comment, productName, userName, userImage, createdAt, id, isShare }) => {
   const { locale, push } = useRouter()
@@ -49,7 +49,7 @@ const Comment = ({ orderId, rate, comment, productName, userName, userImage, cre
           userId: buisnessAccountId,
           reply: reply,
         },
-        mulitFormData,
+        multiFormData,
       )
       toast.success(locale === "en" ? "Your Reply has been sent!" : "!تم إرسال الرد بنجاح")
       setOpenReplyModal(false)

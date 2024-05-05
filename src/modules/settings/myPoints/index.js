@@ -8,7 +8,7 @@ import { toast } from "react-toastify"
 import PointsIcon from "../../../assets/images/point_icon.svg"
 import Image from "next/image"
 import ShareModal from "./ShareModal"
-import { mulitFormData } from "../../../common/axiosHeaders"
+import { multiFormData } from "../../../common/axiosHeaders"
 import { useFetch } from "../../../hooks/useFetch"
 import Alerto from "../../../common/Alerto"
 
@@ -26,7 +26,7 @@ const MyPoints = () => {
         {
           params: { transactionPointsAmount: parseInt(points) },
         },
-        mulitFormData,
+        multiFormData,
       )
       toast.success(locale === "en" ? "Transaction Successfull" : "تمت العملية بنجاح")
       fetchMyPointsData()
