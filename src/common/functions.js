@@ -2,7 +2,10 @@ import axios from "axios"
 import { token } from "../../token"
 import t from "../translations.json"
 import { pathOr } from "ramda"
-import { BsEmojiAngry, BsEmojiGrin, BsEmojiSmile } from "react-icons/bs"
+import Image from "next/image"
+import sadFace from "../assets/images/SadColor-Gray.svg"
+import smileFace from "../assets/images/SmileFace-Color.svg"
+import happyFace from "../assets/images/HappyFace-Color.svg"
 
 export const formatDate = (date) => {
   const year = new Date(date)?.getFullYear()
@@ -127,17 +130,13 @@ export const negotiationTypeTranslation = (dataFromApi, locale) => {
 }
 
 export const handleShowRatingEmoji = (rating) => {
-  switch (rating) {
-    case 1:
-      return <BsEmojiAngry className="main-color mx-2" size={30} />
-
-    case 2:
-      return <BsEmojiSmile className="main-color mx-2" size={30} />
-
-    case 3:
-      return <BsEmojiGrin className="main-color mx-2" size={30} />
-
-    default:
-      return <BsEmojiSmile className="main-color mx-2" size={30} />
+  if (rating >= 1 && rating < 2) {
+    return <Image src={sadFace} alt="angry emoji" width={30} height={30} />
+  } else if (rating >= 2 && rating < 3) {
+    return <Image src={smileFace} alt="smile emoji" width={30} height={30} />
+  } else if (rating === 3) {
+    return <Image src={happyFace} alt="happy emoji" width={30} height={30} />
+  } else {
+    return null
   }
 }

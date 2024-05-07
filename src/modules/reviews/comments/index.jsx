@@ -98,7 +98,7 @@ const Comment = ({
             </div>
             <div className="imogy">
               {handleShowRatingEmoji(rate)}
-              <span className="fs-4">{rate.toFixed()}</span>
+              <span className="fs-4 mx-2">{rate.toFixed()}</span>
             </div>
           </div>
           <div className="d-flex align-items-center gap-3">
