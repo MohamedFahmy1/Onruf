@@ -82,7 +82,7 @@ const Comment = ({
               <div className="f-b fs-5">{locale === "en" ? productNameEn : productNameAr}</div>
             </div>
             <div className="num">
-              {pathOr("", [locale, "questionsAndReviews", "reqNumber"], t)} {orderId}#
+              {pathOr("", [locale, "questionsAndReviews", "reqNumber"], t)} #{orderId}
             </div>
           </div>
           <div className="f-b fs-6">{formatDate(createdAt)}</div>

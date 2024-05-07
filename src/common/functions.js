@@ -129,15 +129,15 @@ export const negotiationTypeTranslation = (dataFromApi, locale) => {
 export const handleShowRatingEmoji = (rating) => {
   switch (rating) {
     case 1:
-      return <BsEmojiAngry className="main-color" size={30} />
+      return <BsEmojiAngry className="main-color mx-2" size={30} />
 
     case 2:
-      return <BsEmojiSmile className="main-color" size={30} />
+      return <BsEmojiSmile className="main-color mx-2" size={30} />
 
     case 3:
-      return <BsEmojiGrin className="main-color" size={30} />
+      return <BsEmojiGrin className="main-color mx-2" size={30} />
 
     default:
-      return <BsEmojiSmile className="main-color" size={30} />
+      return <BsEmojiSmile className="main-color mx-2" size={30} />
   }
 }

@@ -136,7 +136,6 @@ const ReplyModal = ({ openModal, setOpenModal, clientName, question, handleAnswe
               placeholder={pathOr("", [locale, "questionsAndReviews", "writeYourReply"], t)}
             />
           </div>
-
           <Row>
             <Col>
               <button

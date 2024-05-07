@@ -3,7 +3,7 @@ import { Col } from "react-bootstrap"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
-import { formatDate } from "../../../common/functions"
+import { formatDate, handleShowRatingEmoji } from "../../../common/functions"
 import rating from "../../../../public/images/rating.png"
 import Image from "next/image"
 import ResponsiveImage from "../../../common/ResponsiveImage"
@@ -44,8 +44,10 @@ const ProfileCard = ({
             </div>
           </div>
           <div className="imogy">
-            <span>{rate ? rate?.toFixed(1) : <Skeleton variant="text" width={20} sx={{ fontSize: "15px" }} />}</span>
-            <Image src={rating} alt="rating" width={30} height={30} />
+            <span className="mx-2">
+              {rate ? rate?.toFixed(1) : <Skeleton variant="text" width={20} sx={{ fontSize: "15px" }} />}
+            </span>
+            {handleShowRatingEmoji(rate)}
           </div>
           <Link href={`/settings/editAccount/${id}`}>
             <span className="btn-main d-block mt-3">{pathOr("", [locale, "Settings", "editAccount"], t)}</span>
