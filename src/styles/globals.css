@@ -386,7 +386,7 @@ textarea {
 }
 
 body {
-  text-align: right;
+  text-align: start;
   font-family: "myFont";
   word-spacing: 1px;
   background: #f8f8f8 !important;

@@ -53,11 +53,18 @@ const Reviews = () => {
 
   const handlePageChange = (event, value) => setCurrentPage(value)
 
-  const renderItems = () =>
-    currentData.map((item) =>
+  const renderItems = () => {
+    if (currentData.length === 0) {
+      return tab === "ratings" ? (
+        <h2 className="text-center">{pathOr("", [locale, "questionsAndReviews", "noRatings"], t)}</h2>
+      ) : (
+        <h2 className="text-center">{pathOr("", [locale, "questionsAndReviews", "noQuestions"], t)}</h2>
+      )
+    }
+    return currentData.map((item) =>
       tab === "ratings" ? <Comment key={item.id} {...item} /> : <Question key={item.id} {...item} />,
     )
-
+  }
   return (
     <div className="body-content">
       <div>
@@ -126,13 +133,15 @@ const Reviews = () => {
         <div className="tab-content">
           <div className="tab-pane fade show active">
             <div>{renderItems()}</div>
-            <Pagination
-              count={totalPages}
-              page={currentPage}
-              onChange={handlePageChange}
-              color="primary"
-              sx={{ my: 2, p: 2, ".MuiPagination-ul": { justifyContent: "center" } }}
-            />
+            {currentData?.length > 0 && (
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+                color="primary"
+                sx={{ my: 2, p: 2, ".MuiPagination-ul": { justifyContent: "center" } }}
+              />
+            )}
           </div>
         </div>
       </div>

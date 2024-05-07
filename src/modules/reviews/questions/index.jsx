@@ -60,10 +60,6 @@ const Question = ({ id, question, isShared, productName, clientName, clientImage
                 <div className="gray-color">{question}</div>
               </div>
             </div>
-            <div className="imogy">
-              {/* <span>{rate}</span> */}
-              {/* <img src={image} /> */}
-            </div>
           </div>
           <div className="d-flex align-items-center gap-3">
             <button
@@ -105,17 +101,13 @@ const ReplyModal = ({ openModal, setOpenModal, clientName, question, handleAnswe
   const [answer, setAnswer] = useState("")
   const { locale } = useRouter()
   return (
-    <Modal
-      show={openModal}
-      onHide={() => setOpenModal(false)}
-      style={{
-        textAlign: locale === "en" ? "left" : "right",
-        direction: locale === "en" ? "rtl" : "ltr",
-      }}
-    >
+    <Modal show={openModal} onHide={() => setOpenModal(false)}>
       <div className="modal-dialog modal-dialog-centered modal-lg mx-5">
         <div className="modal-content" style={{ border: "none" }}>
           <Modal.Header className="py-1 px-0">
+            <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
+              {pathOr("", [locale, "questionsAndReviews", "respondToQuestion"], t)}
+            </h5>
             <button
               type="button"
               className="btn-close"
@@ -123,18 +115,15 @@ const ReplyModal = ({ openModal, setOpenModal, clientName, question, handleAnswe
               aria-label="Close"
               onClick={() => setOpenModal(false)}
             ></button>
-            <h5 className="modal-title m-0 f-b" id="staticBackdropLabel">
-              {pathOr("", [locale, "questionsAndReviews", "respondToQuestion"], t)}
-            </h5>
           </Modal.Header>
-          <Modal.Body className="d-flex align-items-center justify-content-end gap-2  px-0 pt-3 pb-0">
+          <Modal.Body className="d-flex align-items-center gap-2 px-0 pt-3 pb-0">
             <div className="d-flex align-items-center gap-2">
+              <Image src={clientImage} className="img_user" alt="client" width={50} height={50} />
               <div className="f-b">
                 <h6 className="m-0 f-b">{clientName}</h6>
                 <div className="gray-color">{question}</div>
               </div>
             </div>
-            <Image src={clientImage} className="img_user" alt="client" width={50} height={50} />
           </Modal.Body>
           <hr />
           <div className="form-group">

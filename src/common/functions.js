@@ -2,6 +2,7 @@ import axios from "axios"
 import { token } from "../../token"
 import t from "../translations.json"
 import { pathOr } from "ramda"
+import { BsEmojiAngry, BsEmojiGrin, BsEmojiSmile } from "react-icons/bs"
 
 export const formatDate = (date) => {
   const year = new Date(date)?.getFullYear()
@@ -123,4 +124,20 @@ export const negotiationTypeTranslation = (dataFromApi, locale) => {
   } else if (dataFromApi?.match(/Refused/gi)) {
     return pathOr("", [locale, "negotiation", "refused"], t)
   } else return "Unknown negotiation type"
+}
+
+export const handleShowRatingEmoji = (rating) => {
+  switch (rating) {
+    case 1:
+      return <BsEmojiAngry className="main-color" size={30} />
+
+    case 2:
+      return <BsEmojiSmile className="main-color" size={30} />
+
+    case 3:
+      return <BsEmojiGrin className="main-color" size={30} />
+
+    default:
+      return <BsEmojiSmile className="main-color" size={30} />
+  }
 }

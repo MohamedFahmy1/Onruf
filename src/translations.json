@@ -1136,7 +1136,9 @@
       "respondToReview": "Respond to Review",
       "respondToQuestion": "Respond to Question",
       "writeYourReply": "Write Your Reply",
-      "sendReply": "Send Reply"
+      "sendReply": "Send Reply",
+      "noQuestions": "No Questions To Show!",
+      "noRatings": "No Ratings To Show!"
     },
     "Wallet": {
       "myWallet": "My Wallet",
