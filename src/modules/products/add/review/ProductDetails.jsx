@@ -72,7 +72,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
 
   const applyCoupon = async () => {
     try {
-      const res = await axios.get(`/GetCouponByCode?couponCode=${couponCode}&couponScreen=Product`)
+      const res = await axios.get(`/GetCouponByCode?couponCode=${couponCode}&couponScreen=1`)
       const couponData = res?.data?.data.coupon
       setCouponData(couponData)
       toast.success(locale === "en" ? "Coupon applied successfully!" : "تم تطبيق الكوبون بنجاح")
