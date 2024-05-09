@@ -8,16 +8,9 @@ import ResponsiveImage from "../../../common/ResponsiveImage"
 import Link from "next/link"
 import { Skeleton } from "@mui/material"
 
-const ProfileCard = ({
-  id,
-  businessAccountNameEn,
-  commercialRegisterFile,
-  rate,
-  createdAt,
-  businessAccountImage,
-  ...props
-}) => {
+const ProfileCard = ({ id, businessAccountNameEn, rate, createdAt, businessAccountImage }) => {
   const { locale } = useRouter()
+
   return (
     <Col lg={4}>
       <section className="contint_paner">
