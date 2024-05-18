@@ -31,6 +31,7 @@ const tabsStyles = {
     },
   },
 }
+
 function NegotiationOffers() {
   const { locale } = useRouter()
   const [selectedTab, setSelectedTab] = useState(0)

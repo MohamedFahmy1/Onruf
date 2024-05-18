@@ -12,6 +12,7 @@ import { RiDeleteBin5Line } from "react-icons/ri"
 import t from "../../translations.json"
 import Alerto from "../../common/Alerto"
 import Link from "next/link"
+import moment from "moment"
 
 const Coupons = () => {
   const { locale, push } = useRouter()
@@ -19,8 +20,8 @@ const Coupons = () => {
   const [selectedFilter, setSelectedFilter] = useState("all")
   const couponsCount = coupons && coupons?.length
   const allCoupons = coupons && coupons
-  const activeCoupons = coupons && coupons?.filter(({ expiryDate }) => new Date(expiryDate) < new Date())
-  const expiredCoupons = coupons && coupons?.filter(({ expiryDate }) => new Date(expiryDate) >= new Date())
+  const activeCoupons = coupons && coupons.filter(({ expiryDate }) => moment(expiryDate).isSameOrAfter(moment(), "day"))
+  const expiredCoupons = coupons && coupons.filter(({ expiryDate }) => moment(expiryDate).isBefore(moment(), "day"))
   const filterCoupons =
     selectedFilter === "all" ? allCoupons : selectedFilter === "active" ? activeCoupons : expiredCoupons
 
@@ -29,7 +30,7 @@ const Coupons = () => {
       try {
         const formData = new FormData()
         formData.append("id", couponId)
-        const data = await axios.patch(`/ChangeCouponStatus?couponId=${couponId}`, null)
+        await axios.patch(`/ChangeCouponStatus?couponId=${couponId}`, null)
         toast.success(locale === "en" ? "Coupon has been updated successfully!" : "تم تعديل الكوبون بنجاح")
         getCopounsList()
       } catch (err) {
@@ -198,7 +199,7 @@ const Coupons = () => {
       </div>
       <div className="contint_paner">
         <div className="outer_table">
-          {coupons && <Table columns={columns} data={filterCoupons} isCheckbox={false} pageSize={10} />}
+          {filterCoupons && <Table columns={columns} data={filterCoupons} isCheckbox={false} pageSize={10} />}
         </div>
         {filterCoupons?.length > 10 && <Pagination listLength={filterCoupons?.length} pageSize={10} />}
       </div>
