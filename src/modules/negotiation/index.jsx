@@ -6,7 +6,7 @@ import t from "../../translations.json"
 import { useRouter } from "next/router"
 import axios from "axios"
 import Alerto from "../../common/Alerto"
-import Pagination from "@mui/lab/Pagination"
+import Pagination from "@mui/material/Pagination"
 
 const tabsStyles = {
   ".MuiTabs-flexContainer": {
@@ -80,18 +80,26 @@ function NegotiationOffers() {
         <Tab label={pathOr("", [locale, "negotiation", "recieved"], t)} />
         <Tab label={pathOr("", [locale, "negotiation", "sent"], t)} />
       </Tabs>
-      <Grid container spacing={2} px={3}>
-        {currentData?.map((item) => (
-          <OfferCard offer={item} key={item.offerId} getOffers={getOffers} selectedTab={selectedTab} />
-        ))}
-      </Grid>
-      <Pagination
-        count={totalPages}
-        page={currentPage}
-        onChange={handlePageChange}
-        color="primary"
-        sx={{ my: 2, p: 2, ".MuiPagination-ul": { justifyContent: "center" } }}
-      />
+      {currentData?.length > 0 ? (
+        <Grid container spacing={2} px={3}>
+          {currentData?.map((item) => (
+            <OfferCard offer={item} key={item.offerId} getOffers={getOffers} selectedTab={selectedTab} />
+          ))}
+        </Grid>
+      ) : (
+        <Typography variant="h4" py={10} textAlign={"center"} component={"h2"} color="textPrimary">
+          {pathOr("", [locale, "negotiation", "noOffersFound"], t)}
+        </Typography>
+      )}
+      {currentData?.length > 0 && (
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
+          sx={{ my: 2, p: 2, ".MuiPagination-ul": { justifyContent: "center" } }}
+        />
+      )}
     </Box>
   )
 }

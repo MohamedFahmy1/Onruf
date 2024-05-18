@@ -13,11 +13,11 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
   const [acceptModal, setAcceptModal] = useState(false)
   const [refuseModal, setRefuseModal] = useState(false)
 
-  const productImage = !offer?.productImage.includes("https")
-    ? offer?.productImage.replace("http", "https")
+  const productImage = !offer?.productImage?.includes("https")
+    ? offer?.productImage?.replace("http", "https")
     : offer?.productImage
-  const receiverImage = !offer?.receiverImage.includes("https")
-    ? offer?.receiverImage.replace("http", "https")
+  const receiverImage = !offer?.receiverImage?.includes("https")
+    ? offer?.receiverImage?.replace("http", "https")
     : offer?.receiverImage
 
   return (
@@ -36,7 +36,7 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
       >
         <Box sx={{ backgroundColor: "#ee6c4d", padding: 1, borderBottom: "1px solid #e0e0e0" }}>
           <Typography variant="subtitle1" component="h2" color={"#fff"} align="center" m={0}>
-            {negotiationTypeTranslation(offer?.offerStatus, locale)}
+            {negotiationTypeTranslation(offer.offerStatus, locale)}
           </Typography>
         </Box>
         <CardContent

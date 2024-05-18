@@ -25,7 +25,8 @@
       "reject_negotiation_offer": "رفض عرض التفاوض",
       "please_add_reason": "من فضلك أضف سبب",
       "write_reject_reason": "اكتب سبب الرفض",
-      "seller": "بائع"
+      "seller": "بائع",
+      "noOffersFound": "لم يتم العثور على عروض تفاوض"
     },
     "sidebar": {
       "home": "الرئيسية",
@@ -714,7 +715,8 @@
       "reject_negotiation_offer": "Reject Negotiation Offer",
       "please_add_reason": "Please add reason",
       "write_reject_reason": "Write Reject Reason",
-      "seller": "Seller"
+      "seller": "Seller",
+      "noOffersFound": "No Negotiation Offers Found"
     },
     "sidebar": {
       "home": "Home",
