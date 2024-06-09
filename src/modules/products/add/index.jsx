@@ -110,7 +110,6 @@ const AddProduct = () => {
           <AddProductStepOne
             next={(selectedCat) => handleNextStep(selectedCat)}
             setSelectedCatProps={setSelectedCatProps}
-            productPayload={productPayload}
             setProductPayload={setProductPayload}
           />
         )}

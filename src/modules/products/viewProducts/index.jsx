@@ -128,9 +128,11 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       setQuantityValueInfinity(singleSelectedRow.qty === null ? true : false)
     }
   }, [singleSelectedRow])
+
   useEffect(() => {
     p && setProducts(p)
   }, [p])
+
   useEffect(() => {
     if (!id) {
       fetchDidntSell()
