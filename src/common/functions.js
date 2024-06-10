@@ -14,10 +14,12 @@ export const formatDate = (date) => {
   const day = new Date(date)?.getDate()?.toString().padStart(2, "0")
   return ` ${day}/${+month + 1}/${year}`
 }
+
 export const minDate = () => {
   const dateIntoArray = formatDate(new Date()).split("/")
   return `${dateIntoArray[2]}-${dateIntoArray[1]}-${dateIntoArray[0].trim()}`
 }
+
 export const onlyNumbersInInputs = (e) => {
   if (
     !["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "Backspace", "Delete", "ArrowRight", "ArrowLeft"].includes(
@@ -109,6 +111,7 @@ export const orderTypesTranslation = (typeFromApi, locale) => {
     return pathOr("", [locale, "Orders", "auction"], t)
   } else return "Unknown order type"
 }
+
 export const negotiationTypeTranslation = (dataFromApi, locale) => {
   if (dataFromApi?.match(/Expired/gi)) {
     return pathOr("", [locale, "negotiation", "expired"], t)

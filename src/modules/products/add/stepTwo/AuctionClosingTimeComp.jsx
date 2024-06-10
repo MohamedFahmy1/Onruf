@@ -3,10 +3,8 @@ import styles from "./stepTwo.module.css"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../../../../translations.json"
-import { toast } from "react-toastify"
 import moment from "moment"
 import { textAlignStyle } from "../../../../styles/stylesObjects"
-import { minDate } from "../../../../common/functions"
 
 const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCatProps }) => {
   const { locale } = useRouter()

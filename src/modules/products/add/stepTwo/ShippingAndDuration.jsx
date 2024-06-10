@@ -21,6 +21,14 @@ const ShippingAndDuration = ({
   const { data: shippingOptions } = useFetch("/GetAllShippingOptions")
 
   const handleShippingOptions = (optionIndex) => {
+    const primaryOptions = [1, 2, 3]
+    if (primaryOptions.includes(optionIndex)) {
+      setProductPayload((prev) => ({
+        ...prev,
+        ShippingOptions: prev.ShippingOptions.filter((value) => !primaryOptions.includes(value)),
+      }))
+    }
+
     // if the shipping option was not selected
     if (!productPayload.ShippingOptions?.includes(optionIndex)) {
       setProductPayload((prev) => ({
