@@ -171,6 +171,7 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                         id="Price"
                         type="number"
                         onKeyDown={(e) => onlyNumbersInInputs(e)}
+                        onWheel={(e) => e.target.blur()}
                         value={productPayload.Price === 0 ? "" : productPayload.Price}
                         onChange={(e) => setProductPayload({ ...productPayload, Price: +e.target.value })}
                         className={`form-control ${styles["form-control"]}`}
@@ -203,6 +204,7 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                           <input
                             type="number"
                             onKeyDown={(e) => onlyNumbersInInputs(e)}
+                            onWheel={(e) => e.target.blur()}
                             value={productPayload.AuctionStartPrice === 0 ? "" : productPayload.AuctionStartPrice}
                             onChange={(e) =>
                               setProductPayload({ ...productPayload, AuctionStartPrice: +e.target.value })
@@ -233,6 +235,7 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                           <input
                             type="number"
                             onKeyDown={(e) => onlyNumbersInInputs(e)}
+                            onWheel={(e) => e.target.blur()}
                             value={productPayload.AuctionMinimumPrice === 0 ? " " : productPayload.AuctionMinimumPrice}
                             onChange={(e) =>
                               setProductPayload({ ...productPayload, AuctionMinimumPrice: +e.target.value })
@@ -286,6 +289,7 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                                   type="number"
                                   className={`form-control ${styles["form-control"]}`}
                                   onKeyDown={(e) => onlyNumbersInInputs(e)}
+                                  onWheel={(e) => e.target.blur()}
                                   value={
                                     productPayload.AuctionNegotiatePrice === 0
                                       ? ""

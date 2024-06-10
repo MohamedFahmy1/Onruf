@@ -101,7 +101,7 @@ const AdDetails = ({ productPayload, setProductPayload, validateAdDetails, setEv
                 className={`form-control ${styles["form-control"]}`}
                 placeholder={
                   productPayload.subTitleAr !== null
-                    ? pathOr("", [locale, "Products", "enterProductSecondaryAddressEn"], t)
+                    ? pathOr("", [locale, "Products", "enterProductSecondaryAddressAr"], t)
                     : "-"
                 }
                 value={!!productPayload.subTitleAr ? productPayload.subTitleAr : ""}

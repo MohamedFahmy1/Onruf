@@ -44,6 +44,15 @@ const ProductDetails = ({
       Alerto(e)
     }
   }, [locale, catId])
+
+  const handleGoNext = () => {
+    if (specifications?.length === 0 || !specifications) {
+      setEventKey("2")
+    } else if (validateProductDetails() === true) {
+      setEventKey("2")
+    }
+  }
+
   const onChangeSpesfication = ({ target: { value, checked } }, index, type) => {
     let updatedSpec = { ...productPayload.productSep[index] }
 
@@ -273,13 +282,7 @@ const ProductDetails = ({
             </div>
           ))}
       </section>
-      <button
-        className="btn-main mt-3"
-        type="button"
-        onClick={() => {
-          validateProductDetails() === true && setEventKey("2")
-        }}
-      >
+      <button className="btn-main mt-3" type="button" onClick={handleGoNext}>
         {pathOr("", [locale, "Products", "next"], t)}
       </button>
     </Accordion.Body>

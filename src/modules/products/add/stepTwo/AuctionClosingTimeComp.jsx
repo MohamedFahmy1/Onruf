@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import styles from "./stepTwo.module.css"
 import { useRouter } from "next/router"
 import { pathOr } from "ramda"
@@ -6,10 +6,13 @@ import t from "../../../../translations.json"
 import { toast } from "react-toastify"
 import moment from "moment"
 import { textAlignStyle } from "../../../../styles/stylesObjects"
+import { minDate } from "../../../../common/functions"
 
 const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCatProps }) => {
   const { locale } = useRouter()
   const [activeElementIndex, setActiveElementIndex] = useState(null)
+  const dateTimeInput = useRef(null)
+
   function renderFixedLengthDays(item) {
     switch (item) {
       case 1:
@@ -20,6 +23,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
         return `${item} ${pathOr("", [locale, "Products", "days"], t)}`
     }
   }
+
   function renderFixedLengthWeeks(item) {
     switch (item) {
       case 1:
@@ -30,6 +34,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
         return `${item} ${pathOr("", [locale, "Products", "weeks"], t)}`
     }
   }
+
   function renderFixedLengthMonths(item) {
     switch (item) {
       case 1:
@@ -40,23 +45,31 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
         return `${item} ${pathOr("", [locale, "Products", "months"], t)}`
     }
   }
+
   const calculateFutureDate = (item, unit) => {
     const unitMapping = { 1: "days", 2: "weeks", 3: "months" }
     return moment().add(+item, unitMapping[unit]).format("YYYY-MM-DDTHH:mm")
   }
 
   const handleSelection = (item, auctionClosingTime) => {
-    if (productPayload.IsAuctionClosingTimeFixed) {
-      setProductPayload({
-        ...productPayload,
-        AuctionClosingTime: auctionClosingTime,
-        IsAuctionClosingTimeFixed: true,
-      })
-      setActiveElementIndex(+item)
-    } else {
-      toast.error(locale === "en" ? "Please Select Duration Type First!" : "رجاء اختر نوع المدة")
-    }
+    setProductPayload({
+      ...productPayload,
+      AuctionClosingTime: auctionClosingTime,
+      IsAuctionClosingTimeFixed: true,
+    })
+    setActiveElementIndex(+item)
+    dateTimeInput.current.value = null
   }
+
+  const handleChangeAuctionClosingTime = (e) => {
+    setProductPayload({
+      ...productPayload,
+      AuctionClosingTime: e.target.value,
+      IsAuctionClosingTimeFixed: false,
+    })
+    setActiveElementIndex(null)
+  }
+
   return (
     <div className="col-md-12 col-lg-6 d-flex flex-wrap flex-lg-nowrap w-100 gap-5 mb-4">
       <div
@@ -75,6 +88,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
             onChange={() => {
               setActiveElementIndex(null)
               setProductPayload({ ...productPayload, AuctionClosingTime: "", IsAuctionClosingTimeFixed: true })
+              dateTimeInput.current.value = null
             }}
             checked={productPayload.IsAuctionClosingTimeFixed}
           />
@@ -112,6 +126,7 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
             onChange={() => {
               setProductPayload({ ...productPayload, AuctionClosingTime: "", IsAuctionClosingTimeFixed: false })
               setActiveElementIndex(null)
+              dateTimeInput.current.value = null
             }}
             checked={productPayload.IsAuctionClosingTimeFixed === false}
           />
@@ -121,17 +136,10 @@ const AuctionClosingTimeComp = ({ productPayload, setProductPayload, selectedCat
         } ${pathOr("", [locale, "Products", "currency"], t)}`}</p>
         <input
           type="datetime-local"
-          onChange={(e) => {
-            if (!productPayload.IsAuctionClosingTimeFixed) {
-              setProductPayload({
-                ...productPayload,
-                AuctionClosingTime: e.target.value,
-                IsAuctionClosingTimeFixed: false,
-              })
-            } else return toast.error(locale === "en" ? "Please Select Duration Type First!" : "رجاء اختر نوع المدة")
-          }}
-          value={productPayload.AuctionClosingTime}
-          disabled={productPayload.IsAuctionClosingTimeFixed}
+          ref={dateTimeInput}
+          onChange={handleChangeAuctionClosingTime}
+          min={moment().format("YYYY-MM-DDTHH:mm")}
+          defaultValue={productPayload.AuctionClosingTime}
           className="rounded"
         />
       </div>
