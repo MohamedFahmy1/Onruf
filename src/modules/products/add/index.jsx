@@ -37,7 +37,7 @@ const AddProduct = () => {
     Lat: "30",
     Lon: "30",
     AcceptQuestion: false,
-    IsFixedPriceEnabled: true,
+    IsFixedPriceEnabled: false,
     IsAuctionEnabled: false,
     IsNegotiationEnabled: false,
     Price: 0,

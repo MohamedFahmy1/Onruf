@@ -9,7 +9,7 @@ import { onlyNumbersInInputs } from "../../../../common/functions"
 import { useFetch } from "../../../../hooks/useFetch"
 import BanksData from "./BanksData"
 
-const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, setEventKey }) => {
+const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, setEventKey, selectedCatProps }) => {
   const { locale, pathname } = useRouter()
   const { data: userBanksData } = useFetch("/BankTransfersList")
   const [showBanksData, setShowBanksData] = useState(false)
@@ -69,85 +69,95 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                   <RequiredSympol />
                 </label>
                 <div className="row">
-                  <div className="col-lg-4 col-md-6">
-                    <div className="form-group">
-                      <div className="form-control outer-check-input">
-                        <div className="form-check form-switch p-0 m-0 d-flex">
-                          <input
-                            className="form-check-input m-0"
-                            type="checkbox"
-                            role="switch"
-                            id="IsFixedPriceEnabled"
-                            checked={productPayload.IsFixedPriceEnabled === 0 ? "" : productPayload.IsFixedPriceEnabled}
-                            onChange={() => {
-                              setProductPayload({
-                                ...productPayload,
-                                IsFixedPriceEnabled: !productPayload.IsFixedPriceEnabled,
-                                // if you choose negotion you must set price to 0
-                                Price: productPayload.IsNegotiationEnabled ? 0 : productPayload.Price,
-                              })
-                            }}
-                            disabled={pathname.includes("edit")}
-                          />
-                          <label htmlFor="IsFixedPriceEnabled">{pathOr("", [locale, "Products", "adFixed"], t)}</label>
-                          <span className="bord" />
+                  {selectedCatProps.enableFixedPrice && (
+                    <div className="col-lg-4 col-md-6">
+                      <div className="form-group">
+                        <div className="form-control outer-check-input">
+                          <div className="form-check form-switch p-0 m-0 d-flex">
+                            <input
+                              className="form-check-input m-0"
+                              type="checkbox"
+                              role="switch"
+                              id="IsFixedPriceEnabled"
+                              checked={
+                                productPayload.IsFixedPriceEnabled === 0 ? "" : productPayload.IsFixedPriceEnabled
+                              }
+                              onChange={() => {
+                                setProductPayload({
+                                  ...productPayload,
+                                  IsFixedPriceEnabled: !productPayload.IsFixedPriceEnabled,
+                                  // if you choose negotion you must set price to 0
+                                  Price: productPayload.IsNegotiationEnabled ? 0 : productPayload.Price,
+                                })
+                              }}
+                              disabled={pathname.includes("edit")}
+                            />
+                            <label htmlFor="IsFixedPriceEnabled">
+                              {pathOr("", [locale, "Products", "adFixed"], t)}
+                            </label>
+                            <span className="bord" />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="col-lg-4 col-md-6">
-                    <div className="form-group">
-                      <div className="form-control outer-check-input">
-                        <div className="form-check form-switch p-0 m-0">
-                          <input
-                            className="form-check-input m-0"
-                            type="checkbox"
-                            role="switch"
-                            id="IsAuctionEnabled"
-                            checked={productPayload.IsAuctionEnabled === 0 ? "" : productPayload.IsAuctionEnabled}
-                            onChange={() =>
-                              setProductPayload({
-                                ...productPayload,
-                                IsAuctionEnabled: !productPayload.IsAuctionEnabled,
-                              })
-                            }
-                            disabled={pathname.includes("edit")}
-                          />
-                          <label htmlFor="IsAuctionEnabled">{pathOr("", [locale, "Products", "adAuct"], t)}</label>
-                          <span className="bord" />
+                  )}
+                  {selectedCatProps.enableAuction && (
+                    <div className="col-lg-4 col-md-6">
+                      <div className="form-group">
+                        <div className="form-control outer-check-input">
+                          <div className="form-check form-switch p-0 m-0">
+                            <input
+                              className="form-check-input m-0"
+                              type="checkbox"
+                              role="switch"
+                              id="IsAuctionEnabled"
+                              checked={productPayload.IsAuctionEnabled === 0 ? "" : productPayload.IsAuctionEnabled}
+                              onChange={() =>
+                                setProductPayload({
+                                  ...productPayload,
+                                  IsAuctionEnabled: !productPayload.IsAuctionEnabled,
+                                })
+                              }
+                              disabled={pathname.includes("edit")}
+                            />
+                            <label htmlFor="IsAuctionEnabled">{pathOr("", [locale, "Products", "adAuct"], t)}</label>
+                            <span className="bord" />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="col-lg-4 col-md-6">
-                    <div className="form-group">
-                      <div className="form-control outer-check-input">
-                        <div className="form-check form-switch p-0 m-0">
-                          <input
-                            className="form-check-input m-0"
-                            type="checkbox"
-                            role="switch"
-                            id="IsNegotiationEnabled"
-                            checked={
-                              productPayload.IsNegotiationEnabled === 0 ? "" : productPayload.IsNegotiationEnabled
-                            }
-                            onChange={() =>
-                              setProductPayload({
-                                ...productPayload,
-                                IsNegotiationEnabled: !productPayload.IsNegotiationEnabled,
-                                Price: !productPayload.IsNegotiationEnabled ? 0 : productPayload.Price,
-                              })
-                            }
-                            disabled={pathname.includes("edit")}
-                          />
-                          <label htmlFor="IsNegotiationEnabled">
-                            {pathOr("", [locale, "Products", "negotiation"], t)}
-                          </label>
-                          <span className="bord" />
+                  )}
+                  {selectedCatProps.enableNegotiation && (
+                    <div className="col-lg-4 col-md-6">
+                      <div className="form-group">
+                        <div className="form-control outer-check-input">
+                          <div className="form-check form-switch p-0 m-0">
+                            <input
+                              className="form-check-input m-0"
+                              type="checkbox"
+                              role="switch"
+                              id="IsNegotiationEnabled"
+                              checked={
+                                productPayload.IsNegotiationEnabled === 0 ? "" : productPayload.IsNegotiationEnabled
+                              }
+                              onChange={() =>
+                                setProductPayload({
+                                  ...productPayload,
+                                  IsNegotiationEnabled: !productPayload.IsNegotiationEnabled,
+                                  Price: !productPayload.IsNegotiationEnabled ? 0 : productPayload.Price,
+                                })
+                              }
+                              disabled={pathname.includes("edit")}
+                            />
+                            <label htmlFor="IsNegotiationEnabled">
+                              {pathOr("", [locale, "Products", "negotiation"], t)}
+                            </label>
+                            <span className="bord" />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

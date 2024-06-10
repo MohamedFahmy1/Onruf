@@ -24,19 +24,30 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       ? selectedCatProps?.extraProductImageFee *
         (productFullData?.listImageFile.length - selectedCatProps?.freeProductImagesCount)
       : 0
+
   const totalVideoFee =
     productFullData?.videoUrl?.length > selectedCatProps?.freeProductVidoesCount
       ? selectedCatProps?.extraProductVidoeFee *
         (productFullData?.videoUrl?.length - selectedCatProps?.freeProductVidoesCount)
       : 0
+
   const auctionFee = productFullData?.IsAuctionEnabled ? selectedCatProps?.enableAuctionFee : 0
+
   const negotiationFee = productFullData?.IsNegotiationEnabled ? selectedCatProps?.enableNegotiationFee : 0
+
   const fixedFee = productFullData?.IsFixedPriceEnabled ? selectedCatProps?.enableFixedPriceSaleFee : 0
+
   const pakaFee = productFullData?.pakatId ? packageDetails?.price : 0
+
   const couponDiscount = couponData ? couponData.discountValue : 0
+
+  const subtitleFee = !!(productFullData?.subTitleAr.trim() !== "" || productFullData?.subTitleEn.trim() !== "")
+    ? selectedCatProps?.subTitleFee
+    : 0
+
   const totalCost =
     +selectedCatProps?.productPublishPrice +
-    +selectedCatProps?.subTitleFee +
+    +subtitleFee +
     +totalImageFee +
     +totalVideoFee +
     +auctionFee +
@@ -44,12 +55,15 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
     +fixedFee +
     +pakaFee -
     +couponDiscount
+
   const aditionalImagesFee =
     selectedCatProps?.extraProductImageFee *
     (productFullData.listImageFile.length - selectedCatProps?.freeProductImagesCount)
+
   const aditionalVideoFee =
     selectedCatProps?.extraProductVidoeFee *
     (productFullData.videoUrl.length - selectedCatProps?.freeProductVidoesCount)
+
   const taxValue = (totalCost * (12 / 100)).toFixed(2)
 
   const getShippingOptions = useCallback(async () => {
@@ -474,7 +488,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
                       <span>{pathOr("", [locale, "Products", "couponCode"], t)}</span> <span>{couponCode}</span>
                     </li>
                   )}
-                  {selectedCatProps?.productPublishPrice > 0 && (
+                  {subtitleFee > 0 && (
                     <li>
                       <span>{pathOr("", [locale, "Products", "subtitle_fee"], t)}</span>{" "}
                       <span>

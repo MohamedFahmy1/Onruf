@@ -239,6 +239,7 @@ const AddProductStepTwo = ({
           setProductPayload={setProductPayload}
           validateSaleDetails={validateSaleDetails}
           setEventKey={setEventKey}
+          selectedCatProps={selectedCatProps}
         />
       </Accordion.Item>
 
