@@ -71,16 +71,21 @@ const AddProductStepTwo = ({
     }
   }
 
-  const validateProductDetails = () => {
+  const validateProductDetails = (specifications) => {
     for (let i = 0; i < productPayload.productSep.length; i++) {
-      if (
-        productPayload.productSep[i].ValueSpeAr === "" ||
-        productPayload.productSep[i].ValueSpeEn === "" ||
-        !productPayload.productSep[i].ValueSpeAr ||
-        !productPayload.productSep[i].ValueSpeEn
-      ) {
-        toast.error(locale === "en" ? "Please enter all Product Details!" : "رجاء ادخال جميع بيانات المنتج")
-        return false
+      const specId = productPayload.productSep[i].SpecificationId
+      const spec = specifications.find((s) => s.id === specId)
+
+      if (spec?.isRequired) {
+        if (
+          productPayload.productSep[i].ValueSpeAr === "" ||
+          productPayload.productSep[i].ValueSpeEn === "" ||
+          !productPayload.productSep[i].ValueSpeAr ||
+          !productPayload.productSep[i].ValueSpeEn
+        ) {
+          toast.error(locale === "en" ? "Please enter all Product Details!" : "رجاء ادخال جميع بيانات المنتج")
+          return false
+        }
       }
     }
     return true

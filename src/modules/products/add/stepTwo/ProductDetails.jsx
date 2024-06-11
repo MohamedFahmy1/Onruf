@@ -48,7 +48,7 @@ const ProductDetails = ({
   const handleGoNext = () => {
     if (specifications?.length === 0 || !specifications) {
       setEventKey("2")
-    } else if (validateProductDetails() === true) {
+    } else if (validateProductDetails(specifications) === true) {
       setEventKey("2")
     }
   }
@@ -137,14 +137,17 @@ const ProductDetails = ({
     }
   }, [specifications, editModeOn, pathname, setProductPayload])
 
+  const RequiredSympol = () => <span style={{ color: "red", fontSize: "1.3rem" }}>*</span>
+
   return (
     <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
       <section className="form-content">
-        {Boolean(specifications?.length) &&
+        {!!specifications?.length &&
           specifications.map((spesfication, index) => (
             <div className="form-group" key={spesfication?.id}>
               <label htmlFor={index} style={{ ...textAlignStyle(locale), display: "block" }}>
                 {spesfication.name}
+                {spesfication.isRequired && <RequiredSympol />}
               </label>
               {spesfication.type === 1 && (
                 <select

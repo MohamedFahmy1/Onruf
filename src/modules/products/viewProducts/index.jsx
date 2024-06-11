@@ -142,7 +142,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const handleChangeStatus = useCallback(
     async (id) => {
       try {
-        await axios.post(`/ChangeStatusProduct?id=${id}`, {})
+        await axios.post(`/ChangeStatusProduct?id=${id}`)
         toast.success(locale === "en" ? "Product Status Changed Successfully!" : "تم تغيير حالة المنتج بنجاح")
         getProductData()
       } catch (err) {
