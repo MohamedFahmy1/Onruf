@@ -1,5 +1,5 @@
 import { useRouter } from "next/router"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import AddProductStepTwo from "../add/stepTwo"
 import { pathOr } from "ramda"
 import t from "../../../translations.json"
@@ -13,9 +13,31 @@ const EditProduct = () => {
   const [step, setStep] = useState(1)
   const localeRef = useRef(locale)
   const [selectedCatProps, setSelectedCatProps] = useState()
+  const [specificationsFromApi, setSpecificationsFromApi] = useState([])
   const { data: shippingOptions } = useFetch(`/GetProductShippingOptions?productId=${query.id}`, true)
   const { data: paymentOptions } = useFetch(`/GetProductPaymentOptions?productId=${query.id}`, true)
   const { data: bankAccounts } = useFetch(`/GetProductBankAccounts?productId=${query.id}`, true)
+
+  const fetchSpecificationsList = useCallback(async () => {
+    try {
+      const {
+        data: { data: spefications },
+      } = await axios(
+        `/ListAllSpecificationAndSubSpecificationByCatId?lang=${locale}&id=${selectedCatProps.id}&currentPage=1`,
+      )
+      setProductPayload((prev) => ({
+        ...prev,
+        productSep: transformProductSepData(specificationsFromApi, spefications),
+      }))
+    } catch (e) {
+      Alerto(e)
+    }
+  }, [locale, selectedCatProps?.id, specificationsFromApi])
+
+  useEffect(() => {
+    selectedCatProps?.id && fetchSpecificationsList()
+  }, [fetchSpecificationsList, selectedCatProps?.id])
+
   const [productPayload, setProductPayload] = useState({
     nameAr: "",
     nameEn: "",
@@ -75,6 +97,7 @@ const EditProduct = () => {
           const { data } = await axios(`/GetProductById?id=${query.id}&lang=${currentLocale}`)
           const productData = data.data
           setSelectedCatProps({ ...productData.categoryDto })
+          setSpecificationsFromApi(productData.listProductSep)
           setProductPayload((prev) => ({
             ...prev,
             id: query.id,
@@ -93,7 +116,6 @@ const EditProduct = () => {
             District: productData.district,
             Street: productData.street,
             GovernmentCode: productData.governmentCode,
-            productSep: transformProductSepData(productData.listProductSep),
             listMedia: productData.listMedia,
             MainImageIndex: productData.listMedia.findIndex((item) => item.isMainMadia === true),
             Lat: productData.lat,
@@ -146,18 +168,20 @@ const EditProduct = () => {
     }
   }, [shippingOptions, paymentOptions, query.id, bankAccounts])
 
-  // tranformation data from back-end to match front-end
-  const transformProductSepData = (data) => {
-    let updatedData = data.map((item) => {
+  // tranformation data from back-end to match front-end (They wanted it to be complicated like this :D god help you )
+  const transformProductSepData = (dataFromApi, specifications) => {
+    let updatedData = dataFromApi.map((item) => {
       return {
         HeaderSpeAr: item.headerSpeAr,
         HeaderSpeEn: item.headerSpeEn,
         SpecificationId: item.specificationId,
         Type: item.type,
-        ValueSpeAr: item.valueSpeAr ? item.valueSpeAr : "",
-        ValueSpeEn: item.valueSpeEn ? item.valueSpeEn : "",
+        ValueSpeAr: item.valueSpeAr,
+        ValueSpeEn: item.valueSpeEn,
       }
     })
+
+    // Group the type 7 values by their SpecificationId
     let combined = {}
     updatedData.forEach((item) => {
       const specId = item.SpecificationId
@@ -177,7 +201,35 @@ const EditProduct = () => {
     })
     // Convert the result back to an array
     let combinedArray = Object.values(combined)
-    return combinedArray
+    const valueDict = {}
+    combinedArray.forEach((item) => {
+      valueDict[item.SpecificationId] = item
+    })
+
+    // Array to hold the transformed specifications
+    const transformedSpecifications = []
+
+    // Iterate over each specification
+    specifications.forEach((spec) => {
+      const specId = spec.id
+      // Check if the current specification has values from the API
+      if (valueDict[specId]) {
+        // If it has values, use them
+        transformedSpecifications.push(valueDict[specId])
+      } else {
+        // If it doesn't have values, create a new object with empty values
+        transformedSpecifications.push({
+          HeaderSpeAr: spec.nameAr,
+          HeaderSpeEn: spec.nameEn,
+          SpecificationId: specId,
+          Type: spec.type,
+          ValueSpeAr: "",
+          ValueSpeEn: "",
+        })
+      }
+    })
+
+    return transformedSpecifications
   }
 
   return (
