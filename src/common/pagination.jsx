@@ -8,8 +8,7 @@ const Pagination = ({ listLength, pageSize = 10 }) => {
   const page = parseInt(router.query.page) || 1
   const length = Math.ceil(listLength / pageSize)
 
-  // Construct the base URL without query parameters
-  const baseUrl = router.pathname.replace("[id]", router.query.id)
+  const baseUrl = router.asPath.split("?")[0]
 
   return (
     <nav aria-label="Page navigation" className="mt-3">
