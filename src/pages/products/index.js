@@ -34,12 +34,11 @@ export async function getServerSideProps({ req, locale }) {
   const businessId = cookies.businessAccountId
   const authToken = cookies.Token
   const providerId = cookies.ProviderId
-  if (!businessId || !authToken) {
-    console.error("Missing businessId or authToken")
-    return { redirect: { destination: "/404", permanent: false } }
-  }
+  // if (!businessId || !authToken) {
+  //   return { redirect: { destination: "/404", permanent: false } }
+  // }
   try {
-    const response = await axios.get(`/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`, {
+    const products = await axios.get(`/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`, {
       headers: {
         "Business-Account-Id": businessId,
         "Provider-Id": providerId,
@@ -48,20 +47,12 @@ export async function getServerSideProps({ req, locale }) {
         "Application-Source": "BusinessAccount",
       },
     })
-
-    if (response.status !== 200) {
-      console.error("Non-200 response from API", response.status)
-      return { redirect: { destination: "/404", permanent: false } }
-    }
-
-    const products = response.data.data
     return {
       props: {
-        products,
+        products: products.data.data,
       },
     }
   } catch (error) {
-    console.error("Error fetching products", error)
     return { redirect: { destination: "/404", permanent: false } }
   }
 }
