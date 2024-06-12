@@ -19,7 +19,7 @@ const ProductsPage = ({ products }) => {
 
 export default ProductsPage
 
-export async function getServerSideProps({ req, locale }) {
+export async function getServerSideProps({ req, query }) {
   const parseCookies = (req) => {
     const list = {}
     const rc = req.headers.cookie
@@ -30,13 +30,19 @@ export async function getServerSideProps({ req, locale }) {
       })
     return list
   }
+
   const cookies = parseCookies(req)
   const businessId = cookies.businessAccountId
   const authToken = cookies.Token
   const providerId = cookies.ProviderId
-  // if (!businessId || !authToken) {
-  //   return { redirect: { destination: "/404", permanent: false } }
-  // }
+
+  const urlPath = query?.locale || "ar"
+  const locale = urlPath.includes("en") ? "en" : "ar"
+
+  if (!businessId || !authToken) {
+    return { redirect: { destination: "/404", permanent: false } }
+  }
+
   try {
     const products = await axios.get(`/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`, {
       headers: {
@@ -53,6 +59,7 @@ export async function getServerSideProps({ req, locale }) {
       },
     }
   } catch (error) {
+    console.error("Error fetching products", error)
     return { redirect: { destination: "/404", permanent: false } }
   }
 }
