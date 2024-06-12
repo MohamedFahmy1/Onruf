@@ -1,5 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/:id*",
+        destination: "/:id*",
+      },
+    ]
+  },
   reactStrictMode: false,
   eslint: {
     ignoreDuringBuilds: true,
