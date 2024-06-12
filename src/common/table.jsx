@@ -1,7 +1,9 @@
-import React, { useId } from "react"
+import React, { useState, useEffect, useId } from "react"
 import { useTable, useRowSelect, useMountedLayoutEffect } from "react-table"
 import Checkbox from "./tableCheckbox"
 import Router, { useRouter } from "next/router"
+import { pathOr } from "ramda"
+import t from "../translations.json"
 
 const Table = ({
   columns,
@@ -11,17 +13,18 @@ const Table = ({
   selectedRows = {},
   onSelectedRowsChange = () => null,
 }) => {
+  const [isLoading, setIsLoading] = useState(true)
   const id = useId()
   const route = Router?.router?.state
   const page = +route?.query?.page || 1
   const { locale } = useRouter()
+
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
     prepareRow,
-    selectedFlatRows,
     state: { selectedRowIds },
   } = useTable(
     {
@@ -33,24 +36,29 @@ const Table = ({
     },
     useRowSelect,
     (hooks) => {
-      isCheckbox
-        ? hooks.visibleColumns.push((columns) => [
-            {
-              id: "selection",
-              Header: ({ getToggleAllRowsSelectedProps }) => <Checkbox {...getToggleAllRowsSelectedProps()} />,
-              Cell: ({ row }) => {
-                return <Checkbox {...row.getToggleRowSelectedProps()} />
-              },
+      isCheckbox &&
+        hooks.visibleColumns.push((columns) => [
+          {
+            id: "selection",
+            Header: ({ getToggleAllRowsSelectedProps }) => <Checkbox {...getToggleAllRowsSelectedProps()} />,
+            Cell: ({ row }) => {
+              return <Checkbox {...row.getToggleRowSelectedProps()} />
             },
-            ...columns,
-          ])
-        : null
+          },
+          ...columns,
+        ])
     },
   )
 
   useMountedLayoutEffect(() => {
     onSelectedRowsChange && onSelectedRowsChange(selectedRowIds)
   }, [onSelectedRowsChange, selectedRowIds])
+
+  useEffect(() => {
+    if (data.length > 0 || !Array.isArray(data)) {
+      setIsLoading(false)
+    }
+  }, [data])
 
   return (
     <table className="table table_dash" {...getTableProps()}>
@@ -67,7 +75,13 @@ const Table = ({
       </thead>
 
       <tbody {...getTableBodyProps()}>
-        {rows?.length ? (
+        {isLoading ? (
+          <tr>
+            <td className="text-center" rowSpan={3} colSpan={8}>
+              <b>{locale === "en" ? "Loading..." : "جاري التحميل..."}</b>
+            </td>
+          </tr>
+        ) : rows?.length ? (
           rows?.slice((page - 1) * pageSize, page * pageSize).map((row, i) => {
             prepareRow(row)
             return (
@@ -83,7 +97,7 @@ const Table = ({
         ) : (
           <tr>
             <td className="text-center" rowSpan={3} colSpan={8}>
-              <b>No data found !</b>
+              <b>{pathOr("", [locale, "Products", "NoDataFound"], t)}</b>
             </td>
           </tr>
         )}

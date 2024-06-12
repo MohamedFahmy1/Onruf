@@ -113,6 +113,7 @@
     },
     "Products": {
       "productName": "اسم المنتج",
+      "NoDataFound": "لا يوجد بيانات",
       "category": "التصنيف",
       "qty": "الكمية",
       "price": "السعر",
@@ -802,6 +803,7 @@
     },
     "Products": {
       "productName": "Product name",
+      "NoDataFound": "No Data Found !",
       "category": "Category",
       "qty": "qty",
       "price": "Price",
