@@ -60,6 +60,9 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
             <Typography variant="body1" component="p" color={"rgba(0, 0, 0, 0.6)"}>
               {offer?.region}
             </Typography>
+            <Typography variant="body1" component="p" color={"rgba(0, 0, 0, 0.6)"}>
+              {pathOr("", [locale, "Products", "quantity"], t)}: {offer?.offerQuantity}
+            </Typography>
             <Typography variant="body1" component="p" sx={{ fontWeight: "600", color: "#ff5722" }}>
               {offer?.offerPrice} {pathOr("", [locale, "Products", "currency"], t)}
             </Typography>

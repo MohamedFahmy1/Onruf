@@ -35,6 +35,13 @@ const ShippingAndDuration = ({
         ...prev,
         ShippingOptions: [...prev.ShippingOptions, +optionIndex],
       }))
+      // clear all other options if 2 and 3 options not selected in the array
+      if (optionIndex === 1) {
+        setProductPayload((prev) => ({
+          ...prev,
+          ShippingOptions: prev.ShippingOptions.filter((value) => value < 4),
+        }))
+      }
     }
     // if the shipping option is already selected
     else if (productPayload.ShippingOptions?.includes(optionIndex)) {
@@ -42,13 +49,6 @@ const ShippingAndDuration = ({
         ...prev,
         ShippingOptions: prev.ShippingOptions.filter((value) => value !== optionIndex),
       }))
-      // clear 4 ,5 and 6 options if 2 and 3 options not selected in the array
-      if (productPayload.ShippingOptions?.includes(2) || productPayload.ShippingOptions?.includes(3)) {
-        setProductPayload((prev) => ({
-          ...prev,
-          ShippingOptions: prev.ShippingOptions.filter((value) => value !== 4 && value !== 5 && value !== 6),
-        }))
-      }
     }
   }
 
@@ -80,12 +80,12 @@ const ShippingAndDuration = ({
                 </label>
                 <div className="row">
                   {productPayload.ShippingOptions?.includes(2) || productPayload.ShippingOptions?.includes(3)
-                    ? shippingOptions?.map((item) => (
+                    ? shippingOptions.map((item) => (
                         <div className="col-lg-6 col-md-6" key={item.id}>
                           <div className="form-group">
                             <div
                               className={`${
-                                [4, 5, 6].includes(item.id) ? "orange-border" : ""
+                                ![1, 2, 3].includes(item.id) ? "orange-border" : ""
                               } form-control outer-check-input`}
                             >
                               <div className="form-check form-switch p-0 m-0">
@@ -105,7 +105,7 @@ const ShippingAndDuration = ({
                         </div>
                       ))
                     : shippingOptions
-                        ?.filter((item) => item.id !== 4 && item.id !== 5 && item.id !== 6)
+                        ?.filter((value) => value.id == 1 || value.id == 2 || value.id == 3)
                         .map((item) => (
                           <div className="col-lg-6 col-md-6" key={item.id}>
                             <div className="form-group">
