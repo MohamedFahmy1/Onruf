@@ -74,7 +74,7 @@ const AddProductStepTwo = ({
   const validateProductDetails = (specifications) => {
     for (let i = 0; i < productPayload.productSep.length; i++) {
       const specId = productPayload.productSep[i].SpecificationId
-      const spec = specifications.find((s) => s.id === specId)
+      const spec = specifications?.find((s) => s?.id === specId)
 
       if (spec?.isRequired) {
         if (

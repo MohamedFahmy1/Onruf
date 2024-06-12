@@ -48,6 +48,18 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
       })
   }
 
+  const toggleSelection = (value) => {
+    setProductPayload((prevState) => {
+      let newSelection = [...prevState.AuctionNegotiateForWhom]
+      if (newSelection.includes(value)) {
+        newSelection = newSelection.filter((item) => item !== value)
+      } else {
+        newSelection.push(value)
+      }
+      return { ...prevState, AuctionNegotiateForWhom: newSelection }
+    })
+  }
+
   const { PaymentOptions } = productPayload
   useEffect(() => {
     if (PaymentOptions?.includes(1)) {
@@ -322,29 +334,25 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                           </label>
                           <div className="d-flex gap-3 flex-wrap">
                             <div
-                              onClick={() => setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "All" })}
+                              onClick={() => toggleSelection(1)}
                               className={`${styles.p_select} ${
-                                productPayload.AuctionNegotiateForWhom == "All" ? styles.p_select_active : ""
+                                productPayload.AuctionNegotiateForWhom?.includes(1) ? styles.p_select_active : ""
                               }`}
                             >
                               {pathOr("", [locale, "Products", "all_bidders"], t)}
                             </div>
                             <div
-                              onClick={() =>
-                                setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Highest3" })
-                              }
+                              onClick={() => toggleSelection(2)}
                               className={`${styles.p_select} ${
-                                productPayload.AuctionNegotiateForWhom == "Highest3" ? styles.p_select_active : ""
+                                productPayload.AuctionNegotiateForWhom?.includes(2) ? styles.p_select_active : ""
                               }`}
                             >
                               {pathOr("", [locale, "Products", "top_three_bidders"], t)}
                             </div>
                             <div
-                              onClick={() =>
-                                setProductPayload({ ...productPayload, AuctionNegotiateForWhom: "Favorit" })
-                              }
+                              onClick={() => toggleSelection(3)}
                               className={`${styles.p_select} ${
-                                productPayload.AuctionNegotiateForWhom == "Favorit" ? styles.p_select_active : ""
+                                productPayload.AuctionNegotiateForWhom?.includes(3) ? styles.p_select_active : ""
                               }`}
                             >
                               {pathOr("", [locale, "Products", "product_favorites"], t)}

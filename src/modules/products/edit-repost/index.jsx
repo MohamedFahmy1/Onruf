@@ -154,8 +154,8 @@ const EditProduct = () => {
         HeaderSpeEn: item.headerSpeEn,
         SpecificationId: item.specificationId,
         Type: item.type,
-        ValueSpeAr: item.valueSpeAr,
-        ValueSpeEn: item.valueSpeEn,
+        ValueSpeAr: item.valueSpeAr ? item.valueSpeAr : "",
+        ValueSpeEn: item.valueSpeEn ? item.valueSpeEn : "",
       }
     })
     let combined = {}

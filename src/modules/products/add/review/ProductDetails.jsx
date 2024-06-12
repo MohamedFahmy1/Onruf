@@ -41,7 +41,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
 
   const couponDiscount = couponData ? couponData.discountValue : 0
 
-  const subtitleFee = !!(productFullData?.subTitleAr.trim() !== "" || productFullData?.subTitleEn.trim() !== "")
+  const subtitleFee = !!(productFullData?.subTitleAr?.trim() !== "" || productFullData?.subTitleEn?.trim() !== "")
     ? selectedCatProps?.subTitleFee
     : 0
 
@@ -144,7 +144,9 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       else if (value === "" || value === null || key === "productImage" || key === "listMedia") {
         continue
       } else if (key === "productSep") {
-        formData.append(key, JSON.stringify(value))
+        // filter out empty values
+        const filteredValue = value.filter((item) => !!item.ValueSpeAr || !!item.ValueSpeEn)
+        formData.append(key, JSON.stringify(filteredValue))
       } else if (Array.isArray(value)) {
         if (key == "ShippingOptions") {
           value.forEach((item) => {
