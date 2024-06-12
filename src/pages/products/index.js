@@ -19,40 +19,40 @@ const ProductsPage = ({ products }) => {
 
 export default ProductsPage
 
-export async function getServerSideProps({ req, locale }) {
-  const parseCookies = (req) => {
-    const list = {}
-    const rc = req.headers.cookie
-    rc &&
-      rc.split(";").forEach((cookie) => {
-        const parts = cookie.split("=")
-        list[parts.shift().trim()] = decodeURI(parts.join("="))
-      })
-    return list
-  }
-  const cookies = parseCookies(req)
-  const businessId = cookies.businessAccountId
-  const authToken = cookies.Token
-  const providerId = cookies.ProviderId
-  if (!businessId || !authToken) {
-    return { redirect: { destination: "/404", permanent: false } }
-  }
-  try {
-    const products = await axios.get(`/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`, {
-      headers: {
-        "Business-Account-Id": businessId,
-        "Provider-Id": providerId,
-        Authorization: authToken,
-        "User-Language": locale,
-        "Application-Source": "BusinessAccount",
-      },
-    })
-    return {
-      props: {
-        products: products.data.data,
-      },
-    }
-  } catch (error) {
-    return { redirect: { destination: "/404", permanent: false } }
-  }
-}
+// export async function getServerSideProps({ req, locale }) {
+//   const parseCookies = (req) => {
+//     const list = {}
+//     const rc = req.headers.cookie
+//     rc &&
+//       rc.split(";").forEach((cookie) => {
+//         const parts = cookie.split("=")
+//         list[parts.shift().trim()] = decodeURI(parts.join("="))
+//       })
+//     return list
+//   }
+//   const cookies = parseCookies(req)
+//   const businessId = cookies.businessAccountId
+//   const authToken = cookies.Token
+//   const providerId = cookies.ProviderId
+//   if (!businessId || !authToken) {
+//     return { redirect: { destination: "/404", permanent: false } }
+//   }
+//   try {
+//     const products = await axios.get(`/ListProductByBusinessAccountId?currentPage=1&lang=${locale}`, {
+//       headers: {
+//         "Business-Account-Id": businessId,
+//         "Provider-Id": providerId,
+//         Authorization: authToken,
+//         "User-Language": locale,
+//         "Application-Source": "BusinessAccount",
+//       },
+//     })
+//     return {
+//       props: {
+//         products: products.data.data,
+//       },
+//     }
+//   } catch (error) {
+//     return { redirect: { destination: "/404", permanent: false } }
+//   }
+// }
