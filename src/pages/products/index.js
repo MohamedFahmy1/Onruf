@@ -19,7 +19,7 @@ const ProductsPage = ({ products }) => {
 
 export default ProductsPage
 
-export async function getServerSideProps({ req, query }) {
+export async function getServerSideProps({ req }) {
   const parseCookies = (req) => {
     const list = {}
     const rc = req.headers.cookie
@@ -36,8 +36,9 @@ export async function getServerSideProps({ req, query }) {
   const authToken = cookies.Token
   const providerId = cookies.ProviderId
 
-  const urlPath = query?.locale || "ar"
-  const locale = urlPath.includes("en") ? "en" : "ar"
+  // Determine locale from URL path
+  const urlPath = req.url
+  const locale = urlPath.includes("/en") ? "en" : "ar"
 
   if (!businessId || !authToken) {
     return { redirect: { destination: "/404", permanent: false } }
