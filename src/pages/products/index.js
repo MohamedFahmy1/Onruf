@@ -61,6 +61,6 @@ export async function getServerSideProps({ req }) {
     }
   } catch (error) {
     console.error("Error fetching products", error)
-    return { redirect: { destination: "/404", permanent: false } }
+    // return { redirect: { destination: "/404", permanent: false } }
   }
 }
