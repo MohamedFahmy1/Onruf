@@ -80,7 +80,7 @@ const ShippingAndDuration = ({
                 </label>
                 <div className="row">
                   {productPayload.ShippingOptions?.includes(2) || productPayload.ShippingOptions?.includes(3)
-                    ? shippingOptions.map((item) => (
+                    ? shippingOptions?.map((item) => (
                         <div className="col-lg-6 col-md-6" key={item.id}>
                           <div className="form-group">
                             <div

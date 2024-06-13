@@ -156,10 +156,10 @@ const AddProductStepTwo = ({
   }
 
   const validateDurationAndShipping = () => {
-    // if you choosed shipping options 2 or 3 you must choose 4,5 or 6
+    // if you choosed shipping options 2 or 3 you must choose highlighted options
     const hasTwoOrThree = productPayload.ShippingOptions.includes(2) || productPayload.ShippingOptions.includes(3)
-    const hasFourFiveOrSix = productPayload.ShippingOptions.some((id) => [4, 5, 6].includes(id))
-    if (hasTwoOrThree && !hasFourFiveOrSix) {
+    const hasHighlighted = productPayload.ShippingOptions.some((id) => id > 3)
+    if (hasTwoOrThree && !hasHighlighted) {
       return toast.error(
         locale == "en" ? "Please select the highlighted options!" : "من فضلك اختر وسيلة شحن من الوسايل المحدده اعلاه",
       )
