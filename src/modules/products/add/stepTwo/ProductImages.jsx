@@ -24,7 +24,7 @@ const ProductImages = ({ productPayload, setProductPayload, validateProductImage
       if (!allowedTypes.includes(file.type)) {
         return toast.error(locale === "en" ? "Only image files are allowed!" : "مسموح برفع الصور")
       }
-      file.id = Date.now()
+      file.id = Math.random() * (Number.MAX_SAFE_INTEGER - Number.MIN_SAFE_INTEGER) + Number.MIN_SAFE_INTEGER
       newFiles.push(file)
     })
     // if first time upload images

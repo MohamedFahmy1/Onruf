@@ -175,12 +175,25 @@ const AddCoupon = () => {
       }
     }
 
-    const submitCoupon = await axios.post("/AddEditCoupon", form_data)
-    const { data: submitCouponRes } = submitCoupon
+    try {
+      const submitCoupon = await axios.post("/AddEditCoupon", form_data)
+      const { data: submitCouponRes } = submitCoupon
 
-    if (submitCouponRes.status_code === 200) {
-      push("./")
-      toast.success(locale === "en" ? "Coupon Added Successfully!" : "!تم اضافة الكوبون بنجاح")
+      if (submitCouponRes.status_code === 200) {
+        push("./")
+        toast.success(locale === "en" ? "Coupon Added Successfully!" : "!تم اضافة الكوبون بنجاح")
+      }
+    } catch (error) {
+      const errorMessage = error.response.data.message
+      if (errorMessage === "Coupon Code Exists") {
+        toast.error(
+          locale === "en"
+            ? "Coupon Code Exists For Another Coupon Please Use another One"
+            : "كود الكوبون موجود  لكوبون اخر بالفعل برجاء استخدام كود اخر",
+        )
+      } else {
+        toast.error(errorMessage)
+      }
     }
   }
 
