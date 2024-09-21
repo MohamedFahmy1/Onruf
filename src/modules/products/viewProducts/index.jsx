@@ -172,11 +172,12 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
       if (priceValue > singleSelectedRow.price) return toast.error(`Discount should be <= ${singleSelectedRow.price}`)
       if (!priceValue && !discountDate)
         return toast.error(locale === "en" ? "Please Enter Missing Data!" : "من فضلك ادخل جميع البيانات")
+
+      const dateParam = discountDate ? "&discountEndDate=" + discountDate : ""
       await axios.post(
         `/ProductDiscount?productId=${
           singleSelectedRow?.id || singleSelectedRow?.productId
-        }&PriceDiscount=${priceValue}&discountEndDate=${discountDate}`,
-        {},
+        }&PriceDiscount=${priceValue}${dateParam}`,
       )
       setOpenPriceModal(false)
       toast.success(locale === "en" ? "Products has been updated successfully!" : "تم تعديل المنتج بنجاح")
