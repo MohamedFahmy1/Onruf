@@ -123,7 +123,7 @@ const ProductDetails = ({
   }, [pathname, productPayload.productSep])
 
   useEffect(() => {
-    // This will make new productSep array when adding new product and user still didn't edit it
+    // In this case will make new productSep array only when adding new product and user still didn't edit it
     if (!hasRunEffect.current && pathname.includes("add") && !editModeOn && specifications?.length > 0) {
       const speficationsPayloadList = specifications.map((spefication) => ({
         HeaderSpeAr: spefication.nameAr,
