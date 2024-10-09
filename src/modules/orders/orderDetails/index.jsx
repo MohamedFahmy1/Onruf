@@ -265,10 +265,10 @@ export const OrderDetails = () => {
               </ul>
             </div>
             <div className="all_list_producto p-3">
-              <div className="info_shan">
+              {/*<div className="info_shan">
                 <span>{pathOr("", [locale, "Orders", "shipping"], t)}</span>{" "}
                 <span className="f-b">{pathOr("", [locale, "Orders", "free_shipping_in_saudi"], t)}</span>
-              </div>
+              </div>*/}
               <div className="info_shan">
                 <span>{pathOr("", [locale, "Orders", "payment_method"], t)}</span>
                 <span className="f-b">{paymentTypesTranslation(paymentType, locale)}</span>
