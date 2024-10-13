@@ -34,6 +34,7 @@ export const OrderDetails = () => {
     })
     setOrderData(orderData)
   }
+
   useEffect(() => {
     const getBranchesData = async () => {
       const {
@@ -44,8 +45,10 @@ export const OrderDetails = () => {
       })
       setBranchesData(branches)
     }
+
     getBranchesData()
   }, [locale, openBranchModal])
+
   useEffect(() => {
     const getListOrderStatusHistory = async () => {
       const {
@@ -53,6 +56,7 @@ export const OrderDetails = () => {
       } = await axios.post(`/ListOrderStatusHistory?orderId=${id}`)
       setOrderStatusHistory(data)
     }
+
     id && getListOrderStatusHistory()
   }, [locale, openModal, id])
 
@@ -81,12 +85,14 @@ export const OrderDetails = () => {
   const totalQuantity = orderProductFullInfoDto
     .map((item) => item.quantity)
     .reduce((accumulator, currentValue) => accumulator + currentValue, 0)
+
   return (
     <div style={{ padding: "24px" }}>
       <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">
         <h6 className="f-b m-0 fs-5">{pathOr("", [locale, "Orders", "order_details"], t)}</h6>
         <button className="btn-main">{pathOr("", [locale, "Orders", "download_invoice"], t)}</button>
       </div>
+
       <div className="row">
         <div className="col-lg-4">
           <div className="d-flex gap-3">
@@ -111,6 +117,7 @@ export const OrderDetails = () => {
                 />
               </div>
             </div>
+
             <div className="form-group flex-grow-1 mb-1">
               <div className="po_R">
                 <label htmlFor="select_branch">{pathOr("", [locale, "Orders", "select_branch"], t)}</label>
@@ -136,6 +143,7 @@ export const OrderDetails = () => {
               </div>
             </div>
           </div>
+
           <div className="contint_paner p-0">
             <ul className="info_box_order d-flex flex-wrap">
               <li>
@@ -168,6 +176,7 @@ export const OrderDetails = () => {
             </ul>
           </div>
         </div>
+
         <div className="col-lg-4">
           <div className="contint_paner mt-0 p-0">
             <div className="detalis-customer">
@@ -203,6 +212,7 @@ export const OrderDetails = () => {
             </div>
           </div>
         </div>
+
         <div className="col-lg-4">
           <div className="contint_paner mt-0 p-0">
             <div className="info_elomola">
@@ -235,6 +245,7 @@ export const OrderDetails = () => {
             </div>
           </div>
         </div>
+
         <div className="col-12">
           <div className="contint_paner">
             <h5 className="f-b fs-4">{pathOr("", [locale, "Orders", "products"], t)}</h5>
@@ -295,6 +306,7 @@ export const OrderDetails = () => {
             </div>
           </div>
         </div>
+
         <div className="col-12">
           <div className="contint_paner p-0">
             <h5 className="f-b p-4 m-0 fs-4">{pathOr("", [locale, "Orders", "order_log"], t)}</h5>

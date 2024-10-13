@@ -18,6 +18,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
   const [packageDetails, setPackageDetails] = useState()
   const [couponData, setCouponData] = useState()
   const [couponCode, setCouponCode] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const totalImageFee =
     productFullData?.listImageFile.length > selectedCatProps?.freeProductImagesCount
@@ -127,6 +128,9 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    setLoading(true)
+
     let formData = new FormData()
     productFullData.listImageFile.forEach((ele, indx) => {
       ele.id === productFullData.MainImageIndex && indx !== 0 && productFullData.listImageFile.move(indx, 0)
@@ -168,8 +172,10 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       try {
         await axios.post("/AddProduct", formData, multiFormData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
+        setLoading(false)
         push(`/${locale}/products`)
       } catch (error) {
+        setLoading(false)
         toast.error(
           locale === "en"
             ? "Error Please recheck the data you entered!"
@@ -180,8 +186,10 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       try {
         await axios.post("/EditProduct", formData, multiFormData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
+        setLoading(false)
         push(`/${locale}/products`)
       } catch (error) {
+        setLoading(false)
         toast.error(
           locale === "en"
             ? "Error Please recheck the data you entered!"
@@ -618,6 +626,7 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
               className={`${styles["btn-main"]} btn-main mt-2 w-100`}
               data-bs-toggle="modal"
               data-bs-target="#add-product_"
+              disabled={loading}
               onClick={(e) => handleSubmit(e)}
             >
               {pathname.includes("add") && pathOr("", [locale, "Products", "addNewProduct"], t)}
