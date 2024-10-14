@@ -151,6 +151,7 @@ const ProductDetails = ({
                 {spesfication.name}
                 {spesfication.isRequired && <RequiredSympol />}
               </label>
+
               {spesfication.type === 1 && (
                 <select
                   required={spesfication.isRequired}
@@ -174,6 +175,7 @@ const ProductDetails = ({
                     ))}
                 </select>
               )}
+
               {!!(spesfication.type === 2 || spesfication.type === 3 || spesfication.type === 4) && (
                 <input
                   type={spesfication.type === 4 ? "number" : "text"}
@@ -194,6 +196,7 @@ const ProductDetails = ({
                   className={`${styles["form-control"]} form-control`}
                 />
               )}
+
               {spesfication.type === 5 && (
                 <div className="d-flex gap-3">
                   {spesfication.subSpecifications.map((subSpecification) => (
@@ -214,6 +217,7 @@ const ProductDetails = ({
                   ))}
                 </div>
               )}
+
               {spesfication.type === 6 && (
                 <div className="d-flex gap-3">
                   {spesfication.subSpecifications.map((subSpecification) => (
@@ -238,6 +242,7 @@ const ProductDetails = ({
                   ))}
                 </div>
               )}
+
               {spesfication.type === 7 && (
                 <>
                   {console.log(multiSelectedSpecifications)}
