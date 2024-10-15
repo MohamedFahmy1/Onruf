@@ -2,10 +2,7 @@ import { useRouter } from "next/router"
 import { Accordion } from "react-bootstrap"
 import { FaTrashAlt } from "react-icons/fa"
 import styles from "./joinCampaign.module.css"
-import { useTheme } from "@mui/material/styles"
 import { useEffect, useState } from "react"
-import { Autocomplete, Chip, FormControl, MenuItem, OutlinedInput, Select, TextField } from "@mui/material"
-import { Box } from "@mui/system"
 import axios from "axios"
 import { toast } from "react-toastify"
 import { pathOr } from "ramda"
@@ -13,31 +10,14 @@ import t from "../../../translations.json"
 import { useFetch } from "../../../hooks/useFetch"
 import ResponsiveImage from "../../../common/ResponsiveImage"
 import Link from "next/link"
+import ReactSelect from "react-select"
 
-const ITEM_HEIGHT = 48
-const ITEM_PADDING_TOP = 8
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-}
-
-function getStyles(name, categoryName, theme) {
-  return {
-    fontWeight:
-      categoryName.indexOf(name) === -1 ? theme.typography.fontWeightRegular : theme.typography.fontWeightMedium,
-  }
-}
 const JoinCampaign = () => {
   const {
     locale,
     query: { id },
     push,
   } = useRouter()
-  const theme = useTheme()
   const { data: offer } = useFetch(`/GetCouponById?id=${id}`, true)
 
   const [offerPayload, setOfferPayload] = useState({
@@ -51,70 +31,35 @@ const JoinCampaign = () => {
   const [folderName, setFolderName] = useState([])
   const [categories, setCategories] = useState([])
   const [folders, setFolders] = useState([])
-  const [products, setProducts] = useState([])
   const [productsOptions, setProductsOptions] = useState([])
   const [eventKey, setEventKey] = useState("0")
   const [selectedProducts, setSelectedProducts] = useState([])
-
-  const handleChangeSelectedCat = (e) => {
-    const {
-      target: { value },
-    } = e
-    setCategoryName(typeof value === "string" ? value.split(",") : value)
-    categoryName = typeof value === "string" ? value.split(",") : value
-    const selectedCat = categories.filter((category) => categoryName.includes(category.name))
-    const categoryIds = selectedCat.map((category) => category.id)
-    setOfferPayload({ ...offerPayload, categoryIds })
-  }
-
-  const handleChangeSelectedFolders = (e) => {
-    const {
-      target: { value },
-    } = e
-    setFolderName(typeof value === "string" ? value.split(",") : value)
-    folderName = typeof value === "string" ? value.split(",") : value
-    const selectedFolder = folders.filter((folder) => folderName.includes(folder.name))
-    const folderIds = selectedFolder.map((folder) => folder.id)
-    setOfferPayload({ ...offerPayload, fileIds: folderIds })
-  }
 
   const handleLoadProducts = async () => {
     const {
       data: { data: productsList },
     } = await axios.get(`/ListProductByBusinessAccountId?currentPage=1&maxRows=100&lang=${locale}`)
-    setProducts([...productsList])
-    const productsOptionsList = productsList.map((product) => {
-      return {
-        label: product.name,
-        id: product.id,
-      }
-    })
+    const productsOptionsList = productsList.map((product) => ({
+      label: product.name,
+      value: product.id,
+      product,
+    }))
     setProductsOptions([...productsOptionsList])
   }
 
-  const handleProductSearch = ({ target: { value } }) => {
-    if (value) {
-      setProductsOptions(productsOptions.filter((product) => product.label.includes(value)))
-    }
+  const handleProductSelect = (selectedOptions) => {
+    setSelectedProducts(selectedOptions)
+    const selectedProductIds = selectedOptions.map((option) => option.product.id)
+    setOfferPayload({ ...offerPayload, productIds: selectedProductIds })
   }
 
-  const handleProductSelect = (e) => {
-    const productIndex = e.target.id.substring(e.target.id.lastIndexOf("-") + 1)
-    if (productIndex) {
-      const selectedProduct = products[+productIndex]
-      if (!selectedProducts.find((product) => product === selectedProduct)) {
-        setSelectedProducts([...selectedProducts, selectedProduct])
-        const selectedProductIds = selectedProducts.map((selectedProduct) => selectedProduct.id)
-        setOfferPayload({ ...offerPayload, productIds: [...selectedProductIds, selectedProduct.id] })
-      }
-    }
-  }
-
-  const handleRemoveSelectedProduct = (productToRemove) => {
-    const productIndex = selectedProducts.findIndex((product) => product === productToRemove)
-    selectedProducts.splice(productIndex, 1)
-    setSelectedProducts([...selectedProducts])
-    setOfferPayload({ ...offerPayload, productIds: [...selectedProducts] })
+  const handleRemoveSelectedProduct = (optionToRemove) => {
+    const newSelectedProducts = selectedProducts.filter((option) => option.value !== optionToRemove.value)
+    setSelectedProducts(newSelectedProducts)
+    setOfferPayload({
+      ...offerPayload,
+      productIds: newSelectedProducts.map((option) => option.product.id),
+    })
   }
 
   const handleRemoveAllSelectedProducts = () => {
@@ -122,13 +67,15 @@ const JoinCampaign = () => {
     setOfferPayload({ ...offerPayload, productIds: [] })
   }
 
+  console.log(offerPayload)
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const joinOffer = await axios.post(`/BusinessAccountSubscribeInCoupon`, offerPayload)
     const { data: joinOfferRes } = joinOffer
     if (joinOfferRes.status_code === 200) {
       toast.success(locale === "en" ? "You Subscribed To Coupon Successfully!" : "تم الاشتراك بالكوبون بنجاح")
-      push("/")
+      push("..")
     }
   }
 
@@ -145,6 +92,10 @@ const JoinCampaign = () => {
       } = await axios.get(`/ListFolder?type=1&pageIndex=1&PageRowsCount=10&lang=${locale}`)
       setFolders(folders)
     })()
+  }, [locale])
+
+  useEffect(() => {
+    handleLoadProducts()
   }, [locale])
 
   return (
@@ -244,107 +195,35 @@ const JoinCampaign = () => {
             </Accordion.Body>
           </Accordion.Item>
           <Accordion.Item className={`${styles["accordion-item"]} accordion-item`} eventKey="1">
-            <Accordion.Button bsPrefix={styles["header_Accord"]} disabled>
+            <Accordion.Button bsPrefix={styles["header_Accord"]} onClick={() => setEventKey("1")}>
               <span>2</span>
-              {pathOr("", [locale, "marketing", "included_in_coupon"], t)}
+              {pathOr("", [locale, "Coupons", "includedIn"], t)}
             </Accordion.Button>
             <Accordion.Body className={`${styles["accordion-body"]} accordion-body`}>
-              <div className="form-content">
+              <section className="form-content">
                 <form>
+                  {/* Categories Selection */}
                   <div className="form-group">
-                    <label>{pathOr("", [locale, "marketing", "included_categories"], t)}</label>
-                    <FormControl
-                      sx={{
-                        m: 1,
-                        width: "100%",
-                        fontSize: "1rem",
-                        fontWeight: "400",
-                        lineHeight: 1.5,
-                        color: "#495057",
-                        backgroundColor: "#fff",
-                        border: "1px solid #ced4da",
-                        borderRadius: "50px !important",
-                        textIndent: 10,
+                    <label>{pathOr("", [locale, "Coupons", "catIn"], t)}</label>
+                    <ReactSelect
+                      isMulti
+                      options={categories.map((category) => ({
+                        label: category.name,
+                        value: category.id,
+                      }))}
+                      value={categoryName.map((name) => ({ label: name, value: name }))}
+                      onChange={(selectedOptions) => {
+                        const selectedNames = selectedOptions.map((option) => option.label)
+                        setCategoryName(selectedNames)
+                        const selectedCat = categories.filter((category) => selectedNames.includes(category.name))
+                        const CategoryIds = selectedCat.map((category) => category.id)
+                        setOfferPayload({ ...offerPayload, CategoryIds })
                       }}
-                      className="no-outline"
-                    >
-                      <Select
-                        multiple
-                        value={categoryName}
-                        onChange={handleChangeSelectedCat}
-                        input={<OutlinedInput />}
-                        renderValue={(selected) => (
-                          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                            {selected.map((value, index) => (
-                              <Chip key={index} label={value} />
-                            ))}
-                          </Box>
-                        )}
-                        MenuProps={MenuProps}
-                      >
-                        {categories.map((category) => (
-                          <MenuItem
-                            key={category.id}
-                            value={category.name}
-                            style={getStyles(category.name, categoryName, theme)}
-                          >
-                            {category.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <div className="form-group">
-                    <label>{pathOr("", [locale, "marketing", "included_folders"], t)}</label>
-                    <FormControl
-                      sx={{
-                        m: 1,
-                        width: "100%",
-                        fontSize: "1rem",
-                        fontWeight: "400",
-                        lineHeight: 1.5,
-                        color: "#495057",
-                        backgroundColor: "#fff",
-                        border: "1px solid #ced4da",
-                        borderRadius: "50px !important",
-                        textIndent: 10,
-                      }}
-                      className="no-outline"
-                    >
-                      <Select
-                        multiple
-                        value={folderName}
-                        onChange={handleChangeSelectedFolders}
-                        input={<OutlinedInput label=" " />}
-                        renderValue={(selected) => (
-                          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                            {selected.map((value, index) => (
-                              <Chip key={index} label={value} />
-                            ))}
-                          </Box>
-                        )}
-                        MenuProps={MenuProps}
-                      >
-                        {folders.map((folder) => (
-                          <MenuItem
-                            key={folder.id}
-                            value={folder.name}
-                            style={getStyles(folder.name, folderName, theme)}
-                          >
-                            {folder.name}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </div>
-                  <div className="form-group">
-                    <label>{pathOr("", [locale, "marketing", "included_products"], t)}</label>
-                    <div className="po_R">
-                      <Autocomplete
-                        disablePortal
-                        options={productsOptions}
-                        sx={{
-                          m: 1,
+                      placeholder={pathOr("", [locale, "Coupons", "catIn"], t)}
+                      styles={{
+                        control: (provided) => ({
+                          ...provided,
+                          margin: "1rem",
                           width: "100%",
                           fontSize: "1rem",
                           fontWeight: "400",
@@ -352,64 +231,138 @@ const JoinCampaign = () => {
                           color: "#495057",
                           backgroundColor: "#fff",
                           border: "1px solid #ced4da",
-                          borderRadius: "50px !important",
+                          borderRadius: "50px",
                           textIndent: 10,
-                        }}
-                        className="no-outline"
+                          padding: "5px 10px",
+                        }),
+                      }}
+                    />
+                  </div>
+
+                  {/* Folders Selection */}
+                  <div className="form-group">
+                    <label>{pathOr("", [locale, "Coupons", "foldersIn"], t)}</label>
+                    <ReactSelect
+                      isMulti
+                      options={folders.map((folder) => ({
+                        label: folder.name,
+                        value: folder.id,
+                      }))}
+                      value={folderName.map((name) => ({ label: name, value: name }))}
+                      onChange={(selectedOptions) => {
+                        const selectedNames = selectedOptions.map((option) => option.label)
+                        setFolderName(selectedNames)
+                        const selectedFolder = folders.filter((folder) => selectedNames.includes(folder.name))
+                        const folderIds = selectedFolder.map((folder) => folder.id)
+                        setOfferPayload({ ...offerPayload, FileIds: folderIds })
+                      }}
+                      placeholder={pathOr("", [locale, "Coupons", "foldersIn"], t)}
+                      menuPlacement="top"
+                      styles={{
+                        control: (provided) => ({
+                          ...provided,
+                          margin: "1rem",
+                          width: "100%",
+                          fontSize: "1rem",
+                          fontWeight: "400",
+                          lineHeight: 1.5,
+                          color: "#495057",
+                          backgroundColor: "#fff",
+                          border: "1px solid #ced4da",
+                          borderRadius: "50px",
+                          textIndent: 10,
+                          padding: "5px 10px",
+                        }),
+                        menu: (provided) => ({
+                          ...provided,
+                          zIndex: 100,
+                        }),
+                      }}
+                    />
+                  </div>
+
+                  {/* Products Selection */}
+                  <div className="form-group">
+                    <label>{pathOr("", [locale, "Coupons", "productsIn"], t)}</label>
+                    <div className="po_R">
+                      <ReactSelect
+                        isMulti
+                        options={productsOptions}
+                        value={selectedProducts}
                         onChange={handleProductSelect}
-                        renderInput={(params) => (
-                          <TextField
-                            onFocus={handleLoadProducts}
-                            onChange={handleProductSearch}
-                            {...params}
-                            label=" "
-                          />
-                        )}
+                        placeholder={pathOr("", [locale, "Coupons", "productsIn"], t)}
+                        menuPlacement="top"
+                        styles={{
+                          control: (provided) => ({
+                            ...provided,
+                            margin: "1rem",
+                            width: "100%",
+                            fontSize: "1rem",
+                            fontWeight: "400",
+                            lineHeight: 1.5,
+                            color: "#495057",
+                            backgroundColor: "#fff",
+                            border: "1px solid #ced4da",
+                            borderRadius: "50px",
+                            textIndent: 10,
+                            padding: "5px 10px",
+                          }),
+                        }}
                       />
                     </div>
                   </div>
+
+                  {/* Display Selected Products */}
                   {Boolean(selectedProducts.length) && (
                     <div className="contint_paner">
                       <div className="d-flex align-items-center justify-content-between mb-3">
-                        <h5 className="f-b m-0">{pathOr("", [locale, "marketing", "selected_products"], t)}</h5>
-                        <a onClick={handleRemoveAllSelectedProducts} className="main-color f-b font-18">
-                          {pathOr("", [locale, "marketing", "delete_all"], t)}
+                        <h5 className="f-b m-0">{pathOr("", [locale, "Coupons", "chosenProd"], t)}</h5>
+                        <a
+                          onClick={handleRemoveAllSelectedProducts}
+                          className="main-color f-b font-18"
+                          style={{ cursor: "pointer" }}
+                        >
+                          {pathOr("", [locale, "Coupons", "deleteAll"], t)}
                         </a>
                       </div>
                       <ul>
-                        {selectedProducts.map((product) => (
-                          <li key={product?.id} className="d-flex align-items-center justify-content-between mb-3">
-                            <div className="d-flex align-items-center">
-                              {Boolean(product?.listMedia.length) && (
-                                <ResponsiveImage
-                                  imageSrc={product?.listMedia[0].url}
-                                  alt="product"
-                                  width="120px"
-                                  height="100px"
-                                />
-                              )}
-                              <div>
-                                <h6 className="m-0 f-b">{product?.name}</h6>
-                                <div className="gray-color">{new Date(product?.updatedAt).toLocaleDateString()}</div>
+                        {selectedProducts.map((option) => {
+                          const product = option.product
+                          return (
+                            <li key={product.id} className="d-flex align-items-center justify-content-between mb-3">
+                              <div className="d-flex align-items-center">
+                                {Boolean(product.listMedia.length) && (
+                                  <ResponsiveImage
+                                    imageSrc={product.listMedia[0].url}
+                                    alt="product"
+                                    width={"130px"}
+                                    height={"100px"}
+                                  />
+                                )}
+                                <div>
+                                  <h6 className="m-0 f-b">{product.name}</h6>
+                                  <div className="gray-color">{new Date(product.updatedAt).toLocaleDateString()}</div>
+                                </div>
                               </div>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => handleRemoveSelectedProduct(product)}
-                              className="btn_Measures"
-                            >
-                              <FaTrashAlt />
-                            </button>
-                          </li>
-                        ))}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveSelectedProduct(option)}
+                                className="btn_Measures"
+                              >
+                                <FaTrashAlt />
+                              </button>
+                            </li>
+                          )
+                        })}
                       </ul>
                     </div>
                   )}
+
                   <button className="btn-main mt-3" onClick={handleSubmit}>
-                    {pathOr("", [locale, "marketing", "add"], t)}
+                    {pathOr("", [locale, "Coupons", "add"], t)}
                   </button>
                 </form>
-              </div>
+              </section>
             </Accordion.Body>
           </Accordion.Item>
         </Accordion>
