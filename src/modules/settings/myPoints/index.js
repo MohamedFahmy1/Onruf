@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/router"
 import t from "../../../translations.json"
 import { pathOr } from "ramda"
@@ -19,6 +19,7 @@ const MyPoints = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { newInvitationCode, pointsTransactionslist, invitationCodePoints, monyOfPointsTransfered, pointsBalance } =
     myPointsData
+
   const handleTransferPointsToMoney = async () => {
     try {
       await axios.post(

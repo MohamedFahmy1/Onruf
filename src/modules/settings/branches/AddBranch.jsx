@@ -358,7 +358,7 @@ const AddBranch = () => {
                 {pathOr("", [locale, "Branch", "branch"], t)}
               </button>
             </form>
-            <DevTool control={control} />
+            {process.env.NODE_ENV === "development" && <DevTool control={control} />}
           </div>
         </div>
       </div>

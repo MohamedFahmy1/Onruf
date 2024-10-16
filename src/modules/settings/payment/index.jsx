@@ -29,7 +29,10 @@ const PaymentCards = ({ bankTransfers }) => {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm({ mode: "onBlur" })
+
+  const paymentAccountTypeValue = watch("paymentAccountType")
 
   const fetchBankTransfer = async () => {
     const {
@@ -46,7 +49,15 @@ const PaymentCards = ({ bankTransfers }) => {
     setId(bankId)
     setOpenModal(true)
     const getSelectedBankTransfer = bankTransferData.map((b) => b).find((b) => b.id === bankId)
-    reset({ ...getSelectedBankTransfer })
+    reset({
+      ...getSelectedBankTransfer,
+      paymentAccountType:
+        getSelectedBankTransfer.paymentAccountType === "CreditCard"
+          ? 3
+          : getSelectedBankTransfer.paymentAccountType === "STCPay"
+          ? 5
+          : 1,
+    })
   }
 
   const handleDeleteBankTransfer = async (bankId) => {
@@ -120,6 +131,7 @@ const PaymentCards = ({ bankTransfers }) => {
   useEffect(() => {
     setBankTransferData(bankTransfers)
   }, [bankTransfers])
+
   return (
     <Col lg={8}>
       <section className="contint_paner">
@@ -149,7 +161,10 @@ const PaymentCards = ({ bankTransfers }) => {
                 }}
               >
                 <div>
-                  <div className="d-flex align-items-center justify-content-between mb-10 gap-3">
+                  <div
+                    className="d-flex align-items-center justify-content-between mb-10 gap-3"
+                    style={{ maxWidth: "85%" }}
+                  >
                     {bank.paymentAccountType === "CreditCard" && (
                       <Image
                         src={VisaImg}
@@ -245,8 +260,9 @@ const PaymentCards = ({ bankTransfers }) => {
                 <div className="status-P">
                   <input
                     type="radio"
-                    name="days"
+                    name="paymentAccountType"
                     value={3}
+                    defaultChecked={paymentAccountTypeValue === 3}
                     {...register("paymentAccountType", {
                       required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
                     })}
@@ -257,8 +273,9 @@ const PaymentCards = ({ bankTransfers }) => {
                 <div className="status-P">
                   <input
                     type="radio"
-                    name="days"
+                    name="paymentAccountType"
                     value={5}
+                    defaultChecked={paymentAccountTypeValue === 5}
                     {...register("paymentAccountType", {
                       required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
                     })}
@@ -269,13 +286,14 @@ const PaymentCards = ({ bankTransfers }) => {
                 <div className="status-P">
                   <input
                     type="radio"
-                    name="days"
+                    name="paymentAccountType"
                     value={1}
+                    defaultChecked={paymentAccountTypeValue === 1}
                     {...register("paymentAccountType", {
                       required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
                     })}
                   />
-                  <span> {pathOr("", [locale, "BankAccounts", "bankAccount"], t)} </span>
+                  <span>{pathOr("", [locale, "BankAccounts", "bankAccount"], t)}</span>
                   <span className="pord rounded-pill"></span>
                 </div>
               </div>
@@ -365,15 +383,15 @@ const PaymentCards = ({ bankTransfers }) => {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Ex: 07/27"
+                    placeholder="Ex: 07/2027"
                     {...register("expiaryDate", {
                       required: locale === "en" ? "This field is required" : "من فضلك ادخل هذا الحقل",
                       pattern: {
-                        value: /^(0[1-9]|[12][0-9]|3[01])\/(2[3-9]|[3-8][0-9]|90)$/,
+                        value: /^(0[1-9]|1[0-2])\/(20[2-9][0-9])$/,
                         message:
                           locale === "en"
-                            ? "Invalid date format (DD/YY, days from 01 to 31)"
-                            : "تنسيق التاريخ غير صحيح (يوم/سنة، أيام من 01 إلى 31)",
+                            ? "Invalid date format (MM/YYYY, months from 01 to 12)"
+                            : "تنسيق التاريخ غير صحيح (شهر/سنة، الأشهر من 01 إلى 12)",
                       },
                     })}
                   />
@@ -395,6 +413,7 @@ const PaymentCards = ({ bankTransfers }) => {
                           type="checkbox"
                           role="switch"
                           id="flexSwitchCheckChecked"
+                          {...register("saveForLaterUse")}
                         />
                       </div>
                     </div>

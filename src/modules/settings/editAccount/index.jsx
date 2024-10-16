@@ -722,7 +722,7 @@ const EditBussinessAccount = () => {
                 </Accordion.Body>
               </Accordion.Item>
             </form>
-            <DevTool control={control} />
+            {process.env.NODE_ENV === "development" && <DevTool control={control} />}
           </Accordion>
         </div>
       )}

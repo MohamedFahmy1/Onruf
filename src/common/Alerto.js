@@ -1,13 +1,15 @@
 import { toast } from "react-toastify"
 
 const Alerto = (e) => {
-  console.log("🚀 ~ file: Alerto.js:4 ~ Alerto ~ e", e)
+  if (e?.response?.data?.message) {
+    return toast.error(e?.response?.data?.message)
+  }
+
   let obj = e?.response?.data?.errors
   if (e.response) {
-    console.log("obj", obj)
     if (e.response.data) {
       if (!obj) {
-        toast.error(e.response.data.Message)
+        toast.error(e?.response?.data?.Message)
       } else if (Object?.keys(obj)?.length > 0) {
         Object.keys(obj).forEach((ele) => {
           toast.error(obj[ele][0])
@@ -17,7 +19,7 @@ const Alerto = (e) => {
       }
     }
   } else {
-    toast.error("!Oops")
+    toast.error("!Oops something went wrong")
   }
 }
 export default Alerto

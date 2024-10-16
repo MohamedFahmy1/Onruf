@@ -58,6 +58,10 @@ const Table = ({
     if (data.length > 0 || !Array.isArray(data)) {
       setIsLoading(false)
     }
+
+    return () => {
+      setIsLoading(false)
+    }
   }, [data])
 
   return (

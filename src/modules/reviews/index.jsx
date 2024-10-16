@@ -56,9 +56,9 @@ const Reviews = () => {
   const renderItems = () => {
     if (currentData.length === 0) {
       return tab === "ratings" ? (
-        <h2 className="text-center">{pathOr("", [locale, "questionsAndReviews", "noRatings"], t)}</h2>
+        <h2 className="text-center mt-5">{pathOr("", [locale, "questionsAndReviews", "noRatings"], t)}</h2>
       ) : (
-        <h2 className="text-center">{pathOr("", [locale, "questionsAndReviews", "noQuestions"], t)}</h2>
+        <h2 className="text-center mt-5">{pathOr("", [locale, "questionsAndReviews", "noQuestions"], t)}</h2>
       )
     }
     return currentData.map((item) =>
