@@ -19,22 +19,26 @@ import Image from "next/image"
 import Alerto from "../../../common/Alerto"
 import { IoIosCloseCircle } from "react-icons/io"
 import { FaCamera } from "react-icons/fa"
-import styles from "./folders.module.css"
 
 const Folders = () => {
   const { locale } = useRouter()
   const page = useRouter()?.query?.page || 1
   const dispatch = useDispatch()
   const folders = useSelector((state) => state.foldersSlice.folder)
+
   const [openFolderModal, setOpenFolderModal] = useState(false)
   const [folderName, setFolderName] = useState("")
   const [editedFolderName, setEditedFolderName] = useState("")
   const [folderImage, setFolderImage] = useState("")
+
   const [editModal, setEditModal] = useState(false)
   const [folderId, setFolderId] = useState(false)
 
+  const [loading, setLoading] = useState(false)
+
   const editFolder = async () => {
     if (!editedFolderName) return toast.error(locale === "en" ? "Please enter folder name!" : "من فضلك ادخل اسم الملف")
+    setLoading(true)
     const values = { id: folderId, type: 1, nameAr: editedFolderName, nameEn: editedFolderName, image: folderImage }
     const formData = new FormData()
     for (const key in values) {
@@ -44,7 +48,9 @@ const Folders = () => {
       await axios.put("/EditFolder", formData)
       toast.success(locale === "en" ? "A folder has been added successfully!" : "تم تعديل الملف بنجاح")
       setOpenFolderModal(false)
+      setLoading(false)
     } catch (error) {
+      setLoading(false)
       Alerto(error)
     }
   }
@@ -58,6 +64,7 @@ const Folders = () => {
 
   const addNewFolder = async () => {
     if (!folderName) return toast.error(locale === "en" ? "Please enter folder name!" : "من فضلك ادخل اسم الملف")
+    setLoading(true)
     const formData = new FormData()
     formData.append("type", 1)
     formData.append("nameAr", folderName)
@@ -71,7 +78,9 @@ const Folders = () => {
       toast.success(locale === "en" ? "A folder has been added successfully!" : "تم اضافة الملف الجديد بنجاح")
       dispatch(getFolderList(data))
       setOpenFolderModal(false)
+      setLoading(false)
     } catch (error) {
+      setLoading(false)
       Alerto(error)
     }
   }
@@ -238,11 +247,11 @@ const Folders = () => {
         </Modal.Body>
         <Modal.Footer className="modal-footer">
           {editModal ? (
-            <button type="button" className="btn-main" onClick={editFolder}>
+            <button type="button" disabled={loading} className="btn-main" onClick={editFolder}>
               {pathOr("", [locale, "Products", "editFolder"], t)}
             </button>
           ) : (
-            <button type="button" className="btn-main" onClick={addNewFolder}>
+            <button type="button" disabled={loading} className="btn-main" onClick={addNewFolder}>
               {pathOr("", [locale, "Products", "saveFolder"], t)}
             </button>
           )}

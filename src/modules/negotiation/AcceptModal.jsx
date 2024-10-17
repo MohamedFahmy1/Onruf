@@ -10,9 +10,12 @@ import axios from "axios"
 const AcceptModal = ({ acceptModal, setAcceptModal, offerId, productId, getOffers }) => {
   const { locale } = useRouter()
   const [offerExpireHours, setOfferExpireHours] = useState()
+  const [loading, setLoading] = useState(false)
+
   const acceptOffer = async () => {
     if (offerExpireHours) {
       try {
+        setLoading(true)
         await axios.post(
           `/AcceptRejectOffer?offerId=${offerId}&productId=${productId}&acceptOffer=${true}&OfferExpireHours=${offerExpireHours}`,
         )
@@ -20,7 +23,8 @@ const AcceptModal = ({ acceptModal, setAcceptModal, offerId, productId, getOffer
         setAcceptModal(false)
         getOffers()
       } catch (error) {
-        toast.error(error.response.data.message)
+        setLoading(false)
+        Alerto(error)
       }
     } else toast.error(pathOr("", [locale, "negotiation", "please_select_expiration_hours"], t))
   }
@@ -51,7 +55,7 @@ const AcceptModal = ({ acceptModal, setAcceptModal, offerId, productId, getOffer
         </div>
       </Modal.Body>
       <Modal.Footer className="modal-footer">
-        <button type="button" className="btn-main" onClick={acceptOffer}>
+        <button type="button" disabled={loading} className="btn-main" onClick={acceptOffer}>
           {pathOr("", [locale, "negotiation", "accept"], t)}
         </button>
       </Modal.Footer>

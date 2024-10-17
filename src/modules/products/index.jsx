@@ -15,16 +15,19 @@ import { IoIosCloseCircle } from "react-icons/io"
 import { FaCamera } from "react-icons/fa"
 
 const Products = ({ products: p }) => {
+  const { locale } = useRouter()
   const [products, setProducts] = useState(p)
   const [folders, setFolders] = useState()
   const [openFolderModal, setOpenFolderModal] = useState(false)
+
   const [addProductToFolderLoading, setAddProductToFolderLoading] = useState({})
+  const [loading, setLoading] = useState(false)
   const [folderName, setFolderName] = useState("")
   const [createNewFolder, setCreateNewFolder] = useState(folders?.fileList?.length)
+
   const [folderImage, setFolderImage] = useState("")
   const [productsIds, setProductsIds] = useState([])
   const [selectedRows, setSelectedRows] = useState({})
-  const { locale } = useRouter()
 
   useEffect(() => {
     setCreateNewFolder(folders?.fileList?.length)
@@ -53,6 +56,7 @@ const Products = ({ products: p }) => {
     try {
       if (!createNewFolder) {
         if (!folderName) return toast.error(locale === "en" ? "Please enter folder name!" : "من فضلك ادخل اسم الملف")
+        setLoading(true)
         const formData = new FormData()
         formData.append("type", 1)
         formData.append("nameAr", folderName)
@@ -68,10 +72,13 @@ const Products = ({ products: p }) => {
           locale === "en" ? "Your new folder has been created successfully!" : "تم انشاء الملف الجديد بنجاح",
         )
         setCreateNewFolder(true)
+        setLoading(false)
       } else {
+        setLoading(false)
         setCreateNewFolder(false)
       }
     } catch (error) {
+      setLoading(false)
       Alerto(error)
     }
   }
@@ -198,7 +205,12 @@ const Products = ({ products: p }) => {
                         </div>
                       </div>
                     </div>
-                    <button aria-label="save" className="btn-main" onClick={() => addProductToFolder(id)}>
+                    <button
+                      aria-label="save"
+                      disabled={addProductToFolderLoading?.id === id}
+                      className="btn-main"
+                      onClick={() => addProductToFolder(id)}
+                    >
                       {addProductToFolderLoading?.id === id && addProductToFolderLoading.loader ? (
                         <Spinner style={{ marginTop: 8 }} animation="border" />
                       ) : (
@@ -219,6 +231,7 @@ const Products = ({ products: p }) => {
                 : pathOr("", [locale, "Products", "addNewFolder"], t)
             }
             className="btn-main"
+            disabled={loading}
             onClick={addNewFolder}
           >
             {!createNewFolder

@@ -4,13 +4,19 @@ import { pathOr } from "ramda"
 import { useRouter } from "next/router"
 import { toast } from "react-toastify"
 import axios from "axios"
+import Alerto from "../../common/Alerto"
+import { useState } from "react"
 
 const RefuseModal = ({ refuseModal, setRefuseModal, offerId, productId, getOffers }) => {
   const { locale } = useRouter()
+  const [loading, setLoading] = useState(false)
+
   // const [refuseReason, setRefuseReason] = useState()
+
   const refuseOffer = async () => {
     // if (refuseReason) {
     try {
+      setLoading(true)
       await axios.post(
         `/AcceptRejectOffer?offerId=${offerId}&productId=${productId}&acceptOffer=${false}&OfferExpireHours=${0}`,
       )
@@ -18,7 +24,8 @@ const RefuseModal = ({ refuseModal, setRefuseModal, offerId, productId, getOffer
       setRefuseModal(false)
       getOffers()
     } catch (error) {
-      toast.error(error.response.data.message)
+      setLoading(false)
+      Alerto(error)
     }
     // } else toast.error(pathOr("", [locale, "negotiation", "please_add_reason"], t))
   }
@@ -45,7 +52,7 @@ const RefuseModal = ({ refuseModal, setRefuseModal, offerId, productId, getOffer
         </div> */}
       </Modal.Body>
       <Modal.Footer className="modal-footer">
-        <button type="button" className="btn-main" onClick={refuseOffer}>
+        <button type="button" className="btn-main" disabled={loading} onClick={refuseOffer}>
           {pathOr("", [locale, "negotiation", "reject"], t)}
         </button>
       </Modal.Footer>

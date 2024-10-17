@@ -172,7 +172,6 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       try {
         await axios.post("/AddProduct", formData, multiFormData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-        setLoading(false)
         push(`/${locale}/products`)
       } catch (error) {
         setLoading(false)
@@ -186,7 +185,6 @@ const ProductDetails = ({ selectedCatProps, productFullData, handleBack, setProd
       try {
         await axios.post("/EditProduct", formData, multiFormData)
         toast.success(locale === "en" ? "Products has been created successfully!" : "تم اضافة المنتج بنجاح")
-        setLoading(false)
         push(`/${locale}/products`)
       } catch (error) {
         setLoading(false)

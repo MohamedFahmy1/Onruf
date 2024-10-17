@@ -1,4 +1,4 @@
-import React, { useEffect, forwardRef, useRef } from 'react'
+import React, { useEffect, forwardRef, useRef } from "react"
 
 // eslint-disable-next-line react/display-name
 const Checkbox = forwardRef(({ indeterminate, ...rest }, ref) => {
@@ -9,8 +9,7 @@ const Checkbox = forwardRef(({ indeterminate, ...rest }, ref) => {
     resolvedRef.current.indeterminate = indeterminate
   }, [resolvedRef, indeterminate])
 
-  return  <input type='checkbox' ref={resolvedRef} {...rest} />
-
+  return <input type="checkbox" ref={resolvedRef} {...rest} />
 })
 
 export default Checkbox

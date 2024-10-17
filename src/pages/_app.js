@@ -58,8 +58,8 @@ const MyApp = ({ Component, pageProps, emotionCache = clientSideEmotionCache }) 
             {/* <link rel="canonical" href="https://your-preferred-url.com" /> */}
             {/* <meta name="robots" content="noindex, nofollow" />  */}
           </Head>
-          <ThemeProvider theme={theme}>
-            <EmotionCacheProvider theme={theme}>
+          <ThemeProvider theme={{ ...theme, direction: locale === "en" ? "ltr" : "rtl" }}>
+            <EmotionCacheProvider theme={{ ...theme, direction: locale === "en" ? "ltr" : "rtl" }}>
               <CssBaseline />
               <Sidebar />
               <div

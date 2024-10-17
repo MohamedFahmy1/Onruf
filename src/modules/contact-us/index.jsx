@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from "@mui/material"
 import axios from "axios"
-import React from "react"
+import React, { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -11,29 +11,35 @@ import { pathOr } from "ramda"
 import t from "../../translations.json"
 import { textAlignStyle } from "../../styles/stylesObjects"
 
-const schema = yup.object({
-  problemTitle: yup.string().required("Required"),
-  mobileNumber: yup.string().required("Required"),
-  email: yup.string().email().required("Required"),
-  typeOfCommunication: yup.number().required("Required"),
-  meassageDetails: yup.string().required("Required"),
-})
-
 const ContactUS = () => {
+  const { locale, push } = useRouter()
+  const [loading, setLoading] = useState(false)
+
+  const schema = yup.object({
+    problemTitle: yup.string().required(locale === "en" ? "Required" : "مطلوب"),
+    mobileNumber: yup.string().required(locale === "en" ? "Required" : "مطلوب"),
+    email: yup
+      .string()
+      .email({ message: locale === "en" ? "Invalid email address" : "البريد الالكتروني غير صحيح" })
+      .required(locale === "en" ? "Required" : "مطلوب"),
+    typeOfCommunication: yup.number().required(locale === "en" ? "Required" : "مطلوب"),
+    meassageDetails: yup.string().required(locale === "en" ? "Required" : "مطلوب"),
+  })
+
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm({ resolver: yupResolver(schema) })
 
-  const { locale, push } = useRouter()
-
   const handleSubmitQuestion = async (values) => {
     try {
-      const res = await axios.post("/AddEditContactUs", { ...values })
+      setLoading(true)
+      await axios.post("/AddEditContactUs", { ...values })
       toast.success(locale === "en" ? "Your Question has been sent successfully!" : "!تم إرسال سؤالك بنجاح")
       push("/")
     } catch (error) {
+      setLoading(false)
       toast.error(error.response.data.message)
     }
   }
@@ -124,7 +130,12 @@ const ContactUS = () => {
               />
               <p className="errorMsg">{handleFormErrors(errors, "meassageDetails")}</p>
             </Box>
-            <Button type="submit" variant="contained" sx={{ borderRadius: "20px" }}>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={loading}
+              sx={{ borderRadius: "20px", height: "50px", fontSize: "18px" }}
+            >
               {pathOr("", [locale, "ContactUs", "send"], t)}
             </Button>
           </Box>
