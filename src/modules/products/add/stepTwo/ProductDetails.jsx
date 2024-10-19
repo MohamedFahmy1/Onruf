@@ -83,7 +83,6 @@ const ProductDetails = ({
         const allValues = typeof value === "string" ? value.split(",") : value
         updatedSpec.ValueSpeAr = allValues.join(",")
         updatedSpec.ValueSpeEn = allValues.join(",")
-        console.log("allValues", allValues)
         // Update the state to reflect the selected values for the multi-select
         setMultiSelectedSpecifications((prev) => ({
           ...prev,
@@ -245,7 +244,6 @@ const ProductDetails = ({
 
               {spesfication.type === 7 && (
                 <>
-                  {console.log(multiSelectedSpecifications)}
                   <FormControl
                     sx={{
                       m: 1,
@@ -275,7 +273,6 @@ const ProductDetails = ({
                           {selected.map((selectedId, index) => {
                             // Find the subSpecification object that matches the selectedId
                             const selectedSpec = spesfication.subSpecifications.find((sub) => sub.id === selectedId)
-                            console.log("selectedSpec", spesfication.subSpecifications)
                             return (
                               <Chip key={index} label={locale === "en" ? selectedSpec?.nameEn : selectedSpec?.nameAr} />
                             )

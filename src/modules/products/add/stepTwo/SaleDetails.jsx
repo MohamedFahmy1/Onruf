@@ -231,10 +231,10 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                         </span>
                         <div className="po_R flex-grow-1">
                           <input
-                            type="number"
+                            type="text"
                             onKeyDown={(e) => onlyNumbersInInputs(e)}
                             onWheel={(e) => e.target.blur()}
-                            value={productPayload.AuctionStartPrice === 0 ? "" : productPayload.AuctionStartPrice}
+                            value={productPayload.AuctionStartPrice}
                             onChange={(e) =>
                               setProductPayload({ ...productPayload, AuctionStartPrice: +e.target.value })
                             }
@@ -265,7 +265,7 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
                             type="number"
                             onKeyDown={(e) => onlyNumbersInInputs(e)}
                             onWheel={(e) => e.target.blur()}
-                            value={productPayload.AuctionMinimumPrice === 0 ? " " : productPayload.AuctionMinimumPrice}
+                            value={productPayload.AuctionMinimumPrice === 0 ? 0 : productPayload.AuctionMinimumPrice}
                             onChange={(e) =>
                               setProductPayload({ ...productPayload, AuctionMinimumPrice: +e.target.value })
                             }
