@@ -8,6 +8,7 @@ import t from "../../../translations.json"
 import axios from "axios"
 import { useSelector } from "react-redux"
 import { LoadingScreen } from "../../../common/Loading"
+import Image from "next/image"
 
 const Shipping = () => {
   const { locale } = useRouter()
@@ -59,10 +60,11 @@ const Shipping = () => {
           {shippingOptions?.map((option) => (
             <div className="col-lg-3 col-md-6" key={option.id}>
               <a onClick={() => Router.push(`/settings/shipping/${option.id}`)} className="box_company active">
-                <img
-                  src={option.shippingOptionImage ? option.shippingOptionImage : aramex.src}
+                <Image
+                  src={option?.shippingOptionImage ? option?.shippingOptionImage : aramex?.src}
                   width={200}
                   height={200}
+                  alt="shipping"
                 />
                 <h6 className="f-b">
                   {option.shippingOptionName} <br />

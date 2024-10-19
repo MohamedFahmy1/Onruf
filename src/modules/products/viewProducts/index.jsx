@@ -190,6 +190,10 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     }
   }
 
+  const handleNavigateToProductDetails = (id) => {
+    window.open(`${process.env.NEXT_PUBLIC_WEBSITE}Home/GetProductById?id=${id}`, "_blank")
+  }
+
   const getSaleTypes = useCallback(
     (original) => {
       const saleTypes = []
@@ -215,7 +219,7 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         Header: pathOr("", [locale, "Products", "ProductId"], t),
         accessor: "productId",
         Cell: ({ row: { original } }) => (
-          <div>
+          <div onClick={() => handleNavigateToProductDetails(original.id)} style={{ cursor: "pointer" }}>
             <h6 className="m-0 f-b">#{original.id}</h6>
           </div>
         ),
@@ -224,7 +228,10 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         Header: pathOr("", [locale, "Products", "productName"], t),
         accessor: "name",
         Cell: ({ row: { original } }) => (
-          <div className="d-flex align-items-center">
+          <div
+            className="d-flex align-items-center pointer"
+            onClick={() => handleNavigateToProductDetails(original.id)}
+          >
             <div style={{ position: "relative", width: "106px", height: "100px" }}>
               <Image
                 src={original.image || original.productImage}
