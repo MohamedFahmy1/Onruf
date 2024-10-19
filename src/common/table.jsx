@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useId } from "react"
+import React, { useState, useEffect } from "react"
 import { useTable, useRowSelect, useMountedLayoutEffect } from "react-table"
 import Checkbox from "./tableCheckbox"
 import Router, { useRouter } from "next/router"
@@ -14,7 +14,6 @@ const Table = ({
   onSelectedRowsChange = () => null,
 }) => {
   const [isLoading, setIsLoading] = useState(true)
-  const id = useId()
   const route = Router?.router?.state
   const page = +route?.query?.page || 1
   const { locale } = useRouter()
@@ -30,13 +29,14 @@ const Table = ({
     {
       columns,
       data,
+      getRowId: (row) => row.id || row.productId,
       initialState: {
         selectedRowIds: selectedRows,
       },
     },
     useRowSelect,
     (hooks) => {
-      isCheckbox &&
+      if (isCheckbox) {
         hooks.visibleColumns.push((columns) => [
           {
             id: "selection",
@@ -47,6 +47,7 @@ const Table = ({
           },
           ...columns,
         ])
+      }
     },
   )
 
@@ -70,7 +71,7 @@ const Table = ({
         {headerGroups?.map((headerGroup, index) => (
           <tr {...headerGroup.getHeaderGroupProps()} key={index}>
             {headerGroup?.headers?.map((column) => (
-              <th key={id} {...column.getHeaderProps()}>
+              <th key={column.id} {...column.getHeaderProps()}>
                 {column.render("Header")}
               </th>
             ))}
@@ -89,9 +90,9 @@ const Table = ({
           rows?.slice((page - 1) * pageSize, page * pageSize).map((row, i) => {
             prepareRow(row)
             return (
-              <tr {...row.getRowProps()} key={Math.random()}>
+              <tr {...row.getRowProps()} key={row.id}>
                 {row?.cells?.map((cell, index) => (
-                  <td {...cell.getCellProps()} key={index}>
+                  <td {...cell.getCellProps()} key={cell.column.id}>
                     {cell.render("Cell")}
                   </td>
                 ))}

@@ -240,7 +240,7 @@ const Products = ({ products: p }) => {
           </button>
         </Modal.Footer>
       </Modal>
-      <section className="btns_fixeds">
+      <section className="btns_fixeds" style={{ left: locale === "en" ? "55%" : "42%" }}>
         <button
           className="btn-main rounded-0"
           aria-label={locale === "en" ? "Delete selected" : "حذف المحدد"}

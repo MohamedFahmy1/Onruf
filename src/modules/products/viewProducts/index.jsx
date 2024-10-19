@@ -44,13 +44,18 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     selectedProductsIds,
   } = useMemo(() => {
     const productsCount = products?.length
+
     const avaliableProducts = (productsCount > 0 && products?.filter(({ isActive }) => isActive)) || []
+
     const inActiveProducts = (productsCount > 0 && products?.filter(({ isActive }) => !isActive)) || []
+
     const productsAlmostOut =
       (productsCount > 0 &&
         products?.filter(({ qty, almostSoldOutQuantity }) => qty <= almostSoldOutQuantity && qty != null)) ||
       []
+
     const didnotSell = didnotSellProducts
+
     const filterProducts =
       selectedFilter === "avaliableProducts"
         ? avaliableProducts
@@ -59,11 +64,9 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
         : selectedFilter === "didnotSell"
         ? didnotSell
         : inActiveProducts
-    const rows = Object.keys(selectedRows ? selectedRows : {})
-    const selectedProductsIds = rows.map((row) => {
-      const selectedRow = filterProducts.filter((_, index) => index === +row)
-      return selectedRow?.[0]?.productId || selectedRow?.[0]?.id
-    })
+
+    const selectedProductsIds = Object.keys(selectedRows || {})
+
     return {
       productsCount,
       avaliableProducts,
