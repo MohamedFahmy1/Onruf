@@ -10,8 +10,14 @@ import delivery from "../../../assets/images/delivery-truck.png"
 import Image from "next/image"
 import ChangeSingleStatusModal from "./ChangeSingleStatusModal"
 import ChangeBranchModal from "../ChangeBranchModal"
-import { orderStatusTranslate, orderTypesTranslation, paymentTypesTranslation } from "../../../common/functions"
+import {
+  handleNavigateToProductDetails,
+  orderStatusTranslate,
+  orderTypesTranslation,
+  paymentTypesTranslation,
+} from "../../../common/functions"
 import ResponsiveImage from "../../../common/ResponsiveImage"
+import moment from "moment"
 
 export const OrderDetails = () => {
   const {
@@ -156,8 +162,8 @@ export const OrderDetails = () => {
               </li>
               <li>
                 <span className="gray-color">{pathOr("", [locale, "Orders", "order_time"], t)}</span>
-                <div className="f-b">{createdAt.slice(11, 16)}</div>
-                <div className="f-b">{createdAt.slice(0, 10)}</div>
+                <div className="f-b">{moment(createdAt).format("hh:mm A")}</div>
+                <div className="f-b">{moment(createdAt).format("DD/MM/YYYY")}</div>
               </li>
               <li>
                 <span className="gray-color">{pathOr("", [locale, "Orders", "number_of_shipments"], t)}</span>
@@ -258,8 +264,16 @@ export const OrderDetails = () => {
                 {orderProductFullInfoDto.map((item, index) => (
                   <li className="item" key={index}>
                     <div className="d-flex align-items-center gap-1">
-                      <ResponsiveImage imageSrc={item.iamge} alt={"product"} />
+                      <ResponsiveImage
+                        imageSrc={item.iamge}
+                        alt={"product"}
+                        onClick={() => handleNavigateToProductDetails(item.productId)}
+                        className="pointer"
+                      />
                       <div>
+                        <div className="f-b pointer" onClick={() => handleNavigateToProductDetails(item.productId)}>
+                          #{item.productId}
+                        </div>
                         <div className="gray-color">{item.category}</div>
                         <div className="f-b">{item.productName}</div>
                         <div className="gray-color">{orderTypesTranslation(orderSaleType, locale)}</div>
@@ -325,7 +339,8 @@ export const OrderDetails = () => {
                     </div>
                   </div>
                   <div className="gray-color">
-                    {item.statusDate.slice(11, 16)} - {item.statusDate.slice(0, 10)}
+                    {/* {item.statusDate} */}
+                    {moment(item.statusDate).format("DD/MM/YYYY | hh:mm A")}
                   </div>
                 </li>
               ))}

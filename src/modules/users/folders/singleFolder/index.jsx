@@ -24,6 +24,7 @@ const SingleFolder = () => {
     fetchData: getFolderUsers,
     isLoading,
   } = useFetch(`/GetFolderById?id=${folderId}&lang=${locale}`, true)
+
   const rows = Object.keys(selectedRows)
   const selectedUsersIds = rows.map((row) => {
     const selectedRow = users?.listUser.filter((_, index) => index === +row)

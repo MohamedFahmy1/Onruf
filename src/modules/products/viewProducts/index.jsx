@@ -4,7 +4,7 @@ import Pagination from "./../../../common/pagination"
 import { useRouter } from "next/router"
 import { propOr, pathOr } from "ramda"
 import { MdModeEdit } from "react-icons/md"
-import { formatDate, minDate } from "../../../common/functions"
+import { formatDate, handleNavigateToProductDetails, minDate } from "../../../common/functions"
 import Modal from "react-bootstrap/Modal"
 import axios from "axios"
 import { Button } from "react-bootstrap"
@@ -188,10 +188,6 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
     } catch (err) {
       Alerto(err)
     }
-  }
-
-  const handleNavigateToProductDetails = (id) => {
-    window.open(`${process.env.NEXT_PUBLIC_WEBSITE}Home/GetProductById?id=${id}`, "_blank")
   }
 
   const getSaleTypes = useCallback(

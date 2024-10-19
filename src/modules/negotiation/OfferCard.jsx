@@ -4,7 +4,7 @@ import { pathOr } from "ramda"
 import { useState } from "react"
 import t from "../../translations.json"
 import AcceptModal from "./AcceptModal"
-import { negotiationTypeTranslation } from "../../common/functions"
+import { handleNavigateToProductDetails, negotiationTypeTranslation } from "../../common/functions"
 import RefuseModal from "./RefuseModal"
 import ResponsiveImage from "../../common/ResponsiveImage"
 
@@ -49,8 +49,22 @@ const OfferCard = ({ offer, getOffers, selectedTab }) => {
             },
           }}
         >
-          <ResponsiveImage imageSrc={productImage} alt={"product"} />
+          <ResponsiveImage
+            imageSrc={productImage}
+            alt={"product"}
+            onClick={() => handleNavigateToProductDetails(offer?.productId)}
+            className="pointer"
+          />
           <Box>
+            <Typography
+              variant="body1"
+              component="p"
+              fontWeight={600}
+              className="pointer"
+              onClick={() => handleNavigateToProductDetails(offer?.productId)}
+            >
+              #{offer?.productId}
+            </Typography>
             <Typography variant="body1" component="p" fontWeight={300} color={"rgba(0, 0, 0, 0.6)"}>
               {offer?.productCategory}
             </Typography>

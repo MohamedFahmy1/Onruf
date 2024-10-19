@@ -16,6 +16,7 @@ import t from "../../../translations.json"
 import Image from "next/image"
 import ResponsiveImage from "../../../common/ResponsiveImage"
 import { useFetch } from "../../../hooks/useFetch"
+import Link from "next/link"
 
 const UserDetails = () => {
   const {
@@ -31,16 +32,22 @@ const UserDetails = () => {
       {
         Header: pathOr("", [locale, "Orders", "order_number"], t),
         accessor: "orderInfoDtos.orderNumber",
-        Cell: ({ row: { original } }) => <div className="f-b">#{original?.orderMasterId}</div>,
+        Cell: ({ row: { original } }) => (
+          <Link href={`/orders/${original.orderMasterId}`}>
+            <div className="f-b pointer">#{original?.orderMasterId}</div>
+          </Link>
+        ),
       },
       {
         Header: pathOr("", [locale, "Orders", "client"], t),
         Cell: ({ row: { original } }) => {
           return (
-            <div>
-              <h6 className="m-0 f-b">{original?.clientName}</h6>
-              <h6 className="gray-color">{original?.shippingAddress}</h6>
-            </div>
+            <Link href={`/orders/${original.orderMasterId}`}>
+              <div className="pointer">
+                <h6 className="m-0 f-b">{original?.clientName}</h6>
+                <h6 className="gray-color">{original?.shippingAddress}</h6>
+              </div>
+            </Link>
           )
         },
       },
@@ -48,39 +55,51 @@ const UserDetails = () => {
         Header: pathOr("", [locale, "Orders", "orderHistory"], t),
         accessor: "dateOfOrder",
         Cell: ({ row: { original } }) => (
-          <div>
-            <h6 className="m-0 f-b">{moment(original?.createdAt).format("lll")}</h6>
-          </div>
+          <Link href={`/orders/${original.orderMasterId}`}>
+            <h6 className="m-0 f-b pointer">{moment(original?.createdAt).format("lll")}</h6>
+          </Link>
         ),
       },
       {
         Header: pathOr("", [locale, "Orders", "shipping"], t),
         accessor: "shipping",
         Cell: ({ row: { original } }) => (
-          <div className="f-b">
-            {original?.shippingFee === 0
-              ? pathOr("", [locale, "Products", "freeDelivery"], t)
-              : `${original?.shippingFee} ${pathOr("", [locale, "Products", "currency"], t)}`}
-          </div>
+          <Link href={`/orders/${original.orderMasterId}`}>
+            <div className="f-b pointer">
+              {original?.shippingFee === 0
+                ? pathOr("", [locale, "Products", "freeDelivery"], t)
+                : `${original?.shippingFee} ${pathOr("", [locale, "Products", "currency"], t)}`}
+            </div>
+          </Link>
         ),
       },
       {
         Header: pathOr("", [locale, "Orders", "payment"], t),
         accessor: "payment",
-        Cell: ({ row: { original } }) => <div className="f-b">{original?.paymentType}</div>,
+        Cell: ({ row: { original } }) => (
+          <Link href={`/orders/${original.orderMasterId}`}>
+            <div className="f-b pointer">{original?.paymentType}</div>
+          </Link>
+        ),
       },
       {
         Header: pathOr("", [locale, "Orders", "order_status"], t),
         accessor: "status",
-        Cell: ({ row: { original } }) => <div className="f-b main-color">{original?.status}</div>,
+        Cell: ({ row: { original } }) => (
+          <Link href={`/orders/${original.orderMasterId}`}>
+            <div className="f-b main-color pointer">{original?.status}</div>
+          </Link>
+        ),
       },
       {
         Header: pathOr("", [locale, "Orders", "total"], t),
         accessor: "totalAfterDiscount",
         Cell: ({ row: { original } }) => (
-          <div className="f-b">
-            {original?.totalOrderAmountAfterDiscount} {pathOr("", [locale, "Products", "currency"], t)}
-          </div>
+          <Link href={`/orders/${original.orderMasterId}`}>
+            <div className="f-b pointer">
+              {original?.totalOrderAmountAfterDiscount} {pathOr("", [locale, "Products", "currency"], t)}
+            </div>
+          </Link>
         ),
       },
     ],
@@ -102,7 +121,7 @@ const UserDetails = () => {
               <div className="d-flex align-items-center justify-content-between gap-2">
                 {user?.clientImage && (
                   <ResponsiveImage
-                    imageSrc={`${process.env.NEXT_PUBLIC_URL}${user?.clientImage}`}
+                    imageSrc={`${process.env.NEXT_PUBLIC_URL}/${user?.clientImage}`}
                     alt={"client"}
                     width="100px"
                     height="100px"

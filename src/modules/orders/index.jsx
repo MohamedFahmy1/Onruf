@@ -14,6 +14,7 @@ import ChangeStatusModal from "./ChangeStatusModal"
 import ChangeBranchModal from "./ChangeBranchModal"
 import { useFetch } from "../../hooks/useFetch"
 import { LoadingScreen } from "../../common/Loading"
+import moment from "moment"
 
 const Orders = () => {
   // const [shippingOptions, setShippingOptions] = useState()
@@ -122,11 +123,11 @@ const Orders = () => {
       //   updatedOrders = orders.filter((item) => item.shippingOptionId === filter.shippingOptionId)
       // }
       if (filter?.year !== "") {
-        updatedOrders = orders.filter((item) => item.createdAt.slice(0, 4) == filter.year)
+        updatedOrders = orders.filter((item) => moment(item.createdAt).year() == filter.year)
       }
       if (filter?.year !== "" && filter?.paymentType !== "") {
         updatedOrders = orders.filter((item) => item.paymentTypeId == filter.paymentType)
-        updatedOrders = updatedOrders.filter((item) => item.createdAt.slice(0, 4) == filter.year)
+        updatedOrders = updatedOrders.filter((item) => moment(item.createdAt).year() == filter.year)
       }
       setFilterdOrders(updatedOrders)
       setShowFilter(true)
@@ -247,11 +248,14 @@ const Orders = () => {
     [locale],
   )
 
-  console.log(columns)
-
   if (isLoading) {
     return <LoadingScreen />
   }
+
+  const currentYear = moment().year()
+  const maxYearsLater = 10
+
+  const years = Array.from({ length: maxYearsLater + 1 }, (_, i) => currentYear - i)
 
   return (
     <>
@@ -274,10 +278,11 @@ const Orders = () => {
               <option hidden disabled value={""}>
                 {pathOr("", [locale, "Orders", "orderHistory"], t)}
               </option>
-              <option value={2023}>2023</option>
-              <option value={2022}>2022</option>
-              <option value={2021}>2021</option>
-              <option value={2020}>2020</option>
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
             </select>
             {/*<select
               className="form-control form-select"
@@ -429,7 +434,7 @@ const Orders = () => {
           {orders && (
             <Table
               columns={columns}
-              data={orders}
+              data={filterdOrders === undefined ? orders : filterdOrders}
               pageSize={10}
               selectedRows={selectedRows}
               onSelectedRowsChange={setSelectedRows}

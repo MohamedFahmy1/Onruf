@@ -6,13 +6,10 @@ import Image from "next/image"
 import sadFace from "../assets/images/SadColor-Gray.svg"
 import smileFace from "../assets/images/SmileFace-Color.svg"
 import happyFace from "../assets/images/HappyFace-Color.svg"
+import moment from "moment"
 
 export const formatDate = (date) => {
-  const year = new Date(date)?.getFullYear()
-  // Months start from 0
-  const month = new Date(date)?.getMonth()?.toString().padStart(2, "0")
-  const day = new Date(date)?.getDate()?.toString().padStart(2, "0")
-  return ` ${day}/${+month + 1}/${year}`
+  return moment(date).format("DD/MM/YYYY")
 }
 
 export const minDate = () => {
@@ -142,4 +139,12 @@ export const handleShowRatingEmoji = (rating) => {
   } else {
     return null
   }
+}
+
+export const handleNavigateToProductDetails = (id) => {
+  window.open(`${process.env.NEXT_PUBLIC_WEBSITE}Home/GetProductById?id=${id}`, "_blank")
+}
+
+export const handleNavigateToSellerDetails = (id) => {
+  window.open(`${process.env.NEXT_PUBLIC_WEBSITE}Home/SellerInformation?productId=${id}`, "_blank")
 }

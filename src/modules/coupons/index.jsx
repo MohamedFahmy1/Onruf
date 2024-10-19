@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { FiPlusCircle } from "react-icons/fi"
 import { BiChart } from "react-icons/bi"
 import { useRouter } from "next/router"
@@ -98,7 +98,7 @@ const Coupons = () => {
         accessor: "createdAt",
         Cell: ({ row: { original } }) => (
           <div className="d-flex align-items-center">
-            <h6 className="m-0 f-b"> {original.createdAt.slice(0, 10)} </h6>
+            <h6 className="m-0 f-b">{moment(original.createdAt).format("DD-MM-YYYY")} </h6>
           </div>
         ),
       },
@@ -107,7 +107,7 @@ const Coupons = () => {
         accessor: "expiryDate",
         Cell: ({ row: { original } }) => (
           <div className="d-flex align-items-center">
-            <h6 className="m-0 f-b"> {propOr("-", ["expiryDate"], original)} </h6>
+            <h6 className="m-0 f-b"> {moment(original.expiryDate).format("DD-MM-YYYY")} </h6>
           </div>
         ),
       },
