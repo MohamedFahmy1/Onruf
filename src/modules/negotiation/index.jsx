@@ -7,6 +7,7 @@ import { useRouter } from "next/router"
 import axios from "axios"
 import Alerto from "../../common/Alerto"
 import Pagination from "@mui/material/Pagination"
+import { LoadingScreen } from "../../common/Loading"
 
 const tabsStyles = {
   ".MuiTabs-flexContainer": {
@@ -39,13 +40,18 @@ function NegotiationOffers() {
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 12
 
+  const [loading, setLoading] = useState(false)
+
   const getOffers = useCallback(async () => {
     try {
+      setLoading(true)
       const {
         data: { data: offers },
       } = await axios.post(`/GetSaleProductsOffers?isSent=${selectedTab == 0 ? "false" : "true"}`)
       setOffersData(offers)
+      setLoading(false)
     } catch (error) {
+      setLoading(false)
       Alerto(error)
     }
   }, [selectedTab])
@@ -62,6 +68,10 @@ function NegotiationOffers() {
   }
   const totalPages = Math.ceil(offersData?.length / pageSize)
   const currentData = offersData?.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+
+  if (loading) {
+    return <LoadingScreen />
+  }
 
   return (
     <Box

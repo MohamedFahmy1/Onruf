@@ -12,13 +12,18 @@ import Alerto from "../../../../common/Alerto"
 import { useFetch } from "../../../../hooks/useFetch"
 import { formatDate } from "../../../../common/functions"
 import ResponsiveImage from "../../../../common/ResponsiveImage"
+import { LoadingScreen } from "../../../../common/Loading"
 
 const SingleFolder = () => {
   const [selectedRows, setSelectedRows] = useState({})
   const { locale } = useRouter()
   const router = useRouter()
   const folderId = router.query.id
-  const { data: users, fetchData: getFolderUsers } = useFetch(`/GetFolderById?id=${folderId}&lang=${locale}`, true)
+  const {
+    data: users,
+    fetchData: getFolderUsers,
+    isLoading,
+  } = useFetch(`/GetFolderById?id=${folderId}&lang=${locale}`, true)
   const rows = Object.keys(selectedRows)
   const selectedUsersIds = rows.map((row) => {
     const selectedRow = users?.listUser.filter((_, index) => index === +row)
@@ -94,6 +99,8 @@ const SingleFolder = () => {
     ],
     [locale],
   )
+
+  if (isLoading) return <LoadingScreen />
 
   return (
     <div className="body-content" style={{ padding: 30 }}>

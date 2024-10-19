@@ -5,15 +5,20 @@ import { useRouter } from "next/router"
 
 export const useFetch = (apiPath, dynamicPage) => {
   const [data, setData] = useState()
+  const [isLoading, setIsLoading] = useState(false)
   const {
     locale,
     query: { id },
   } = useRouter()
+
   const fetchData = useCallback(async () => {
     try {
+      setIsLoading(true)
       const response = await axios.get(`${apiPath}`)
       setData(response.data.data)
+      setIsLoading(false)
     } catch (error) {
+      setIsLoading(false)
       Alerto(error)
     }
   }, [apiPath])
@@ -28,5 +33,5 @@ export const useFetch = (apiPath, dynamicPage) => {
     }
   }, [locale, fetchData, dynamicPage, id])
 
-  return { data, fetchData }
+  return { data, fetchData, isLoading: isLoading }
 }

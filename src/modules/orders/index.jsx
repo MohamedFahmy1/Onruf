@@ -13,6 +13,7 @@ import { toast } from "react-toastify"
 import ChangeStatusModal from "./ChangeStatusModal"
 import ChangeBranchModal from "./ChangeBranchModal"
 import { useFetch } from "../../hooks/useFetch"
+import { LoadingScreen } from "../../common/Loading"
 
 const Orders = () => {
   // const [shippingOptions, setShippingOptions] = useState()
@@ -39,7 +40,8 @@ const Orders = () => {
     // shippingOptionId: "",
     year: "",
   })
-  const { data: branches } = useFetch(`/GetListBrancheByProviderId?lang=${locale}`)
+
+  const { data: branches, isLoading } = useFetch(`/GetListBrancheByProviderId?lang=${locale}`)
 
   const branchesData = useMemo(() => {
     return branches?.map((item) => ({
@@ -243,6 +245,11 @@ const Orders = () => {
     ],
     [locale],
   )
+
+  console.log(isLoading)
+  if (isLoading) {
+    return <LoadingScreen />
+  }
 
   return (
     <>

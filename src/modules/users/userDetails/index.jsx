@@ -160,7 +160,7 @@ const UserDetails = () => {
         openNotificationModal={openNotificationModal}
         setOpenNotificationModal={setOpenNotificationModal}
       />
-      {userOrders && <Table data={userOrders && userOrders} columns={columns} pageSize={10} />}
+      {userOrders && <Table data={userOrders && userOrders} isCheckbox={false} columns={columns} pageSize={10} />}
       {userOrders?.length > 10 && <Pagination listLength={userOrders.length} pageSize={10} />}
     </article>
   )

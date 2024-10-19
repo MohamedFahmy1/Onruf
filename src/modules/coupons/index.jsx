@@ -13,11 +13,18 @@ import t from "../../translations.json"
 import Alerto from "../../common/Alerto"
 import Link from "next/link"
 import moment from "moment"
+import { useFetch } from "../../hooks/useFetch"
+import { LoadingScreen } from "../../common/Loading"
 
 const Coupons = () => {
   const { locale, push } = useRouter()
-  const [coupons, setCoupons] = useState()
   const [selectedFilter, setSelectedFilter] = useState("all")
+  const {
+    data: coupons,
+    fetchData: getCopounsList,
+    isLoading,
+  } = useFetch(`/ListBusinessAccountCoupons?pageIndex=1&PageRowsCount=50`)
+
   const couponsCount = coupons && coupons?.length
   const allCoupons = coupons && coupons
   const activeCoupons = coupons && coupons.filter(({ expiryDate }) => moment(expiryDate).isSameOrAfter(moment(), "day"))
@@ -56,18 +63,6 @@ const Coupons = () => {
     },
     [locale],
   )
-
-  const getCopounsList = async () => {
-    const data = await axios.get(`/ListBusinessAccountCoupons?pageIndex=1&PageRowsCount=50`)
-    setCoupons(data.data.data)
-  }
-
-  useEffect(() => {
-    getCopounsList()
-    return () => {
-      setCoupons()
-    }
-  }, [])
 
   const columns = useMemo(
     () => [
@@ -154,6 +149,9 @@ const Coupons = () => {
     ],
     [handleDeleteCode, editCoupon, locale],
   )
+
+  if (isLoading) return <LoadingScreen />
+
   return (
     <div className="body-content">
       <div className="d-flex align-items-center justify-content-between mb-4 gap-2 flex-wrap">

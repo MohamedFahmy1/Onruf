@@ -17,6 +17,7 @@ import ResponsiveImage from "../../../common/ResponsiveImage"
 import { useFetch } from "../../../hooks/useFetch"
 import { FaCamera } from "react-icons/fa"
 import Image from "next/image"
+import { LoadingScreen } from "../../../common/Loading"
 
 const UsersFolders = () => {
   const { locale } = useRouter()
@@ -27,9 +28,11 @@ const UsersFolders = () => {
   const [folderImage, setFolderImage] = useState("")
   const [folderId, setFolderId] = useState(false)
   const [editModal, setEditModal] = useState(false)
-  const { data: folders, fetchData: getUserFolders } = useFetch(
-    `/ListFolder?type=2&pageIndex=1&PageRowsCount=10&lang=${locale}`,
-  )
+  const {
+    data: folders,
+    fetchData: getUserFolders,
+    isLoading,
+  } = useFetch(`/ListFolder?type=2&pageIndex=1&PageRowsCount=10&lang=${locale}`)
   const editFolder = async () => {
     if (!editedFolderName) return toast.error(locale === "en" ? "Please enter folder name!" : "من فضلك ادخل اسم الملف")
     const values = { id: folderId, type: 2, nameAr: editedFolderName, nameEn: editedFolderName, image: folderImage }
@@ -72,6 +75,9 @@ const UsersFolders = () => {
   }, [openFolderModal, getUserFolders])
 
   const pageSize = 6
+
+  if (isLoading) return <LoadingScreen />
+
   return (
     <>
       <div className="body-content">

@@ -20,6 +20,7 @@ import ResponsiveImage from "../../common/ResponsiveImage"
 import { IoIosCloseCircle } from "react-icons/io"
 import { FaCamera } from "react-icons/fa"
 import Image from "next/image"
+import { LoadingScreen } from "../../common/Loading"
 
 const Users = () => {
   const { locale } = useRouter()
@@ -31,7 +32,7 @@ const Users = () => {
   const [filter, setFilter] = useState({ fitlerByOrder: 0, filterByNeighborhood: 0 })
   const selectOrderValue = useRef(null)
   const selectCityValue = useRef(null)
-  const { data: users } = useFetch(
+  const { data: users, isLoading } = useFetch(
     `/ListClientsForProvider?lang=${locale}&filterOrder=${filter.fitlerByOrder}${
       filter.filterByNeighborhood === 0 ? "" : `&filterCity=${filter.filterByNeighborhood}`
     }`,
@@ -172,6 +173,8 @@ const Users = () => {
     ],
     [locale],
   )
+
+  if (isLoading) return <LoadingScreen />
 
   return (
     <>

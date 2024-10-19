@@ -5,10 +5,13 @@ import t from "../../translations.json"
 import { useRouter } from "next/router"
 import Image from "next/image"
 import { useFetch } from "../../hooks/useFetch"
+import { LoadingScreen } from "../../common/Loading"
 
 const Marketing = () => {
   const { locale } = useRouter()
-  const { data: offers } = useFetch(`/ListAdminCoupons?currentPage=${1}&maxRows=${10}`)
+  const { data: offers, isLoading } = useFetch(`/ListAdminCoupons?currentPage=${1}&maxRows=${10}`)
+
+  if (isLoading) return <LoadingScreen />
 
   return (
     <article className="body-content">
