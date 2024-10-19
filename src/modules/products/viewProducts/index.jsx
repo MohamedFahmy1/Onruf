@@ -209,6 +209,15 @@ const ViewProducts = ({ products: p = [], setProductsIds, selectedRows, setSelec
   const columns = useMemo(
     () => [
       {
+        Header: pathOr("", [locale, "Products", "ProductId"], t),
+        accessor: "productId",
+        Cell: ({ row: { original } }) => (
+          <div>
+            <h6 className="m-0 f-b">#{original.id}</h6>
+          </div>
+        ),
+      },
+      {
         Header: pathOr("", [locale, "Products", "productName"], t),
         accessor: "name",
         Cell: ({ row: { original } }) => (

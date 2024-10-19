@@ -129,9 +129,13 @@ const AddProductStepTwo = ({
 
   const validateSaleDetails = () => {
     if (
-      !productPayload.IsFixedPriceEnabled &&
-      !productPayload.IsAuctionEnabled &&
-      !productPayload.IsNegotiationEnabled
+      // make sure that at least one sale type is selected unless it is a service and all sale types are disabled
+      !!(
+        !productPayload.IsFixedPriceEnabled &&
+        !productPayload.IsAuctionEnabled &&
+        !productPayload.IsNegotiationEnabled
+      ) &&
+      !!(selectedCatProps?.enableAuction || selectedCatProps?.enableFixedPrice || selectedCatProps?.enableNegotiation)
     ) {
       return toast.error(locale === "en" ? "Please choose sale type!" : "من فضلك حدد نوع البيع")
     } else if (productPayload.IsFixedPriceEnabled && !productPayload.Price) {

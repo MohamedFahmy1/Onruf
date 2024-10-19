@@ -279,7 +279,8 @@
       "write_price": "من فضلك اكتب السعر",
       "write_quantity": "من فضلك اكتب الكمية",
       "edit_product": "تعديل المنتج",
-      "repost_product": "إعادة نشر المنتج"
+      "repost_product": "إعادة نشر المنتج",
+      "ProductId": "رقم المنتج"
     },
     "Users": {
       "users": "العملاء",
@@ -969,7 +970,8 @@
       "write_price": "Please Write Price",
       "write_quantity": "Please Write Quantity",
       "edit_product": "Edit Product",
-      "repost_product": "Repost Product"
+      "repost_product": "Repost Product",
+      "ProductId": "Product Id"
     },
     "Users": {
       "users": "Clients",

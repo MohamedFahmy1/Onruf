@@ -76,10 +76,17 @@ const SaleDetails = ({ productPayload, setProductPayload, validateSaleDetails, s
           <Row>
             <div className="col-12">
               <div className="form-group">
-                <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
-                  {pathOr("", [locale, "Products", "salesType"], t)}
-                  <RequiredSympol />
-                </label>
+                {/* Hide if it's a service and all sales type are disabled */}
+                {!!(
+                  selectedCatProps?.enableAuction ||
+                  selectedCatProps?.enableFixedPrice ||
+                  selectedCatProps?.enableNegotiation
+                ) && (
+                  <label style={{ textAlign: locale === "en" ? "left" : undefined, display: "block" }}>
+                    {pathOr("", [locale, "Products", "salesType"], t)}
+                    <RequiredSympol />
+                  </label>
+                )}
                 <div className="row">
                   {selectedCatProps.enableFixedPrice && (
                     <div className="col-lg-4 col-md-6">
