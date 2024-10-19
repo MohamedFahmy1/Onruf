@@ -7,6 +7,7 @@ import { pathOr } from "ramda"
 import t from "../../../translations.json"
 import axios from "axios"
 import { useSelector } from "react-redux"
+import { LoadingScreen } from "../../../common/Loading"
 
 const Shipping = () => {
   const { locale } = useRouter()
@@ -42,7 +43,7 @@ const Shipping = () => {
     overflow: "scroll",
   }
 
-  if (!shippingOptions.length) return "Loading"
+  if (!shippingOptions.length) return <LoadingScreen />
   return (
     <div className="body-content">
       <div>

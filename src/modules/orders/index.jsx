@@ -49,6 +49,7 @@ const Orders = () => {
       branchId: item.id,
     }))
   }, [branches])
+
   const selectedOrdersObj = useMemo(() => {
     const rows = Object.keys(selectedRows || {})
     return rows.map((row) => {
@@ -246,7 +247,8 @@ const Orders = () => {
     [locale],
   )
 
-  console.log(isLoading)
+  console.log(columns)
+
   if (isLoading) {
     return <LoadingScreen />
   }
@@ -427,7 +429,7 @@ const Orders = () => {
           {orders && (
             <Table
               columns={columns}
-              data={filterdOrders === undefined ? orders : filterdOrders}
+              data={orders}
               pageSize={10}
               selectedRows={selectedRows}
               onSelectedRowsChange={setSelectedRows}

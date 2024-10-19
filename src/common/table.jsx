@@ -1,7 +1,8 @@
+// Table.js
 import React, { useState, useEffect } from "react"
 import { useTable, useRowSelect, useMountedLayoutEffect } from "react-table"
 import Checkbox from "./tableCheckbox"
-import Router, { useRouter } from "next/router"
+import { useRouter } from "next/router"
 import { pathOr } from "ramda"
 import t from "../translations.json"
 
@@ -14,9 +15,8 @@ const Table = ({
   onSelectedRowsChange = () => null,
 }) => {
   const [isLoading, setIsLoading] = useState(true)
-  const route = Router?.router?.state
-  const page = +route?.query?.page || 1
-  const { locale } = useRouter()
+  const { locale, query } = useRouter()
+  const page = parseInt(query.page, 10) || 1
 
   const {
     getTableProps,
@@ -29,7 +29,7 @@ const Table = ({
     {
       columns,
       data,
-      getRowId: (row) => row.id || row.productId,
+      getRowId: (row) => row.orderId || row.id, // Use unique identifier for each row
       initialState: {
         selectedRowIds: selectedRows,
       },
@@ -87,11 +87,11 @@ const Table = ({
             </td>
           </tr>
         ) : rows?.length ? (
-          rows?.slice((page - 1) * pageSize, page * pageSize).map((row, i) => {
+          rows?.slice((page - 1) * pageSize, page * pageSize).map((row) => {
             prepareRow(row)
             return (
               <tr {...row.getRowProps()} key={row.id}>
-                {row?.cells?.map((cell, index) => (
+                {row?.cells?.map((cell) => (
                   <td {...cell.getCellProps()} key={cell.column.id}>
                     {cell.render("Cell")}
                   </td>

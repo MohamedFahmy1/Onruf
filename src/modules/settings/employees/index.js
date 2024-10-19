@@ -9,6 +9,7 @@ import t from "../../../translations.json"
 import Alerto from "../../../common/Alerto"
 import { toast } from "react-toastify"
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
+import { LoadingScreen } from "../../../common/Loading"
 
 const Employees = () => {
   const [employees, setEmployees] = useState([])
@@ -20,8 +21,11 @@ const Employees = () => {
   const inputRef = useRef(null)
   const [filter, setFilter] = useState(false)
 
+  const [isLoading, setIsLoading] = useState(false)
+
   const handleFetchEmployees = async (pageIndex = 1, PageRowsCount = 10) => {
     try {
+      setIsLoading(true)
       const { data } = await axios.get("/GetAllBusinessAccountEmployees", {
         params: {
           pageIndex,
@@ -29,7 +33,9 @@ const Employees = () => {
         },
       })
       setEmployees(data.data)
+      setIsLoading(false)
     } catch (error) {
+      setIsLoading(false)
       Alerto(error)
     }
   }
@@ -134,6 +140,8 @@ const Employees = () => {
       setEmployees([])
     }
   }, [page])
+
+  if (isLoading) return <LoadingScreen />
 
   return (
     <article className="body-content">
