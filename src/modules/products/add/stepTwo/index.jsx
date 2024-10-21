@@ -140,10 +140,7 @@ const AddProductStepTwo = ({
       return toast.error(locale === "en" ? "Please choose sale type!" : "من فضلك حدد نوع البيع")
     } else if (productPayload.IsFixedPriceEnabled && !productPayload.Price) {
       return toast.error(locale === "en" ? "Please enter purchasing price!" : "من فضلك ادخل سعر شراء المنتج")
-    } else if (
-      productPayload.IsAuctionEnabled &&
-      (!productPayload.AuctionStartPrice || !productPayload.AuctionMinimumPrice)
-    ) {
+    } else if (productPayload.IsAuctionEnabled && !productPayload.AuctionMinimumPrice) {
       return toast.error(
         locale === "en"
           ? "Please enter start price and minimum price!"

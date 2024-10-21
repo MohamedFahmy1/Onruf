@@ -148,7 +148,7 @@ const PaymentCards = ({ bankTransfers }) => {
             <AiOutlinePlus />
           </button>
           <div
-            className="d-flex justify-content-between overflow-scroll"
+            className="d-flex justify-content-between overflow-x-scroll overflow-y-hidden"
             style={{ height: "300px", alignItems: "center", columnGap: "20px" }}
           >
             {bankTransferData?.map((bank) => (

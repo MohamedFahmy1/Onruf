@@ -179,7 +179,7 @@ const UserDetails = () => {
         openNotificationModal={openNotificationModal}
         setOpenNotificationModal={setOpenNotificationModal}
       />
-      {userOrders?.length > 0 && <Table data={userOrders} isCheckbox={true} columns={columns} pageSize={10} />}
+      {userOrders?.length > 0 && <Table data={userOrders} isCheckbox={false} columns={columns} pageSize={10} />}
       {userOrders?.length > 10 && <Pagination listLength={userOrders.length} pageSize={10} />}
     </article>
   )

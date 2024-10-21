@@ -21,7 +21,7 @@ const Reviews = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       const response = await axios.get(`/ListProviderProductsRates`, {
-        params: { pageIndex: 1 },
+        params: { pageIndex: 1, PageRowsCount: 10 },
       })
       setItems((items) => ({ ...items, ratings: response.data.data }))
     }

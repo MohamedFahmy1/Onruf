@@ -1,4 +1,3 @@
-// Table.js
 import React, { useState, useEffect } from "react"
 import { useTable, useRowSelect, useMountedLayoutEffect } from "react-table"
 import Checkbox from "./tableCheckbox"
@@ -29,7 +28,7 @@ const Table = ({
     {
       columns,
       data,
-      getRowId: (row) => row.orderId || row.id || row.orderMasterId,
+      getRowId: (row, index) => row.orderId || row.id || row.orderMasterId || `${row.name || "row"}-${index}`,
       initialState: {
         selectedRowIds: selectedRows,
       },
