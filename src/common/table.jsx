@@ -29,7 +29,7 @@ const Table = ({
     {
       columns,
       data,
-      getRowId: (row) => row.orderId || row.id, // Use unique identifier for each row
+      getRowId: (row) => row.orderId || row.id || row.orderMasterId,
       initialState: {
         selectedRowIds: selectedRows,
       },
